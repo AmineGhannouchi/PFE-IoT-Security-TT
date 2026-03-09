@@ -1,38 +1,79 @@
-# Secrets & certificats privés
+# =============================
+# SECRETS & CERTIFICATS PRIVÉS
+# =============================
 *.key
 *.pem
 *.p12
 *.pfx
 pki/certificates/private/
-vault/tokens/
+pki/vault/tokens/
+vault-token.txt
+.vault-token
 
-# Python
+# =============================
+# PYTHON
+# =============================
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
 .env
+.env.*
 venv/
 .venv/
+env/
 *.egg-info/
+dist/
+build/
+.pytest_cache/
 
-# Jupyter
+# =============================
+# JUPYTER NOTEBOOK
+# =============================
 .ipynb_checkpoints/
+*.ipynb_checkpoints
 
-# Docker
+# =============================
+# DOCKER
+# =============================
 .docker/
+docker-compose.override.yml
 
-# OS
-.DS_Store
+# =============================
+# WINDOWS
+# =============================
 Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
 
-# IDE
+# =============================
+# IDE / EDITEURS
+# =============================
 .vscode/
 .idea/
 *.swp
+*.swo
+*~
 
-# Données sensibles
+# =============================
+# DONNÉES VOLUMINEUSES
+# =============================
 datasets/raw/
-results/sensitive/
+*.pcap
+*.pcapng
+*.cap
+results/raw/
 
-# Logs locaux
+# =============================
+# LOGS
+# =============================
 *.log
+logs/
+
+# =============================
+# GNS3
+# =============================
+*.gns3
+GNS3/projects/
