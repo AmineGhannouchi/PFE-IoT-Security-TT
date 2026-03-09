@@ -93,3 +93,24 @@ cd PFE-IoT-Security-TT
 utilisation maximale de Docker, GNS3 en mode léger (Docker nodes).
 
 ---
+
+### 2026-03-09 — Phase 1 : Conception de l'Architecture
+
+**Décisions d'architecture** :
+- 5 zones de sécurité : IoT (VLAN10), DMZ (VLAN20), PKI (VLAN30),
+  SIEM (VLAN40), Analyse (VLAN50)
+- Broker MQTT retenu : Mosquitto (léger, open source, TLS/mTLS)
+- Infrastructure : Docker Compose pour tous les services applicatifs
+- Réseau simulé : GNS3 VM (pfSense + MikroTik CHR)
+- PKI : HashiCorp Vault en mode PKI Engine
+- SIEM : Wazuh single-node + OpenSearch 1 nœud (contrainte RAM)
+
+**Artefacts produits** :
+- 4 diagrammes PlantUML (architecture, topologie, flux E2E, composants)
+- Plan d'adressage IP complet (6 VLANs)
+- Tableau comparatif brokers MQTT
+
+**Contraintes identifiées** :
+- 16 Go RAM → services lancés de manière séquentielle/groupée
+- GNS3 VM limitée à 4 Go RAM
+- Docker Desktop limité à 10 Go RAM

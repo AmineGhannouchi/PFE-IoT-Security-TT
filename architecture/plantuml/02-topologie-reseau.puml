@@ -1,0 +1,65 @@
+@startuml PFE-Topologie-Reseau
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam linetype ortho
+
+title Topologie Réseau — PFE IoT Security TT\nPlan d'adressage IP complet
+
+' ========== ÉQUIPEMENTS RÉSEAU ==========
+node "pfSense CE\nFirewall/Router\nWAN: DHCP\nLAN: 192.168.1.1/24" as PFSENSE #F3E5F5
+node "MikroTik CHR\nSwitch L3\n192.168.1.2/24" as MIKROTIK #F3E5F5
+
+' ========== ZONE IOT ==========
+package "VLAN 10 — Zone IoT\n192.168.10.0/24" #E8F5E9 {
+  node "IoT Device 01\nCapteur Temp.\n192.168.10.11" as DEV01
+  node "IoT Device 02\nCapteur Hum.\n192.168.10.12" as DEV02
+  node "IoT Device 03\nCapteur Pres.\n192.168.10.13" as DEV03
+  node "IoT Device 04\nHTTP Client\n192.168.10.14" as DEV04
+}
+
+' ========== ZONE DMZ ==========
+package "VLAN 20 — Zone DMZ\n192.168.20.0/24" #FFF9C4 {
+  node "MQTT Broker\nMosquitto\n192.168.20.10" as BROKER
+  node "CoAP Gateway\naiocoap\n192.168.20.11" as COAP
+  node "HTTP Gateway\nnginx\n192.168.20.12" as HTTP_GW
+}
+
+' ========== ZONE PKI ==========
+package "VLAN 30 — Zone PKI\n192.168.30.0/24" #FCE4EC {
+  node "HashiCorp Vault\n192.168.30.10" as VAULT
+}
+
+' ========== ZONE SIEM ==========
+package "VLAN 40 — Zone SIEM\n192.168.40.0/24" #E3F2FD {
+  node "Wazuh Manager\n192.168.40.10" as WAZUH
+  node "OpenSearch\n192.168.40.11" as OS_NODE
+  node "OS Dashboards\n192.168.40.12" as OS_DASH
+}
+
+' ========== ZONE ANALYSE ==========
+package "VLAN 50 — Zone Analyse\n192.168.50.0/24" #E0F2F1 {
+  node "Suricata IDS\n192.168.50.10" as SURICATA
+  node "Zeek\n192.168.50.11" as ZEEK
+  node "ML Engine\n192.168.50.12" as ML
+}
+
+' ========== CONNEXIONS ==========
+PFSENSE -- MIKROTIK : Trunk (802.1Q)
+MIKROTIK -- DEV01 : VLAN 10
+MIKROTIK -- DEV02 : VLAN 10
+MIKROTIK -- DEV03 : VLAN 10
+MIKROTIK -- DEV04 : VLAN 10
+MIKROTIK -- BROKER : VLAN 20
+MIKROTIK -- COAP : VLAN 20
+MIKROTIK -- HTTP_GW : VLAN 20
+MIKROTIK -- VAULT : VLAN 30
+MIKROTIK -- WAZUH : VLAN 40
+MIKROTIK -- OS_NODE : VLAN 40
+MIKROTIK -- OS_DASH : VLAN 40
+MIKROTIK -- SURICATA : VLAN 50 (port miroir)
+MIKROTIK -- ZEEK : VLAN 50 (port miroir)
+MIKROTIK -- ML : VLAN 50
+
+@enduml

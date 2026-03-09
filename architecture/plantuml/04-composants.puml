@@ -1,0 +1,78 @@
+@startuml PFE-Architecture-Composants
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam componentStyle rectangle
+
+title Architecture des Composants Logiciels — PFE IoT Security TT
+
+package "Host Windows 11\ni3-1215U / 16 Go RAM" {
+
+  package "GNS3 VM (VMware)\n4 Go RAM" #F3E5F5 {
+    component [pfSense CE\nFirewall/NAT/VPN] as PFSENSE
+    component [MikroTik CHR\nSwitch L3 / VLAN] as MIKROTIK
+  }
+
+  package "Docker Desktop\n10 Go RAM (max)" #E3F2FD {
+
+    package "Stack IoT Simulée" #E8F5E9 {
+      component [iot-device-01\nMQTT + paho] as D1
+      component [iot-device-02\nMQTT + paho] as D2
+      component [iot-device-03\nCoAP + aiocoap] as D3
+      component [iot-device-04\nHTTP + requests] as D4
+    }
+
+    package "Stack Broker / Gateway" #FFF9C4 {
+      component [mosquitto\nMQTT Broker\nPort 8883 (TLS)] as MOSQ
+      component [coap-gateway\naiocoap server\nPort 5684 (DTLS)] as COAP
+      component [nginx\nHTTP/HTTPS GW\nPort 443] as NGINX
+    }
+
+    package "Stack PKI" #FCE4EC {
+      component [vault\nHashiCorp Vault\nPort 8200] as VAULT
+      component [vault-init\nScript init PKI] as VINIT
+    }
+
+    package "Stack SIEM" #E3F2FD {
+      component [wazuh-manager\nPort 1514/1515] as WMGR
+      component [opensearch\nPort 9200] as OS
+      component [opensearch-dashboards\nPort 5601] as OSD
+    }
+
+    package "Stack Analyse Réseau" #E0F2F1 {
+      component [suricata\nIDS/IPS\nPort miroir] as SUR
+      component [zeek\nNetwork Monitor] as ZEK
+    }
+
+    package "Stack ML" #FFF8E1 {
+      component [jupyter\nPort 8888] as JUP
+      component [ml-engine\nPython service] as MLE
+    }
+  }
+}
+
+' Relations
+D1 --> MOSQ : MQTT/TLS 8883
+D2 --> MOSQ : MQTT/TLS 8883
+D3 --> COAP : CoAP/DTLS 5684
+D4 --> NGINX : HTTPS 443
+
+MOSQ <--> VAULT : mTLS cert provisioning
+COAP <--> VAULT : mTLS cert provisioning
+NGINX <--> VAULT : mTLS cert provisioning
+VINIT --> VAULT : Init + config PKI
+
+WMGR --> OS : Indexation logs
+OS --> OSD : Dashboards
+MOSQ --> WMGR : Syslog
+SUR --> WMGR : Alertes IDS
+ZEK --> WMGR : Logs réseau
+
+SUR --> MLE : Flux analysés
+ZEK --> MLE : Connexions log
+MLE --> JUP : Résultats ML
+
+PFSENSE --> MOSQ : Routing inter-VLAN
+MIKROTIK --> SUR : Port mirroring
+
+@enduml

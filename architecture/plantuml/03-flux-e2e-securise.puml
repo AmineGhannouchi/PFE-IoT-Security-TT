@@ -1,0 +1,68 @@
+@startuml PFE-Flux-E2E-Securise
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam sequenceMessageAlign center
+skinparam sequence {
+  ArrowColor #2196F3
+  ActorBorderColor #555555
+  LifeLineBorderColor #999999
+  ParticipantBackgroundColor #FAFAFA
+  ParticipantBorderColor #555555
+}
+
+title Flux de Communication E2E Sécurisé — PFE IoT Security TT
+
+actor "IoT Device\n(Capteur)" as DEVICE
+participant "MikroTik\n(Switch L3)" as SW
+participant "pfSense\n(Firewall)" as FW
+participant "MQTT Broker\n(Mosquitto)" as BROKER
+participant "HashiCorp\nVault (PKI)" as VAULT
+participant "Wazuh\n(SIEM)" as WAZUH
+participant "Suricata\n(IDS)" as SURICATA
+participant "ML Engine\n(Anomaly Det.)" as ML
+
+== Phase 1 : Provisionnement du certificat ==
+
+DEVICE -> VAULT : [mTLS] Demande certificat client\n(CSR)
+VAULT -> VAULT : Validation identité device\nGénération certificat signé
+VAULT --> DEVICE : Certificat X.509 + CA chain
+note right of VAULT : PKI Engine\nTTL = 24h\nRotation automatique
+
+== Phase 2 : Connexion sécurisée au Broker ==
+
+DEVICE -> SW : Paquet TCP SYN (port 8883)
+SW -> FW : Routage VLAN 10 → VLAN 20
+FW -> FW : Vérification règles ACL\n(IoT → DMZ autorisé)
+FW -> BROKER : Forward TCP SYN
+BROKER -> DEVICE : TLS 1.3 Handshake\n(Server Hello + Certificate)
+DEVICE -> BROKER : Client Certificate\n(mTLS authentication)
+BROKER -> VAULT : Vérification CRL/OCSP
+VAULT --> BROKER : Certificat valide ✅
+
+note over DEVICE, BROKER : Canal chiffré établi\nTLS 1.3 — AES-256-GCM\nmTLS bidirectionnel
+
+== Phase 3 : Publication des données IoT ==
+
+DEVICE -> BROKER : [TLS] MQTT CONNECT\n(ClientID + credentials)
+BROKER --> DEVICE : MQTT CONNACK (RC=0)
+DEVICE -> BROKER : [TLS] MQTT PUBLISH\nTopic: iot/sensors/temp/01\nPayload: {"temp": 23.5, "ts": "..."}
+BROKER --> DEVICE : MQTT PUBACK
+
+== Phase 4 : Surveillance et détection ==
+
+BROKER -> WAZUH : Logs MQTT (connexion + publish)
+SW -> SURICATA : Port mirroring — copie du trafic
+SURICATA -> SURICATA : Analyse règles IDS\nDétection anomalies réseau
+SURICATA -> WAZUH : Alerte IDS (si détection)
+WAZUH -> ML : Export logs pour analyse ML
+ML -> ML : IsolationForest\nDétection comportements anormaux
+ML --> WAZUH : Score d'anomalie + classification
+
+== Phase 5 : Rotation des clés ==
+
+VAULT -> DEVICE : Notification renouvellement\n(TTL expirant)
+DEVICE -> VAULT : [mTLS] Renouvellement certificat
+VAULT --> DEVICE : Nouveau certificat X.509
+
+@enduml

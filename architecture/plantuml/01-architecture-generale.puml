@@ -1,0 +1,94 @@
+@startuml PFE-IoT-Architecture-Generale
+
+!define RECTANGLE class
+
+skinparam backgroundColor #FEFEFE
+skinparam componentStyle rectangle
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+
+skinparam component {
+  BackgroundColor<<IoT>> #E8F5E9
+  BackgroundColor<<Security>> #FFF3E0
+  BackgroundColor<<SIEM>> #E3F2FD
+  BackgroundColor<<PKI>> #FCE4EC
+  BackgroundColor<<Network>> #F3E5F5
+  BackgroundColor<<ML>> #E0F2F1
+  BorderColor #555555
+}
+
+title Architecture Globale — PFE IoT Security TT\nFST / Tunisie Telecom — 2026
+
+' =========== ZONE IoT ===========
+package "Zone IoT\n192.168.10.0/24" #E8F5E9 {
+  [Capteur Température\n(paho-mqtt)] <<IoT>> as TEMP
+  [Capteur Humidité\n(paho-mqtt)] <<IoT>> as HUM
+  [Capteur Pression\n(aiocoap)] <<IoT>> as PRES
+  [Simulateur HTTP\n(requests)] <<IoT>> as HTTP_DEV
+}
+
+' =========== ZONE DMZ ===========
+package "Zone DMZ\n192.168.20.0/24" #FFF9C4 {
+  [MQTT Broker\n(Mosquitto / EMQX)] <<Security>> as BROKER
+  [CoAP Gateway\n(aiocoap)] <<Security>> as COAP_GW
+  [HTTP API Gateway\n(nginx / Flask)] <<Security>> as HTTP_GW
+}
+
+' =========== ZONE PKI ===========
+package "Zone PKI & Identités\n192.168.30.0/24" #FCE4EC {
+  [HashiCorp Vault\n(PKI Engine)] <<PKI>> as VAULT
+  [CA Root\n(OpenSSL)] <<PKI>> as CA
+  [Certificate Manager] <<PKI>> as CERT_MGR
+}
+
+' =========== ZONE SIEM ===========
+package "Zone SIEM & Supervision\n192.168.40.0/24" #E3F2FD {
+  [Wazuh Manager\n+ Agent] <<SIEM>> as WAZUH
+  [OpenSearch\n(Indexing)] <<SIEM>> as OPENSEARCH
+  [OpenSearch Dashboards\n(Visualisation)] <<SIEM>> as DASHBOARDS
+}
+
+' =========== ZONE ANALYSE ===========
+package "Zone Analyse Réseau & ML\n192.168.50.0/24" #E0F2F1 {
+  [Suricata\n(IDS/IPS)] <<ML>> as SURICATA
+  [Zeek\n(Network Analysis)] <<ML>> as ZEEK
+  [ML Engine\n(Python / scikit-learn)] <<ML>> as ML_ENGINE
+  [Jupyter Notebook] <<ML>> as JUPYTER
+}
+
+' =========== RÉSEAU ===========
+package "Infrastructure Réseau" #F3E5F5 {
+  [pfSense CE\n(Firewall / NAT)] <<Network>> as PFSENSE
+  [MikroTik CHR\n(Switch L3)] <<Network>> as MIKROTIK
+  [GNS3\n(Simulation)] <<Network>> as GNS3
+}
+
+' =========== FLUX ===========
+' IoT → DMZ (chiffré TLS/DTLS)
+TEMP --> BROKER : MQTT over TLS 1.3
+HUM --> BROKER : MQTT over TLS 1.3
+PRES --> COAP_GW : CoAP over DTLS
+HTTP_DEV --> HTTP_GW : HTTPS (TLS 1.3)
+
+' mTLS entre DMZ et PKI
+BROKER <--> VAULT : mTLS — Certificate Provisioning
+COAP_GW <--> VAULT : mTLS — Certificate Provisioning
+HTTP_GW <--> VAULT : mTLS — Certificate Provisioning
+
+' Réseau
+PFSENSE --> MIKROTIK : Routage inter-zones
+MIKROTIK --> BROKER : Trafic filtré
+MIKROTIK --> WAZUH : Logs réseau
+
+' SIEM
+WAZUH --> OPENSEARCH : Indexation événements
+OPENSEARCH --> DASHBOARDS : Visualisation
+BROKER --> WAZUH : Logs MQTT
+SURICATA --> WAZUH : Alertes IDS
+
+' Analyse
+SURICATA --> ML_ENGINE : Flux réseau analysés
+ZEEK --> ML_ENGINE : Logs connexions
+ML_ENGINE --> JUPYTER : Résultats & visualisation
+
+@enduml
