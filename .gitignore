@@ -1,38 +1,94 @@
-# Secrets & certificats privés
+# ============================================================
+# PFE IoT Security — .gitignore
+# ============================================================
+
+# --- Clés privées & secrets ---
 *.key
 *.pem
 *.p12
 *.pfx
+*.crt
+*.csr
 pki/certificates/private/
-vault/tokens/
+pki/vault/tokens/
+vault-token.txt
+.vault-token
+vault_root_token*
 
-# Python
+# --- Variables d'environnement & secrets ---
+.env
+.env.*
+*.secret
+secrets/
+
+# --- Python ---
 __pycache__/
 *.pyc
 *.pyo
-.env
+*.pyd
+.Python
 venv/
 .venv/
+env/
+ENV/
 *.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
 
-# Jupyter
+# --- Jupyter Notebooks (checkpoints) ---
 .ipynb_checkpoints/
+*/.ipynb_checkpoints/
 
-# Docker
+# --- Docker ---
 .docker/
+docker-compose.override.yml
 
-# OS
+# --- Logs ---
+*.log
+logs/
+*.log.*
+
+# --- Captures réseau sensibles ---
+datasets/raw/
+*.pcap
+*.pcapng
+*.cap
+
+# --- Résultats sensibles ---
+results/sensitive/
+
+# --- OS ---
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+desktop.ini
 
-# IDE
+# --- IDE & Éditeurs ---
 .vscode/
 .idea/
 *.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
 
-# Données sensibles
-datasets/raw/
-results/sensitive/
+# --- GNS3 ---
+*.gns3
+GNS3/
 
-# Logs locaux
-*.log
+# --- Ansible ---
+*.retry
+inventory/secrets/
+
+# --- Fichiers temporaires ---
+tmp/
+temp/
+*.tmp
+*.bak
+*.backup
