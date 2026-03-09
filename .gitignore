@@ -1,0 +1,38 @@
+# Secrets & certificats privés
+*.key
+*.pem
+*.p12
+*.pfx
+pki/certificates/private/
+vault/tokens/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+venv/
+.venv/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Docker
+.docker/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Données sensibles
+datasets/raw/
+results/sensitive/
+
+# Logs locaux
+*.log
