@@ -1,0 +1,108 @@
+@startuml PFE_IoT_Security_Architecture_Globale
+
+!define RECTANGLE class
+
+skinparam backgroundColor #FAFAFA
+skinparam componentStyle rectangle
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 12
+
+title "Architecture Globale — Écosystème IoT Sécurisé E2E\nPFE @ Tunisie Telecom — 2025/2026"
+
+' =============================================
+' ZONE 1 : Terrain / Devices IoT
+' =============================================
+package "Zone IoT — Terrain" #LightBlue {
+  [Capteur Température\n(paho-mqtt)] as SENSOR1
+  [Capteur Pression\n(paho-mqtt)] as SENSOR2
+  [Capteur CoAP\n(aiocoap)] as SENSOR3
+  [Device HTTP\n(requests)] as SENSOR4
+}
+
+' =============================================
+' ZONE 2 : Réseau d'accès
+' =============================================
+package "Réseau d'accès\n(GNS3 — MikroTik CHR)" #LightYellow {
+  [Switch L2] as SW1
+  [Routeur MikroTik CHR] as MIKROTIK
+}
+
+' =============================================
+' ZONE 3 : Passerelle IoT (DMZ)
+' =============================================
+package "DMZ — Passerelle IoT" #LightGreen {
+  [pfSense CE\n(Firewall/NAT)] as PFSENSE
+  [IoT Gateway\n(Docker)] as GATEWAY
+}
+
+' =============================================
+' ZONE 4 : Plateforme IoT
+' =============================================
+package "Plateforme IoT — LAN Sécurisé" #LightCoral {
+  [MQTT Broker\n(Mosquitto/EMQX + TLS)] as BROKER
+  [CoAP Server\n(aiocoap + DTLS)] as COAP_SERVER
+  [HTTP API\n(Flask/FastAPI + TLS)] as HTTP_API
+}
+
+' =============================================
+' ZONE 5 : PKI & Identités
+' =============================================
+package "PKI & Gestion Identités" #Plum {
+  [HashiCorp Vault\n(PKI Engine)] as VAULT
+  [CA Root] as CA_ROOT
+  [CA Intermédiaire] as CA_INTER
+}
+
+' =============================================
+' ZONE 6 : Sécurité & Analyse
+' =============================================
+package "Analyse Réseau & Sécurité" #LightGray {
+  [Suricata\n(IDS/IPS)] as SURICATA
+  [Zeek\n(Network Analysis)] as ZEEK
+}
+
+' =============================================
+' ZONE 7 : SIEM
+' =============================================
+package "SIEM — Supervision" #PeachPuff {
+  [Wazuh Manager] as WAZUH
+  [OpenSearch] as OPENSEARCH
+  [OpenSearch Dashboards] as DASHBOARDS
+}
+
+' =============================================
+' ZONE 8 : ML & Détection
+' =============================================
+package "ML — Détection d'Anomalies" #Honeydew {
+  [Jupyter Notebook\n(IsolationForest\nRandomForest)] as ML
+}
+
+' =============================================
+' FLUX PRINCIPAUX
+' =============================================
+SENSOR1 --> SW1 : MQTT/TLS 8883
+SENSOR2 --> SW1 : MQTT/TLS 8883
+SENSOR3 --> SW1 : CoAP/DTLS 5684
+SENSOR4 --> SW1 : HTTPS 443
+
+SW1 --> MIKROTIK
+MIKROTIK --> PFSENSE : Réseau filtré
+
+PFSENSE --> GATEWAY : Trafic autorisé
+GATEWAY --> BROKER : MQTT/mTLS
+GATEWAY --> COAP_SERVER : CoAP/DTLS
+GATEWAY --> HTTP_API : HTTPS/mTLS
+
+VAULT --> GATEWAY : Certificats
+VAULT --> BROKER : Certificats
+VAULT --> CA_ROOT
+CA_ROOT --> CA_INTER
+
+SURICATA --> WAZUH : Alertes
+ZEEK --> WAZUH : Logs
+BROKER --> WAZUH : Logs
+WAZUH --> OPENSEARCH : Événements
+OPENSEARCH --> DASHBOARDS
+OPENSEARCH --> ML : Données
+
+@enduml

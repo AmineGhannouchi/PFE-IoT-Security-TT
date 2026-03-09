@@ -1,0 +1,52 @@
+@startuml PFE_Flux_MQTT_TLS
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName "DejaVu Sans"
+skinparam sequenceArrowThickness 2
+skinparam roundCorner 10
+
+title "Flux de Communication MQTT/TLS — PFE IoT Security"
+
+actor "IoT Device\n(paho-mqtt)" as DEVICE
+participant "MikroTik CHR\n(Routeur)" as ROUTER
+participant "pfSense\n(Firewall)" as FW
+participant "IoT Gateway\n(Docker)" as GW
+participant "HashiCorp Vault\n(PKI)" as VAULT
+participant "MQTT Broker\n(Mosquitto+TLS)" as BROKER
+participant "Wazuh Agent" as WAZUH
+
+== Phase 1 : Provisioning PKI ==
+VAULT -> DEVICE : Certificat client signé (TLS)
+VAULT -> BROKER : Certificat serveur signé (TLS)
+VAULT -> GW : Certificat gateway signé (mTLS)
+
+== Phase 2 : Connexion sécurisée ==
+DEVICE -> ROUTER : TCP SYN (port 8883)
+ROUTER -> FW : Paquet routé
+FW -> GW : Connexion autorisée (règle IoT)
+GW -> BROKER : Connexion mTLS
+
+DEVICE -> GW : TLS ClientHello
+GW -> DEVICE : TLS ServerHello + Certificat
+DEVICE -> GW : Vérification certificat CA
+GW -> DEVICE : TLS Finished (handshake OK)
+
+note over DEVICE, GW : Canal TLS 1.3 établi ✅
+
+== Phase 3 : Publication MQTT ==
+DEVICE -> GW : MQTT CONNECT (ClientID, credentials)
+GW -> BROKER : MQTT CONNECT (mTLS)
+BROKER -> GW : MQTT CONNACK (0x00 - Succès)
+GW -> DEVICE : MQTT CONNACK
+
+DEVICE -> GW : MQTT PUBLISH (topic: iot/sensor/temp, QoS 1)
+GW -> BROKER : MQTT PUBLISH (relayé, chiffré)
+BROKER -> GW : MQTT PUBACK
+GW -> DEVICE : MQTT PUBACK
+
+== Phase 4 : Supervision ==
+BROKER -> WAZUH : Log événement (connexion, publication)
+FW -> WAZUH : Log firewall
+note over WAZUH : Corrélation événements SIEM
+
+@enduml

@@ -1,0 +1,67 @@
+@startuml PFE_Topologie_Reseau
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName "DejaVu Sans"
+skinparam defaultFontSize 11
+skinparam nodeSep 60
+skinparam rankSep 80
+
+title "Topologie Réseau — PFE IoT Security @ TT\n(Simulation GNS3 sur Windows 11 / VMware)"
+
+' Réseaux
+rectangle "192.168.10.0/24\nRéseau IoT Terrain" as NET_IOT #LightBlue
+rectangle "192.168.20.0/24\nDMZ — Passerelle" as NET_DMZ #LightYellow
+rectangle "192.168.30.0/24\nLAN — Plateforme IoT" as NET_PLATFORM #LightGreen
+rectangle "192.168.40.0/24\nLAN — Management/SIEM" as NET_MGMT #LightGray
+rectangle "192.168.50.0/24\nLAN — PKI / Vault" as NET_PKI #Plum
+
+' Devices IoT
+node "IoT Device 1\nMQTT (paho)\n192.168.10.11" as D1 #Cyan
+node "IoT Device 2\nMQTT (paho)\n192.168.10.12" as D2 #Cyan
+node "IoT Device 3\nCoAP (aiocoap)\n192.168.10.13" as D3 #Cyan
+node "IoT Device 4\nHTTPS\n192.168.10.14" as D4 #Cyan
+
+' Équipements réseau
+node "MikroTik CHR\n(Routeur L3)\n192.168.10.1" as MIKROTIK #Yellow
+node "pfSense CE\n(Firewall + NAT)\n192.168.20.1" as PFSENSE #Orange
+
+' Passerelle
+node "IoT Gateway\n(Docker)\n192.168.20.10" as GATEWAY #LightGreen
+
+' Plateforme IoT
+node "MQTT Broker\n(Mosquitto/EMQX)\n192.168.30.10" as MQTT #Green
+node "CoAP Server\n(aiocoap)\n192.168.30.11" as COAP #Green
+node "HTTP API\n(FastAPI)\n192.168.30.12" as HTTP #Green
+
+' PKI
+node "HashiCorp Vault\n192.168.50.10" as VAULT #Plum
+
+' SIEM
+node "Wazuh Manager\n192.168.40.10" as WAZUH #Orange
+node "OpenSearch\n192.168.40.11" as OPENSEARCH #Orange
+node "Dashboards\n192.168.40.12" as DASH #Orange
+node "Suricata/Zeek\n192.168.40.13" as IDS #Red
+
+' Connexions
+D1 -- NET_IOT
+D2 -- NET_IOT
+D3 -- NET_IOT
+D4 -- NET_IOT
+NET_IOT -- MIKROTIK
+MIKROTIK -- PFSENSE : "Trunking VLAN"
+PFSENSE -- NET_DMZ
+NET_DMZ -- GATEWAY
+GATEWAY -- NET_PLATFORM
+NET_PLATFORM -- MQTT
+NET_PLATFORM -- COAP
+NET_PLATFORM -- HTTP
+NET_PLATFORM -- NET_MGMT
+NET_MGMT -- WAZUH
+WAZUH -- OPENSEARCH
+OPENSEARCH -- DASH
+NET_MGMT -- IDS
+NET_PKI -- VAULT
+VAULT -- NET_PLATFORM
+VAULT -- NET_DMZ
+
+@enduml
