@@ -1,0 +1,19 @@
+# Créer les réseaux Docker (dans PowerShell ou WSL2)
+
+# VLAN 10 — Zone IoT
+docker network create --driver bridge --subnet 192.168.10.0/24 --gateway 192.168.10.1 --opt com.docker.network.bridge.name=br-iot pfe-iot-network
+
+# VLAN 20 — Zone DMZ
+docker network create --driver bridge --subnet 192.168.20.0/24 --gateway 192.168.20.1 --opt com.docker.network.bridge.name=br-dmz pfe-dmz-network
+
+# VLAN 30 — Zone PKI
+docker network create --driver bridge --subnet 192.168.30.0/24 --gateway 192.168.30.1 --opt com.docker.network.bridge.name=br-pki pfe-pki-network
+
+# VLAN 40 — Zone SIEM
+docker network create --driver bridge --subnet 192.168.40.0/24 --gateway 192.168.40.1 --opt com.docker.network.bridge.name=br-siem pfe-siem-network
+
+# VLAN 50 — Zone Analyse
+docker network create --driver bridge --subnet 192.168.50.0/24 --gateway 192.168.50.1 --opt com.docker.network.bridge.name=br-analyse pfe-analyse-network
+
+# Vérifier les réseaux créés
+docker network ls
