@@ -1,0 +1,10 @@
+Mar 11 14:37:59.701 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Mar 11 14:37:59.702 HYPERVISOR: Started on IP = localhost, TCP port = 45591.
+Mar 11 14:37:59.905 HYPERVISOR: exec_cmd: hypervisor version 
+Mar 11 14:37:59.906 HYPERVISOR: exec_cmd: hypervisor working_dir F:\Projets\PFE-IoT-Security-TT\GNS3\PFE\project-files\dynamips 
+Mar 11 14:37:59.913 GENERAL: working_dir=F:\Projets\PFE-IoT-Security-TT\GNS3\PFE\project-files\dynamips
+Mar 11 14:37:59.914 HYPERVISOR: exec_cmd: ethsw create Switch1 
+Mar 11 14:38:06.905 HYPERVISOR: exec_cmd: ethsw delete Switch1 
+Mar 11 14:38:06.905 HYPERVISOR: exec_cmd: hypervisor stop 
+Mar 11 14:38:06.918 HYPERVISOR: Stopped.
+Mar 11 14:38:06.918 GENERAL: reset done.
