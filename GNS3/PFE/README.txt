@@ -1,1 +1,1 @@
-pfsense configure
+config alpine

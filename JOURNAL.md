@@ -114,3 +114,19 @@ utilisation maximale de Docker, GNS3 en mode léger (Docker nodes).
 - 16 Go RAM → services lancés de manière séquentielle/groupée
 - GNS3 VM limitée à 4 Go RAM
 - Docker Desktop limité à 10 Go RAM
+
+### 2026-03-16 — Phase 3bis : Centralisation Docker dans GNS3
+
+**Décision** : Utiliser Docker Engine de la GNS3 VM et exécuter les services (PKI, Broker, SIEM, IDS) comme nœuds Docker dans GNS3.
+
+**Motivation** :
+- Centraliser simulation réseau + services applicatifs
+- Simplifier l’observabilité des flux dans la topologie
+- Faciliter les démonstrations (start/stop des services dans GNS3)
+
+**Implémentation** :
+- Création de 5 switches (SW-IOT, SW-DMZ, SW-PKI, SW-SIEM, SW-ANALYSE)
+- Ajout de 5 conteneurs Alpine test, IP statiques par zone
+- Tests ping passerelles + validation segmentation IoT→SIEM/Analyse bloquée
+
+**Résultat** : Docker nodes gérés par GNS3, connectivité inter-zones conforme.

@@ -1,0 +1,80 @@
+# ================================================
+# PFE IoT Security TT — Stack PKI (HashiCorp Vault)
+# ================================================
+
+version: '3.8'
+
+services:
+
+  # ----------------------------------------
+  # HashiCorp Vault
+  # ----------------------------------------
+  vault:
+    image: hashicorp/vault:1.15.4
+    container_name: pfe-vault
+    hostname: vault.iot-pfe.local
+    restart: unless-stopped
+
+    ports:
+      - "8200:8200"
+
+    environment:
+      VAULT_ADDR: "http://0.0.0.0:8200"
+      VAULT_API_ADDR: "http://0.0.0.0:8200"
+      VAULT_LOG_LEVEL: "info"
+
+    volumes:
+      - vault-data:/vault/data
+      - vault-logs:/vault/logs
+      - ./../../pki/vault/config:/vault/config:ro
+
+    cap_add:
+      - IPC_LOCK
+
+    command: vault server -config=/vault/config/vault.hcl
+
+    networks:
+      pfe-pki-network:
+        ipv4_address: 192.168.30.10
+
+    healthcheck:
+      test: ["CMD", "vault", "status", "-address=http://127.0.0.1:8200"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  # ----------------------------------------
+  # Vault Init (s'exécute une seule fois)
+  # ----------------------------------------
+  vault-init:
+    image: hashicorp/vault:1.15.4
+    container_name: pfe-vault-init
+    depends_on:
+      vault:
+        condition: service_healthy
+
+    environment:
+      VAULT_ADDR: "http://vault:8200"
+
+    volumes:
+      - ./../../pki/vault/scripts:/scripts:ro
+      - vault-init-data:/vault/init
+
+    command: sh /scripts/init-vault.sh
+
+    networks:
+      - pfe-pki-network
+
+volumes:
+  vault-data:
+    name: pfe-vault-data
+  vault-logs:
+    name: pfe-vault-logs
+  vault-init-data:
+    name: pfe-vault-init-data
+
+networks:
+  pfe-pki-network:
+    external: true
+    name: pfe-pki-network
