@@ -130,3 +130,22 @@ utilisation maximale de Docker, GNS3 en mode léger (Docker nodes).
 - Tests ping passerelles + validation segmentation IoT→SIEM/Analyse bloquée
 
 **Résultat** : Docker nodes gérés par GNS3, connectivité inter-zones conforme.
+
+### 2026-03-28 — Phase 3bis : Docker dans GNS3 + Debug routage pfSense
+
+**Contexte** : Les conteneurs Alpine sont exécutés comme Docker nodes dans GNS3 (Docker engine = GNS3 VM).
+
+**Problème** : Depuis `alpine-iot` (192.168.10.100), ping vers `192.168.10.1` OK (GW MikroTik), mais ping vers `pfSense LAN 192.168.1.1` KO.
+
+**Analyse** :
+- Routage correct côté MikroTik (default route vers 192.168.1.1)
+- Routes statiques ajoutées sur pfSense
+- Le blocage provenait du firewall MikroTik (chain=forward) sur ICMP.
+
+**Solution appliquée** :
+Ajout règle MikroTik autorisant ICMP IoT → pfSense :
+`/ip firewall filter add chain=forward action=accept protocol=icmp src-address=192.168.10.0/24 dst-address=192.168.1.1 comment="ALLOW ICMP IoT -> pfSense (debug)"`
+
+**Résultat** :
+- Ping IoT → pfSense OK
+- Segmentation inter-zones conservée
