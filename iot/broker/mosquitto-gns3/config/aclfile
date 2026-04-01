@@ -1,0 +1,10 @@
+# ACL Mosquitto — PFE IoT Security TT
+
+# device-01 (CN = device-01.iot.iot-pfe.local) peut publier sur son topic
+user device-01.iot.iot-pfe.local
+topic write iot/sensors/device-01/#
+topic read iot/commands/device-01/#
+
+# (Option) admin : autoriser lecture globale
+# user mosquitto.dmz.iot-pfe.local
+# topic readwrite #
