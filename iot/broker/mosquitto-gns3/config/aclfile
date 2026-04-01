@@ -1,10 +1,202 @@
-# ACL Mosquitto — PFE IoT Security TT
+# ACL Mosquitto — Fleet top50
 
-# device-01 (CN = device-01.iot.iot-pfe.local) peut publier sur son topic
-user device-01.iot.iot-pfe.local
-topic write iot/sensors/device-01/#
-topic read iot/commands/device-01/#
+user dev_048797.iot.iot-pfe.local
+topic write iot/+/+dev_048797/#
+topic read  iot/commands/dev_048797/#
 
-# (Option) admin : autoriser lecture globale
-# user mosquitto.dmz.iot-pfe.local
-# topic readwrite #
+user dev_010904.iot.iot-pfe.local
+topic write iot/+/+dev_010904/#
+topic read  iot/commands/dev_010904/#
+
+user dev_040520.iot.iot-pfe.local
+topic write iot/+/+dev_040520/#
+topic read  iot/commands/dev_040520/#
+
+user dev_025385.iot.iot-pfe.local
+topic write iot/+/+dev_025385/#
+topic read  iot/commands/dev_025385/#
+
+user dev_035317.iot.iot-pfe.local
+topic write iot/+/+dev_035317/#
+topic read  iot/commands/dev_035317/#
+
+user dev_007498.iot.iot-pfe.local
+topic write iot/+/+dev_007498/#
+topic read  iot/commands/dev_007498/#
+
+user dev_044161.iot.iot-pfe.local
+topic write iot/+/+dev_044161/#
+topic read  iot/commands/dev_044161/#
+
+user dev_015133.iot.iot-pfe.local
+topic write iot/+/+dev_015133/#
+topic read  iot/commands/dev_015133/#
+
+user dev_031869.iot.iot-pfe.local
+topic write iot/+/+dev_031869/#
+topic read  iot/commands/dev_031869/#
+
+user dev_021034.iot.iot-pfe.local
+topic write iot/+/+dev_021034/#
+topic read  iot/commands/dev_021034/#
+
+user dev_006418.iot.iot-pfe.local
+topic write iot/+/+dev_006418/#
+topic read  iot/commands/dev_006418/#
+
+user dev_015351.iot.iot-pfe.local
+topic write iot/+/+dev_015351/#
+topic read  iot/commands/dev_015351/#
+
+user dev_019235.iot.iot-pfe.local
+topic write iot/+/+dev_019235/#
+topic read  iot/commands/dev_019235/#
+
+user dev_028831.iot.iot-pfe.local
+topic write iot/+/+dev_028831/#
+topic read  iot/commands/dev_028831/#
+
+user dev_046490.iot.iot-pfe.local
+topic write iot/+/+dev_046490/#
+topic read  iot/commands/dev_046490/#
+
+user dev_047778.iot.iot-pfe.local
+topic write iot/+/+dev_047778/#
+topic read  iot/commands/dev_047778/#
+
+user dev_031390.iot.iot-pfe.local
+topic write iot/+/+dev_031390/#
+topic read  iot/commands/dev_031390/#
+
+user dev_047631.iot.iot-pfe.local
+topic write iot/+/+dev_047631/#
+topic read  iot/commands/dev_047631/#
+
+user dev_049137.iot.iot-pfe.local
+topic write iot/+/+dev_049137/#
+topic read  iot/commands/dev_049137/#
+
+user dev_040259.iot.iot-pfe.local
+topic write iot/+/+dev_040259/#
+topic read  iot/commands/dev_040259/#
+
+user dev_007025.iot.iot-pfe.local
+topic write iot/+/+dev_007025/#
+topic read  iot/commands/dev_007025/#
+
+user dev_000626.iot.iot-pfe.local
+topic write iot/+/+dev_000626/#
+topic read  iot/commands/dev_000626/#
+
+user dev_015364.iot.iot-pfe.local
+topic write iot/+/+dev_015364/#
+topic read  iot/commands/dev_015364/#
+
+user dev_015583.iot.iot-pfe.local
+topic write iot/+/+dev_015583/#
+topic read  iot/commands/dev_015583/#
+
+user dev_008674.iot.iot-pfe.local
+topic write iot/+/+dev_008674/#
+topic read  iot/commands/dev_008674/#
+
+user dev_017075.iot.iot-pfe.local
+topic write iot/+/+dev_017075/#
+topic read  iot/commands/dev_017075/#
+
+user dev_021414.iot.iot-pfe.local
+topic write iot/+/+dev_021414/#
+topic read  iot/commands/dev_021414/#
+
+user dev_017558.iot.iot-pfe.local
+topic write iot/+/+dev_017558/#
+topic read  iot/commands/dev_017558/#
+
+user dev_040370.iot.iot-pfe.local
+topic write iot/+/+dev_040370/#
+topic read  iot/commands/dev_040370/#
+
+user dev_005529.iot.iot-pfe.local
+topic write iot/+/+dev_005529/#
+topic read  iot/commands/dev_005529/#
+
+user dev_022746.iot.iot-pfe.local
+topic write iot/+/+dev_022746/#
+topic read  iot/commands/dev_022746/#
+
+user dev_030293.iot.iot-pfe.local
+topic write iot/+/+dev_030293/#
+topic read  iot/commands/dev_030293/#
+
+user dev_023285.iot.iot-pfe.local
+topic write iot/+/+dev_023285/#
+topic read  iot/commands/dev_023285/#
+
+user dev_033066.iot.iot-pfe.local
+topic write iot/+/+dev_033066/#
+topic read  iot/commands/dev_033066/#
+
+user dev_001895.iot.iot-pfe.local
+topic write iot/+/+dev_001895/#
+topic read  iot/commands/dev_001895/#
+
+user dev_048574.iot.iot-pfe.local
+topic write iot/+/+dev_048574/#
+topic read  iot/commands/dev_048574/#
+
+user dev_014203.iot.iot-pfe.local
+topic write iot/+/+dev_014203/#
+topic read  iot/commands/dev_014203/#
+
+user dev_015513.iot.iot-pfe.local
+topic write iot/+/+dev_015513/#
+topic read  iot/commands/dev_015513/#
+
+user dev_030373.iot.iot-pfe.local
+topic write iot/+/+dev_030373/#
+topic read  iot/commands/dev_030373/#
+
+user dev_049247.iot.iot-pfe.local
+topic write iot/+/+dev_049247/#
+topic read  iot/commands/dev_049247/#
+
+user dev_007022.iot.iot-pfe.local
+topic write iot/+/+dev_007022/#
+topic read  iot/commands/dev_007022/#
+
+user dev_025408.iot.iot-pfe.local
+topic write iot/+/+dev_025408/#
+topic read  iot/commands/dev_025408/#
+
+user dev_044025.iot.iot-pfe.local
+topic write iot/+/+dev_044025/#
+topic read  iot/commands/dev_044025/#
+
+user dev_010123.iot.iot-pfe.local
+topic write iot/+/+dev_010123/#
+topic read  iot/commands/dev_010123/#
+
+user dev_045783.iot.iot-pfe.local
+topic write iot/+/+dev_045783/#
+topic read  iot/commands/dev_045783/#
+
+user dev_002506.iot.iot-pfe.local
+topic write iot/+/+dev_002506/#
+topic read  iot/commands/dev_002506/#
+
+user dev_032752.iot.iot-pfe.local
+topic write iot/+/+dev_032752/#
+topic read  iot/commands/dev_032752/#
+
+user dev_013449.iot.iot-pfe.local
+topic write iot/+/+dev_013449/#
+topic read  iot/commands/dev_013449/#
+
+user dev_000274.iot.iot-pfe.local
+topic write iot/+/+dev_000274/#
+topic read  iot/commands/dev_000274/#
+
+user dev_018900.iot.iot-pfe.local
+topic write iot/+/+dev_018900/#
+topic read  iot/commands/dev_018900/#
+
