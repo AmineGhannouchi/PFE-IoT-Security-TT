@@ -149,3 +149,18 @@ Ajout règle MikroTik autorisant ICMP IoT → pfSense :
 **Résultat** :
 - Ping IoT → pfSense OK
 - Segmentation inter-zones conservée
+
+### 2026-03-28 — Phase 4 : Persistance GNS3 Docker nodes
+
+**Problème** : Les données `/work/vault` dans pfe-toolbox disparaissaient après redémarrage GNS3.
+
+**Cause** : Conteneurs Docker GNS3 sans volume persistant.
+
+**Solution** :
+- Activation de volumes GNS3 “container-path only”
+- Toolbox : persister `/work`
+- Vault : persister `/vault/data`, `/vault/logs`, `/vault/init`, `/vault/config`
+
+**Résultat** :
+- Données toolbox conservées
+- Vault conserve son état (initialized=true) après reboot, unseal requis.
