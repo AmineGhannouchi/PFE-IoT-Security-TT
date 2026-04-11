@@ -7,7 +7,8 @@ version: '3.8'
 services:
 
   # ----------------------------------------
-  # HashiCorp Vault
+  # HashiCorp Vault — serveur PKI
+  # Données persistées dans le volume pfe-vault-data
   # ----------------------------------------
   vault:
     image: hashicorp/vault:1.15.4
@@ -38,18 +39,22 @@ services:
         ipv4_address: 192.168.30.10
 
     healthcheck:
-      test: ["CMD", "vault", "status", "-address=http://127.0.0.1:8200"]
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8200/v1/sys/health | grep -q 'initialized' || exit 1"]
       interval: 10s
       timeout: 5s
-      retries: 5
-      start_period: 15s
+      retries: 10
+      start_period: 20s
 
   # ----------------------------------------
-  # Vault Init (s'exécute une seule fois)
+  # Vault Init + Unseal + PKI Bootstrap
+  # S'exécute après que Vault est healthy.
+  # Idempotent : ne réinitialise pas si déjà fait.
+  # Credentials → volume pfe-vault-init-data (/vault/init/)
   # ----------------------------------------
   vault-init:
     image: hashicorp/vault:1.15.4
     container_name: pfe-vault-init
+    restart: "no"
     depends_on:
       vault:
         condition: service_healthy
@@ -61,16 +66,21 @@ services:
       - ./../../pki/vault/scripts:/scripts:ro
       - vault-init-data:/vault/init
 
-    command: sh /scripts/init-vault.sh
+    # python3 needed by init-vault.sh to parse JSON keys
+    entrypoint: >
+      sh -c "apk add --no-cache python3 curl jq 2>/dev/null || true && sh /scripts/init-vault.sh"
 
     networks:
       - pfe-pki-network
 
 volumes:
+  # Vault storage — persisté entre redémarrages GNS3
   vault-data:
     name: pfe-vault-data
+  # Vault logs
   vault-logs:
     name: pfe-vault-logs
+  # Unseal keys + root token (jamais perdus)
   vault-init-data:
     name: pfe-vault-init-data
 

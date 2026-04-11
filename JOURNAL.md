@@ -164,3 +164,92 @@ Ajout règle MikroTik autorisant ICMP IoT → pfSense :
 **Résultat** :
 - Données toolbox conservées
 - Vault conserve son état (initialized=true) après reboot, unseal requis.
+
+---
+
+### 2026-04-11 — Étape 1 : Audit Vault + Correction Persistance
+
+**Problème critique identifié** :
+- `docker-compose.pki.yml` référençait `pki/vault/config/` (inexistant) et `init-vault.sh` (manquant).
+- Données Vault perdues après redémarrage GNS3 : pas de volume Docker sur `/vault/data`.
+
+**Solutions implémentées** :
+
+1. **Créé `pki/vault/config/vault.hcl`** — Config Vault pour le déploiement Docker Compose
+   (storage=file:/vault/data, listener TCP 0.0.0.0:8200, TLS désactivé en PKI interne)
+
+2. **Créé `pki/vault/scripts/init-vault.sh`** — Script d'initialisation idempotent :
+   - Attend que Vault soit accessible (30 tentatives × 3s)
+   - Initialise (5 shares / threshold 3) si pas encore fait
+   - Sauvegarde unseal keys + root token dans `/vault/init/` (volume persistant)
+   - Déscelle automatiquement avec 3 clés
+   - Lance `bootstrap-pki-api.sh` (PKI root CA + intermediate CA + rôles)
+
+3. **Corrigé `infrastructure/docker/docker-compose.pki.yml`** :
+   - Healthcheck robuste via `/v1/sys/health`
+   - Service `vault-init` exécute `init-vault.sh` (restart=no, après healthcheck)
+   - 3 volumes nommés : `pfe-vault-data`, `pfe-vault-logs`, `pfe-vault-init-data`
+
+4. **Corrigé `pki/vault/scripts/bootstrap-pki-api.sh`** et **`issue-mosquitto-cert-api.sh`** :
+   - Support des deux formats de token (`VAULT_ROOT_TOKEN=xxx` et token brut)
+   - `VAULT_ADDR` et `ROOT_TOKEN_FILE` configurables via env var
+
+5. **Créé `scripts/audit-vault.sh`** — Audit complet :
+   - Ping + port PKI zone
+   - /v1/sys/health avec diagnostic HTTP code
+   - Vérification moteurs PKI (pki, pki_int)
+   - Test émission certificat
+   - Vérification rôles (iot-services, iot-devices)
+
+6. **Créé `tests/scenarios/test-vault-api.sh`** — Tests automatisés Vault API
+
+**Validation** :
+```bash
+# Démarrer la stack PKI
+docker compose -f infrastructure/docker/docker-compose.pki.yml up -d
+
+# Audit depuis toolbox
+docker exec pfe-toolbox sh /scripts/audit-vault.sh
+
+# Tests automatisés
+bash tests/scenarios/test-vault-api.sh http://192.168.30.10:8200
+```
+
+**Résultat attendu** : `Vault 100% opérationnel — passage à MQTT autorisé.`
+
+---
+
+### 2026-04-11 — Étape 2 : Déploiement Mosquitto TLS/mTLS
+
+**Artefacts créés** :
+
+1. **`infrastructure/docker/docker-compose.mosquitto.yml`** :
+   - Service `mosquitto` (eclipse-mosquitto:2.0) sur DMZ 192.168.20.10:8883
+   - Service `mosquitto-cert-init` : récupère les certs depuis Vault avant démarrage
+   - Volumes : `pfe-mosquitto-certs`, `pfe-mosquitto-data`, `pfe-mosquitto-logs`
+   - Réseau : `pfe-dmz-network` (externe)
+
+2. **`iot/broker/mosquitto-gns3/Dockerfile`** mis à jour :
+   - Suppression du `COPY certs/` — les certs viennent du volume (jamais dans l'image)
+   - Création propre des répertoires data/log avec permissions mosquitto
+
+**Procédure de déploiement** :
+```bash
+# 1. S'assurer que PKI est prête
+bash tests/scenarios/test-vault-api.sh http://192.168.30.10:8200
+
+# 2. Démarrer la stack Mosquitto
+docker compose -f infrastructure/docker/docker-compose.mosquitto.yml up -d
+
+# 3. Test connexion mTLS depuis pfe-toolbox
+mosquitto_pub \
+  --cafile /work/vault/certs/ca-chain.crt \
+  --cert   /work/fleet-sim/certs/<device_id>/client.crt \
+  --key    /work/fleet-sim/certs/<device_id>/client.key \
+  -h 192.168.20.10 -p 8883 \
+  -t iot/test/hello -m '{"msg":"ok"}' --tls-version tlsv1.3
+```
+
+**Avancement global** : 45%
+
+Prochaine étape : Simulation IoT fleet (fleet_sim.py) + IDS (Suricata/Zeek).
