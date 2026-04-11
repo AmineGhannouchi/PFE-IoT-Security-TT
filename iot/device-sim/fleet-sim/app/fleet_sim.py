@@ -29,7 +29,21 @@ def build_topic(tenant_id: str, device_id: str, message_type: str) -> str:
     return f"iot/{tenant_id}/{device_id}/{mt}"
 
 
+def device_dns_name(device_id: str) -> str:
+    return str(device_id).replace("_", "-")
+
+
 def connect_mqtt(broker_host, broker_port, cafile, certfile, keyfile, client_id, tls_version="TLS1.3"):
+    missing_files = [
+        path for path in (cafile, certfile, keyfile)
+        if not os.path.isfile(path)
+    ]
+    if missing_files:
+        missing_list = ", ".join(missing_files)
+        raise FileNotFoundError(
+            f"Missing certificate file(s) for client '{client_id}': {missing_list}"
+        )
+
     client = mqtt.Client(client_id=client_id, protocol=mqtt.MQTTv311, clean_session=True)
 
     # TLS context
@@ -51,6 +65,7 @@ def connect_mqtt(broker_host, broker_port, cafile, certfile, keyfile, client_id,
 def replay_device(df_dev: pd.DataFrame, args, device_id: str):
     tenant_id = df_dev["tenant_id"].iloc[0]
     cert_dir = args.certs_dir
+    client_id = device_dns_name(device_id)
 
     cafile = os.path.join(cert_dir, "ca-chain.crt")
     certfile = os.path.join(cert_dir, device_id, "client.crt")
@@ -58,7 +73,7 @@ def replay_device(df_dev: pd.DataFrame, args, device_id: str):
 
     client = connect_mqtt(
         args.broker_host, args.broker_port, cafile, certfile, keyfile,
-        client_id=device_id, tls_version="TLS1.3"
+        client_id=client_id, tls_version="TLS1.3"
     )
 
     # sort by timestamp
@@ -144,10 +159,19 @@ def main():
 
     print(f"Loaded {len(df)} MQTT rows. Simulating {len(chosen)} devices (top by frequency).")
 
+    skipped_devices = []
+
     for device_id in chosen:
         df_dev = df[df["device_id"] == device_id]
         print(f"== Device {device_id}: rows={len(df_dev)}")
-        replay_device(df_dev, args, device_id)
+        try:
+            replay_device(df_dev, args, device_id)
+        except FileNotFoundError as exc:
+            print(f"[WARN] Skip device {device_id}: {exc}")
+            skipped_devices.append(device_id)
+
+    if skipped_devices:
+        print(f"Skipped {len(skipped_devices)} device(s) without valid cert files.")
 
     print("Done.")
 

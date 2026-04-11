@@ -7,12 +7,16 @@ ACL="/work/fleet-sim/out/aclfile"
 echo "# ACL Mosquitto — Fleet top50" > "$ACL"
 echo "" >> "$ACL"
 
-while IFS= read -r DEV; do
+
+# Nettoyage de DEV pour éviter les retours à la ligne ou espaces
+while IFS= read -r DEV || [ -n "$DEV" ]; do
+  DEV="$(echo "$DEV" | tr -d '\r' | xargs)"
   [ -z "$DEV" ] && continue
 
-  USER="${DEV}.iot.iot-pfe.local"
+  DEV_DNS="$(echo "$DEV" | tr '_' '-')"
+  USER="${DEV_DNS}.iot.iot-pfe.local"
   echo "user $USER" >> "$ACL"
-  echo "topic write iot/+/+$DEV/#" >> "$ACL"
+  echo "topic write iot/+/$(echo "$DEV")/#" >> "$ACL"
   echo "topic read  iot/commands/$DEV/#" >> "$ACL"
   echo "" >> "$ACL"
 done < "$LIST"

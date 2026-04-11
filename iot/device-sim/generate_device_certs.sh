@@ -13,11 +13,11 @@ fi
 
 mkdir -p "$OUT"
 
-# CA chain (on réutilise ce que tu as déjà généré)
+# CA chain (on reutilise ce que tu as dejà genere)
 if [ -f /work/vault/certs/ca-chain.crt ]; then
   cp /work/vault/certs/ca-chain.crt "$OUT/ca-chain.crt"
 else
-  echo "/work/vault/certs/ca-chain.crt introuvable. Génère-le depuis Vault (intermediate+root)."
+  echo "/work/vault/certs/ca-chain.crt introuvable. Genere-le depuis Vault (intermediate+root)."
   exit 1
 fi
 
@@ -25,9 +25,12 @@ echo "==> Generating device certs into $OUT/<device_id>/client.(crt|key)"
 
 i=0
 while IFS= read -r DEV; do
+  DEV=$(echo "$DEV" | tr -d '\r')
   [ -z "$DEV" ] && continue
   i=$((i+1))
   echo "[$i] $DEV"
+
+  DEV_DNS=$(echo "$DEV" | tr '_' '-')
 
   mkdir -p "$OUT/$DEV"
 
@@ -35,7 +38,7 @@ while IFS= read -r DEV; do
   curl -sS -X POST \
     -H "X-Vault-Token: $ROOT_TOKEN" \
     -H "Content-Type: application/json" \
-    --data "{\"common_name\":\"$DEV.iot.iot-pfe.local\",\"ttl\":\"24h\"}" \
+    --data "{\"common_name\":\"$DEV_DNS.iot.iot-pfe.local\",\"ttl\":\"720h\"}" \
     "$VAULT/v1/pki_int/issue/iot-devices" \
     > "$OUT/$DEV/issue.json"
 
