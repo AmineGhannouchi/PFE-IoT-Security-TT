@@ -1,0 +1,19 @@
+[1 - Suricata-Main] 2026-04-11 22:05:45 Notice: suricata: This is Suricata version 8.0.4 RELEASE running in USER mode
+[1 - Suricata-Main] 2026-04-11 22:05:45 Info: cpu: CPUs/cores online: 4
+[1 - Suricata-Main] 2026-04-11 22:05:45 Info: suricata: Setting engine mode to IDS mode by default
+[1 - Suricata-Main] 2026-04-11 22:05:45 Info: exception-policy: master exception-policy set to: auto
+[1 - Suricata-Main] 2026-04-11 22:05:46 Info: logopenfile: fast output device (regular) initialized: fast.log
+[1 - Suricata-Main] 2026-04-11 22:05:46 Info: logopenfile: eve-log output device (regular) initialized: eve.json
+[1 - Suricata-Main] 2026-04-11 22:05:46 Info: logopenfile: stats output device (regular) initialized: stats.log
+[1 - Suricata-Main] 2026-04-11 22:05:46 Warning: detect: No rule files match the pattern /var/lib/suricata/rules/suricata.rules
+[1 - Suricata-Main] 2026-04-11 22:05:46 Warning: detect: 1 rule files specified, but no rules were loaded!
+[1 - Suricata-Main] 2026-04-11 22:05:46 Info: threshold-config: Threshold config parsed: 0 rule(s) found
+[1 - Suricata-Main] 2026-04-11 22:05:46 Info: detect: 0 signatures processed. 0 are IP-only rules, 0 are inspecting packet payload, 0 inspect application layer, 0 are decoder event only
+[14 - RX#01] 2026-04-11 22:05:46 Info: pcap: Starting file run for /data/mqtt_tls.pcap
+[1 - Suricata-Main] 2026-04-11 22:05:46 Notice: threads: Threads created -> RX: 1 W: 4 FM: 1 FR: 1   Engine started.
+[14 - RX#01] 2026-04-11 22:05:46 Info: checksum: No packets with invalid checksum, assuming checksum offloading is NOT used
+[14 - RX#01] 2026-04-11 22:05:46 Info: pcap: pcap file /data/mqtt_tls.pcap end of file reached (pcap err code 0)
+[1 - Suricata-Main] 2026-04-11 22:05:46 Notice: suricata: Signal Received.  Stopping engine.
+[1 - Suricata-Main] 2026-04-11 22:05:46 Info: suricata: time elapsed 0.109s
+[14 - RX#01] 2026-04-11 22:05:46 Notice: pcap: read 1 file, 1748 packets, 754415 bytes
+[1 - Suricata-Main] 2026-04-11 22:05:46 Info: counters: Alerts: 0

@@ -1,0 +1,1 @@
+alert tcp any any -> 192.168.20.10 8883 (msg:"PFE MQTT TLS broker 8883"; flow:to_server,established; sid:1000001; rev:1;)
