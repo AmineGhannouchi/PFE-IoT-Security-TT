@@ -7,6 +7,11 @@ pki/certificates/private/
 pki/vault/tokens/
 vault-token.txt
 .vault-token
+# Vault init output (unseal keys + root token — NE JAMAIS COMMITTER)
+**/init-output.json
+**/root_token.txt
+**/root_token.env
+**/unseal-keys.json
 
 # =============================
 # PYTHON

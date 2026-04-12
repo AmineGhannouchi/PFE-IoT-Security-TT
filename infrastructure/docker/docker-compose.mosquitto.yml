@@ -1,0 +1,105 @@
+# ================================================
+# PFE IoT Security TT — Stack MQTT (Mosquitto TLS/mTLS)
+# ================================================
+# Pré-requis :
+#   - PKI Vault opérationnelle (docker-compose.pki.yml)
+#   - Certificat Mosquitto généré via issue-mosquitto-cert-api.sh
+#   - Fichiers attendus dans pfe-vault-init-data:/vault/init/certs/ :
+#       mosquitto.crt, mosquitto.key, ca-chain.crt
+# ================================================
+
+version: '3.8'
+
+services:
+
+  # ----------------------------------------
+  # Eclipse Mosquitto — Broker MQTT TLS/mTLS
+  # Zone DMZ : 192.168.20.10:8883
+  # ----------------------------------------
+  mosquitto:
+    build:
+      context: ./../../iot/broker/mosquitto-gns3
+      dockerfile: Dockerfile
+    image: pfe-mosquitto:latest
+    container_name: pfe-mosquitto
+    hostname: mosquitto.dmz.iot-pfe.local
+    restart: unless-stopped
+
+    ports:
+      - "8883:8883"
+
+    volumes:
+      # Certificats issus de Vault (générés par issue-mosquitto-cert-api.sh)
+      - mosquitto-certs:/mosquitto/config/certs
+      # Données de persistance MQTT (sessions, messages retained)
+      - mosquitto-data:/mosquitto/data
+      # Logs
+      - mosquitto-logs:/mosquitto/log
+
+    networks:
+      pfe-dmz-network:
+        ipv4_address: 192.168.20.10
+
+    healthcheck:
+      test: ["CMD-SHELL", "mosquitto_sub -h 127.0.0.1 -p 8883 --cafile /mosquitto/config/certs/ca-chain.crt -t '$$SYS/#' -C 1 -W 3 2>/dev/null && echo ok || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # ----------------------------------------
+  # Vault Cert Fetcher
+  # Récupère les certificats Mosquitto depuis Vault
+  # et les place dans le volume mosquitto-certs.
+  # S'exécute une fois ; relancer si certs expirés.
+  # ----------------------------------------
+  mosquitto-cert-init:
+    image: hashicorp/vault:1.15.4
+    container_name: pfe-mosquitto-cert-init
+    restart: "no"
+
+    environment:
+      VAULT_ADDR: "http://192.168.30.10:8200"
+
+    volumes:
+      - ./../../pki/vault/scripts:/scripts:ro
+      - ./../../pki/vault/scripts:/vault/scripts:ro
+      - mosquitto-certs:/work/vault/certs
+      - vault-init-data:/vault/init:ro
+
+    entrypoint: >
+      sh -c "
+        apk add --no-cache jq curl 2>/dev/null || true &&
+        mkdir -p /work/vault &&
+        if [ -f /vault/init/root_token.env ]; then
+          cp /vault/init/root_token.env /work/vault/root_token.txt;
+        fi &&
+        export ROOT_TOKEN_FILE=/work/vault/root_token.txt &&
+        export VAULT_ADDR=http://192.168.30.10:8200 &&
+        sh /scripts/issue-mosquitto-cert-api.sh &&
+        echo 'Certs ready in /work/vault/certs -> volume mosquitto-certs'
+      "
+
+    networks:
+      - pfe-pki-network
+      - pfe-dmz-network
+
+volumes:
+  mosquitto-certs:
+    name: pfe-mosquitto-certs
+  mosquitto-data:
+    name: pfe-mosquitto-data
+  mosquitto-logs:
+    name: pfe-mosquitto-logs
+  # Référence au volume init Vault (read-only pour récupérer le token)
+  vault-init-data:
+    external: true
+    name: pfe-vault-init-data
+
+networks:
+  pfe-dmz-network:
+    external: true
+    name: pfe-dmz-network
+  pfe-pki-network:
+    external: true
+    name: pfe-pki-network

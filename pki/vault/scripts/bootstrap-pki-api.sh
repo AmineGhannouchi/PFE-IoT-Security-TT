@@ -1,15 +1,19 @@
 #!/bin/sh
 set -e
 
-VAULT="http://192.168.30.10:8200"
-ROOT_TOKEN_FILE="/work/vault/root_token.txt"
+VAULT="${VAULT_ADDR:-http://192.168.30.10:8200}"
+ROOT_TOKEN_FILE="${ROOT_TOKEN_FILE:-/work/vault/root_token.txt}"
 
 if [ ! -f "$ROOT_TOKEN_FILE" ]; then
   echo "❌ root_token.txt introuvable. Fais d'abord init/unseal."
   exit 1
 fi
 
-ROOT_TOKEN=$(cut -d= -f2 "$ROOT_TOKEN_FILE")
+# Support both "VAULT_ROOT_TOKEN=xxx" and bare token formats
+ROOT_TOKEN=$(grep -oP '(?<==)[^\s]+' "$ROOT_TOKEN_FILE" | head -1)
+if [ -z "$ROOT_TOKEN" ]; then
+  ROOT_TOKEN=$(cat "$ROOT_TOKEN_FILE" | tr -d '[:space:]')
+fi
 
 h() { echo "==> $1"; }
 req() {
