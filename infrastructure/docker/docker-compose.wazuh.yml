@@ -1,6 +1,7 @@
 # PFE IoT Security TT — Wazuh Single-Node
+# Déploiement : Docker dans GNS3 (zone SIEM 192.168.40.0/24)
 # Compatibilité : Wazuh 4.9.x | OpenSearch 2.x
-# RAM recommandée : 8 Go minimum
+# RAM optimisée : 32 Go RAM disponible
 
 services:
 
@@ -37,23 +38,31 @@ services:
       - wazuh_wodles:/var/ossec/wodles
       - filebeat_etc:/etc/filebeat
       - filebeat_var:/var/lib/filebeat
+      # Certificats Wazuh internes (filebeat vers indexer)
+      - ./wazuh-certs/root-ca.pem:/etc/ssl/root-ca.pem
+      - ./wazuh-certs/wazuh.manager.pem:/etc/ssl/filebeat.pem
+      - ./wazuh-certs/wazuh.manager-key.pem:/etc/ssl/filebeat.key
+      # Configuration custom
       - ./wazuh-config/wazuh_manager.conf:/wazuh-config-mount/etc/ossec.conf
       - ./wazuh-config/rules/local_rules.xml:/var/ossec/etc/rules/local_rules.xml
-      - ../../results/analysis/step6/suricata-v2/eve.json:/var/ossec/logs/suricata/eve.json:ro
+      # Logs Suricata (chemin Linux sur le host GNS3)
+      - /opt/pfe/results/suricata/eve.json:/var/ossec/logs/suricata/eve.json:ro
     ports:
       - "1514:1514"
       - "1515:1515"
       - "514:514/udp"
       - "55000:55000"
     networks:
-      - pfe-siem-network
+      pfe-siem-network:
+        ipv4_address: 192.168.40.10
 
   wazuh.indexer:
     image: wazuh/wazuh-indexer:4.9.2
     hostname: wazuh.indexer
     restart: always
     environment:
-      - "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g"
+      # 32 Go RAM dispo : heap indexer à 2 Go
+      - "OPENSEARCH_JAVA_OPTS=-Xms2g -Xmx2g"
       - node.name=wazuh.indexer
       - cluster.initial_cluster_manager_nodes=wazuh.indexer
       - discovery.type=single-node
@@ -74,7 +83,8 @@ services:
       - ./wazuh-config/wazuh.indexer.yml:/usr/share/wazuh-indexer/opensearch.yml
       - ./wazuh-config/internal_users.yml:/usr/share/wazuh-indexer/opensearch-security/internal_users.yml
     networks:
-      - pfe-siem-network
+      pfe-siem-network:
+        ipv4_address: 192.168.40.20
 
   wazuh.dashboard:
     image: wazuh/wazuh-dashboard:4.9.2
@@ -99,7 +109,8 @@ services:
       - wazuh.indexer
       - wazuh.manager
     networks:
-      - pfe-siem-network
+      pfe-siem-network:
+        ipv4_address: 192.168.40.30
 
 volumes:
   wazuh_api_configuration:
@@ -116,8 +127,9 @@ volumes:
   wazuh-indexer-data:
 
 networks:
+  # Réseau déjà créé dans GNS3 — on l'utilise tel quel
   pfe-siem-network:
-    driver: bridge
+    external: true
     ipam:
       config:
         - subnet: 172.20.0.0/24

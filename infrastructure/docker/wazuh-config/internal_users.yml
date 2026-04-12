@@ -1,0 +1,56 @@
+---
+# ============================================================
+# PFE IoT Security TT — OpenSearch Internal Users
+# Les mots de passe réels sont gérés par les variables
+# d'environnement dans docker-compose.wazuh.yml
+# ============================================================
+_meta:
+  type: "internalusers"
+  config_version: 2
+
+# Administrateur principal (mot de passe : SecretPassword1! via env)
+admin:
+  hash: "$2y$12$K/SpwjtB.wOHJ/Nc6GVvDOliSkal2Ow1oMVkFCnoPhBAAqDG.dYGm"
+  reserved: true
+  backend_roles:
+    - "admin"
+  description: "Wazuh admin user"
+
+# Utilisateur dashboard (mot de passe : kibanaserver via env)
+kibanaserver:
+  hash: "$2a$12$4AcgAt3xwOWadA5s5blL6ev39OXDNhmOesEoo33eZR/R/QvhFDiTE"
+  reserved: true
+  description: "Wazuh dashboard internal user"
+
+# Utilisateur read-only pour les agents
+kibanaro:
+  hash: "$2a$12$JJSXNfTowz7Uu5ttXfeYpeYE0arACvcwleFALdkM.txHXFB5j8B9y"
+  reserved: false
+  backend_roles:
+    - "kibanauser"
+    - "readall"
+  description: "Wazuh dashboard read-only user"
+
+# Utilisateur logstash (ingest)
+logstash:
+  hash: "$2a$12$u1ShR4l4uBS3Uv59Pa2y5.1uQuZBrZtmNfqB3iM/.jL0XoV9sghS2"
+  reserved: false
+  backend_roles:
+    - "logstash"
+  description: "Logstash user"
+
+# Utilisateur readall
+readall:
+  hash: "$2a$12$ae4ycwzwvLtZxwZ82RmiEunBbIPiAmGZduBAjKN0TXdwQFtCwARz2"
+  reserved: false
+  backend_roles:
+    - "readall"
+  description: "Read-only user"
+
+# Utilisateur snapshots
+snapshotrestore:
+  hash: "$2y$12$DpwmetHKwgYnorbgdvORCenv4NAK8cPUg8AI6pxLCuWf/ALc0.v7W"
+  reserved: false
+  backend_roles:
+    - "snapshotrestore"
+  description: "Snapshot/restore user"
