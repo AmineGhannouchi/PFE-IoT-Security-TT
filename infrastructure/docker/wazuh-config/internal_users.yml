@@ -1,56 +1,35 @@
----
 # ============================================================
-# PFE IoT Security TT — OpenSearch Internal Users
-# Les mots de passe réels sont gérés par les variables
-# d'environnement dans docker-compose.wazuh.yml
+# Wazuh OpenSearch — Internal users
+# Passwords are bcrypt hashed
+#
+# admin         : SecretPassword1!
+# kibanaserver  : kibanaserver
+# wazuh-wui     : MyS3cr3tP@ssw0rd
+#
+# To regenerate a hash:
+#   docker run --rm wazuh/wazuh-indexer:4.9.2 \
+#     bash /usr/share/wazuh-indexer/plugins/opensearch-security/tools/hash.sh -p <password>
 # ============================================================
+
 _meta:
   type: "internalusers"
   config_version: 2
 
-# Administrateur principal (mot de passe : SecretPassword1! via env)
 admin:
-  hash: "$2y$12$K/SpwjtB.wOHJ/Nc6GVvDOliSkal2Ow1oMVkFCnoPhBAAqDG.dYGm"
+  hash: "$2y$12$K/SpwjtB.wOHJ/Nc6GVRDuc1h0rM1DfvziFRNPtk27P.c4yDr9njO"
   reserved: true
   backend_roles:
     - "admin"
-  description: "Wazuh admin user"
+  description: "Admin user"
 
-# Utilisateur dashboard (mot de passe : kibanaserver via env)
 kibanaserver:
-  hash: "$2a$12$4AcgAt3xwOWadA5s5blL6ev39OXDNhmOesEoo33eZR/R/QvhFDiTE"
+  hash: "$2a$12$4AcgAt3xwOWadA5s5blL6ev39OXDNhmOesEoo33eZtrq2N0YrU3H."
   reserved: true
-  description: "Wazuh dashboard internal user"
+  description: "OpenSearch Dashboards user"
 
-# Utilisateur read-only pour les agents
-kibanaro:
-  hash: "$2a$12$JJSXNfTowz7Uu5ttXfeYpeYE0arACvcwleFALdkM.txHXFB5j8B9y"
+wazuh-wui:
+  hash: "$2y$12$eDMSsGLsGT9s2I8FbpfZr.lHHv5lTkWbnlSU2YCkYIh3LsqAFe2KO"
   reserved: false
   backend_roles:
-    - "kibanauser"
-    - "readall"
-  description: "Wazuh dashboard read-only user"
-
-# Utilisateur logstash (ingest)
-logstash:
-  hash: "$2a$12$u1ShR4l4uBS3Uv59Pa2y5.1uQuZBrZtmNfqB3iM/.jL0XoV9sghS2"
-  reserved: false
-  backend_roles:
-    - "logstash"
-  description: "Logstash user"
-
-# Utilisateur readall
-readall:
-  hash: "$2a$12$ae4ycwzwvLtZxwZ82RmiEunBbIPiAmGZduBAjKN0TXdwQFtCwARz2"
-  reserved: false
-  backend_roles:
-    - "readall"
-  description: "Read-only user"
-
-# Utilisateur snapshots
-snapshotrestore:
-  hash: "$2y$12$DpwmetHKwgYnorbgdvORCenv4NAK8cPUg8AI6pxLCuWf/ALc0.v7W"
-  reserved: false
-  backend_roles:
-    - "snapshotrestore"
-  description: "Snapshot/restore user"
+    - "wazuh_ui_user"
+  description: "Wazuh API user for Dashboard"

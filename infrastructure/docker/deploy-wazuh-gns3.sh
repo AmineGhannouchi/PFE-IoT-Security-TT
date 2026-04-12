@@ -1,96 +1,116 @@
-#!/bin/sh
+#!/bin/bash
 # ============================================================
-# PFE IoT Security TT — Déploiement Wazuh dans GNS3
-# À exécuter sur le HOST Docker de GNS3 (VM Linux)
+# PFE IoT Security TT — Déploiement Wazuh sur GNS3 VM
+# Exécuter depuis la GNS3 VM en SSH ou console
+# Chemin projet : /home/gns3/PFE-IoT-Security-TT
 # ============================================================
-
 set -e
 
-DEPLOY_DIR="/opt/pfe/wazuh"
-SIEM_NET="pfe-siem-network"
+REPO_PATH="/home/gns3/PFE-IoT-Security-TT"
+DOCKER_DIR="$REPO_PATH/infrastructure/docker"
+CERTS_DIR="$DOCKER_DIR/wazuh-certs"
 
-echo "============================================"
-echo " PFE IoT Security TT - Wazuh SIEM Deploy"
-echo "============================================"
+echo "============================================="
+echo " PFE IoT — Déploiement Wazuh SIEM (GNS3 VM)"
+echo "============================================="
 
-# ---- 1) Prérequis vm.max_map_count (obligatoire pour OpenSearch) ----
+# ----------------------------------------------------------
+# 1. Récupérer les derniers fichiers depuis GitHub
+# ----------------------------------------------------------
 echo ""
-echo "[1/6] Configuration vm.max_map_count..."
-CURRENT=$(sysctl -n vm.max_map_count)
-if [ "$CURRENT" -lt "262144" ]; then
-  sysctl -w vm.max_map_count=262144
-  echo "vm.max_map_count=262144" >> /etc/sysctl.conf
-  echo "    ==> Mis à jour : $CURRENT -> 262144"
-else
-  echo "    ==> Déjà OK : $CURRENT"
+echo "[1/5] Git pull..."
+cd "$REPO_PATH"
+git pull origin main
+
+# ----------------------------------------------------------
+# 2. vm.max_map_count (obligatoire pour OpenSearch)
+# ----------------------------------------------------------
+echo ""
+echo "[2/5] Configuration kernel (vm.max_map_count)..."
+sudo sysctl -w vm.max_map_count=262144
+
+# Rendre permanent au reboot
+if ! grep -q "vm.max_map_count" /etc/sysctl.conf 2>/dev/null; then
+    echo "vm.max_map_count=262144" | sudo tee -a /etc/sysctl.conf
+    echo "     -> Ajouté dans /etc/sysctl.conf (persistant)"
 fi
 
-# ---- 2) Créer le réseau Docker SIEM si absent ----
+# ----------------------------------------------------------
+# 3. Régénérer les certificats Wazuh (ne sont pas dans git)
+# ----------------------------------------------------------
 echo ""
-echo "[2/6] Vérification du réseau $SIEM_NET..."
-if ! docker network ls --format '{{.Name}}' | grep -q "^${SIEM_NET}$"; then
-  docker network create \
-    --driver bridge \
-    --subnet 192.168.40.0/24 \
-    --gateway 192.168.40.1 \
-    --opt com.docker.network.bridge.name=br-siem \
-    "$SIEM_NET"
-  echo "    ==> Réseau $SIEM_NET créé (192.168.40.0/24)"
-else
-  echo "    ==> Réseau $SIEM_NET déjà présent"
+echo "[3/5] Génération des certificats Wazuh internes..."
+cd "$DOCKER_DIR"
+
+# Nettoyer les anciens certs s'ils existent
+rm -f "$CERTS_DIR"/*.pem "$CERTS_DIR"/*.key 2>/dev/null || true
+
+docker run --rm \
+    -v "${CERTS_DIR}:/certificates" \
+    -v "${CERTS_DIR}/config.yml:/config/certs.yml" \
+    wazuh/wazuh-certs-generator:0.0.2 \
+    /entrypoint.sh
+
+echo "     -> Certificats générés dans $CERTS_DIR"
+ls -la "$CERTS_DIR"/*.pem 2>/dev/null | awk '{print "        " $NF}'
+
+# ----------------------------------------------------------
+# 4. Vérifier que tous les fichiers de config sont présents
+# ----------------------------------------------------------
+echo ""
+echo "[4/5] Vérification des fichiers de configuration..."
+
+REQUIRED_FILES=(
+    "wazuh-config/wazuh_manager.conf"
+    "wazuh-config/wazuh.indexer.yml"
+    "wazuh-config/internal_users.yml"
+    "wazuh-config/opensearch_dashboards.yml"
+    "wazuh-config/rules/local_rules.xml"
+    "wazuh-certs/root-ca.pem"
+    "wazuh-certs/wazuh.indexer.pem"
+    "wazuh-certs/wazuh.indexer-key.pem"
+    "wazuh-certs/wazuh.dashboard.pem"
+    "wazuh-certs/wazuh.dashboard-key.pem"
+    "wazuh-certs/admin.pem"
+    "wazuh-certs/admin-key.pem"
+)
+
+ALL_OK=true
+for f in "${REQUIRED_FILES[@]}"; do
+    if [ -f "$DOCKER_DIR/$f" ]; then
+        echo "     [✓] $f"
+    else
+        echo "     [✗] MANQUANT : $f"
+        ALL_OK=false
+    fi
+done
+
+if [ "$ALL_OK" = false ]; then
+    echo ""
+    echo "ERREUR : Des fichiers sont manquants. Arrêt."
+    exit 1
 fi
 
-# ---- 3) Préparer les dossiers ----
+# ----------------------------------------------------------
+# 5. Démarrer la stack Wazuh
+# ----------------------------------------------------------
 echo ""
-echo "[3/6] Création des dossiers de déploiement..."
-mkdir -p "$DEPLOY_DIR"
-mkdir -p /opt/pfe/results/suricata
-
-echo "    ==> $DEPLOY_DIR"
-echo "    ==> /opt/pfe/results/suricata"
-
-# ---- 4) Copier les fichiers du projet (depuis /tmp/pfe-deploy) ----
-echo ""
-echo "[4/6] Copie des fichiers de configuration..."
-if [ -d /tmp/pfe-deploy ]; then
-  cp -r /tmp/pfe-deploy/wazuh-certs    "$DEPLOY_DIR/"
-  cp -r /tmp/pfe-deploy/wazuh-config   "$DEPLOY_DIR/"
-  cp    /tmp/pfe-deploy/docker-compose.wazuh.yml "$DEPLOY_DIR/"
-  # Corriger le chemin du compose (chemins relatifs → absolus)
-  sed -i "s|./wazuh-certs|$DEPLOY_DIR/wazuh-certs|g" "$DEPLOY_DIR/docker-compose.wazuh.yml"
-  sed -i "s|./wazuh-config|$DEPLOY_DIR/wazuh-config|g" "$DEPLOY_DIR/docker-compose.wazuh.yml"
-  echo "    ==> Fichiers copiés depuis /tmp/pfe-deploy"
-else
-  echo "    [WARN] /tmp/pfe-deploy absent — assure-toi d'avoir copié les fichiers via SCP"
-fi
-
-# ---- 5) Copier eve.json Suricata si disponible ----
-echo ""
-echo "[5/6] Copie du fichier Suricata eve.json..."
-if [ -f /tmp/pfe-deploy/eve.json ]; then
-  cp /tmp/pfe-deploy/eve.json /opt/pfe/results/suricata/eve.json
-  echo "    ==> eve.json copié"
-else
-  # Créer un fichier vide pour que Wazuh démarre sans erreur
-  echo '{}' > /opt/pfe/results/suricata/eve.json
-  echo "    [INFO] eve.json vide créé (à remplacer par le vrai fichier)"
-fi
-
-# ---- 6) Démarrer Wazuh ----
-echo ""
-echo "[6/6] Démarrage de la stack Wazuh..."
-cd "$DEPLOY_DIR"
+echo "[5/5] Démarrage de la stack Wazuh..."
+cd "$DOCKER_DIR"
 
 docker compose -f docker-compose.wazuh.yml pull
 docker compose -f docker-compose.wazuh.yml up -d
 
 echo ""
-echo "============================================"
+echo "============================================="
 echo " Stack Wazuh démarrée !"
-echo " Dashboard : https://192.168.40.30"
-echo " Login     : admin / SecretPassword1!"
-echo " API       : https://192.168.40.10:55000"
-echo "============================================"
+echo "============================================="
 echo ""
-echo "Suivi des logs :"
-echo "  docker compose -f $DEPLOY_DIR/docker-compose.wazuh.yml logs -f wazuh.manager"
+echo " Dashboard : https://$(hostname -I | awk '{print $1}'):443"
+echo " Login     : admin / SecretPassword1!"
+echo ""
+echo " Suivre les logs :"
+echo "   docker compose -f $DOCKER_DIR/docker-compose.wazuh.yml logs -f wazuh.manager"
+echo ""
+echo " Vérifier l'état :"
+echo "   docker compose -f $DOCKER_DIR/docker-compose.wazuh.yml ps"

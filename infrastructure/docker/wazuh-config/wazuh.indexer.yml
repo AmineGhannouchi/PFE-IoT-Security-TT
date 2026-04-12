@@ -1,50 +1,44 @@
-# ============================================================
-# PFE IoT Security TT — OpenSearch (Wazuh Indexer) config
-# Node: wazuh.indexer | IP: 192.168.40.20
-# ============================================================
-
-network.host: 0.0.0.0
-node.name: wazuh.indexer
-
-cluster.name: wazuh-cluster
+network.host: "0.0.0.0"
+node.name: "wazuh.indexer"
 cluster.initial_cluster_manager_nodes:
-  - wazuh.indexer
-
+  - "wazuh.indexer"
+cluster.name: "wazuh-cluster"
 discovery.type: single-node
 
+# Paths
 path.data: /var/lib/wazuh-indexer
 path.logs: /var/log/wazuh-indexer
 
-# ---- TLS Transport ----
+# TLS — HTTP layer
+plugins.security.ssl.http.pemcert_filepath: /usr/share/wazuh-indexer/certs/wazuh.indexer.pem
+plugins.security.ssl.http.pemkey_filepath: /usr/share/wazuh-indexer/certs/wazuh.indexer.key
+plugins.security.ssl.http.pemtrustedcas_filepath: /usr/share/wazuh-indexer/certs/root-ca.pem
+plugins.security.ssl.http.enabled: true
+
+# TLS — Transport layer
 plugins.security.ssl.transport.pemcert_filepath: /usr/share/wazuh-indexer/certs/wazuh.indexer.pem
 plugins.security.ssl.transport.pemkey_filepath: /usr/share/wazuh-indexer/certs/wazuh.indexer.key
 plugins.security.ssl.transport.pemtrustedcas_filepath: /usr/share/wazuh-indexer/certs/root-ca.pem
 plugins.security.ssl.transport.enforce_hostname_verification: false
 
-# ---- TLS HTTP ----
-plugins.security.ssl.http.enabled: true
-plugins.security.ssl.http.pemcert_filepath: /usr/share/wazuh-indexer/certs/wazuh.indexer.pem
-plugins.security.ssl.http.pemkey_filepath: /usr/share/wazuh-indexer/certs/wazuh.indexer.key
-plugins.security.ssl.http.pemtrustedcas_filepath: /usr/share/wazuh-indexer/certs/root-ca.pem
-
-# ---- Security plugin ----
-plugins.security.allow_default_init_securityindex: true
-
+# Security plugin
 plugins.security.authcz.admin_dn:
   - "CN=admin,OU=Wazuh,O=Wazuh,L=California,C=US"
-
 plugins.security.nodes_dn:
   - "CN=wazuh.indexer,OU=Wazuh,O=Wazuh,L=California,C=US"
-
-plugins.security.check_snapshot_restore_write_privileges: true
-plugins.security.enable_snapshot_restore_privilege: true
-
 plugins.security.restapi.roles_enabled:
   - "all_access"
   - "security_rest_api_access"
-
 plugins.security.system_indices.enabled: true
 plugins.security.system_indices.indices:
+  - ".plugins-ml-config"
+  - ".plugins-ml-connector"
+  - ".plugins-ml-model-group"
+  - ".plugins-ml-model"
+  - ".plugins-ml-task"
+  - ".plugins-ml-conversation-meta"
+  - ".plugins-ml-conversation-interactions"
+  - ".opendistro_security"
   - ".opendistro-alerting-config"
   - ".opendistro-alerting-alert*"
   - ".opendistro-anomaly-results*"
@@ -52,11 +46,14 @@ plugins.security.system_indices.indices:
   - ".opendistro-anomaly-checkpoints"
   - ".opendistro-anomaly-detection-state"
   - ".opendistro-reports-*"
-  - ".opendistro-notifications-*"
-  - ".opendistro-notebooks"
+  - ".opensearch-notifications-*"
+  - ".opensearch-notebooks"
   - ".opensearch-observability"
+  - ".ql-datasources"
   - ".opendistro-asynchronous-search-response*"
-  - ".reindex-in-progress"
-  - ".opendistro-security-auditlog*"
+  - ".replication-metadata-store"
+  - ".opensearch-knn-models"
+  - ".geospatial-ip2geo-data*"
 
+# Compatibility
 compatibility.override_main_response_version: true
