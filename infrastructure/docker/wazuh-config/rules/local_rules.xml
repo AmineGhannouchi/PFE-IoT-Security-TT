@@ -1,0 +1,85 @@
+<!-- ============================================================ -->
+<!-- PFE IoT Security TT — Règles Wazuh Custom                   -->
+<!-- Phase 7 — SIEM IoT                                          -->
+<!-- ============================================================ -->
+<group name="pfe_iot,suricata,">
+
+  <!-- ------------------------------------------------- -->
+  <!-- Règle parent : événement Suricata                  -->
+  <!-- ------------------------------------------------- -->
+  <rule id="100100" level="3">
+    <decoded_as>json</decoded_as>
+    <field name="source">suricata</field>
+    <description>Suricata event received</description>
+  </rule>
+
+  <!-- ------------------------------------------------- -->
+  <!-- Alerte Suricata de type "alert"                    -->
+  <!-- ------------------------------------------------- -->
+  <rule id="100101" level="7">
+    <if_sid>100100</if_sid>
+    <field name="event_type">alert</field>
+    <description>Suricata IDS alert: $(alert.signature)</description>
+    <group>ids,alert,</group>
+  </rule>
+
+  <!-- ------------------------------------------------- -->
+  <!-- DoS MQTT détecté (SID 1000010)                    -->
+  <!-- ------------------------------------------------- -->
+  <rule id="100110" level="12">
+    <if_sid>100101</if_sid>
+    <field name="alert.signature_id">1000010</field>
+    <description>PFE [CRITICAL] DoS attack detected on MQTT broker from $(src_ip)</description>
+    <group>dos,mqtt,attack,</group>
+    <mitre>
+      <id>T1499</id>
+    </mitre>
+  </rule>
+
+  <!-- ------------------------------------------------- -->
+  <!-- Volume TCP élevé MQTT (SID 1000012)               -->
+  <!-- ------------------------------------------------- -->
+  <rule id="100111" level="10">
+    <if_sid>100101</if_sid>
+    <field name="alert.signature_id">1000012</field>
+    <description>PFE [HIGH] High volume MQTT traffic from $(src_ip) - possible DoS/Replay</description>
+    <group>dos,replay,mqtt,</group>
+    <mitre>
+      <id>T1499</id>
+    </mitre>
+  </rule>
+
+  <!-- ------------------------------------------------- -->
+  <!-- Connexion TLS valide (SID 1000001 - baseline)     -->
+  <!-- ------------------------------------------------- -->
+  <rule id="100120" level="3">
+    <if_sid>100101</if_sid>
+    <field name="alert.signature_id">1000001</field>
+    <description>PFE [INFO] TLS 1.3 connection to MQTT broker from $(src_ip)</description>
+    <group>tls,mqtt,baseline,</group>
+  </rule>
+
+  <!-- ------------------------------------------------- -->
+  <!-- Tentative downgrade TLS (SID 1000020)             -->
+  <!-- ------------------------------------------------- -->
+  <rule id="100130" level="14">
+    <if_sid>100101</if_sid>
+    <field name="alert.signature_id">1000020</field>
+    <description>PFE [CRITICAL] TLS downgrade attempt on MQTT broker from $(src_ip)</description>
+    <group>tls,downgrade,mitm,</group>
+    <mitre>
+      <id>T1557</id>
+    </mitre>
+  </rule>
+
+  <!-- ------------------------------------------------- -->
+  <!-- Événement TLS Suricata (event_type = tls)         -->
+  <!-- ------------------------------------------------- -->
+  <rule id="100140" level="2">
+    <if_sid>100100</if_sid>
+    <field name="event_type">tls</field>
+    <description>PFE [INFO] TLS 1.3 session observed: $(src_ip):$(src_port) -> $(dest_ip):$(dest_port)</description>
+    <group>tls,mqtt,</group>
+  </rule>
+
+</group>

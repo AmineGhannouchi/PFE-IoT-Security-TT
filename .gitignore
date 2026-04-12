@@ -1,8 +1,6 @@
 # =============================
 # SECRETS & CERTIFICATS PRIVÉS
 # =============================
-*.key
-*.pem
 *.p12
 *.pfx
 pki/certificates/private/
