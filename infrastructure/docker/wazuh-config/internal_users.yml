@@ -6,9 +6,9 @@
 # kibanaserver  : kibanaserver
 # wazuh-wui     : MyS3cr3tP@ssw0rd
 #
-# To regenerate a hash:
-#   docker run --rm wazuh/wazuh-indexer:4.9.2 \
-#     bash /usr/share/wazuh-indexer/plugins/opensearch-security/tools/hash.sh -p <password>
+# Hashes générés le 2026-04-12 via :
+#   docker exec docker-wazuh.indexer-1 bash \
+#     /usr/share/wazuh-indexer/plugins/opensearch-security/tools/hash.sh -p <password>
 # ============================================================
 
 _meta:
@@ -16,19 +16,19 @@ _meta:
   config_version: 2
 
 admin:
-  hash: "$2y$12$K/SpwjtB.wOHJ/Nc6GVRDuc1h0rM1DfvziFRNPtk27P.c4yDr9njO"
+  hash: "$2y$12$rT4EoD0Ht9n8JqavKAPxmO705FGTVm1lh0R/C.62mesUk3J8qUxOu"
   reserved: true
   backend_roles:
     - "admin"
   description: "Admin user"
 
 kibanaserver:
-  hash: "$2a$12$4AcgAt3xwOWadA5s5blL6ev39OXDNhmOesEoo33eZtrq2N0YrU3H."
+  hash: "$2y$12$Yy80oSMmxOiIABKHbQX8XeQmv/dQA2a0Wc2bCyPO/BzOzdeqCTYGC"
   reserved: true
   description: "OpenSearch Dashboards user"
 
 wazuh-wui:
-  hash: "$2y$12$eDMSsGLsGT9s2I8FbpfZr.lHHv5lTkWbnlSU2YCkYIh3LsqAFe2KO"
+  hash: "$2y$12$ISgfG70CMzioeqfZgQjElOcnzAWvoIaj6E/tN5n.BuB.pjL8VVRT2"
   reserved: false
   backend_roles:
     - "wazuh_ui_user"
