@@ -61,7 +61,6 @@ $RECYCLE.BIN/
 # DONNÉES VOLUMINEUSES
 # =============================
 datasets/raw/
-*.pcap
 *.pcapng
 *.cap
 results/raw/
@@ -72,6 +71,7 @@ results/raw/
 *.log
 logs/
 !results/analysis/step6/suricata/*.log
+!results/analysis/step6/suricata-v2/*.log
 # =============================
 # GNS3
 # =============================

@@ -1,0 +1,15 @@
+04/11/2026-13:21:01.880785  [**] [1:1000012:1] PFE [WARN] High volume TCP flow to MQTT broker [**] [Classification: (null)] [Priority: 3] {TCP} 192.168.10.9:52559 -> 192.168.20.10:8883
+04/11/2026-13:21:57.190568  [**] [1:1000012:1] PFE [WARN] High volume TCP flow to MQTT broker [**] [Classification: (null)] [Priority: 3] {TCP} 192.168.10.9:54857 -> 192.168.20.10:8883
+04/11/2026-13:21:16.966278  [**] [1:1000012:1] PFE [WARN] High volume TCP flow to MQTT broker [**] [Classification: (null)] [Priority: 3] {TCP} 192.168.10.9:38827 -> 192.168.20.10:8883
+04/11/2026-13:22:21.340293  [**] [1:1000012:1] PFE [WARN] High volume TCP flow to MQTT broker [**] [Classification: (null)] [Priority: 3] {TCP} 192.168.10.9:38873 -> 192.168.20.10:8883
+04/11/2026-13:21:25.020672  [**] [1:1000012:1] PFE [WARN] High volume TCP flow to MQTT broker [**] [Classification: (null)] [Priority: 3] {TCP} 192.168.10.9:47063 -> 192.168.20.10:8883
+04/11/2026-13:22:33.410023  [**] [1:1000012:1] PFE [WARN] High volume TCP flow to MQTT broker [**] [Classification: (null)] [Priority: 3] {TCP} 192.168.10.9:59735 -> 192.168.20.10:8883
+04/11/2026-13:22:33.411691  [**] [1:1000012:1] PFE [WARN] High volume TCP flow to MQTT broker [**] [Classification: (null)] [Priority: 3] {TCP} 192.168.10.9:59735 -> 192.168.20.10:8883
+04/11/2026-13:22:34.409266  [**] [1:1000012:1] PFE [WARN] High volume TCP flow to MQTT broker [**] [Classification: (null)] [Priority: 3] {TCP} 192.168.10.9:59735 -> 192.168.20.10:8883
+04/11/2026-13:21:45.139216  [**] [1:1000012:1] PFE [WARN] High volume TCP flow to MQTT broker [**] [Classification: (null)] [Priority: 3] {TCP} 192.168.10.9:35457 -> 192.168.20.10:8883
+04/11/2026-13:23:01.558223  [**] [1:1000012:1] PFE [WARN] High volume TCP flow to MQTT broker [**] [Classification: (null)] [Priority: 3] {TCP} 192.168.10.9:43315 -> 192.168.20.10:8883
+04/11/2026-13:21:49.158045  [**] [1:1000012:1] PFE [WARN] High volume TCP flow to MQTT broker [**] [Classification: (null)] [Priority: 3] {TCP} 192.168.10.9:35457 -> 192.168.20.10:8883
+04/11/2026-13:21:57.198968  [**] [1:1000010:1] PFE [ALERT] DoS - Excessive TLS connections to MQTT broker [**] [Classification: (null)] [Priority: 3] {TCP} 192.168.10.9:36679 -> 192.168.20.10:8883
+04/11/2026-13:22:01.226424  [**] [1:1000012:1] PFE [WARN] High volume TCP flow to MQTT broker [**] [Classification: (null)] [Priority: 3] {TCP} 192.168.10.9:36679 -> 192.168.20.10:8883
+04/11/2026-13:22:13.283319  [**] [1:1000012:1] PFE [WARN] High volume TCP flow to MQTT broker [**] [Classification: (null)] [Priority: 3] {TCP} 192.168.10.9:59723 -> 192.168.20.10:8883
+04/11/2026-13:22:37.474855  [**] [1:1000012:1] PFE [WARN] High volume TCP flow to MQTT broker [**] [Classification: (null)] [Priority: 3] {TCP} 192.168.10.9:36793 -> 192.168.20.10:8883
