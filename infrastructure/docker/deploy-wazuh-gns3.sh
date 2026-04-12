@@ -20,7 +20,6 @@ echo "============================================="
 echo ""
 echo "[1/5] Git pull..."
 cd "$REPO_PATH"
-git pull origin main
 
 # ----------------------------------------------------------
 # 2. vm.max_map_count (obligatoire pour OpenSearch)
