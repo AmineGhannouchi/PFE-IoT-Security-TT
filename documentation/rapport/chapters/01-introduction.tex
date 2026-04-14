@@ -1,53 +1,53 @@
-\chapter{Introduction GÃ©nÃ©rale}
+\chapter{Introduction Générale}
 
 \section{Contexte et motivations}
 
-L'Internet des Objets (IoT) connaÃ®t une expansion exponentielle dans le secteur des tÃ©lÃ©communications. Selon les estimations de l'GSMA, le nombre de connexions IoT dÃ©passera 25 milliards d'unitÃ©s d'ici 2025, gÃ©nÃ©rant un volume de donnÃ©es sans prÃ©cÃ©dent. Les opÃ©rateurs tÃ©lÃ©com comme \TT{} se trouvent au cÅ“ur de cette transformation numÃ©rique, en dÃ©ployant des infrastructures capables d'absorber ces flux tout en garantissant leur confidentialitÃ©, leur intÃ©gritÃ© et leur disponibilitÃ©.
+L'Internet des Objets (IoT) connaît une expansion exponentielle dans le secteur des télécommunications. Selon les estimations de l'GSMA, le nombre de connexions IoT dépassera 25 milliards d'unités d'ici 2025, générant un volume de données sans précédent. Les opérateurs télécom comme \TT{} se trouvent au cœur de cette transformation numérique, en déployant des infrastructures capables d'absorber ces flux tout en garantissant leur confidentialité, leur intégrité et leur disponibilité.
 
-Or, l'IoT prÃ©sente des caractÃ©ristiques propres qui compliquent drastiquement la sÃ©curisation : les dispositifs disposent souvent de ressources calculatoires limitÃ©es, leurs mises Ã  jour de sÃ©curitÃ© sont rares, et les protocoles de communication applicatifs (MQTT, CoAP) ont Ã©tÃ© conÃ§us Ã  l'origine sans mÃ©canismes de sÃ©curitÃ© obligatoires. Ces facteurs font des Ã©cosystÃ¨mes IoT des cibles de choix pour les attaquants, qui peuvent y dÃ©ployer des \textit{botnets}, des attaques par dÃ©ni de service (\ac{DoS}), des interceptions (Man-in-the-Middle) ou encore des injections de donnÃ©es malveillantes.
+Or, l'IoT présente des caractéristiques propres qui compliquent drastiquement la sécurisation : les dispositifs disposent souvent de ressources calculatoires limitées, leurs mises à jour de sécurité sont rares, et les protocoles de communication applicatifs (MQTT, CoAP) ont été conçus à l'origine sans mécanismes de sécurité obligatoires. Ces facteurs font des écosystèmes IoT des cibles de choix pour les attaquants, qui peuvent y déployer des \textit{botnets}, des attaques par déni de service (\ac{DoS}), des interceptions (Man-in-the-Middle) ou encore des injections de données malveillantes.
 
-Ce projet de fin d'Ã©tudes, rÃ©alisÃ© au sein de \TT{}, rÃ©pond Ã  un besoin concret et stratÃ©gique : dÃ©finir, implÃ©menter et valider une architecture de sÃ©curitÃ© complÃ¨te pour des flux MQTT en environnement IoT simulÃ©.
+Ce projet de fin d'études, réalisé au sein de \TT{}, répond à un besoin concret et stratégique : définir, implémenter et valider une architecture de sécurité complète pour des flux MQTT en environnement IoT simulé.
 
-\section{ProblÃ©matique}
+\section{Problématique}
 
-La problÃ©matique centrale de ce travail peut se formuler ainsi :
+La problématique centrale de ce travail peut se formuler ainsi :
 
-\begin{tcolorbox}[colback=blue!5, colframe=blue!50!black, title=ProblÃ©matique]
-\textit{Comment sÃ©curiser de bout en bout les flux de communication d'un Ã©cosystÃ¨me IoT simulÃ©, depuis l'authentification des dispositifs jusqu'Ã  la dÃ©tection automatisÃ©e des comportements anormaux, tout en maintenant des performances acceptables pour les applications temps-rÃ©el ?}
+\begin{tcolorbox}[colback=blue!5, colframe=blue!50!black, title=Problématique]
+\textit{Comment sécuriser de bout en bout les flux de communication d'un écosystème IoT simulé, depuis l'authentification des dispositifs jusqu'à la détection automatisée des comportements anormaux, tout en maintenant des performances acceptables pour les applications temps-réel ?}
 \end{tcolorbox}
 
-Cette problÃ©matique se dÃ©compose en quatre sous-questions directrices :
+Cette problématique se décompose en quatre sous-questions directrices :
 
 \begin{enumerate}
-  \item Comment Ã©tablir une chaÃ®ne de confiance cryptographique pour des milliers de dispositifs IoT hÃ©tÃ©rogÃ¨nes ?
-  \item Comment configurer le protocole MQTT pour exiger une authentification mutuelle TLS (mTLS) sans dÃ©grader significativement les performances ?
-  \item Comment dÃ©tecter en temps rÃ©el les attaques rÃ©seau et les comportements anormaux dans un flux MQTT chiffrÃ© ?
-  \item Dans quelle mesure les approches de Machine Learning non supervisÃ© sont-elles viables pour la dÃ©tection d'anomalies dans des contextes IoT rÃ©els ?
+  \item Comment établir une chaîne de confiance cryptographique pour des milliers de dispositifs IoT hétérogènes ?
+  \item Comment configurer le protocole MQTT pour exiger une authentification mutuelle TLS (mTLS) sans dégrader significativement les performances ?
+  \item Comment détecter en temps réel les attaques réseau et les comportements anormaux dans un flux MQTT chiffré ?
+  \item Dans quelle mesure les approches de Machine Learning non supervisé sont-elles viables pour la détection d'anomalies dans des contextes IoT réels ?
 \end{enumerate}
 
 \section{Objectifs du projet}
 
-Les objectifs opÃ©rationnels de ce travail sont les suivants :
+Les objectifs opérationnels de ce travail sont les suivants :
 
 \begin{itemize}
-  \item \textbf{O1 â€” Infrastructure PKI} : DÃ©ployer une hiÃ©rarchie de certification (CA racine, CA intermÃ©diaire) basÃ©e sur HashiCorp Vault pour Ã©mettre et gÃ©rer automatiquement les certificats de dispositifs et de services.
-  \item \textbf{O2 â€” Broker sÃ©curisÃ©} : Configurer un broker Mosquitto en TLS 1.3 strict avec mTLS obligatoire et politiques d'accÃ¨s par topic.
-  \item \textbf{O3 â€” Simulation rÃ©aliste} : Reproduire le comportement d'une flotte de 50 capteurs IoT en rejouant un dataset de 76\,000 Ã©vÃ©nements rÃ©els couvrant sept types d'attaques.
-  \item \textbf{O4 â€” Analyse rÃ©seau} : DÃ©ployer Suricata avec des rÃ¨gles IDS personnalisÃ©es pour dÃ©tecter les anomalies dans les flux MQTT.
-  \item \textbf{O5 â€” SIEM} : IntÃ©grer Wazuh pour la collecte, la corrÃ©lation et l'alerte des Ã©vÃ©nements de sÃ©curitÃ©.
-  \item \textbf{O6 â€” DÃ©tection ML} : Comparer IsolationForest (non supervisÃ©) et RandomForest (supervisÃ©) pour la dÃ©tection d'anomalies.
-  \item \textbf{O7 â€” Performance} : Quantifier l'overhead TLS/mTLS sur les mÃ©triques MQTT clÃ©s (latence, dÃ©bit, RTT).
+  \item \textbf{O1 — Infrastructure PKI} : Déployer une hiérarchie de certification (CA racine, CA intermédiaire) basée sur HashiCorp Vault pour émettre et gérer automatiquement les certificats de dispositifs et de services.
+  \item \textbf{O2 — Broker sécurisé} : Configurer un broker Mosquitto en TLS 1.3 strict avec mTLS obligatoire et politiques d'accès par topic.
+  \item \textbf{O3 — Simulation réaliste} : Reproduire le comportement d'une flotte de 50 capteurs IoT en rejouant un dataset de 76\,000 événements réels couvrant sept types d'attaques.
+  \item \textbf{O4 — Analyse réseau} : Déployer Suricata avec des règles IDS personnalisées pour détecter les anomalies dans les flux MQTT.
+  \item \textbf{O5 — SIEM} : Intégrer Wazuh pour la collecte, la corrélation et l'alerte des événements de sécurité.
+  \item \textbf{O6 — Détection ML} : Comparer IsolationForest (non supervisé) et RandomForest (supervisé) pour la détection d'anomalies.
+  \item \textbf{O7 — Performance} : Quantifier l'overhead TLS/mTLS sur les métriques MQTT clés (latence, débit, RTT).
 \end{itemize}
 
 \section{Plan du rapport}
 
-Ce rapport est structurÃ© en onze chapitres :
+Ce rapport est structuré en onze chapitres :
 
 \begin{description}
-  \item[Chapitres 1-2] Contexte, Ã©tat de l'art et analyse comparative des technologies.
-  \item[Chapitres 3-4] Architecture gÃ©nÃ©rale, conception de la PKI et dÃ©ploiement de Vault.
+  \item[Chapitres 1-2] Contexte, état de l'art et analyse comparative des technologies.
+  \item[Chapitres 3-4] Architecture générale, conception de la PKI et déploiement de Vault.
   \item[Chapitres 5-6] Configuration TLS/mTLS, simulateur de flotte IoT.
-  \item[Chapitres 7-8] Analyse rÃ©seau par Suricata, intÃ©gration SIEM Wazuh.
-  \item[Chapitres 9-10] DÃ©tection par Machine Learning, Ã©valuation des performances.
+  \item[Chapitres 7-8] Analyse réseau par Suricata, intégration SIEM Wazuh.
+  \item[Chapitres 9-10] Détection par Machine Learning, évaluation des performances.
   \item[Chapitre 11] Conclusion et perspectives.
 \end{description}

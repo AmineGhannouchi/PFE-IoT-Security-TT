@@ -1,6 +1,6 @@
-﻿%% rapport.tex  Document principal
-%% PFE : SÃ©curisation des flux de communication pour un
-%%       Ã©cosystÃ¨me IoT simulÃ©
+%% rapport.tex  Document principal
+%% PFE : Sécurisation des flux de communication pour un
+%%       écosystème IoT simulé
 %% FST / Tunisie Telecom  2025-2026
 %% Auteur : Amine Ghannouchi
 \documentclass[12pt, a4paper, twoside]{report}
@@ -25,7 +25,7 @@
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds}
 
-%% En-tÃªtes & pieds de page
+%% En-têtes & pieds de page
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
@@ -69,19 +69,19 @@
   extendedchars=true,
   inputencoding=utf8,
   literate=
-    {Ã }{{\`a}}1 {Ã¢}{{\^a}}1 {Ã¤}{{\"a}}1
-    {Ã©}{{\'e}}1 {Ã¨}{{\`e}}1 {Ãª}{{\^e}}1 {Ã«}{{\"e}}1
-    {Ã®}{{\^i}}1 {Ã¯}{{\"i}}1
-    {Ã´}{{\^o}}1 {Ã¶}{{\"o}}1
-    {Ã¹}{{\`u}}1 {Ã»}{{\^u}}1 {Ã¼}{{\"u}}1
-    {Ã§}{{\c{c}}}1
-    {Ã€}{{\`A}}1 {Ã‚}{{\^A}}1
-    {Ã‰}{{\'E}}1 {Ãˆ}{{\`E}}1 {ÃŠ}{{\^E}}1
-    {ÃŽ}{{\^I}}1 {Ã”}{{\^O}}1
-    {Ã™}{{\`U}}1 {Ã›}{{\^U}}1
-    {Ã‡}{{\c{C}}}1
-    {Å“}{{\oe}}1 {Ã¦}{{\ae}}1
-    {Â«}{{\guillemotleft}}1 {Â»}{{\guillemotright}}1
+    {à}{{\`a}}1 {â}{{\^a}}1 {ä}{{\"a}}1
+    {é}{{\'e}}1 {è}{{\`e}}1 {ê}{{\^e}}1 {ë}{{\"e}}1
+    {î}{{\^i}}1 {ï}{{\"i}}1
+    {ô}{{\^o}}1 {ö}{{\"o}}1
+    {ù}{{\`u}}1 {û}{{\^u}}1 {ü}{{\"u}}1
+    {ç}{{\c{c}}}1
+    {À}{{\`A}}1 {Â}{{\^A}}1
+    {É}{{\'E}}1 {È}{{\`E}}1 {Ê}{{\^E}}1
+    {Î}{{\^I}}1 {Ô}{{\^O}}1
+    {Ù}{{\`U}}1 {Û}{{\^U}}1
+    {Ç}{{\c{C}}}1
+    {œ}{{\oe}}1 {æ}{{\ae}}1
+    {«}{{\guillemotleft}}1 {»}{{\guillemotright}}1
 }
 
 \lstdefinelanguage{yaml}{
@@ -119,7 +119,7 @@
   morestring=[b]"
 }
 
-%% MathÃ©matiques
+%% Mathématiques
 \usepackage{amsmath, amssymb, amsfonts}
 
 %% Liens hypertexte
@@ -130,7 +130,7 @@
   urlcolor=RoyalBlue,
   bookmarks=true,
   bookmarksnumbered=true,
-  pdftitle={PFE â€” SÃ©curisation des flux IoT},
+  pdftitle={PFE — Sécurisation des flux IoT},
   pdfauthor={Amine Ghannouchi},
   pdfsubject={IoT Security, TLS/mTLS, PKI, SIEM, Machine Learning}
 ]{hyperref}
@@ -154,7 +154,7 @@
 \usepackage{tcolorbox}
 \tcbuselibrary{skins, breakable}
 
-%% BoÃ®tes callout
+%% Boîtes callout
 \newtcolorbox{infobox}[1][]{
   colback=blue!5!white, colframe=blue!60!black,
   title=#1, fonttitle=\bfseries, breakable
@@ -168,13 +168,13 @@
   title=#1, fonttitle=\bfseries, breakable
 }
 
-%% Commandes personnalisÃ©es
+%% Commandes personnalisées
 \newcommand{\TT}{\textit{Tunisie Telecom}}
-\newcommand{\FST}{\textit{FacultÃ© des Sciences de Tunis}}
+\newcommand{\FST}{\textit{Faculté des Sciences de Tunis}}
 \newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
 
-%% NumÃ©rotation
+%% Numérotation
 \setcounter{tocdepth}{3}
 \setcounter{secnumdepth}{3}
 
@@ -183,7 +183,7 @@
 %% Page de garde
 \input{chapters/00-pagedegarde}
 
-%% Pages prÃ©liminaires
+%% Pages préliminaires
 \pagenumbering{roman}
 \setcounter{page}{1}
 
@@ -215,7 +215,7 @@
 \input{chapters/11-conclusion}
 
 %% Bibliographie
-\printbibliography[heading=bibintoc, title={RÃ©fÃ©rences bibliographiques}]
+\printbibliography[heading=bibintoc, title={Références bibliographiques}]
 
 %% Annexes
 \appendix

@@ -1,24 +1,24 @@
-\chapter{Ã‰valuation des Performances}
+\chapter{Évaluation des Performances}
 
-\section{MÃ©thodologie de mesure}
+\section{Méthodologie de mesure}
 
 \subsection{Objectif}
 
-L'Ã©valuation des performances vise Ã  quantifier l'\textbf{overhead} introduit par les mÃ©canismes de sÃ©curitÃ© (TLS 1.3, mTLS) sur les mÃ©triques clÃ©s du protocole MQTT. Les mesures ont Ã©tÃ© rÃ©alisÃ©es en mode simulation via le script \texttt{tests/performance/mqtt\_perf\_test.py}.
+L'évaluation des performances vise à quantifier l'\textbf{overhead} introduit par les mécanismes de sécurité (TLS 1.3, mTLS) sur les métriques clés du protocole MQTT. Les mesures ont été réalisées en mode simulation via le script \texttt{tests/performance/mqtt\_perf\_test.py}.
 
-\subsection{MÃ©triques mesurÃ©es}
+\subsection{Métriques mesurées}
 
 \begin{itemize}
-  \item \textbf{Latence de connexion} : Temps d'Ã©tablissement de la connexion depuis le socket TCP jusqu'au \texttt{CONNACK} MQTT.
-  \item \textbf{RTT (Round-Trip Time)} : DÃ©lai aller-retour d'un message publish/subscribe de bout en bout.
-  \item \textbf{DÃ©bit (Throughput)} : Nombre de messages par seconde pour diffÃ©rentes tailles de payload.
+  \item \textbf{Latence de connexion} : Temps d'établissement de la connexion depuis le socket TCP jusqu'au \texttt{CONNACK} MQTT.
+  \item \textbf{RTT (Round-Trip Time)} : Délai aller-retour d'un message publish/subscribe de bout en bout.
+  \item \textbf{Débit (Throughput)} : Nombre de messages par seconde pour différentes tailles de payload.
 \end{itemize}
 
-\subsection{Configurations testÃ©es}
+\subsection{Configurations testées}
 
 \begin{table}[H]
 \centering
-\caption{Configurations comparÃ©es pour l'Ã©valuation des performances}
+\caption{Configurations comparées pour l'évaluation des performances}
 \label{tab:perf_configs}
 \begin{tabular}{ll}
 \toprule
@@ -31,7 +31,7 @@ TLS1.3+mTLS & MQTT avec TLS 1.3 + authentification client (mTLS) \\
 \end{tabular}
 \end{table}
 
-\section{RÃ©sultats des mesures}
+\section{Résultats des mesures}
 
 \subsection{Latence de connexion}
 
@@ -43,7 +43,7 @@ TLS1.3+mTLS & MQTT avec TLS 1.3 + authentification client (mTLS) \\
 \toprule
 \textbf{Configuration} & \textbf{Latence moy. (ms)} & \textbf{Overhead} \\
 \midrule
-TCP (baseline) & 8.69 & â€” \\
+TCP (baseline) & 8.69 & — \\
 TLS 1.3 + mTLS & 40.8 & \textbf{+369.5\%} \\
 \bottomrule
 \end{tabular}
@@ -52,11 +52,11 @@ TLS 1.3 + mTLS & 40.8 & \textbf{+369.5\%} \\
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{figures/perf_connection_latency.png}
-  \caption{Latence de connexion MQTT â€” TCP vs TLS 1.3/mTLS}
+  \caption{Latence de connexion MQTT — TCP vs TLS 1.3/mTLS}
   \label{fig:perf_conn}
 \end{figure}
 
-L'overhead de connexion de \textbf{+369\%} s'explique principalement par le handshake TLS 1.3 en mTLS (environ 32 ms) qui s'ajoute Ã  la connexion TCP de base. Cette latence est une opÃ©ration ponctuelle par dispositif.
+L'overhead de connexion de \textbf{+369\%} s'explique principalement par le handshake TLS 1.3 en mTLS (environ 32 ms) qui s'ajoute à la connexion TCP de base. Cette latence est une opération ponctuelle par dispositif.
 
 \subsection{RTT des messages}
 
@@ -68,7 +68,7 @@ L'overhead de connexion de \textbf{+369\%} s'explique principalement par le hand
 \toprule
 \textbf{Configuration} & \textbf{RTT moy. (ms)} & \textbf{RTT p99 (ms)} & \textbf{Overhead} \\
 \midrule
-TCP & 4.16 & â€” & â€” \\
+TCP & 4.16 & — & — \\
 TLS 1.3 + mTLS & 7.85 & 11.75 & \textbf{+88.8\%} \\
 \bottomrule
 \end{tabular}
@@ -77,21 +77,21 @@ TLS 1.3 + mTLS & 7.85 & 11.75 & \textbf{+88.8\%} \\
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{figures/perf_rtt_messages.png}
-  \caption{RTT MQTT â€” comparaison TCP vs TLS 1.3/mTLS}
+  \caption{RTT MQTT — comparaison TCP vs TLS 1.3/mTLS}
   \label{fig:perf_rtt}
 \end{figure}
 
-Le RTT moyen passe de 4.16 ms (TCP) Ã  7.85 ms (TLS mTLS), soit une augmentation de \textbf{+88.8\%}. Avec un p99 Ã  11.75 ms, ces valeurs restent bien en dessous du seuil de 50 ms gÃ©nÃ©ralement admis pour les applications IoT temps-rÃ©el.
+Le RTT moyen passe de 4.16 ms (TCP) à 7.85 ms (TLS mTLS), soit une augmentation de \textbf{+88.8\%}. Avec un p99 à 11.75 ms, ces valeurs restent bien en dessous du seuil de 50 ms généralement admis pour les applications IoT temps-réel.
 
-\subsection{DÃ©bit (Throughput)}
+\subsection{Débit (Throughput)}
 
 \begin{table}[H]
 \centering
-\caption{DÃ©bit MQTT (messages/seconde) selon la taille de payload}
+\caption{Débit MQTT (messages/seconde) selon la taille de payload}
 \label{tab:perf_throughput}
 \begin{tabular}{lllll}
 \toprule
-\textbf{Payload} & \textbf{TCP (msg/s)} & \textbf{TLS mTLS (msg/s)} & \textbf{RÃ©duction} \\
+\textbf{Payload} & \textbf{TCP (msg/s)} & \textbf{TLS mTLS (msg/s)} & \textbf{Réduction} \\
 \midrule
 64 bytes  & 1\,850 & 1\,480 & -20\% \\
 256 bytes & 1\,620 & 1\,350 & -16.7\% \\
@@ -104,11 +104,11 @@ Le RTT moyen passe de 4.16 ms (TCP) Ã  7.85 ms (TLS mTLS), soit une augmentati
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{figures/perf_throughput.png}
-  \caption{DÃ©bit MQTT selon la taille de payload}
+  \caption{Débit MQTT selon la taille de payload}
   \label{fig:perf_throughput}
 \end{figure}
 
-La rÃ©duction de dÃ©bit est inversement proportionnelle Ã  la taille du payload : l'overhead TLS est proportionnellement plus important pour les petits messages (64B: -20\%) que pour les grands (4KB: -8.1\%), ce qui est cohÃ©rent avec le fait que l'en-tÃªte TLS a une taille fixe.
+La réduction de débit est inversement proportionnelle à la taille du payload : l'overhead TLS est proportionnellement plus important pour les petits messages (64B: -20\%) que pour les grands (4KB: -8.1\%), ce qui est cohérent avec le fait que l'en-tête TLS a une taille fixe.
 
 \begin{figure}[H]
   \centering
@@ -120,26 +120,26 @@ La rÃ©duction de dÃ©bit est inversement proportionnelle Ã  la taille du pa
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\textwidth]{figures/perf_tls_handshake.png}
-  \caption{DÃ©composition temporelle du handshake TLS 1.3 mTLS}
+  \caption{Décomposition temporelle du handshake TLS 1.3 mTLS}
   \label{fig:tls_handshake}
 \end{figure}
 
-\section{Analyse et interprÃ©tation}
+\section{Analyse et interprétation}
 
-\subsection{AcceptabilitÃ© des overheads}
+\subsection{Acceptabilité des overheads}
 
 \begin{table}[H]
 \centering
-\caption{Comparaison overhead mesurÃ© vs seuils IoT industriels}
+\caption{Comparaison overhead mesuré vs seuils IoT industriels}
 \label{tab:overhead_analysis}
 \begin{tabular}{llll}
 \toprule
-\textbf{MÃ©trique} & \textbf{Valeur mesurÃ©e} & \textbf{Seuil IoT critique} & \textbf{Verdict} \\
+\textbf{Métrique} & \textbf{Valeur mesurée} & \textbf{Seuil IoT critique} & \textbf{Verdict} \\
 \midrule
 Connexion (TLS) & 40.8 ms & 500 ms & \textcolor{green}{\textbf{OK}} \\
 RTT moyen & 7.85 ms & 50 ms & \textcolor{green}{\textbf{OK}} \\
 RTT p99 & 11.75 ms & 50 ms & \textcolor{green}{\textbf{OK}} \\
-DÃ©bit min (64B) & 1\,480 msg/s & 100 msg/s/device & \textcolor{green}{\textbf{OK}} \\
+Débit min (64B) & 1\,480 msg/s & 100 msg/s/device & \textcolor{green}{\textbf{OK}} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -147,12 +147,12 @@ DÃ©bit min (64B) & 1\,480 msg/s & 100 msg/s/device & \textcolor{green}{\textbf
 \subsection{Recommandations applicatives}
 
 \begin{enumerate}
-  \item \textbf{RÃ©utilisation de sessions TLS} : La reconnexion frÃ©quente est le principal coÃ»t ; utiliser \texttt{keepalive=300s} pour maintenir la connexion.
+  \item \textbf{Réutilisation de sessions TLS} : La reconnexion fréquente est le principal coût ; utiliser \texttt{keepalive=300s} pour maintenir la connexion.
   \item \textbf{Taille de payload optimale} : Grouper les mesures en payloads de 256-1024B pour amortir l'overhead TLS.
-  \item \textbf{Session resumption} : TLS 1.3 supporte la reprise de session (0-RTT) pour rÃ©duire le coÃ»t des reconnexions Ã  < 5 ms.
+  \item \textbf{Session resumption} : TLS 1.3 supporte la reprise de session (0-RTT) pour réduire le coût des reconnexions à < 5 ms.
 \end{enumerate}
 
 \begin{tcolorbox}[colback=green!5, colframe=green!50!black, title=Bilan performances]
-L'overhead TLS 1.3/mTLS est \textbf{acceptable} pour les cas d'usage IoT industriel :\\ RTT +88.8\% (4.2 ms $\to$ 7.9 ms), bien en deÃ§Ã  du seuil de 50 ms.\\
-Le dÃ©bit reste supÃ©rieur Ã  1\,400 msg/s par nÅ“ud, largement suffisant pour les tÃ©lÃ©metries IoT.
+L'overhead TLS 1.3/mTLS est \textbf{acceptable} pour les cas d'usage IoT industriel :\\ RTT +88.8\% (4.2 ms $\to$ 7.9 ms), bien en deçà du seuil de 50 ms.\\
+Le débit reste supérieur à 1\,400 msg/s par nœud, largement suffisant pour les télémetries IoT.
 \end{tcolorbox}
