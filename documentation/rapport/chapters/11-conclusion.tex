@@ -1,0 +1,87 @@
+\chapter{Conclusion et Perspectives}
+
+\section{Synthèse des travaux}
+
+Ce projet de fin d'études avait pour objectif de concevoir, implémenter et valider une architecture complète de sécurisation des flux de communication pour un écosystème IoT simulé. L'ensemble des objectifs définis initialement ont été atteints.
+
+\subsection{Objectifs atteints}
+
+\begin{description}
+  \item[O1 — Infrastructure PKI] Une hiérarchie de certification à deux niveaux (CA racine + CA intermédiaire) a été déployée sur HashiCorp Vault. Cinquante certificats de dispositifs ont été émis automatiquement via l'API REST en moins de 100 ms chacun.
+
+  \item[O2 — Broker sécurisé] Mosquitto v2.0 a été configuré avec TLS 1.3 strict et mTLS obligatoire. Toute connexion sans certificat client valide est rejetée. Les ACL basées sur le CN du certificat garantissent l'isolation des topics par dispositif.
+
+  \item[O3 — Simulation réaliste] Le simulateur de flotte a rejoué avec succès les 76\,000 événements du dataset CSV en 50 threads concurrents, couvrant 7 types de comportements dont 6 catégories d'attaques.
+
+  \item[O4 — Analyse réseau] Suricata v7.0 avec le décodeur MQTT natif a généré 51 alertes pertinentes. Quatre règles personnalisées couvrent les principales typologies d'attaques IoT.
+
+  \item[O5 — SIEM] Wazuh v4.7 a ingéré et corrélé l'ensemble des alertes Suricata. Des règles de corrélation custom élèvent les attaques DoS au niveau de sévérité 10 (critique).
+
+  \item[O6 — Détection ML] Le Random Forest atteint F1=0.994 et ROC-AUC=0.999. L'IsolationForest, en mode non supervisé, obtient F1=0.930 et ROC-AUC=0.959 — performance remarquable sans étiquettes.
+
+  \item[O7 — Performance] L'overhead TLS/mTLS est de +89\% sur le RTT (4.2 ms $\to$ 7.9 ms) et -20\% sur le débit pour les petits payloads, restant largement dans les limites acceptables pour l'IoT industriel.
+\end{description}
+
+\subsection{Bilan quantitatif}
+
+\begin{table}[H]
+\centering
+\caption{Résumé quantitatif des résultats du projet}
+\label{tab:bilan_final}
+\begin{tabular}{lll}
+\toprule
+\textbf{Indicateur} & \textbf{Valeur} & \textbf{Seuil cible} \\
+\midrule
+Certificats émis (Vault) & 50 & 50 \\
+Temps d'émission moyen & 87 ms & $<$ 200 ms \\
+Messages MQTT simulés & 76\,000 & 76\,000 \\
+Taux de perte MQTT & 0\% & $<$ 0.1\% \\
+Alertes Suricata générées & 51 & $>$ 30 \\
+F1-Score RandomForest & 0.994 & $>$ 0.95 \\
+F1-Score IsolationForest & 0.930 & $>$ 0.85 \\
+RTT TLS mTLS (moy.) & 7.85 ms & $<$ 50 ms \\
+RTT TLS mTLS (p99) & 11.75 ms & $<$ 50 ms \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Contributions}
+
+Ce travail apporte plusieurs contributions à la sécurisation des écosystèmes IoT :
+
+\begin{enumerate}
+  \item \textbf{Architecture référence} : Une architecture E2E complète et reproductible (PKI $\to$ broker $\to$ IDS $\to$ SIEM $\to$ ML) entièrement basée sur des outils open-source, adaptable à des déploiements industriels réels.
+
+  \item \textbf{Validation quantitative de l'overhead TLS/mTLS} : Les mesures précises de latence et de débit fournissent des données de référence pour la planification de déploiements IoT sécurisés.
+
+  \item \textbf{Règles Suricata MQTT} : Un ensemble de règles IDS spécifiques au protocole MQTT et aux topologies d'attaques IoT, réutilisables dans d'autres déploiements.
+
+  \item \textbf{Comparaison ML supervisé/non supervisé} : Une validation empirique montrant que l'IsolationForest offre un compromis intéressant pour la détection d'anomalies sans étiquettes.
+\end{enumerate}
+
+\section{Limitations et travaux futurs}
+
+\subsection{Limitations actuelles}
+
+\begin{itemize}
+  \item \textbf{Échelle de simulation} : 50 dispositifs simulés ; une validation à plus grande échelle (1\,000+) reste à effectuer.
+  \item \textbf{OCSP/CRL} : La révocation de certificats en temps-réel n'a pas été testée en charge.
+  \item \textbf{Zero-day attacks} : Les règles Suricata sont basées sur des patterns connus ; les attaques inconnues échappent à la détection par signature.
+  \item \textbf{Mode simulation} : Les tests de performance ont été réalisés en simulation locale ; une validation sur réseau physique GNS3 complet apporterait plus de réalisme.
+\end{itemize}
+
+\subsection{Perspectives}
+
+\begin{description}
+  \item[Court terme] Déploiement de Cert-Manager (Kubernetes) pour la rotation automatique des certificats à l'échelle. Intégration du pipeline ML dans Wazuh via les décodeurs personnalisés.
+
+  \item[Moyen terme] Extension à d'autres protocoles IoT (CoAP/DTLS, AMQP). Test en environnement réel avec des dispositifs ESP32/Raspberry Pi. Déploiement sur infrastructure cloud (Azure IoT Hub en comparaison).
+
+  \item[Long terme] Intégration d'un système de détection comportementale basé sur des LLMs pour la corrélation d'événements multi-couches. Adoption du standard NIST IoT Cybersecurity (SP 800-213) comme référentiel de conformité.
+\end{description}
+
+\section{Mot de fin}
+
+Ce projet a permis de démontrer qu'il est possible de construire un écosystème IoT sécurisé de bout en bout en s'appuyant exclusivement sur des technologies open-source matures. L'approche \textit{defense in depth} adoptée — combinant PKI, mTLS, IDS et ML — offre une sécurité robuste tout en maintenant des performances compatibles avec les exigences opérationnelles de l'IoT industriel.
+
+La collaboration avec \TT{} a été une opportunité précieuse d'ancrer ces travaux de recherche dans les réalités et contraintes d'un opérateur télécom de premier plan, ouvrant la voie à des implémentations concrètes dans les années à venir.
