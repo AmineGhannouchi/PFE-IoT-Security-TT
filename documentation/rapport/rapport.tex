@@ -1,25 +1,23 @@
-%% ============================================================
-%% rapport.tex â€” Document principal
+﻿%% rapport.tex  Document principal
 %% PFE : SÃ©curisation des flux de communication pour un
 %%       Ã©cosystÃ¨me IoT simulÃ©
-%% FST / Tunisie Telecom â€” 2025-2026
+%% FST / Tunisie Telecom  2025-2026
 %% Auteur : Amine Ghannouchi
-%% ============================================================
 \documentclass[12pt, a4paper, twoside]{report}
 
-%% â”€â”€ Encodage & langue â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+%% Encodage & langue
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[french]{babel}
 \usepackage{lmodern}
 
-%% â”€â”€ Mise en page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+%% Mise en page
 \usepackage[top=2.5cm, bottom=2.5cm, left=3cm, right=2.5cm]{geometry}
 \usepackage{setspace}
 \onehalfspacing
 \usepackage{emptypage}
 
-%% â”€â”€ Couleurs & graphiques â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+%% Couleurs & graphiques
 \usepackage[dvipsnames, table]{xcolor}
 \usepackage{graphicx}
 \usepackage{float}
@@ -27,16 +25,16 @@
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds}
 
-%% â”€â”€ En-tÃªtes & pieds de page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+%% En-tÃªtes & pieds de page
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[LE,RO]{\small\nouppercase{\leftmark}}
-\fancyhead[RE,LO]{\small\textit{PFE â€” IoT Security}}
+\fancyhead[RE,LO]{\small\textit{PFE  IoT Security}}
 \fancyfoot[C]{\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
 
-%% â”€â”€ Tableaux â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+%% Tableaux
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{multirow}
@@ -44,7 +42,7 @@
 \usepackage{array}
 \renewcommand{\arraystretch}{1.3}
 
-%% â”€â”€ Code source â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+%% Code source
 \usepackage{listings}
 \usepackage{lstautogobble}
 
@@ -121,10 +119,10 @@
   morestring=[b]"
 }
 
-%% â”€â”€ MathÃ©matiques â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+%% MathÃ©matiques
 \usepackage{amsmath, amssymb, amsfonts}
 
-%% â”€â”€ Liens hypertexte â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+%% Liens hypertexte
 \usepackage[
   colorlinks=true,
   linkcolor=NavyBlue,
@@ -138,7 +136,7 @@
 ]{hyperref}
 \usepackage{bookmark}
 
-%% â”€â”€ Bibliographie â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+%% Bibliographie
 \usepackage[
   backend=biber,
   style=ieee,
@@ -146,7 +144,7 @@
 ]{biblatex}
 \addbibresource{bibliography.bib}
 
-%% â”€â”€ Divers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+%% Divers
 \usepackage{microtype}
 \usepackage{csquotes}
 \usepackage{acronym}
@@ -156,7 +154,7 @@
 \usepackage{tcolorbox}
 \tcbuselibrary{skins, breakable}
 
-%% â”€â”€ BoÃ®tes callout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+%% BoÃ®tes callout
 \newtcolorbox{infobox}[1][]{
   colback=blue!5!white, colframe=blue!60!black,
   title=#1, fonttitle=\bfseries, breakable
@@ -170,23 +168,22 @@
   title=#1, fonttitle=\bfseries, breakable
 }
 
-%% â”€â”€ Commandes personnalisÃ©es â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+%% Commandes personnalisÃ©es
 \newcommand{\TT}{\textit{Tunisie Telecom}}
 \newcommand{\FST}{\textit{FacultÃ© des Sciences de Tunis}}
 \newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
 
-%% â”€â”€ NumÃ©rotation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+%% NumÃ©rotation
 \setcounter{tocdepth}{3}
 \setcounter{secnumdepth}{3}
 
-%% ============================================================
 \begin{document}
 
-%% â”€â”€ Page de garde â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+%% Page de garde
 \input{chapters/00-pagedegarde}
 
-%% â”€â”€ Pages prÃ©liminaires â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+%% Pages prÃ©liminaires
 \pagenumbering{roman}
 \setcounter{page}{1}
 
@@ -194,13 +191,13 @@
 \input{chapters/00-remerciements}
 \input{chapters/00-resume}
 
-%% â”€â”€ Tables â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+%% Tables
 \tableofcontents
 \listoffigures
 \listoftables
 \input{chapters/00-acronymes}
 
-%% â”€â”€ Corps du rapport â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+%% Corps du rapport
 \cleardoublepage
 \pagenumbering{arabic}
 \setcounter{page}{1}
@@ -217,10 +214,10 @@
 \input{chapters/10-performance}
 \input{chapters/11-conclusion}
 
-%% â”€â”€ Bibliographie â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+%% Bibliographie
 \printbibliography[heading=bibintoc, title={RÃ©fÃ©rences bibliographiques}]
 
-%% â”€â”€ Annexes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+%% Annexes
 \appendix
 \input{chapters/annexe-a}
 \input{chapters/annexe-b}

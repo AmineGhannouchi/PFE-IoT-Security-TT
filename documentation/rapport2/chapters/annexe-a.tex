@@ -1,9 +1,8 @@
-﻿\chapter{Scripts et Code Source}
+\chapter{Scripts et Code Source}
 \label{annexe:scripts}
 
 Cette annexe regroupe l'ensemble des scripts développés pour le projet. Ils sont classés par fonction.
 
-%% ─────────────────────────────────────────────
 \section{Bootstrap de la PKI --- Vault API}
 \label{sec:script_pki}
 
@@ -116,7 +115,6 @@ req POST "/v1/pki_int/roles/iot-devices" '{
 echo "PKI bootstrap done."
 \end{lstlisting}
 
-%% ─────────────────────────────────────────────
 \section{Émission du certificat Mosquitto}
 \label{sec:script_issue_mosquitto}
 
@@ -150,7 +148,6 @@ jq -r '.data.issuing_ca' \
 echo "Certificat Mosquitto emis avec succes."
 \end{lstlisting}
 
-%% ─────────────────────────────────────────────
 \section{Génération des certificats devices}
 \label{sec:script_gen_certs}
 
@@ -201,7 +198,6 @@ done < "$LIST"
 echo "Done. Generated $i device certs."
 \end{lstlisting}
 
-%% ─────────────────────────────────────────────
 \section{Génération du fichier ACL Mosquitto}
 \label{sec:script_acl}
 
@@ -229,7 +225,6 @@ done < "$LIST"
 echo "Wrote $ACL"
 \end{lstlisting}
 
-%% ─────────────────────────────────────────────
 \section{Tests de connectivité réseau}
 \label{sec:script_connectivity}
 
@@ -268,18 +263,15 @@ test_ping "test-iot"  "192.168.50.10" "IoT -> Analyse (BLOQUE)"  "fail"
 echo "Resultats : $pass PASS / $fail FAIL"
 \end{lstlisting}
 
-%% ─────────────────────────────────────────────
 \section{Tests de performance MQTT}
 \label{sec:script_perf}
 
 Le script complet de tests de performance (601 lignes) mesure la latence de connexion, le RTT des messages, le throughput et l'overhead TLS. Il supporte deux modes : \texttt{--mode real} (connexion au broker GNS3) et \texttt{--mode simulate} (données réalistes). Seule la structure principale est reproduite ci-dessous ; le code complet est disponible dans le dépôt (\texttt{tests/performance/mqtt\_perf\_test.py}).
 
 \begin{lstlisting}[language=Python, caption={mqtt\_perf\_test.py --- Structure du script de performance}, label={lst:perf_test}]
-"""
 Phase 9 -- Tests de performance MQTT
 PFE -- Securisation des flux de communication IoT
 FST / Tunisie Telecom | Amine Ghannouchi
-"""
 
 import argparse, json, os, ssl, time, threading, statistics
 import numpy as np, matplotlib.pyplot as plt
@@ -325,7 +317,6 @@ if __name__ == '__main__':
     print_summary(data)
 \end{lstlisting}
 
-%% ─────────────────────────────────────────────
 \section{Simulateur de flotte IoT}
 \label{sec:script_fleet}
 
@@ -371,7 +362,6 @@ if __name__ == "__main__":
     main()
 \end{lstlisting}
 
-%% ─────────────────────────────────────────────
 \section{Analyse des événements Suricata}
 \label{sec:script_analyze_eve}
 

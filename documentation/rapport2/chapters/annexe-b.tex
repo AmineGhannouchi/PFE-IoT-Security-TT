@@ -1,9 +1,8 @@
-﻿\chapter{Fichiers de Configuration}
+\chapter{Fichiers de Configuration}
 \label{annexe:configs}
 
 Cette annexe regroupe les fichiers de configuration des différents composants de l'infrastructure.
 
-%% ─────────────────────────────────────────────
 \section{Configuration MikroTik CHR}
 \label{sec:config_mikrotik}
 
@@ -63,7 +62,6 @@ add chain=forward src-address=192.168.10.0/24 dst-address=192.168.50.0/24 \
 add chain=forward action=drop comment="DROP all other inter-VLAN"
 \end{lstlisting}
 
-%% ─────────────────────────────────────────────
 \section{Configuration Mosquitto (TLS/mTLS)}
 \label{sec:config_mosquitto}
 
@@ -110,7 +108,6 @@ persistence true
 persistence_location /mosquitto/data/
 \end{lstlisting}
 
-%% ─────────────────────────────────────────────
 \section{Configuration Suricata (MQTT natif)}
 \label{sec:config_suricata}
 
@@ -157,7 +154,6 @@ rule-files:
   - mqtt-custom.rules
 \end{lstlisting}
 
-%% ─────────────────────────────────────────────
 \section{Règles Suricata personnalisées}
 \label{sec:config_suricata_rules}
 
@@ -193,7 +189,6 @@ alert mqtt !$IOT_NET any -> $MQTT_BROKER 8883 (msg:"PFE - MQTT depuis zone non-I
   flow:to_server; sid:1000005; rev:1; classtype:policy-violation;)
 \end{lstlisting}
 
-%% ─────────────────────────────────────────────
 \section{Règles Wazuh personnalisées}
 \label{sec:config_wazuh_rules}
 
@@ -246,7 +241,6 @@ alert mqtt !$IOT_NET any -> $MQTT_BROKER 8883 (msg:"PFE - MQTT depuis zone non-I
 </group>
 \end{lstlisting}
 
-%% ─────────────────────────────────────────────
 \section{Dockerfile du simulateur de flotte}
 \label{sec:config_dockerfile}
 
@@ -268,7 +262,6 @@ CMD ["python", "/app/fleet_sim.py", \
      "--csv", "/app/dataset/iot_communication_security_dataset_sample.csv"]
 \end{lstlisting}
 
-%% ─────────────────────────────────────────────
 \section{Dockerfile Toolbox}
 \label{sec:config_dockerfile_toolbox}
 
@@ -290,7 +283,6 @@ USER pfe
 CMD ["bash"]
 \end{lstlisting}
 
-%% ─────────────────────────────────────────────
 \section{Commandes de création des réseaux Docker}
 \label{sec:config_docker_networks}
 
@@ -321,7 +313,6 @@ docker network create --driver bridge \
   --opt com.docker.network.bridge.name=br-analyse pfe-analyse-network
 \end{lstlisting}
 
-%% ─────────────────────────────────────────────
 \section{Variables d'environnement du projet}
 \label{sec:config_env}
 
