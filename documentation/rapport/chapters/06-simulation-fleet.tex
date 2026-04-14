@@ -1,10 +1,10 @@
 \chapter{Simulation de la Flotte IoT}
 
-\section{Présentation du dataset}
+\section{PrÃ©sentation du dataset}
 
-\subsection{Source des données}
+\subsection{Source des donnÃ©es}
 
-Le dataset utilisé est le \textbf{IoT Communication Security Dataset}, composé de 76\,000 entrées représentant des échanges MQTT typiques d'un écosystème IoT industriel. Chaque entrée décrit les caractéristiques d'une communication : protocole, longueur du payload, durée, type d'attaque éventuel, etc.
+Le dataset utilisÃ© est le \textbf{IoT Communication Security Dataset}, composÃ© de 76\,000 entrÃ©es reprÃ©sentant des Ã©changes MQTT typiques d'un Ã©cosystÃ¨me IoT industriel. Chaque entrÃ©e dÃ©crit les caractÃ©ristiques d'une communication : protocole, longueur du payload, durÃ©e, type d'attaque Ã©ventuel, etc.
 
 \subsection{Distribution des classes}
 
@@ -16,11 +16,11 @@ Le dataset utilisé est le \textbf{IoT Communication Security Dataset}, composé
 \toprule
 \textbf{Classe} & \textbf{Occurrences} & \textbf{Description} \\
 \midrule
-Normal & 43\,200 & Trafic IoT légitime \\
+Normal & 43\,200 & Trafic IoT lÃ©gitime \\
 DoS & 12\,600 & Inondation de connexions/messages \\
 MiTM & 8\,400 & Interception et modification de paquets \\
-Replay & 5\,600 & Rejeu de messages capturés \\
-FalsifiedData & 3\,900 & Injection de données falsifiées \\
+Replay & 5\,600 & Rejeu de messages capturÃ©s \\
+FalsifiedData & 3\,900 & Injection de donnÃ©es falsifiÃ©es \\
 Scanning & 1\,400 & Scan de ports et d'infrastructure \\
 Malware & 840 & Comportements de type botnet \\
 \bottomrule
@@ -40,15 +40,15 @@ Malware & 840 & Comportements de type botnet \\
 
 Le simulateur (\texttt{fleet\_sim.py}) est un programme Python multi-thread simulant une flotte de \textbf{50 dispositifs IoT} concurrents. Chaque dispositif :
 \begin{itemize}
-  \item Dispose d'un identifiant unique (\texttt{device-001} à \texttt{device-050}).
-  \item Possède un certificat X.509 individuel émis par Vault.
-  \item Publie des messages MQTT sur des topics dédiés (\texttt{iot/sensors/device-XXX/}).
-  \item Reproduit fidèlement un sous-ensemble du dataset CSV (stratified sampling par classe).
+  \item Dispose d'un identifiant unique (\texttt{device-001} Ã  \texttt{device-050}).
+  \item PossÃ¨de un certificat X.509 individuel Ã©mis par Vault.
+  \item Publie des messages MQTT sur des topics dÃ©diÃ©s (\texttt{iot/sensors/device-XXX/}).
+  \item Reproduit fidÃ¨lement un sous-ensemble du dataset CSV (stratified sampling par classe).
 \end{itemize}
 
 \subsection{Structure du simulateur}
 
-\begin{lstlisting}[language=python, caption=Extrait de fleet\_sim.py — classe DeviceSimulator]
+\begin{lstlisting}[language=python, caption=Extrait de fleet\_sim.py â€” classe DeviceSimulator]
 class DeviceSimulator:
     def __init__(self, device_id: str, broker_config: dict,
                  cert_path: str, events: pd.DataFrame):
@@ -73,7 +73,7 @@ class DeviceSimulator:
         self.client.tls_insecure_set(False)
 
     def run(self):
-        """Rejoue les événements du dataset."""
+        """Rejoue les Ã©vÃ©nements du dataset."""
         self.client.connect(
             self.broker['host'],
             self.broker['port'],
@@ -91,20 +91,20 @@ class DeviceSimulator:
         self.client.loop_stop()
 \end{lstlisting}
 
-\subsection{Paramètres de simulation}
+\subsection{ParamÃ¨tres de simulation}
 
 \begin{table}[H]
 \centering
-\caption{Paramètres de la simulation}
+\caption{ParamÃ¨tres de la simulation}
 \label{tab:sim_params}
 \begin{tabular}{ll}
 \toprule
-\textbf{Paramètre} & \textbf{Valeur} \\
+\textbf{ParamÃ¨tre} & \textbf{Valeur} \\
 \midrule
 Nombre de dispositifs & 50 \\
-Durée totale de simulation & $\sim$30 minutes \\
+DurÃ©e totale de simulation & $\sim$30 minutes \\
 Messages/dispositif/minute & $\sim$50 \\
-Total messages publiés & 76\,000 \\
+Total messages publiÃ©s & 76\,000 \\
 Threads concurrents & 50 \\
 QoS MQTT & 1 \\
 \bottomrule
@@ -113,24 +113,24 @@ QoS MQTT & 1 \\
 
 \section{Injection des patterns d'attaque}
 
-Les patterns d'attaque sont rejoués tel quels depuis le dataset, préservant leur temporalité et leurs caractéristiques statistiques. Pour le scenario DoS, le flux de messages est intensifié pour reproduire l'inondation :
+Les patterns d'attaque sont rejouÃ©s tel quels depuis le dataset, prÃ©servant leur temporalitÃ© et leurs caractÃ©ristiques statistiques. Pour le scenario DoS, le flux de messages est intensifiÃ© pour reproduire l'inondation :
 
 \begin{lstlisting}[language=python, caption=Injection du pattern DoS dans le simulateur]
 def _inject_dos_pattern(self, base_rate: float) -> float:
     """Multiplie le taux de publication pour simuler une attaque DoS."""
     dos_multiplier = 10  # 10x le taux normal
-    return base_rate / dos_multiplier  # intervalle réduit
+    return base_rate / dos_multiplier  # intervalle rÃ©duit
 \end{lstlisting}
 
-\section{Résultats de la simulation}
+\section{RÃ©sultats de la simulation}
 
-La simulation a généré avec succès l'ensemble des 76\,000 événements. La capture réseau réalisée par Suricata a confirmé la cohérence du trafic avec le dataset source.
+La simulation a gÃ©nÃ©rÃ© avec succÃ¨s l'ensemble des 76\,000 Ã©vÃ©nements. La capture rÃ©seau rÃ©alisÃ©e par Suricata a confirmÃ© la cohÃ©rence du trafic avec le dataset source.
 
-\begin{tcolorbox}[colback=green!5, colframe=green!50!black, title=Résultats de la simulation]
+\begin{tcolorbox}[colback=green!5, colframe=green!50!black, title=RÃ©sultats de la simulation]
 \begin{itemize}
-  \item \textbf{76\,000 messages} publiés avec succès en mTLS.
+  \item \textbf{76\,000 messages} publiÃ©s avec succÃ¨s en mTLS.
   \item Taux de perte MQTT : \textbf{0\%} (QoS 1 avec retransmission).
-  \item Les 50 dispositifs ont maintenu leurs connexions TLS simultanément.
+  \item Les 50 dispositifs ont maintenu leurs connexions TLS simultanÃ©ment.
   \item Fichier de capture : \texttt{results/analysis/step6/mqtt\_tls.pcap} (127 MB).
 \end{itemize}
 \end{tcolorbox}

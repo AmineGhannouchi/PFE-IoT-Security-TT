@@ -1,11 +1,11 @@
 \chapter{Configurations des Composants}
 \label{annex:configs}
 
-\section{Configuration complète de Mosquitto}
+\section{Configuration complÃ¨te de Mosquitto}
 
-\begin{lstlisting}[language=bash, caption=mosquitto.conf — Configuration TLS/mTLS complète]
-# Eclipse Mosquitto 2.0 — Configuration PFE IoT Security
-# Port MQTT sécurisé uniquement
+\begin{lstlisting}[language=bash, caption=mosquitto.conf â€” Configuration TLS/mTLS complÃ¨te]
+# Eclipse Mosquitto 2.0 â€” Configuration PFE IoT Security
+# Port MQTT sÃ©curisÃ© uniquement
 listener 8883
 protocol mqtt
 
@@ -17,7 +17,7 @@ tls_version tlsv1.3
 require_certificate true
 use_identity_as_username true
 
-# Sécurité
+# SÃ©curitÃ©
 allow_anonymous false
 password_file /mosquitto/config/passwd
 acl_file /mosquitto/config/acl.conf
@@ -36,8 +36,8 @@ connection_messages true
 
 \section{Configuration Suricata (extraits)}
 
-\begin{lstlisting}[language=yaml, caption=suricata.yaml — Sections clés]
-# Configuration réseau
+\begin{lstlisting}[language=yaml, caption=suricata.yaml â€” Sections clÃ©s]
+# Configuration rÃ©seau
 vars:
   address-groups:
     HOME_NET: "[192.168.10.0/24,192.168.20.0/24]"
@@ -74,12 +74,12 @@ app-layer:
 
 \section{Configuration MikroTik (Firewall)}
 
-\lstinputlisting[language=bash, caption=mikrotik-config.rsc — Règles de pare-feu]{../../infrastructure/vm/mikrotik-config.rsc}
+\lstinputlisting[language=bash, caption=mikrotik-config.rsc â€” RÃ¨gles de pare-feu]{../../infrastructure/vm/mikrotik-config.rsc}
 
 \section{Configuration Vault (policies)}
 
-\begin{lstlisting}[language=hcl, caption=pki-policy.hcl — Politique Vault pour l'émission de certificats]
-# Politique pour l'émission de certificats IoT
+\begin{lstlisting}[language=hcl, caption=pki-policy.hcl â€” Politique Vault pour l'Ã©mission de certificats]
+# Politique pour l'Ã©mission de certificats IoT
 path "pki_int/issue/iot-devices" {
   capabilities = ["create", "update"]
 }

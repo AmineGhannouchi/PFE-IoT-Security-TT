@@ -1,33 +1,33 @@
 \chapter{Scripts et Automatisation}
 \label{annex:scripts}
 
-Cette annexe regroupe les scripts principaux développés dans le cadre du projet.
+Cette annexe regroupe les scripts principaux dÃ©veloppÃ©s dans le cadre du projet.
 
 \section{Script de bootstrap PKI Vault}
 \label{sec:script_pki}
 
-\lstinputlisting[language=bash, caption=bootstrap-pki-api.sh — Initialisation complète de la PKI Vault]{../../pki/vault/scripts/bootstrap-pki-api.sh}
+\lstinputlisting[language=bash, caption=bootstrap-pki-api.sh â€” Initialisation complÃ¨te de la PKI Vault]{../../pki/vault/scripts/bootstrap-pki-api.sh}
 
-\section{Script d'émission de certificat Mosquitto}
+\section{Script d'Ã©mission de certificat Mosquitto}
 
-\lstinputlisting[language=bash, caption=issue-mosquitto-cert-api.sh — Émission du certificat du broker]{../../pki/vault/scripts/issue-mosquitto-cert-api.sh}
+\lstinputlisting[language=bash, caption=issue-mosquitto-cert-api.sh â€” Ã‰mission du certificat du broker]{../../pki/vault/scripts/issue-mosquitto-cert-api.sh}
 
-\section{Script de génération des certificats de dispositifs}
+\section{Script de gÃ©nÃ©ration des certificats de dispositifs}
 
-\lstinputlisting[language=bash, caption=generate-device-certs.sh — Génération des certificats IoT]{../../iot/device-sim/generate_device_certs.sh}
+\lstinputlisting[language=bash, caption=generate-device-certs.sh â€” GÃ©nÃ©ration des certificats IoT]{../../iot/device-sim/generate_device_certs.sh}
 
-\section{Script de test de connectivité}
+\section{Script de test de connectivitÃ©}
 
-\lstinputlisting[language=bash, caption=test-connectivity.sh — Vérification E2E]{../../tests/scenarios/test-connectivity.sh}
+\lstinputlisting[language=bash, caption=test-connectivity.sh â€” VÃ©rification E2E]{../../tests/scenarios/test-connectivity.sh}
 
 \section{Script de performance MQTT}
 
-\begin{lstlisting}[language=bash, caption=Exécution du test de performance]
-# Mode simulation (sans broker réel)
+\begin{lstlisting}[language=bash, caption=ExÃ©cution du test de performance]
+# Mode simulation (sans broker rÃ©el)
 cd tests/performance
 python mqtt_perf_test.py --mode simulate
 
-# Mode réel (avec broker GNS3)
+# Mode rÃ©el (avec broker GNS3)
 python mqtt_perf_test.py --mode real \
   --broker 192.168.20.10 \
   --port 8883 \

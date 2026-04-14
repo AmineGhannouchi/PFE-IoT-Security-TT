@@ -1,25 +1,25 @@
 %% ============================================================
-%% rapport.tex — Document principal
-%% PFE : Sécurisation des flux de communication pour un
-%%       écosystème IoT simulé
-%% FST / Tunisie Telecom — 2025-2026
+%% rapport.tex â€” Document principal
+%% PFE : SÃ©curisation des flux de communication pour un
+%%       Ã©cosystÃ¨me IoT simulÃ©
+%% FST / Tunisie Telecom â€” 2025-2026
 %% Auteur : Amine Ghannouchi
 %% ============================================================
 \documentclass[12pt, a4paper, twoside]{report}
 
-%% ── Encodage & langue ───────────────────────────────────────
+%% â”€â”€ Encodage & langue â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[french]{babel}
 \usepackage{lmodern}
 
-%% ── Mise en page ────────────────────────────────────────────
+%% â”€â”€ Mise en page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 \usepackage[top=2.5cm, bottom=2.5cm, left=3cm, right=2.5cm]{geometry}
 \usepackage{setspace}
 \onehalfspacing
 \usepackage{emptypage}
 
-%% ── Couleurs & graphiques ───────────────────────────────────
+%% â”€â”€ Couleurs & graphiques â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 \usepackage[dvipsnames, table]{xcolor}
 \usepackage{graphicx}
 \usepackage{float}
@@ -27,16 +27,16 @@
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds}
 
-%% ── En-têtes & pieds de page ────────────────────────────────
+%% â”€â”€ En-tÃªtes & pieds de page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[LE,RO]{\small\nouppercase{\leftmark}}
-\fancyhead[RE,LO]{\small\textit{PFE — IoT Security}}
+\fancyhead[RE,LO]{\small\textit{PFE â€” IoT Security}}
 \fancyfoot[C]{\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
 
-%% ── Tableaux ────────────────────────────────────────────────
+%% â”€â”€ Tableaux â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{multirow}
@@ -44,7 +44,7 @@
 \usepackage{array}
 \renewcommand{\arraystretch}{1.3}
 
-%% ── Code source ─────────────────────────────────────────────
+%% â”€â”€ Code source â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 \usepackage{listings}
 \usepackage{lstautogobble}
 
@@ -67,7 +67,23 @@
   captionpos=b, showstringspaces=false,
   autogobble=true,
   tabsize=2,
-  aboveskip=8pt, belowskip=8pt
+  aboveskip=8pt, belowskip=8pt,
+  extendedchars=true,
+  inputencoding=utf8,
+  literate=
+    {Ã }{{\`a}}1 {Ã¢}{{\^a}}1 {Ã¤}{{\"a}}1
+    {Ã©}{{\'e}}1 {Ã¨}{{\`e}}1 {Ãª}{{\^e}}1 {Ã«}{{\"e}}1
+    {Ã®}{{\^i}}1 {Ã¯}{{\"i}}1
+    {Ã´}{{\^o}}1 {Ã¶}{{\"o}}1
+    {Ã¹}{{\`u}}1 {Ã»}{{\^u}}1 {Ã¼}{{\"u}}1
+    {Ã§}{{\c{c}}}1
+    {Ã€}{{\`A}}1 {Ã‚}{{\^A}}1
+    {Ã‰}{{\'E}}1 {Ãˆ}{{\`E}}1 {ÃŠ}{{\^E}}1
+    {ÃŽ}{{\^I}}1 {Ã”}{{\^O}}1
+    {Ã™}{{\`U}}1 {Ã›}{{\^U}}1
+    {Ã‡}{{\c{C}}}1
+    {Å“}{{\oe}}1 {Ã¦}{{\ae}}1
+    {Â«}{{\guillemotleft}}1 {Â»}{{\guillemotright}}1
 }
 
 \lstdefinelanguage{yaml}{
@@ -79,6 +95,24 @@
   morestring=[b]"
 }
 
+\lstdefinelanguage{json}{
+  keywords={true,false,null},
+  keywordstyle=\color{keywordcolor}\bfseries,
+  sensitive=false,
+  morestring=[b]",
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/}
+}
+
+\lstdefinelanguage{hcl}{
+  keywords={resource,variable,output,module,provider,terraform,locals,data,for,if,in},
+  keywordstyle=\color{keywordcolor}\bfseries,
+  sensitive=false,
+  morestring=[b]",
+  comment=[l]{\#},
+  morecomment=[l]{//}
+}
+
 \lstdefinelanguage{bash}{
   keywords={sudo,apt,git,docker,python3,pip,echo,export,mkdir,chmod,cp,rm,systemctl},
   keywordstyle=\color{keywordcolor}\bfseries,
@@ -87,10 +121,10 @@
   morestring=[b]"
 }
 
-%% ── Mathématiques ───────────────────────────────────────────
+%% â”€â”€ MathÃ©matiques â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 \usepackage{amsmath, amssymb, amsfonts}
 
-%% ── Liens hypertexte ────────────────────────────────────────
+%% â”€â”€ Liens hypertexte â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 \usepackage[
   colorlinks=true,
   linkcolor=NavyBlue,
@@ -98,13 +132,13 @@
   urlcolor=RoyalBlue,
   bookmarks=true,
   bookmarksnumbered=true,
-  pdftitle={PFE — Sécurisation des flux IoT},
+  pdftitle={PFE â€” SÃ©curisation des flux IoT},
   pdfauthor={Amine Ghannouchi},
   pdfsubject={IoT Security, TLS/mTLS, PKI, SIEM, Machine Learning}
 ]{hyperref}
 \usepackage{bookmark}
 
-%% ── Bibliographie ───────────────────────────────────────────
+%% â”€â”€ Bibliographie â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 \usepackage[
   backend=biber,
   style=ieee,
@@ -112,7 +146,7 @@
 ]{biblatex}
 \addbibresource{bibliography.bib}
 
-%% ── Divers ──────────────────────────────────────────────────
+%% â”€â”€ Divers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 \usepackage{microtype}
 \usepackage{csquotes}
 \usepackage{acronym}
@@ -122,7 +156,7 @@
 \usepackage{tcolorbox}
 \tcbuselibrary{skins, breakable}
 
-%% ── Boîtes callout ──────────────────────────────────────────
+%% â”€â”€ BoÃ®tes callout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 \newtcolorbox{infobox}[1][]{
   colback=blue!5!white, colframe=blue!60!black,
   title=#1, fonttitle=\bfseries, breakable
@@ -136,23 +170,23 @@
   title=#1, fonttitle=\bfseries, breakable
 }
 
-%% ── Commandes personnalisées ─────────────────────────────────
+%% â”€â”€ Commandes personnalisÃ©es â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 \newcommand{\TT}{\textit{Tunisie Telecom}}
-\newcommand{\FST}{\textit{Faculté des Sciences de Tunis}}
+\newcommand{\FST}{\textit{FacultÃ© des Sciences de Tunis}}
 \newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
 
-%% ── Numérotation ─────────────────────────────────────────────
+%% â”€â”€ NumÃ©rotation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 \setcounter{tocdepth}{3}
 \setcounter{secnumdepth}{3}
 
 %% ============================================================
 \begin{document}
 
-%% ── Page de garde ───────────────────────────────────────────
+%% â”€â”€ Page de garde â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 \input{chapters/00-pagedegarde}
 
-%% ── Pages préliminaires ─────────────────────────────────────
+%% â”€â”€ Pages prÃ©liminaires â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 \pagenumbering{roman}
 \setcounter{page}{1}
 
@@ -160,13 +194,13 @@
 \input{chapters/00-remerciements}
 \input{chapters/00-resume}
 
-%% ── Tables ──────────────────────────────────────────────────
+%% â”€â”€ Tables â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 \tableofcontents
 \listoffigures
 \listoftables
 \input{chapters/00-acronymes}
 
-%% ── Corps du rapport ─────────────────────────────────────────
+%% â”€â”€ Corps du rapport â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 \cleardoublepage
 \pagenumbering{arabic}
 \setcounter{page}{1}
@@ -183,10 +217,10 @@
 \input{chapters/10-performance}
 \input{chapters/11-conclusion}
 
-%% ── Bibliographie ───────────────────────────────────────────
-\printbibliography[heading=bibintoc, title={Références bibliographiques}]
+%% â”€â”€ Bibliographie â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+\printbibliography[heading=bibintoc, title={RÃ©fÃ©rences bibliographiques}]
 
-%% ── Annexes ─────────────────────────────────────────────────
+%% â”€â”€ Annexes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 \appendix
 \input{chapters/annexe-a}
 \input{chapters/annexe-b}

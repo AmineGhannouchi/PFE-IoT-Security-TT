@@ -1,21 +1,21 @@
-\chapter{Architecture Générale du Système}
+\chapter{Architecture GÃ©nÃ©rale du SystÃ¨me}
 
 \section{Vue d'ensemble}
 
-L'architecture retenue pour ce projet est basée sur une approche \textbf{défense en profondeur} (\textit{defense in depth}) : chaque couche de l'écosystème dispose de ses propres mécanismes de sécurité, de sorte qu'une compromission partielle ne compromet pas l'ensemble du système.
+L'architecture retenue pour ce projet est basÃ©e sur une approche \textbf{dÃ©fense en profondeur} (\textit{defense in depth}) : chaque couche de l'Ã©cosystÃ¨me dispose de ses propres mÃ©canismes de sÃ©curitÃ©, de sorte qu'une compromission partielle ne compromet pas l'ensemble du systÃ¨me.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/architecture-generale.png}
-  \caption{Architecture générale de l'écosystème IoT sécurisé}
+  \caption{Architecture gÃ©nÃ©rale de l'Ã©cosystÃ¨me IoT sÃ©curisÃ©}
   \label{fig:archi_generale}
 \end{figure}
 
-\section{Topologie réseau GNS3}
+\section{Topologie rÃ©seau GNS3}
 
-La simulation réseau est réalisée sous \textbf{GNS3} (Graphical Network Simulator 3) avec VMware Workstation Pro comme hyperviseur. L'environnement comprend :
+La simulation rÃ©seau est rÃ©alisÃ©e sous \textbf{GNS3} (Graphical Network Simulator 3) avec VMware Workstation Pro comme hyperviseur. L'environnement comprend :
 
-\subsection{Segmentation réseau}
+\subsection{Segmentation rÃ©seau}
 
 \begin{table}[H]
 \centering
@@ -23,86 +23,86 @@ La simulation réseau est réalisée sous \textbf{GNS3} (Graphical Network Simul
 \label{tab:adressage}
 \begin{tabular}{lllp{5cm}}
 \toprule
-\textbf{Réseau} & \textbf{CIDR} & \textbf{Composants} & \textbf{Rôle} \\
+\textbf{RÃ©seau} & \textbf{CIDR} & \textbf{Composants} & \textbf{RÃ´le} \\
 \midrule
-IoT Devices & 192.168.10.0/24 & fleet-simulator, capteurs & Zone devices — trafic MQTT non chiffré interne \\
-Services & 192.168.20.0/24 & Mosquitto, Vault, Suricata & Zone services sécurisés \\
+IoT Devices & 192.168.10.0/24 & fleet-simulator, capteurs & Zone devices â€” trafic MQTT non chiffrÃ© interne \\
+Services & 192.168.20.0/24 & Mosquitto, Vault, Suricata & Zone services sÃ©curisÃ©s \\
 Management & 192.168.30.0/24 & Wazuh OVA & Zone administration et SIEM \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{Composants réseau}
+\subsection{Composants rÃ©seau}
 
-Un routeur \textbf{MikroTik CHR} (RouterOS v7) assure le routage inter-VLAN et implémente les règles de pare-feu (firewall) :
+Un routeur \textbf{MikroTik CHR} (RouterOS v7) assure le routage inter-VLAN et implÃ©mente les rÃ¨gles de pare-feu (firewall) :
 \begin{itemize}
   \item Autorisation explicite du port 8883 (MQTT/TLS) de la zone IoT vers la zone Services.
   \item Blocage de tout trafic direct IoT $\to$ Management.
-  \item NAT masquerade pour l'accès Internet (mises à jour, time sync).
+  \item NAT masquerade pour l'accÃ¨s Internet (mises Ã  jour, time sync).
 \end{itemize}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/gns3-topology.png}
-  \caption{Topologie réseau dans GNS3}
+  \caption{Topologie rÃ©seau dans GNS3}
   \label{fig:gns3_topology}
 \end{figure}
 
 \section{Composants applicatifs}
 
-\subsection{Broker MQTT — Mosquitto}
+\subsection{Broker MQTT â€” Mosquitto}
 
-Eclipse Mosquitto v2.0 est déployé en conteneur Docker sur la zone Services (192.168.20.10). Il est configuré avec :
+Eclipse Mosquitto v2.0 est dÃ©ployÃ© en conteneur Docker sur la zone Services (192.168.20.10). Il est configurÃ© avec :
 \begin{itemize}
-  \item TLS 1.3 strict (port 8883 uniquement, port 1883 désactivé).
+  \item TLS 1.3 strict (port 8883 uniquement, port 1883 dÃ©sactivÃ©).
   \item mTLS obligatoire (\texttt{require\_certificate true}).
-  \item ACL basée sur le \textbf{Common Name} du certificat client.
+  \item ACL basÃ©e sur le \textbf{Common Name} du certificat client.
 \end{itemize}
 
-\subsection{PKI — HashiCorp Vault}
+\subsection{PKI â€” HashiCorp Vault}
 
-Vault v1.15 est déployé sur 192.168.20.20. Il héberge :
+Vault v1.15 est dÃ©ployÃ© sur 192.168.20.20. Il hÃ©berge :
 \begin{itemize}
-  \item Un moteur PKI racine (\texttt{pki}) avec une CA hors-ligne simulée.
-  \item Un moteur PKI intermédiaire (\texttt{pki\_int}) émettant les certificats de services et de dispositifs.
-  \item Des politiques Vault contrôlant l'accès à l'API d'émission de certificats.
+  \item Un moteur PKI racine (\texttt{pki}) avec une CA hors-ligne simulÃ©e.
+  \item Un moteur PKI intermÃ©diaire (\texttt{pki\_int}) Ã©mettant les certificats de services et de dispositifs.
+  \item Des politiques Vault contrÃ´lant l'accÃ¨s Ã  l'API d'Ã©mission de certificats.
 \end{itemize}
 
 \subsection{Fleet Simulator}
 
-Le simulateur de flotte est un conteneur Python (192.168.10.X) rejouant le dataset CSV de 76\,000 événements. Chaque dispositif simulé possède un certificat unique émis par Vault.
+Le simulateur de flotte est un conteneur Python (192.168.10.X) rejouant le dataset CSV de 76\,000 Ã©vÃ©nements. Chaque dispositif simulÃ© possÃ¨de un certificat unique Ã©mis par Vault.
 
 \subsection{Suricata IDS}
 
-Suricata v7.0 est déployé en mode \textit{AF\_PACKET} sur le segment Services, avec une copie du trafic réseau via un switch GNS3 en mode hub.
+Suricata v7.0 est dÃ©ployÃ© en mode \textit{AF\_PACKET} sur le segment Services, avec une copie du trafic rÃ©seau via un switch GNS3 en mode hub.
 
 \subsection{Wazuh SIEM}
 
-Wazuh v4.7 est déployé sous forme d'OVA VMware sur 192.168.30.128. Il ingère :
+Wazuh v4.7 est dÃ©ployÃ© sous forme d'OVA VMware sur 192.168.30.128. Il ingÃ¨re :
 \begin{itemize}
   \item Les alertes Suricata (\texttt{/var/log/suricata/eve.json}).
   \item Les logs du broker Mosquitto.
-  \item Les journaux système des conteneurs.
+  \item Les journaux systÃ¨me des conteneurs.
 \end{itemize}
 
-\section{Flux de données E2E sécurisé}
+\section{Flux de donnÃ©es E2E sÃ©curisÃ©}
 
-Le flux de communication de bout en bout suit les étapes suivantes :
+Le flux de communication de bout en bout suit les Ã©tapes suivantes :
 
 \begin{enumerate}
-  \item Le dispositif IoT demande un certificat à Vault via l'API REST (authentification par token).
-  \item Vault émet un certificat X.509 signé par la CA intermédiaire, valide 24 heures.
-  \item Le dispositif établit une connexion TLS 1.3 avec Mosquitto (port 8883), en présentant son certificat.
-  \item Mosquitto valide la chaîne de certification et autorise la connexion si le CN correspond à la politique ACL.
-  \item Les messages MQTT sont publiés sur les topics autorisés et transités vers les subscribers.
-  \item Suricata inspecte le trafic réseau et génère des alertes JSON dans \texttt{eve.json}.
-  \item Wazuh ingère les alertes Suricata et les corrèle avec d'autres événements.
-  \item Le pipeline ML analyse les métriques de communication pour détecter des anomalies.
+  \item Le dispositif IoT demande un certificat Ã  Vault via l'API REST (authentification par token).
+  \item Vault Ã©met un certificat X.509 signÃ© par la CA intermÃ©diaire, valide 24 heures.
+  \item Le dispositif Ã©tablit une connexion TLS 1.3 avec Mosquitto (port 8883), en prÃ©sentant son certificat.
+  \item Mosquitto valide la chaÃ®ne de certification et autorise la connexion si le CN correspond Ã  la politique ACL.
+  \item Les messages MQTT sont publiÃ©s sur les topics autorisÃ©s et transitÃ©s vers les subscribers.
+  \item Suricata inspecte le trafic rÃ©seau et gÃ©nÃ¨re des alertes JSON dans \texttt{eve.json}.
+  \item Wazuh ingÃ¨re les alertes Suricata et les corrÃ¨le avec d'autres Ã©vÃ©nements.
+  \item Le pipeline ML analyse les mÃ©triques de communication pour dÃ©tecter des anomalies.
 \end{enumerate}
 
 \section{Choix technologiques}
 
-Les principaux choix techniques ont été motivés par les critères suivants :
+Les principaux choix techniques ont Ã©tÃ© motivÃ©s par les critÃ¨res suivants :
 
 \begin{table}[H]
 \centering
@@ -112,13 +112,13 @@ Les principaux choix techniques ont été motivés par les critères suivants :
 \toprule
 \textbf{Composant} & \textbf{Technologie} & \textbf{Justification} \\
 \midrule
-Simulation réseau & GNS3 & Standard académique, support Docker natif, reproductible \\
-Routeur & MikroTik CHR & Utilisé en production chez TT, RouterOS complet \\
-Broker MQTT & Mosquitto & Open-source, TLS 1.3 natif, ACL avancées, communauté active \\
+Simulation rÃ©seau & GNS3 & Standard acadÃ©mique, support Docker natif, reproductible \\
+Routeur & MikroTik CHR & UtilisÃ© en production chez TT, RouterOS complet \\
+Broker MQTT & Mosquitto & Open-source, TLS 1.3 natif, ACL avancÃ©es, communautÃ© active \\
 PKI & HashiCorp Vault & API programmatique, rotation automatique, open-source \\
-IDS & Suricata & Support MQTT natif, multi-thread, règles compatibles Snort \\
-SIEM & Wazuh & OpenSearch intégré, agents légers, gratuit et open-source \\
-ML & scikit-learn & Large écosystème, IsolationForest + RF disponibles \\
+IDS & Suricata & Support MQTT natif, multi-thread, rÃ¨gles compatibles Snort \\
+SIEM & Wazuh & OpenSearch intÃ©grÃ©, agents lÃ©gers, gratuit et open-source \\
+ML & scikit-learn & Large Ã©cosystÃ¨me, IsolationForest + RF disponibles \\
 \bottomrule
 \end{tabular}
 \end{table}

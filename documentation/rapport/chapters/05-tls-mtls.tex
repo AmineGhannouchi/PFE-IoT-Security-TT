@@ -1,21 +1,21 @@
 \chapter{Configuration TLS/mTLS sur Mosquitto}
 
-\section{Sécurisation du broker MQTT}
+\section{SÃ©curisation du broker MQTT}
 
-\subsection{Architecture de sécurité Mosquitto}
+\subsection{Architecture de sÃ©curitÃ© Mosquitto}
 
-Mosquitto v2.0 intègre un support natif de TLS via la bibliothèque OpenSSL. La configuration de sécurité retenue repose sur :
+Mosquitto v2.0 intÃ¨gre un support natif de TLS via la bibliothÃ¨que OpenSSL. La configuration de sÃ©curitÃ© retenue repose sur :
 \begin{enumerate}
-  \item \textbf{Désactivation complète du port non chiffré} (1883) — seul le port 8883 (MQTT/TLS) est exposé.
-  \item \textbf{TLS 1.3 obligatoire} — les versions antérieures sont explicitement interdites.
-  \item \textbf{mTLS obligatoire} — le broker exige un certificat client pour toute connexion.
-  \item \textbf{ACL par certificat} — l'autorisation d'accès aux topics est liée au CN du certificat client.
+  \item \textbf{DÃ©sactivation complÃ¨te du port non chiffrÃ©} (1883) â€” seul le port 8883 (MQTT/TLS) est exposÃ©.
+  \item \textbf{TLS 1.3 obligatoire} â€” les versions antÃ©rieures sont explicitement interdites.
+  \item \textbf{mTLS obligatoire} â€” le broker exige un certificat client pour toute connexion.
+  \item \textbf{ACL par certificat} â€” l'autorisation d'accÃ¨s aux topics est liÃ©e au CN du certificat client.
 \end{enumerate}
 
 \subsection{Configuration principale de Mosquitto}
 
 \begin{lstlisting}[language=bash, caption=Configuration Mosquitto (\texttt{mosquitto.conf}) avec TLS 1.3 et mTLS]
-# === Port sécurisé uniquement ===
+# === Port sÃ©curisÃ© uniquement ===
 listener 8883
 protocol mqtt
 
@@ -31,7 +31,7 @@ use_identity_as_username true
 # === TLS 1.3 strict ===
 tls_version tlsv1.3
 
-# === Désactivation anonymous ===
+# === DÃ©sactivation anonymous ===
 allow_anonymous false
 
 # === Politiques ACL ===
@@ -41,7 +41,7 @@ acl_file /mosquitto/config/acl.conf
 
 \subsection{Configuration des ACL}
 
-Le fichier ACL lie le CN du certificat client aux topics autorisés :
+Le fichier ACL lie le CN du certificat client aux topics autorisÃ©s :
 
 \begin{lstlisting}[language=bash, caption=Extrait du fichier ACL Mosquitto]
 # Dispositif device-001 peut publier sur son topic
@@ -55,11 +55,11 @@ topic read iot/#
 topic read $SYS/#
 \end{lstlisting}
 
-\section{Déploiement dans Docker/GNS3}
+\section{DÃ©ploiement dans Docker/GNS3}
 
 \subsection{Dockerfile Mosquitto}
 
-\begin{lstlisting}[language=bash, caption=Dockerfile du broker Mosquitto sécurisé]
+\begin{lstlisting}[language=bash, caption=Dockerfile du broker Mosquitto sÃ©curisÃ©]
 FROM eclipse-mosquitto:2.0
 
 # Copie des certificats et configurations
@@ -67,7 +67,7 @@ COPY certs/ /mosquitto/certs/
 COPY config/mosquitto.conf /mosquitto/config/mosquitto.conf
 COPY config/acl.conf /mosquitto/config/acl.conf
 
-# Permissions strictes sur les clés privées
+# Permissions strictes sur les clÃ©s privÃ©es
 RUN chmod 600 /mosquitto/certs/server.key
 
 EXPOSE 8883
@@ -78,17 +78,17 @@ EXPOSE 8883
 \subsection{Test de connexion mTLS avec openssl}
 
 \begin{lstlisting}[language=bash, caption=Test de la connexion mTLS]
-# Test TLS : connexion sans certificat client (doit échouer)
+# Test TLS : connexion sans certificat client (doit Ã©chouer)
 openssl s_client -connect 192.168.20.10:8883 \
   -CAfile pki/certs/ca/root-ca.crt
-# Résultat attendu : SSL alert handshake failure
+# RÃ©sultat attendu : SSL alert handshake failure
 
-# Test mTLS : connexion avec certificat client (doit réussir)
+# Test mTLS : connexion avec certificat client (doit rÃ©ussir)
 openssl s_client -connect 192.168.20.10:8883 \
   -CAfile pki/certs/ca/root-ca.crt \
   -cert pki/certs/devices/device-001.crt \
   -key pki/certs/devices/device-001.key
-# Résultat : Verification: OK, Protocol: TLSv1.3
+# RÃ©sultat : Verification: OK, Protocol: TLSv1.3
 \end{lstlisting}
 
 \subsection{Test fonctionnel MQTT}
@@ -112,7 +112,7 @@ mosquitto_pub -h 192.168.20.10 -p 8883 \
 
 \section{Analyse du handshake TLS 1.3}
 
-Le handshake TLS 1.3 capturé via Wireshark présente les caractéristiques suivantes :
+Le handshake TLS 1.3 capturÃ© via Wireshark prÃ©sente les caractÃ©ristiques suivantes :
 
 \begin{table}[H]
 \centering
@@ -120,24 +120,24 @@ Le handshake TLS 1.3 capturé via Wireshark présente les caractéristiques suiv
 \label{tab:handshake_tls}
 \begin{tabular}{llp{6cm}}
 \toprule
-\textbf{Étape} & \textbf{Durée} & \textbf{Description} \\
+\textbf{Ã‰tape} & \textbf{DurÃ©e} & \textbf{Description} \\
 \midrule
 ClientHello & < 1 ms & Propose TLS 1.3, cipher suites, key\_share \\
-ServerHello & $\sim$ 2 ms & Sélectionne TLS\_AES\_256\_GCM\_SHA384, renvoie key\_share serveur \\
-EncryptedExtensions & $\sim$ 3 ms & Extensions chiffrées (ALPN, SNI) \\
+ServerHello & $\sim$ 2 ms & SÃ©lectionne TLS\_AES\_256\_GCM\_SHA384, renvoie key\_share serveur \\
+EncryptedExtensions & $\sim$ 3 ms & Extensions chiffrÃ©es (ALPN, SNI) \\
 Certificate (serveur) & $\sim$ 5 ms & Certificat X.509 du broker \\
 CertificateVerify & $\sim$ 6 ms & Signature du transcript par le serveur \\
 Finished (serveur) & $\sim$ 7 ms & HMAC du handshake \\
 Certificate (client) & $\sim$ 8 ms & Certificat X.509 du dispositif (mTLS) \\
 CertificateVerify & $\sim$ 9 ms & Signature par le dispositif \\
-Finished (client) & $\sim$10 ms & Établissement complet de la session \\
+Finished (client) & $\sim$10 ms & Ã‰tablissement complet de la session \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\begin{tcolorbox}[colback=green!5, colframe=green!50!black, title=Résultat TLS/mTLS]
-Durée totale du handshake TLS 1.3 mTLS : \textbf{$\sim$40 ms} (overhead mesuré expérimentalement).\\
-Cipher suite sélectionnée : \texttt{TLS\_AES\_256\_GCM\_SHA384}.\\
-Toutes les connexions sans certificat client valide sont rejetées.\\
-50 dispositifs connectés simultanément sans dégradation notable.
+\begin{tcolorbox}[colback=green!5, colframe=green!50!black, title=RÃ©sultat TLS/mTLS]
+DurÃ©e totale du handshake TLS 1.3 mTLS : \textbf{$\sim$40 ms} (overhead mesurÃ© expÃ©rimentalement).\\
+Cipher suite sÃ©lectionnÃ©e : \texttt{TLS\_AES\_256\_GCM\_SHA384}.\\
+Toutes les connexions sans certificat client valide sont rejetÃ©es.\\
+50 dispositifs connectÃ©s simultanÃ©ment sans dÃ©gradation notable.
 \end{tcolorbox}

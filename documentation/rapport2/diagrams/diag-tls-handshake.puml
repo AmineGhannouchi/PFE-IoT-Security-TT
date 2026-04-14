@@ -1,0 +1,64 @@
+@startuml diag-tls-handshake
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam sequence {
+  ArrowColor #1565C0
+  ParticipantBackgroundColor #E3F2FD
+  ParticipantBorderColor #1565C0
+}
+
+title Diagramme de Séquence — Handshake TLS 1.3 mTLS\nAuthentification Mutuelle Dispositif ↔ Broker
+
+participant "Dispositif IoT\n(Client TLS)" as CLIENT
+participant "Mosquitto\n(Serveur TLS)" as SERVER
+
+note over CLIENT, SERVER #FFF9C4
+  **TLS 1.3 (RFC 8446)** — Handshake en 1-RTT
+  Contrairement à TLS 1.2 (2-RTT), TLS 1.3 réduit
+  la latence en combinant les échanges de clés et
+  les paramètres dans un seul aller-retour.
+end note
+
+CLIENT -> SERVER : **ClientHello** (~1 ms)\n— Version : TLS 1.3\n— Cipher suites proposées\n— key_share (ECDHE courbe X25519)\n— Extensions (SNI, ALPN)
+activate SERVER
+
+SERVER --> CLIENT : **ServerHello** (~2 ms)\n— Cipher sélectionné : TLS_AES_256_GCM_SHA384\n— key_share serveur (ECDHE)\n— {EncryptedExtensions}\n— {Certificate} (serveur X.509)\n— {CertificateVerify} (signature transcript)\n— {Finished} (HMAC)
+deactivate SERVER
+
+note right of SERVER #E8F5E9
+  À partir de ce point,
+  les données sont chiffrées.
+  Forward Secrecy garanti
+  par ECDHE.
+end note
+
+CLIENT -> CLIENT : Vérification du certificat serveur\n— Chaîne : Serveur → CA Inter → CA Racine\n— Validité temporelle\n— Correspondance SAN / IP
+
+CLIENT -> SERVER : **{Certificate}** (client — mTLS) (~8 ms)\n— Certificat X.509 du dispositif\n— Signé par CA Intermédiaire
+activate SERVER
+
+CLIENT -> SERVER : **{CertificateVerify}** (~9 ms)\n— Signature du transcript handshake\n— Preuve de possession de la clé privée
+
+CLIENT -> SERVER : **{Finished}** (~10 ms)\n— HMAC du handshake complet
+
+SERVER -> SERVER : Vérification certificat client\n— Chaîne : Client → CA Inter → CA Racine\n— CN dans la liste ACL\n— Extended Key Usage : clientAuth
+deactivate SERVER
+
+note over CLIENT, SERVER #E8F5E9
+  **Session TLS 1.3 établie**
+  ————————————————————
+  Cipher : TLS_AES_256_GCM_SHA384
+  Authentification : Mutuelle (mTLS)
+  Forward Secrecy : ECDHE (X25519)
+  Durée handshake : ~40 ms
+  ————————————————————
+  Le trafic MQTT est désormais
+  entièrement chiffré et authentifié.
+end note
+
+CLIENT -> SERVER : [Chiffré] MQTT CONNECT
+SERVER --> CLIENT : [Chiffré] MQTT CONNACK
+
+@enduml

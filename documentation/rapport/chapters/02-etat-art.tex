@@ -1,21 +1,21 @@
-\chapter{État de l'Art}
+\chapter{Ã‰tat de l'Art}
 
 \section{Protocoles de communication IoT}
 
-\subsection{MQTT — Message Queuing Telemetry Transport}
+\subsection{MQTT â€” Message Queuing Telemetry Transport}
 
-MQTT est un protocole de messagerie publish/subscribe conçu pour les réseaux à faible bande passante et les dispositifs à ressources limitées. Initialement développé par IBM en 1999, il est devenu la norme \textbf{ISO/IEC 20922:2016} et le standard de facto pour l'IoT industriel.
+MQTT est un protocole de messagerie publish/subscribe conÃ§u pour les rÃ©seaux Ã  faible bande passante et les dispositifs Ã  ressources limitÃ©es. Initialement dÃ©veloppÃ© par IBM en 1999, il est devenu la norme \textbf{ISO/IEC 20922:2016} et le standard de facto pour l'IoT industriel.
 
 Son architecture repose sur trois acteurs :
 \begin{itemize}
-  \item Le \textbf{broker} (courtier), nœud central chargé du routage des messages.
-  \item Les \textbf{publishers}, dispositifs émettant des messages sur des \textit{topics}.
-  \item Les \textbf{subscribers}, services consommant des messages en s'abonnant à des topics.
+  \item Le \textbf{broker} (courtier), nÅ“ud central chargÃ© du routage des messages.
+  \item Les \textbf{publishers}, dispositifs Ã©mettant des messages sur des \textit{topics}.
+  \item Les \textbf{subscribers}, services consommant des messages en s'abonnant Ã  des topics.
 \end{itemize}
 
-MQTT supporte trois niveaux de qualité de service (\ac{QoS}) : QoS 0 (at most once), QoS 1 (at least once) et QoS 2 (exactly once). Dans notre projet, QoS 1 est utilisé pour l'équilibre fiabilité/performance.
+MQTT supporte trois niveaux de qualitÃ© de service (\ac{QoS}) : QoS 0 (at most once), QoS 1 (at least once) et QoS 2 (exactly once). Dans notre projet, QoS 1 est utilisÃ© pour l'Ã©quilibre fiabilitÃ©/performance.
 
-\textbf{Faiblesses natives :} Sans configuration explicite, MQTT v3.1.1 transmet les données en clair sur TCP port 1883 et n'effectue aucune vérification d'identité. MQTT v5 améliore la situation mais ne rend pas TLS obligatoire.
+\textbf{Faiblesses natives :} Sans configuration explicite, MQTT v3.1.1 transmet les donnÃ©es en clair sur TCP port 1883 et n'effectue aucune vÃ©rification d'identitÃ©. MQTT v5 amÃ©liore la situation mais ne rend pas TLS obligatoire.
 
 \subsection{Comparatif des protocoles IoT}
 
@@ -25,90 +25,90 @@ MQTT supporte trois niveaux de qualité de service (\ac{QoS}) : QoS 0 (at most o
 \label{tab:protocoles_iot}
 \begin{tabular}{lllllp{3.5cm}}
 \toprule
-\textbf{Protocole} & \textbf{Transport} & \textbf{Modèle} & \textbf{QoS} & \textbf{Sécu. native} & \textbf{Usage typique} \\
+\textbf{Protocole} & \textbf{Transport} & \textbf{ModÃ¨le} & \textbf{QoS} & \textbf{SÃ©cu. native} & \textbf{Usage typique} \\
 \midrule
-MQTT 5 & TCP & Pub/Sub & 0-1-2 & TLS optionnel & IoT, télémetrie \\
-CoAP & UDP & Req/Resp & Oui & DTLS optionnel & Contraints (microcontrôleurs) \\
+MQTT 5 & TCP & Pub/Sub & 0-1-2 & TLS optionnel & IoT, tÃ©lÃ©metrie \\
+CoAP & UDP & Req/Resp & Oui & DTLS optionnel & Contraints (microcontrÃ´leurs) \\
 AMQP 1.0 & TCP & Pub/Sub & Oui & TLS + SASL & Entreprise, finance \\
 HTTP/2 & TCP & Req/Resp & N/A & TLS (HTTPS) & APIs REST IoT \\
-WebSocket & TCP & Full-duplex & N/A & TLS & Dashboards, temps-réel \\
+WebSocket & TCP & Full-duplex & N/A & TLS & Dashboards, temps-rÃ©el \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\section{Sécurité des flux IoT}
+\section{SÃ©curitÃ© des flux IoT}
 
 \subsection{Vecteurs d'attaque principaux}
 
-L'ENISA et le MITRE ATT\&CK ICS framework identifient plusieurs catégories d'attaques ciblant les écosystèmes IoT :
+L'ENISA et le MITRE ATT\&CK ICS framework identifient plusieurs catÃ©gories d'attaques ciblant les Ã©cosystÃ¨mes IoT :
 
 \begin{description}
-  \item[Interception (MiTM)] Absence de chiffrement ou certificats non vérifiés permettant l'écoute passive ou l'injection active.
-  \item[Usurpation d'identité] Connexion au broker avec des identifiants volés ou sans authentification forte.
+  \item[Interception (MiTM)] Absence de chiffrement ou certificats non vÃ©rifiÃ©s permettant l'Ã©coute passive ou l'injection active.
+  \item[Usurpation d'identitÃ©] Connexion au broker avec des identifiants volÃ©s ou sans authentification forte.
   \item[DoS / DDoS] Inondation du broker avec des milliers de connexions ou de publications pour saturer les ressources.
-  \item[Injection de données] Publication de valeurs malveillantes sur les topics de commande pour affecter les actionneurs.
-  \item[Replay] Rejeu de messages chiffrés capturés pour déclencher des actions non autorisées.
+  \item[Injection de donnÃ©es] Publication de valeurs malveillantes sur les topics de commande pour affecter les actionneurs.
+  \item[Replay] Rejeu de messages chiffrÃ©s capturÃ©s pour dÃ©clencher des actions non autorisÃ©es.
 \end{description}
 
 \subsection{TLS 1.3 et mTLS pour MQTT}
 
-TLS 1.3 (RFC 8446, 2018) est la version recommandée pour les connexions MQTT sécurisées. Ses principales avancées par rapport à TLS 1.2 sont :
+TLS 1.3 (RFC 8446, 2018) est la version recommandÃ©e pour les connexions MQTT sÃ©curisÃ©es. Ses principales avancÃ©es par rapport Ã  TLS 1.2 sont :
 \begin{itemize}
-  \item \textbf{0-RTT resumption} pour les connexions répétées (sur même session).
+  \item \textbf{0-RTT resumption} pour les connexions rÃ©pÃ©tÃ©es (sur mÃªme session).
   \item Suppression des algorithmes faibles (RSA key exchange, RC4, MD5/SHA-1).
   \item \textbf{Forward Secrecy} obligatoire via ECDHE.
-  \item Handshake réduit à \textbf{1 RTT} contre 2 RTT pour TLS 1.2.
+  \item Handshake rÃ©duit Ã  \textbf{1 RTT} contre 2 RTT pour TLS 1.2.
 \end{itemize}
 
-Le \textbf{mTLS} (mutual TLS) étend le handshake standard en exigeant que le client présente également un certificat signé par la CA de confiance. Cela permet d'authentifier à la fois le serveur ET le client, ce qui est critique pour des dispositifs IoT dont on veut contrôler l'identité.
+Le \textbf{mTLS} (mutual TLS) Ã©tend le handshake standard en exigeant que le client prÃ©sente Ã©galement un certificat signÃ© par la CA de confiance. Cela permet d'authentifier Ã  la fois le serveur ET le client, ce qui est critique pour des dispositifs IoT dont on veut contrÃ´ler l'identitÃ©.
 
-\section{Infrastructures à Clés Publiques pour l'IoT}
+\section{Infrastructures Ã  ClÃ©s Publiques pour l'IoT}
 
-\subsection{Défis spécifiques à l'IoT}
+\subsection{DÃ©fis spÃ©cifiques Ã  l'IoT}
 
-La gestion des certificats dans un écosystème IoT présente des défis uniques :
+La gestion des certificats dans un Ã©cosystÃ¨me IoT prÃ©sente des dÃ©fis uniques :
 \begin{itemize}
-  \item \textbf{Volume :} Des milliers à millions de dispositifs, chacun nécessitant un certificat unique.
-  \item \textbf{Durée de vie courte :} Pour limiter l'exposition en cas de compromission.
-  \item \textbf{Rotation automatisée :} Les dispositifs ne peuvent pas renouveler manuellement leurs certificats.
-  \item \textbf{Révocation :} Les CRL ou OCSP doivent être accessibles même sur réseaux contraints.
+  \item \textbf{Volume :} Des milliers Ã  millions de dispositifs, chacun nÃ©cessitant un certificat unique.
+  \item \textbf{DurÃ©e de vie courte :} Pour limiter l'exposition en cas de compromission.
+  \item \textbf{Rotation automatisÃ©e :} Les dispositifs ne peuvent pas renouveler manuellement leurs certificats.
+  \item \textbf{RÃ©vocation :} Les CRL ou OCSP doivent Ãªtre accessibles mÃªme sur rÃ©seaux contraints.
 \end{itemize}
 
 \subsection{HashiCorp Vault comme PKI dynamique}
 
 HashiCorp Vault est une solution open-source de gestion des secrets et de PKI dynamique. Son moteur \texttt{pki} permet :
 \begin{itemize}
-  \item L'émission automatisée de certificats X.509 via API REST ou CLI.
-  \item La définition de \textbf{rôles} avec des contraintes (TTL, CN autorisés, IP SAN).
-  \item L'intégration avec des orchestrateurs (Kubernetes, Nomad) ou des scripts shell.
-  \item La révocation immédiate et la génération automatique de CRL.
+  \item L'Ã©mission automatisÃ©e de certificats X.509 via API REST ou CLI.
+  \item La dÃ©finition de \textbf{rÃ´les} avec des contraintes (TTL, CN autorisÃ©s, IP SAN).
+  \item L'intÃ©gration avec des orchestrateurs (Kubernetes, Nomad) ou des scripts shell.
+  \item La rÃ©vocation immÃ©diate et la gÃ©nÃ©ration automatique de CRL.
 \end{itemize}
 
-\section{Détection d'anomalies et SIEM}
+\section{DÃ©tection d'anomalies et SIEM}
 
 \subsection{Suricata IDS}
 
-Suricata est un moteur IDS/IPS open-source multi-thread supportant l'inspection en profondeur des paquets (DPI). Il supporte nativement le protocole MQTT depuis sa version 6.0 (\texttt{app-layer-protocol: mqtt}), ce qui permet d'écrire des règles spécifiques aux topics et aux payloads MQTT.
+Suricata est un moteur IDS/IPS open-source multi-thread supportant l'inspection en profondeur des paquets (DPI). Il supporte nativement le protocole MQTT depuis sa version 6.0 (\texttt{app-layer-protocol: mqtt}), ce qui permet d'Ã©crire des rÃ¨gles spÃ©cifiques aux topics et aux payloads MQTT.
 
 \subsection{Wazuh SIEM}
 
 Wazuh est une plateforme SIEM open-source issue du fork d'OSSEC. Elle offre :
 \begin{itemize}
-  \item Un agent léger déployable sur Linux, Windows, macOS et conteneurs.
-  \item Un moteur de règles configurable avec corrélation multi-sources.
-  \item L'intégration native avec OpenSearch/Elasticsearch pour la visualisation.
-  \item Des modules spécialisés pour Suricata, Docker, Kubernetes, AWS CloudTrail.
+  \item Un agent lÃ©ger dÃ©ployable sur Linux, Windows, macOS et conteneurs.
+  \item Un moteur de rÃ¨gles configurable avec corrÃ©lation multi-sources.
+  \item L'intÃ©gration native avec OpenSearch/Elasticsearch pour la visualisation.
+  \item Des modules spÃ©cialisÃ©s pour Suricata, Docker, Kubernetes, AWS CloudTrail.
 \end{itemize}
 
-\subsection{Machine Learning pour la détection d'anomalies IoT}
+\subsection{Machine Learning pour la dÃ©tection d'anomalies IoT}
 
-Deux approches complémentaires ont été retenues :
+Deux approches complÃ©mentaires ont Ã©tÃ© retenues :
 
-\textbf{IsolationForest} \cite{liu2008isolation} est un algorithme non supervisé basé sur la construction d'arbres d'isolation aléatoires. Les points anormaux, étant rares et distincts, sont isolés en un nombre minimal de partitions. Son avantage majeur est l'absence de nécessité d'étiquettes : il peut détecter des attaques inconnues.
+\textbf{IsolationForest} \cite{liu2008isolation} est un algorithme non supervisÃ© basÃ© sur la construction d'arbres d'isolation alÃ©atoires. Les points anormaux, Ã©tant rares et distincts, sont isolÃ©s en un nombre minimal de partitions. Son avantage majeur est l'absence de nÃ©cessitÃ© d'Ã©tiquettes : il peut dÃ©tecter des attaques inconnues.
 
-\textbf{Random Forest} \cite{breiman2001random} est un ensemble d'arbres de décision entraîné en mode supervisé. Il exploite les étiquettes disponibles pour apprendre les signatures spécifiques de chaque type d'attaque, atteignant des performances proches de la perfection sur des datasets équilibrés.
+\textbf{Random Forest} \cite{breiman2001random} est un ensemble d'arbres de dÃ©cision entraÃ®nÃ© en mode supervisÃ©. Il exploite les Ã©tiquettes disponibles pour apprendre les signatures spÃ©cifiques de chaque type d'attaque, atteignant des performances proches de la perfection sur des datasets Ã©quilibrÃ©s.
 
-\section{Synthèse et positionnement}
+\section{SynthÃ¨se et positionnement}
 
 \begin{table}[H]
 \centering
@@ -116,15 +116,15 @@ Deux approches complémentaires ont été retenues :
 \label{tab:positionnement}
 \begin{tabular}{lcccc}
 \toprule
-\textbf{Solution} & \textbf{PKI complète} & \textbf{mTLS MQTT} & \textbf{IDS} & \textbf{ML détection} \\
+\textbf{Solution} & \textbf{PKI complÃ¨te} & \textbf{mTLS MQTT} & \textbf{IDS} & \textbf{ML dÃ©tection} \\
 \midrule
 AWS IoT Core & \checkmark & \checkmark & $\sim$ & $\sim$ \\
 Azure IoT Hub & \checkmark & \checkmark & $\sim$ & \checkmark \\
 Eclipse Mosquitto (base) & $\times$ & Optionnel & $\times$ & $\times$ \\
-Travaux académiques & Partiel & Partiel & Partiel & Isolé \\
+Travaux acadÃ©miques & Partiel & Partiel & Partiel & IsolÃ© \\
 \textbf{Cette architecture} & \checkmark & \checkmark & \checkmark & \checkmark \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Notre contribution se distingue par l'intégration verticale complète, du certificat dispositif jusqu'à la détection ML, dans un environnement simulé reproductible et open-source.
+Notre contribution se distingue par l'intÃ©gration verticale complÃ¨te, du certificat dispositif jusqu'Ã  la dÃ©tection ML, dans un environnement simulÃ© reproductible et open-source.

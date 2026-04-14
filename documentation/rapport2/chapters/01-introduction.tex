@@ -1,0 +1,61 @@
+\chapter{Introduction Générale}
+
+\section{Contexte et motivations}
+
+L'Internet des Objets (IoT) connaît une expansion exponentielle dans le secteur des télécommunications. Selon les estimations de la GSMA, le nombre de connexions IoT dépassera 25 milliards d'unités d'ici 2025, générant un volume de données sans précédent. Les opérateurs télécom comme \TT{} se trouvent au cœur de cette transformation numérique, en déployant des infrastructures capables d'absorber ces flux tout en garantissant leur confidentialité, leur intégrité et leur disponibilité.
+
+Or, l'IoT présente des caractéristiques propres qui compliquent drastiquement la sécurisation : les dispositifs disposent souvent de ressources calculatoires limitées, leurs mises à jour de sécurité sont rares, et les protocoles de communication applicatifs (MQTT, CoAP) ont été conçus à l'origine sans mécanismes de sécurité obligatoires. Ces facteurs font des écosystèmes IoT des cibles de choix pour les attaquants, qui peuvent y déployer des \textit{botnets}, des attaques par déni de service (\ac{DoS}), des interceptions (\textit{Man-in-the-Middle}) ou encore des injections de données malveillantes.
+
+Ce projet de fin d'études, réalisé au sein de \TT{}, répond à un besoin concret et stratégique : définir, implémenter et valider une architecture de sécurité complète pour des flux MQTT en environnement IoT simulé.
+
+\section{Problématique}
+
+La problématique centrale de ce travail peut se formuler ainsi :
+
+\begin{tcolorbox}[colback=blue!5, colframe=blue!50!black, title=Problématique]
+\textit{Comment sécuriser de bout en bout les flux de communication d'un écosystème IoT simulé, depuis l'authentification des dispositifs jusqu'à la détection automatisée des comportements anormaux, tout en maintenant des performances acceptables pour les applications temps-réel ?}
+\end{tcolorbox}
+
+Cette problématique se décompose en quatre sous-questions directrices :
+
+\begin{enumerate}
+  \item Comment établir une chaîne de confiance cryptographique pour des milliers de dispositifs IoT hétérogènes ?
+  \item Comment configurer le protocole MQTT pour exiger une authentification mutuelle TLS (mTLS) sans dégrader significativement les performances ?
+  \item Comment détecter en temps réel les attaques réseau et les comportements anormaux dans un flux MQTT chiffré ?
+  \item Dans quelle mesure les approches de Machine Learning non supervisé sont-elles viables pour la détection d'anomalies dans des contextes IoT réels ?
+\end{enumerate}
+
+\section{Objectifs du projet}
+
+Les objectifs opérationnels de ce travail sont les suivants :
+
+\begin{itemize}
+  \item \textbf{O1 -- Infrastructure PKI} : Déployer une hiérarchie de certification (CA racine, CA intermédiaire) basée sur HashiCorp Vault pour émettre et gérer automatiquement les certificats de dispositifs et de services.
+  \item \textbf{O2 -- Broker sécurisé} : Configurer un broker Mosquitto en TLS~1.3 strict avec mTLS obligatoire et politiques d'accès par topic.
+  \item \textbf{O3 -- Simulation réaliste} : Reproduire le comportement d'une flotte de 50 capteurs IoT en rejouant un dataset de 76\,000 événements réels couvrant sept types d'attaques.
+  \item \textbf{O4 -- Analyse réseau} : Déployer Suricata avec des règles IDS personnalisées pour détecter les anomalies dans les flux MQTT.
+  \item \textbf{O5 -- SIEM} : Intégrer Wazuh pour la collecte, la corrélation et l'alerte des événements de sécurité.
+  \item \textbf{O6 -- Détection ML} : Comparer IsolationForest (non supervisé) et RandomForest (supervisé) pour la détection d'anomalies.
+  \item \textbf{O7 -- Performance} : Quantifier l'overhead TLS/mTLS sur les métriques MQTT clés (latence, débit, RTT).
+\end{itemize}
+
+\section{Plan du rapport}
+
+Ce rapport est structuré en douze chapitres :
+
+\begin{description}
+  \item[Chapitre~1] Introduction générale, problématique et objectifs.
+  \item[Chapitre~2] Cadre général du projet : présentation de l'organisme d'accueil (\TT{}), méthodologie Scrum et planification.
+  \item[Chapitre~3] État de l'art : protocoles IoT, sécurité des flux, PKI, ML pour la détection d'anomalies.
+  \item[Chapitre~4] Architecture générale du système : topologie réseau, composants, flux E2E.
+  \item[Chapitre~5] Infrastructure PKI et déploiement de HashiCorp Vault.
+  \item[Chapitre~6] Configuration TLS/mTLS sur le broker Mosquitto.
+  \item[Chapitre~7] Simulation de la flotte IoT et injection des patterns d'attaque.
+  \item[Chapitre~8] Analyse réseau avec Suricata IDS.
+  \item[Chapitre~9] Intégration SIEM avec Wazuh.
+  \item[Chapitre~10] Détection d'anomalies par Machine Learning.
+  \item[Chapitre~11] Évaluation des performances.
+  \item[Chapitre~12] Conclusion et perspectives.
+\end{description}
+
+Les annexes A et B regroupent l'intégralité des scripts d'automatisation et des configurations techniques des composants déployés.

@@ -1,20 +1,20 @@
-\chapter*{Résumé}
-\addcontentsline{toc}{chapter}{Résumé}
+\chapter*{RÃ©sumÃ©}
+\addcontentsline{toc}{chapter}{RÃ©sumÃ©}
 
-\textbf{Mots-clés :} IoT, sécurité, TLS 1.3, mTLS, PKI, HashiCorp Vault, MQTT, Suricata, Wazuh, SIEM, IsolationForest, RandomForest, détection d'anomalies, GNS3.
+\textbf{Mots-clÃ©s :} IoT, sÃ©curitÃ©, TLS 1.3, mTLS, PKI, HashiCorp Vault, MQTT, Suricata, Wazuh, SIEM, IsolationForest, RandomForest, dÃ©tection d'anomalies, GNS3.
 
 \vspace{0.5cm}
 
-L'essor de l'Internet des Objets (IoT) dans les environnements des opérateurs de télécommunications engendre des flux de données massifs et hétérogènes exposés à des risques croissants d'interception, d'altération et de compromission. Ce projet de fin d'études, réalisé en partenariat avec \TT{}, aborde la problématique de la \textbf{sécurisation de bout en bout des flux de communication d'un écosystème IoT simulé}.
+L'essor de l'Internet des Objets (IoT) dans les environnements des opÃ©rateurs de tÃ©lÃ©communications engendre des flux de donnÃ©es massifs et hÃ©tÃ©rogÃ¨nes exposÃ©s Ã  des risques croissants d'interception, d'altÃ©ration et de compromission. Ce projet de fin d'Ã©tudes, rÃ©alisÃ© en partenariat avec \TT{}, aborde la problÃ©matique de la \textbf{sÃ©curisation de bout en bout des flux de communication d'un Ã©cosystÃ¨me IoT simulÃ©}.
 
-La démarche adoptée est expérimentale et s'appuie sur un laboratoire simulé combinant \textbf{GNS3} pour la topologie réseau et \textbf{Docker} pour les nœuds applicatifs. Nous avons conçu et déployé une architecture composée de six éléments majeurs : (1) une \textbf{infrastructure à clés publiques (PKI)} basée sur HashiCorp Vault avec une hiérarchie CA racine -- CA intermédiaire ; (2) un \textbf{broker MQTT Mosquitto} configuré en TLS 1.3 et mTLS obligatoire ; (3) un \textbf{simulateur de flotte IoT} rejouant 76\,000 événements réels issus d'un dataset CSV couvrant sept types d'attaques ; (4) une \textbf{analyse réseau} par Suricata avec règles personnalisées ; (5) un \textbf{SIEM Wazuh} ingérant les alertes et corrélant les événements ; (6) un \textbf{pipeline de détection d'anomalies} par Machine Learning (IsolationForest + RandomForest).
+La dÃ©marche adoptÃ©e est expÃ©rimentale et s'appuie sur un laboratoire simulÃ© combinant \textbf{GNS3} pour la topologie rÃ©seau et \textbf{Docker} pour les nÅ“uds applicatifs. Nous avons conÃ§u et dÃ©ployÃ© une architecture composÃ©e de six Ã©lÃ©ments majeurs : (1) une \textbf{infrastructure Ã  clÃ©s publiques (PKI)} basÃ©e sur HashiCorp Vault avec une hiÃ©rarchie CA racine -- CA intermÃ©diaire ; (2) un \textbf{broker MQTT Mosquitto} configurÃ© en TLS 1.3 et mTLS obligatoire ; (3) un \textbf{simulateur de flotte IoT} rejouant 76\,000 Ã©vÃ©nements rÃ©els issus d'un dataset CSV couvrant sept types d'attaques ; (4) une \textbf{analyse rÃ©seau} par Suricata avec rÃ¨gles personnalisÃ©es ; (5) un \textbf{SIEM Wazuh} ingÃ©rant les alertes et corrÃ©lant les Ã©vÃ©nements ; (6) un \textbf{pipeline de dÃ©tection d'anomalies} par Machine Learning (IsolationForest + RandomForest).
 
-Les résultats obtenus démontrent l'efficacité de l'approche : le RandomForest atteint un F1-score de \textbf{0,994} et un ROC-AUC de \textbf{0,999} pour la détection binaire, tandis que l'IsolationForest, en mode non supervisé, obtient \textbf{0,930} / \textbf{0,959}. Les tests de performance montrent que l'overhead TLS 1.3/mTLS sur le RTT MQTT est de \textbf{+89\%} (4,2 ms $\to$ 7,9 ms), restant largement en deçà du seuil critique de 50 ms pour les applications IoT industrielles.
+Les rÃ©sultats obtenus dÃ©montrent l'efficacitÃ© de l'approche : le RandomForest atteint un F1-score de \textbf{0,994} et un ROC-AUC de \textbf{0,999} pour la dÃ©tection binaire, tandis que l'IsolationForest, en mode non supervisÃ©, obtient \textbf{0,930} / \textbf{0,959}. Les tests de performance montrent que l'overhead TLS 1.3/mTLS sur le RTT MQTT est de \textbf{+89\%} (4,2 ms $\to$ 7,9 ms), restant largement en deÃ§Ã  du seuil critique de 50 ms pour les applications IoT industrielles.
 
 \vspace{0.5cm}
 \hrule
 \vspace{0.3cm}
 
-\textbf{Abstract} — \textit{The growth of IoT in telecom operator environments generates massive and heterogeneous data flows exposed to increasing risks of interception, alteration and compromise. This final-year project, carried out in partnership with Tunisie Telecom, addresses the end-to-end security of communication flows in a simulated IoT ecosystem. We designed and deployed a complete architecture including a PKI based on HashiCorp Vault, a Mosquitto MQTT broker with TLS 1.3/mTLS, an IoT fleet simulator, Suricata IDS, Wazuh SIEM and an ML anomaly detection pipeline. The RandomForest classifier achieves F1=0.994, ROC-AUC=0.999. TLS overhead on RTT is +89\% (4.2ms to 7.9ms), well within IoT industrial thresholds.}
+\textbf{Abstract} â€” \textit{The growth of IoT in telecom operator environments generates massive and heterogeneous data flows exposed to increasing risks of interception, alteration and compromise. This final-year project, carried out in partnership with Tunisie Telecom, addresses the end-to-end security of communication flows in a simulated IoT ecosystem. We designed and deployed a complete architecture including a PKI based on HashiCorp Vault, a Mosquitto MQTT broker with TLS 1.3/mTLS, an IoT fleet simulator, Suricata IDS, Wazuh SIEM and an ML anomaly detection pipeline. The RandomForest classifier achieves F1=0.994, ROC-AUC=0.999. TLS overhead on RTT is +89\% (4.2ms to 7.9ms), well within IoT industrial thresholds.}
 
 \cleardoublepage

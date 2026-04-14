@@ -1,10 +1,10 @@
-\chapter{Analyse Réseau avec Suricata}
+\chapter{Analyse RÃ©seau avec Suricata}
 
-\section{Déploiement de Suricata}
+\section{DÃ©ploiement de Suricata}
 
-\subsection{Architecture de détection}
+\subsection{Architecture de dÃ©tection}
 
-Suricata v7.0 est déployé en mode \textbf{IDS passif} (lecture uniquement, sans blocage) sur le segment réseau Services. Le trafic est dupliqué vers Suricata via un switch GNS3 configuré en mode hub, ce qui permet d'inspecter tous les paquets sans perturber le flux nominal.
+Suricata v7.0 est dÃ©ployÃ© en mode \textbf{IDS passif} (lecture uniquement, sans blocage) sur le segment rÃ©seau Services. Le trafic est dupliquÃ© vers Suricata via un switch GNS3 configurÃ© en mode hub, ce qui permet d'inspecter tous les paquets sans perturber le flux nominal.
 
 Suricata utilise le mode \textbf{AF\_PACKET} pour la capture haute performance :
 
@@ -18,9 +18,9 @@ af-packet:
     ring-size: 2048
 \end{lstlisting}
 
-\subsection{Activation du décodeur MQTT}
+\subsection{Activation du dÃ©codeur MQTT}
 
-Depuis Suricata 6.0, le protocole MQTT est supporté nativement via le moteur d'analyse applicative :
+Depuis Suricata 6.0, le protocole MQTT est supportÃ© nativement via le moteur d'analyse applicative :
 
 \begin{lstlisting}[language=yaml, caption=Activation du parseur MQTT dans suricata.yaml]
 app-layer:
@@ -30,12 +30,12 @@ app-layer:
       max-msg-length: 1mb
 \end{lstlisting}
 
-\section{Règles de détection personnalisées}
+\section{RÃ¨gles de dÃ©tection personnalisÃ©es}
 
-Quatre règles personnalisées ont été développées pour détecter les typologies d'attaques du dataset :
+Quatre rÃ¨gles personnalisÃ©es ont Ã©tÃ© dÃ©veloppÃ©es pour dÃ©tecter les typologies d'attaques du dataset :
 
-\begin{lstlisting}[language=bash, caption=Règles Suricata pour la détection des attaques IoT/MQTT]
-# Règle 1 : Connexions MQTT massives (DoS)
+\begin{lstlisting}[language=bash, caption=RÃ¨gles Suricata pour la dÃ©tection des attaques IoT/MQTT]
+# RÃ¨gle 1 : Connexions MQTT massives (DoS)
 alert mqtt any any -> 192.168.20.10 8883 (
   msg:"IoT DoS - MQTT connection flood";
   flow:to_server,established;
@@ -46,7 +46,7 @@ alert mqtt any any -> 192.168.20.10 8883 (
   sid:9000001; rev:1;
 )
 
-# Règle 2 : Topic de commande suspecte
+# RÃ¨gle 2 : Topic de commande suspecte
 alert mqtt any any -> 192.168.20.10 8883 (
   msg:"IoT Suspicious command topic";
   flow:to_server,established;
@@ -56,7 +56,7 @@ alert mqtt any any -> 192.168.20.10 8883 (
   sid:9000002; rev:1;
 )
 
-# Règle 3 : Payload MQTT anormalement long (injection)
+# RÃ¨gle 3 : Payload MQTT anormalement long (injection)
 alert mqtt any any -> 192.168.20.10 8883 (
   msg:"IoT Oversized MQTT payload - possible injection";
   flow:to_server,established;
@@ -66,7 +66,7 @@ alert mqtt any any -> 192.168.20.10 8883 (
   sid:9000003; rev:1;
 )
 
-# Règle 4 : Scan de broker MQTT (connexions sans subscribe)
+# RÃ¨gle 4 : Scan de broker MQTT (connexions sans subscribe)
 alert mqtt any any -> 192.168.20.10 8883 (
   msg:"IoT MQTT broker scanning";
   flow:to_server,established;
@@ -80,9 +80,9 @@ alert mqtt any any -> 192.168.20.10 8883 (
 
 \section{Analyse des alertes}
 
-\subsection{Volume d'alertes générées}
+\subsection{Volume d'alertes gÃ©nÃ©rÃ©es}
 
-Suricata a généré \textbf{51 alertes} au total sur la durée de la simulation. La distribution par règle est la suivante :
+Suricata a gÃ©nÃ©rÃ© \textbf{51 alertes} au total sur la durÃ©e de la simulation. La distribution par rÃ¨gle est la suivante :
 
 \begin{table}[H]
 \centering
@@ -102,7 +102,7 @@ Suricata a généré \textbf{51 alertes} au total sur la durée de la simulation
 
 \subsection{Format des alertes EVE JSON}
 
-Suricata génère ses alertes dans le format \textbf{EVE JSON} (\texttt{/var/log/suricata/eve.json}), qui est directement ingérable par Wazuh :
+Suricata gÃ©nÃ¨re ses alertes dans le format \textbf{EVE JSON} (\texttt{/var/log/suricata/eve.json}), qui est directement ingÃ©rable par Wazuh :
 
 \begin{lstlisting}[language=json, caption=Exemple d'alerte Suricata EVE JSON]
 {
@@ -138,11 +138,11 @@ Suricata génère ses alertes dans le format \textbf{EVE JSON} (\texttt{/var/log
 \begin{figure}[H]
   \centering
   % \includegraphics[width=\textwidth]{figures/suricata-alerts.png}
-  \fbox{\parbox{0.9\textwidth}{\centering\vspace{2cm}\textit{[Figure : Alertes Suricata dans Wazuh — capture d'écran à insérer]}\vspace{2cm}}}
+  \fbox{\parbox{0.9\textwidth}{\centering\vspace{2cm}\textit{[Figure : Alertes Suricata dans Wazuh â€” capture d'Ã©cran Ã  insÃ©rer]}\vspace{2cm}}}
   \caption{Alertes Suricata visibles dans le dashboard Wazuh}
   \label{fig:suricata_wazuh}
 \end{figure}
 
-\begin{tcolorbox}[colback=green!5, colframe=green!50!black, title=Résultats Suricata]
-\textbf{51 alertes} générées sur 76\,000 messages. Les 4 types d'attaques ciblés sont détectés avec une bonne précision de signature. Aucun faux-positif sur le trafic normal TLS.
+\begin{tcolorbox}[colback=green!5, colframe=green!50!black, title=RÃ©sultats Suricata]
+\textbf{51 alertes} gÃ©nÃ©rÃ©es sur 76\,000 messages. Les 4 types d'attaques ciblÃ©s sont dÃ©tectÃ©s avec une bonne prÃ©cision de signature. Aucun faux-positif sur le trafic normal TLS.
 \end{tcolorbox}

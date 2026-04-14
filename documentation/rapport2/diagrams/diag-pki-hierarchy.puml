@@ -1,0 +1,94 @@
+@startuml diag-pki-hierarchy
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+
+skinparam class {
+  BackgroundColor #FAFAFA
+  BorderColor #555555
+  ArrowColor #555555
+}
+
+title Diagramme de Classes — Hiérarchie PKI\nInfrastructure à Clés Publiques
+
+class "CA Racine" as ROOT <<Root CA>> #FCE4EC {
+  CN : PFE-IoT Root CA
+  Algorithme : RSA-4096
+  Signature : SHA-256
+  Validité : 10 ans
+  Key Usage : keyCertSign, cRLSign
+  Basic Constraints : CA:TRUE
+  --
+  Rôle : Signer la CA intermédiaire
+  Statut : Hors-ligne (simulé)
+}
+
+class "CA Intermédiaire" as INTER <<Intermediate CA>> #F8BBD0 {
+  CN : PFE-IoT Intermediate CA
+  Algorithme : RSA-2048
+  Signature : SHA-256
+  Validité : 5 ans
+  Key Usage : keyCertSign, cRLSign
+  Basic Constraints : CA:TRUE, pathlen:0
+  --
+  Rôle : Émettre les certificats finaux
+  Hébergement : Vault PKI Engine
+}
+
+class "Rôle Services" as ROLE_SVC <<Vault Role>> #FFF3E0 {
+  Nom : services
+  Domaines : pfe-iot.local
+  Sous-domaines : Oui
+  IP SAN : Oui
+  TTL max : 8760h (1 an)
+  Key Type : RSA-2048
+  Extended Key Usage : serverAuth
+}
+
+class "Rôle IoT Devices" as ROLE_DEV <<Vault Role>> #FFF3E0 {
+  Nom : iot-devices
+  Domaines : devices.pfe-iot.local
+  Sous-domaines : Oui
+  IP SAN : Oui
+  TTL max : 24h
+  Key Type : RSA-2048
+  Extended Key Usage : clientAuth
+}
+
+class "Certificat Mosquitto" as CERT_MOSQ <<Service Cert>> #E8F5E9 {
+  CN : mosquitto.pfe-iot.local
+  SAN : 192.168.20.10
+  Key Usage : digitalSignature, keyEncipherment
+  EKU : serverAuth
+  Validité : 1 an
+}
+
+class "Certificat Device" as CERT_DEV <<Device Cert>> #E8F5E9 {
+  CN : device-XXX.devices.pfe-iot.local
+  SAN : 192.168.10.XX
+  Key Usage : digitalSignature, keyEncipherment
+  EKU : clientAuth
+  Validité : 24 heures
+  --
+  50 certificats émis
+  Temps moyen : 87 ms / certificat
+}
+
+ROOT "1" --> "1" INTER : signe
+INTER "1" --> "1" ROLE_SVC : définit
+INTER "1" --> "1" ROLE_DEV : définit
+ROLE_SVC "1" --> "1..*" CERT_MOSQ : émet
+ROLE_DEV "1" --> "1..50" CERT_DEV : émet
+
+note bottom of ROOT
+  La CA racine reste hors-ligne.
+  Seule la CA intermédiaire
+  est exposée via l'API Vault.
+  En cas de compromission,
+  elle peut être révoquée
+  sans invalider la racine.
+end note
+
+@enduml

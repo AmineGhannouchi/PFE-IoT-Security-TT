@@ -1,0 +1,109 @@
+@startuml diag-classe-fleet-sim
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam classFontStyle bold
+
+title Diagramme de Classes\nSimulateur de Flotte IoT (fleet_sim.py)
+
+package "fleet_sim" <<Frame>> {
+
+  class FleetOrchestrator {
+    - config : dict
+    - dataset : pd.DataFrame
+    - devices : List[DeviceSimulator]
+    - thread_pool : ThreadPoolExecutor
+    --
+    + __init__(config_path: str)
+    + load_dataset(csv_path: str) : pd.DataFrame
+    + partition_events(n_devices: int) : List[pd.DataFrame]
+    + launch() : None
+    + wait_completion() : None
+    + generate_report() : dict
+  }
+
+  class DeviceSimulator {
+    - device_id : str
+    - broker_config : dict
+    - cert_path : str
+    - events : pd.DataFrame
+    - client : mqtt.Client
+    - stats : DeviceStats
+    --
+    + __init__(device_id, broker_config, cert_path, events)
+    - _configure_tls() : None
+    - _format_payload(event: pd.Series) : dict
+    - _inject_dos_pattern(base_rate: float) : float
+    + run() : None
+    + disconnect() : None
+  }
+
+  class DeviceStats {
+    - messages_sent : int
+    - messages_failed : int
+    - start_time : float
+    - end_time : float
+    - attack_types : Counter
+    --
+    + record_send(success: bool) : None
+    + record_attack(attack_type: str) : None
+    + duration() : float
+    + throughput() : float
+    + to_dict() : dict
+  }
+
+  class BrokerConfig <<dataclass>> {
+    + host : str = "192.168.20.10"
+    + port : int = 8883
+    + keepalive : int = 60
+    + qos : int = 1
+    + ca_cert : str
+    + use_tls : bool = True
+  }
+
+  class CertificateManager {
+    - vault_addr : str
+    - vault_token : str
+    - cert_dir : str
+    --
+    + request_cert(device_id: str, ttl: str) : CertBundle
+    + verify_chain(cert_path: str) : bool
+    + renew_if_expired(device_id: str) : CertBundle
+  }
+
+  class CertBundle <<dataclass>> {
+    + certificate : str
+    + private_key : str
+    + ca_chain : str
+    + serial : str
+    + expiry : datetime
+  }
+
+}
+
+package "paho.mqtt" <<External>> #DDDDDD {
+  class "mqtt.Client" as MqttClient {
+    + tls_set(...)
+    + connect(host, port, keepalive)
+    + publish(topic, payload, qos)
+    + loop_start()
+    + loop_stop()
+    + disconnect()
+  }
+}
+
+package "pandas" <<External>> #DDDDDD {
+  class "DataFrame" as DF
+}
+
+FleetOrchestrator "1" *-- "50" DeviceSimulator : crée et orchestre >
+DeviceSimulator "1" *-- "1" DeviceStats : collecte stats >
+DeviceSimulator --> BrokerConfig : utilise >
+DeviceSimulator --> MqttClient : délègue MQTT >
+FleetOrchestrator --> CertificateManager : provisionne certs >
+CertificateManager --> CertBundle : retourne >
+DeviceSimulator ..> DF : itère events >
+
+@enduml
