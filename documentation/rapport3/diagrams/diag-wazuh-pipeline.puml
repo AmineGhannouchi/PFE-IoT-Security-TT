@@ -1,0 +1,70 @@
+@startuml diag-wazuh-pipeline
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam componentStyle rectangle
+
+title Pipeline d'Ingestion et Corrélation — Wazuh SIEM
+
+package "Sources de Données" #FFF9C4 {
+  [Suricata IDS\neve.json] as SRC_SUR
+  [Broker Mosquitto\nLogs MQTT] as SRC_MOSQ
+  [Conteneurs Docker\nJournaux système] as SRC_DOCKER
+}
+
+package "Wazuh Manager" #E3F2FD {
+
+  component [Logcollector\n(Collecte)] as COLLECT
+  note bottom of COLLECT
+    Mode JSON pour Suricata
+    Filtre : event_type == "alert"
+  end note
+
+  component [Decoders\n(Décodage)] as DECODE
+  note bottom of DECODE
+    Extraction des champs :
+    src_ip, dst_ip, alert.signature,
+    alert.category, alert.severity
+  end note
+
+  component [Rules Engine\n(Corrélation)] as RULES
+  note bottom of RULES
+    Règles personnalisées :
+    100200 — TLS MQTT (niveau 3)
+    100201 — Generic Suricata (niveau 6)
+    100202 — DoS Attack (niveau 10)
+    100203 — High volume (niveau 8)
+  end note
+
+  component [Alerting\n(Notifications)] as ALERT
+}
+
+package "Wazuh Indexer (OpenSearch)" #E8F5E9 {
+  database [Index wazuh-alerts\n(stockage événements)] as INDEX
+}
+
+package "Wazuh Dashboard" #FCE4EC {
+  [OpenSearch Dashboards\nVisualisation temps-réel\nhttps://192.168.30.128] as DASH
+}
+
+' Flux
+SRC_SUR --> COLLECT : eve.json\n(JSON)
+SRC_MOSQ --> COLLECT : syslog
+SRC_DOCKER --> COLLECT : journald
+
+COLLECT --> DECODE : Événements bruts
+DECODE --> RULES : Événements décodés
+RULES --> ALERT : Alertes (niveau ≥ 3)
+RULES --> INDEX : Tous les événements
+INDEX --> DASH : Requêtes\nvisualisations
+
+note bottom of DASH
+  Filtres disponibles :
+  — rule.groups : suricata
+  — rule.level : ≥ 10 (critique)
+  — data.src_ip : par source
+  — Période temporelle
+end note
+
+@enduml

@@ -1,0 +1,47 @@
+@startgantt
+title Planification Gantt du projet PFE
+project starts 2025-02-03
+saturday are closed
+sunday are closed
+
+-- Sprint 0 : Cadrage --
+[Analyse des besoins] starts 2025-02-03 and lasts 5 days
+[Etude bibliographique] starts 2025-02-03 and lasts 8 days
+[Choix technologiques] starts 2025-02-10 and lasts 4 days
+[Cahier des charges] starts 2025-02-12 and lasts 4 days
+
+-- Sprint 1 : Infrastructure reseau --
+[Installation GNS3 + VMware] starts 2025-02-17 and lasts 4 days
+[Topologie + VLANs] starts 2025-02-19 and lasts 6 days
+[Deploiement pfSense / MikroTik] starts 2025-02-24 and lasts 7 days
+[Tests connectivite] starts 2025-03-03 and lasts 5 days
+
+-- Sprint 2 : PKI et broker MQTT --
+[Deploiement Vault] starts 2025-03-10 and lasts 5 days
+[CA racine + intermediaire] starts 2025-03-13 and lasts 6 days
+[Mosquitto TLS 1.3 / mTLS] starts 2025-03-19 and lasts 7 days
+[Emission 50 certificats] starts 2025-03-26 and lasts 5 days
+
+-- Sprint 3 : Simulation flotte --
+[Developpement fleet-sim] starts 2025-03-31 and lasts 7 days
+[Injection 76000 messages] starts 2025-04-07 and lasts 5 days
+[Capture reseau pcap] starts 2025-04-10 and lasts 3 days
+
+-- Sprint 4 : Detection et analyse --
+[Suricata + regles MQTT] starts 2025-04-14 and lasts 6 days
+[Wazuh OVA + ingestion] starts 2025-04-18 and lasts 7 days
+[Pipeline ML IF + RF] starts 2025-04-23 and lasts 8 days
+[Tests de performance] starts 2025-04-30 and lasts 5 days
+
+-- Sprint 5 : Synthese et redaction --
+[Redaction du rapport] starts 2025-05-05 and lasts 15 days
+[Diagrammes UML] starts 2025-05-08 and lasts 6 days
+[Preparation soutenance] starts 2025-05-19 and lasts 5 days
+
+-- Jalons --
+[Validation cahier des charges] happens at 2025-02-15
+[PKI operationnelle] happens at 2025-03-31
+[Detection ML validee] happens at 2025-05-04
+[Soutenance] happens at 2025-05-25
+
+@endgantt

@@ -1,0 +1,225 @@
+%% rapport.tex - Document principal (rapport3)
+%% PFE : Securisation des flux de communication pour un
+%%       ecosysteme IoT simule
+%% FST / Tunisie Telecom - 2025-2026
+%% Auteur : Amine Ghannouchi
+%% Structure : 5 chapitres consolides
+\documentclass[12pt, a4paper, twoside]{report}
+
+%% Encodage & langue
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{lmodern}
+
+%% Mise en page
+\usepackage[top=2.5cm, bottom=2.5cm, left=3cm, right=2.5cm]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{emptypage}
+
+%% Couleurs & graphiques
+\usepackage[dvipsnames, table]{xcolor}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds}
+
+%% En-tetes & pieds de page
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\small\nouppercase{\leftmark}}
+\fancyhead[RE,LO]{\small\textit{PFE -- IoT Security}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+%% Tableaux
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{array}
+\renewcommand{\arraystretch}{1.3}
+
+%% Code source (uniquement pour les annexes)
+\usepackage{listings}
+\usepackage{lstautogobble}
+
+\definecolor{codebg}{RGB}{248,248,248}
+\definecolor{codeframe}{RGB}{200,200,200}
+\definecolor{keywordcolor}{RGB}{0,0,180}
+\definecolor{commentcolor}{RGB}{80,120,80}
+\definecolor{stringcolor}{RGB}{160,32,32}
+
+\lstset{
+  backgroundcolor=\color{codebg},
+  frame=single, rulecolor=\color{codeframe},
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{keywordcolor}\bfseries,
+  commentstyle=\color{commentcolor}\itshape,
+  stringstyle=\color{stringcolor},
+  numbers=left, numberstyle=\tiny\color{gray},
+  stepnumber=1, numbersep=8pt,
+  breaklines=true, breakatwhitespace=true,
+  captionpos=b, showstringspaces=false,
+  autogobble=true,
+  tabsize=2,
+  aboveskip=8pt, belowskip=8pt,
+  extendedchars=true,
+  inputencoding=utf8,
+  literate=
+    {à}{{\`a}}1 {â}{{\^a}}1 {ä}{{\"a}}1
+    {é}{{\'e}}1 {è}{{\`e}}1 {ê}{{\^e}}1 {ë}{{\"e}}1
+    {î}{{\^i}}1 {ï}{{\"i}}1
+    {ô}{{\^o}}1 {ö}{{\"o}}1
+    {ù}{{\`u}}1 {û}{{\^u}}1 {ü}{{\"u}}1
+    {ç}{{\c{c}}}1
+    {À}{{\`A}}1 {Â}{{\^A}}1
+    {É}{{\'E}}1 {È}{{\`E}}1 {Ê}{{\^E}}1
+    {Î}{{\^I}}1 {Ô}{{\^O}}1
+    {Ù}{{\`U}}1 {Û}{{\^U}}1
+    {Ç}{{\c{C}}}1
+    {œ}{{\oe}}1 {æ}{{\ae}}1
+    {«}{{\guillemotleft}}1 {»}{{\guillemotright}}1
+}
+
+\lstdefinelanguage{yaml}{
+  keywords={true,false,null,yes,no},
+  keywordstyle=\color{keywordcolor}\bfseries,
+  sensitive=false,
+  comment=[l]{\#},
+  morestring=[b]',
+  morestring=[b]"
+}
+
+\lstdefinelanguage{json}{
+  keywords={true,false,null},
+  keywordstyle=\color{keywordcolor}\bfseries,
+  sensitive=false,
+  morestring=[b]",
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/}
+}
+
+\lstdefinelanguage{hcl}{
+  keywords={resource,variable,output,module,provider,terraform,locals,data,for,if,in},
+  keywordstyle=\color{keywordcolor}\bfseries,
+  sensitive=false,
+  morestring=[b]",
+  comment=[l]{\#},
+  morecomment=[l]{//}
+}
+
+\lstdefinelanguage{bash}{
+  keywords={sudo,apt,git,docker,python3,pip,echo,export,mkdir,chmod,cp,rm,systemctl},
+  keywordstyle=\color{keywordcolor}\bfseries,
+  comment=[l]{\#},
+  morestring=[b]',
+  morestring=[b]"
+}
+
+%% Mathematiques
+\usepackage{amsmath, amssymb, amsfonts}
+
+%% Liens hypertexte
+\usepackage[
+  colorlinks=true,
+  linkcolor=NavyBlue,
+  citecolor=ForestGreen,
+  urlcolor=RoyalBlue,
+  bookmarks=true,
+  bookmarksnumbered=true,
+  pdftitle={PFE -- Securisation des flux IoT},
+  pdfauthor={Amine Ghannouchi},
+  pdfsubject={IoT Security, TLS/mTLS, PKI, SIEM, Machine Learning}
+]{hyperref}
+\usepackage{bookmark}
+
+%% Bibliographie
+\usepackage[
+  backend=biber,
+  style=ieee,
+  sorting=none
+]{biblatex}
+\addbibresource{bibliography.bib}
+
+%% Divers
+\usepackage{microtype}
+\usepackage{csquotes}
+\usepackage{acronym}
+\usepackage{enumitem}
+\usepackage{pifont}
+\usepackage{mdframed}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins, breakable}
+
+%% Boites callout
+\newtcolorbox{infobox}[1][]{
+  colback=blue!5!white, colframe=blue!60!black,
+  title=#1, fonttitle=\bfseries, breakable
+}
+\newtcolorbox{warningbox}[1][]{
+  colback=orange!10!white, colframe=orange!80!black,
+  title=#1, fonttitle=\bfseries, breakable
+}
+\newtcolorbox{resultbox}[1][]{
+  colback=green!5!white, colframe=green!60!black,
+  title=#1, fonttitle=\bfseries, breakable
+}
+
+%% Commandes personnalisees
+\newcommand{\TT}{\textit{Tunisie Telecom}}
+\newcommand{\FST}{\textit{Faculté des Sciences de Tunis}}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
+
+%% Chemin des figures
+\graphicspath{{figures/}{diagrams/}}
+
+%% Numerotation
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+
+\begin{document}
+
+%% Page de garde
+\input{chapters/00-pagedegarde}
+
+%% Pages preliminaires
+\pagenumbering{roman}
+\setcounter{page}{1}
+
+\input{chapters/00-dedicace}
+\input{chapters/00-remerciements}
+\input{chapters/00-resume}
+
+%% Tables
+\tableofcontents
+\listoffigures
+\listoftables
+\input{chapters/00-acronymes}
+
+%% Corps du rapport
+\cleardoublepage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\input{chapters/00-introduction-generale}
+\input{chapters/01-contexte}
+\input{chapters/02-analyse-besoins}
+\input{chapters/03-realisation}
+\input{chapters/04-simulation}
+\input{chapters/05-ml-performance}
+\input{chapters/06-conclusion}
+
+%% Bibliographie
+\printbibliography[heading=bibintoc, title={Références bibliographiques}]
+
+%% Annexes
+\appendix
+\input{chapters/annexe-a}
+\input{chapters/annexe-b}
+
+\end{document}

@@ -1,0 +1,73 @@
+@startuml diag-composants
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam componentStyle rectangle
+skinparam shadowing false
+
+title Diagramme de Composants Logiciels\nArchitecture de Déploiement
+
+package "Machine Hôte — Windows 11\ni3-1215U / 16 Go RAM" {
+
+  package "GNS3 VM (VMware Workstation)\n4 Go RAM" #F3E5F5 {
+    component [pfSense CE\nFirewall / NAT / VPN\nFreeBSD] as PFSENSE
+    component [MikroTik CHR\nRouterOS v7\nSwitch L3 / VLAN] as MIKROTIK
+  }
+
+  package "Docker Engine (GNS3 VM)\nConteneurs applicatifs" #E3F2FD {
+
+    package "Couche IoT Simulée" #E8F5E9 {
+      component [fleet-simulator\nPython 3.11\npaho-mqtt + TLS] as FLEET
+      note bottom of FLEET
+        50 threads concurrents
+        76 000 événements CSV
+        Certificats individuels
+      end note
+    }
+
+    package "Couche Services (DMZ)" #FFF9C4 {
+      component [Mosquitto v2.0\nBroker MQTT\nTLS 1.3 + mTLS\nPort 8883] as MOSQ
+      component [Suricata v7.0\nIDS passif\nParseur MQTT natif\nAF_PACKET] as SUR
+    }
+
+    package "Couche PKI" #FCE4EC {
+      component [HashiCorp Vault v1.15\nPKI Engine\nCA racine + intermédiaire\nPort 8200] as VAULT
+    }
+
+    package "Couche SIEM" #E3F2FD {
+      component [Wazuh v4.7 OVA\nManager + Indexer\n+ Dashboard\n192.168.30.128] as WAZUH
+    }
+
+    package "Couche ML / Analyse" #FFF8E1 {
+      component [Python ML Engine\nscikit-learn\nIsolationForest\nRandomForest] as MLE
+    }
+  }
+}
+
+' Interfaces
+interface "MQTT/TLS\n8883" as IMQTT
+interface "API REST\n8200" as IAPI
+interface "EVE JSON\nFichier" as IEVE
+interface "Syslog\n1514" as ISYS
+
+FLEET --> IMQTT
+IMQTT --> MOSQ
+
+FLEET ..> IAPI
+MOSQ ..> IAPI
+IAPI --> VAULT
+
+SUR --> IEVE
+IEVE --> WAZUH
+
+MOSQ --> ISYS
+ISYS --> WAZUH
+
+SUR ..> MLE : Données réseau
+WAZUH ..> MLE : Logs corrélés
+
+PFSENSE --> MIKROTIK : Routage
+MIKROTIK --> MOSQ : Inter-VLAN
+MIKROTIK --> SUR : Port miroir
+
+@enduml

@@ -1,0 +1,57 @@
+@startuml diag-deploiement
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam node {
+  BackgroundColor #FAFAFA
+  BorderColor #555555
+}
+
+title Diagramme de Déploiement\nInfrastructure Physique et Virtuelle
+
+node "Machine Hôte\nWindows 11\ni3-1215U / 16 Go RAM\nSSD 512 Go" as HOST {
+
+  node "VMware Workstation Pro" as VMWARE {
+
+    node "GNS3 VM\nUbuntu Server\n4 Go RAM / 2 vCPU" as GNS3VM {
+
+      artifact "Docker Engine" as DOCKER
+
+      node "Conteneur: fleet-simulator\nPython 3.11 / paho-mqtt\n192.168.10.100" as C_FLEET
+      node "Conteneur: mosquitto\nEclipse Mosquitto v2.0\n192.168.20.10" as C_MOSQ
+      node "Conteneur: vault\nHashiCorp Vault v1.15\n192.168.20.20" as C_VAULT
+      node "Conteneur: suricata\nSuricata v7.0\n192.168.20.20" as C_SUR
+
+      node "VM: pfSense CE\nFreeBSD\nWAN: DHCP / LAN: 192.168.1.1" as V_PF
+      node "VM: MikroTik CHR\nRouterOS v7\n192.168.1.2" as V_MK
+    }
+
+    node "Wazuh OVA v4.7\n8 Go RAM / 4 vCPU\n192.168.30.128" as WAZUH {
+      artifact "Wazuh Manager" as WM
+      artifact "OpenSearch" as OS
+      artifact "Dashboards" as OSD
+    }
+  }
+
+  node "GNS3 Client\n(Interface graphique)" as GNS3C
+}
+
+' Relations
+GNS3C -- GNS3VM : TCP/3080\n(API GNS3)
+DOCKER -- C_FLEET
+DOCKER -- C_MOSQ
+DOCKER -- C_VAULT
+DOCKER -- C_SUR
+
+V_PF -- V_MK : Trunk 802.1Q
+V_MK -- C_FLEET : VLAN 10
+V_MK -- C_MOSQ : VLAN 20
+V_MK -- C_VAULT : VLAN 30
+V_MK -- C_SUR : VLAN 20\n(port miroir)
+V_MK -- WAZUH : VLAN 40
+
+WM -- OS : localhost:9200
+OS -- OSD : localhost:5601
+
+@enduml

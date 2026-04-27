@@ -1,0 +1,105 @@
+@startuml diag-flux-e2e
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam sequenceMessageAlign center
+skinparam shadowing false
+skinparam sequence {
+  ArrowColor #2196F3
+  ActorBorderColor #555555
+  LifeLineBorderColor #999999
+  ParticipantBackgroundColor #FAFAFA
+  ParticipantBorderColor #555555
+}
+
+title Flux de Communication E2E Sécurisé\nDiagramme de Séquence
+
+actor "Dispositif IoT\n(Capteur)" as DEV
+participant "MikroTik\nRouteur L3" as RTR
+participant "HashiCorp\nVault (PKI)" as VAULT
+participant "Mosquitto\nBroker MQTT" as BROKER
+participant "Suricata\nIDS" as IDS
+participant "Wazuh\nSIEM" as SIEM
+participant "ML Engine\nDétection" as ML
+
+== Phase 1 — Provisionnement de l'Identité ==
+
+DEV -> VAULT : Requête API REST\nDemande certificat X.509\n(CN = device-XXX.devices.pfe-iot.local)
+activate VAULT
+VAULT -> VAULT : Validation de l'identité\nGénération clé RSA-2048\nSignature par CA Intermédiaire
+VAULT --> DEV : Certificat X.509 + Clé privée\n+ Chaîne CA (TTL = 24h)
+deactivate VAULT
+
+note over DEV, VAULT
+  Le certificat contient :
+  — CN : device-XXX.devices.pfe-iot.local
+  — SAN : IP du dispositif
+  — Key Usage : digitalSignature, keyEncipherment
+  — Extended Key Usage : clientAuth
+  — Validité : 24 heures
+end note
+
+== Phase 2 — Établissement de la Connexion TLS 1.3 mTLS ==
+
+DEV -> RTR : Paquet TCP SYN (port 8883)
+RTR -> RTR : Vérification ACL firewall\n(IoT → DMZ autorisé)
+RTR -> BROKER : Forward TCP SYN
+
+DEV -> BROKER : ClientHello\n(TLS 1.3, cipher suites, key_share)
+activate BROKER
+BROKER --> DEV : ServerHello + Certificate (serveur)\n+ CertificateVerify + Finished
+DEV -> BROKER : Certificate (client — mTLS)\n+ CertificateVerify + Finished
+BROKER -> BROKER : Validation chaîne certificat client\nVérification CN dans ACL
+deactivate BROKER
+
+note over DEV, BROKER #E8F5E9
+  Canal chiffré établi
+  ——————————————————
+  Protocole : TLS 1.3
+  Cipher : TLS_AES_256_GCM_SHA384
+  Authentification : Mutuelle (mTLS)
+  Forward Secrecy : ECDHE
+end note
+
+== Phase 3 — Publication des Données IoT ==
+
+DEV -> BROKER : [TLS] MQTT CONNECT\n(ClientID + CN certificat)
+BROKER --> DEV : MQTT CONNACK (RC=0, succès)
+
+loop Pour chaque mesure du capteur
+  DEV -> BROKER : [TLS] MQTT PUBLISH\nTopic: iot/sensors/device-XXX/temperature\nPayload: {"temp": 23.5, "ts": "..."}
+  BROKER --> DEV : MQTT PUBACK (QoS 1)
+end
+
+== Phase 4 — Détection et Supervision ==
+
+RTR -> IDS : Port mirroring\n(copie du trafic VLAN 20)
+activate IDS
+IDS -> IDS : Inspection DPI\nApplication des règles MQTT\n(DoS, injection, scanning)
+IDS -> SIEM : Alertes EVE JSON\n(si anomalie détectée)
+deactivate IDS
+
+BROKER -> SIEM : Logs MQTT\n(connexions, publications)
+activate SIEM
+SIEM -> SIEM : Corrélation multi-sources\nApplication règles custom\n(niveaux 3 à 10)
+SIEM -> ML : Export données\npour analyse ML
+deactivate SIEM
+
+activate ML
+ML -> ML : IsolationForest → score anomalie\nRandomForest → classification attaque
+ML --> SIEM : Résultats détection\n(Normal / Attaque + type)
+deactivate ML
+
+== Phase 5 — Rotation Automatique des Certificats ==
+
+note over DEV, VAULT #FFECB3
+  Avant expiration du TTL (24h),
+  le dispositif renouvelle son certificat
+  automatiquement via l'API Vault
+end note
+
+DEV -> VAULT : Renouvellement certificat\n(nouveau CSR)
+VAULT --> DEV : Nouveau certificat X.509\n(TTL = 24h)
+
+@enduml

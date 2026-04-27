@@ -1,0 +1,65 @@
+@startuml diag-pki-sequence
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam shadowing false
+
+title Diagramme de Séquence — Émission de Certificat via Vault PKI
+
+actor "Administrateur" as ADMIN
+participant "Vault CLI /\nAPI REST" as API
+participant "Vault Server\n(PKI Engine)" as VAULT
+database "Backend\nStockage" as STORE
+participant "Dispositif IoT\nou Service" as TARGET
+
+== Initialisation (une seule fois) ==
+
+ADMIN -> API : Activer moteur PKI racine\n(path=pki)
+API -> VAULT : secrets enable -path=pki pki
+VAULT -> STORE : Créer mount PKI
+
+ADMIN -> API : Générer CA racine\n(RSA-4096, TTL=10 ans)
+API -> VAULT : pki/root/generate/internal
+VAULT -> VAULT : Génération clé RSA-4096\nCréation certificat auto-signé
+VAULT -> STORE : Stocker CA racine
+VAULT --> API : Certificat CA racine (PEM)
+
+ADMIN -> API : Activer PKI intermédiaire\n(path=pki_int)
+API -> VAULT : secrets enable -path=pki_int pki
+
+ADMIN -> API : Générer CSR intermédiaire
+API -> VAULT : pki_int/intermediate/generate/internal
+VAULT --> API : CSR intermédiaire
+
+ADMIN -> API : Signer CSR par CA racine
+API -> VAULT : pki/root/sign-intermediate
+VAULT -> VAULT : Signature SHA-256
+VAULT --> API : Certificat intermédiaire signé
+
+ADMIN -> API : Importer certificat signé
+API -> VAULT : pki_int/intermediate/set-signed
+VAULT -> STORE : Stocker CA intermédiaire
+
+ADMIN -> API : Créer rôle "iot-devices"\n(TTL=24h, clientAuth)
+API -> VAULT : pki_int/roles/iot-devices
+
+== Émission de certificat (par dispositif) ==
+
+TARGET -> API : POST /v1/pki_int/issue/iot-devices\n{"common_name": "device-001...",\n "ttl": "24h"}
+API -> VAULT : Issue certificate
+activate VAULT
+VAULT -> VAULT : Générer clé RSA-2048\nCréer certificat X.509\nSigner par CA intermédiaire
+VAULT -> STORE : Enregistrer le serial
+VAULT --> API : Certificat + Clé privée\n+ Chaîne CA
+deactivate VAULT
+API --> TARGET : JSON Response\n(certificate, private_key, ca_chain)
+
+note over TARGET
+  Le dispositif stocke :
+  — device-XXX.crt (certificat)
+  — device-XXX.key (clé privée)
+  — ca-chain.crt (chaîne CA)
+  Durée d'émission : ~87 ms
+end note
+
+@enduml

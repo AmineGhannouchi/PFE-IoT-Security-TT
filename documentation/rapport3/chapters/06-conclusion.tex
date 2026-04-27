@@ -1,0 +1,103 @@
+\chapter*{Conclusion générale et perspectives}
+\addcontentsline{toc}{chapter}{Conclusion générale et perspectives}
+\markboth{Conclusion générale et perspectives}{Conclusion générale et perspectives}
+
+\section*{Synthèse des travaux}
+
+Ce projet de fin d'études a présenté la conception, l'implémentation et l'évaluation d'une architecture complète de sécurisation des flux de communication dans un écosystème IoT simulé. Les travaux ont été réalisés au sein de \TT{} en suivant la méthodologie Scrum, articulée en six sprints itératifs. L'approche adoptée couvre l'ensemble de la chaîne de sécurité, du provisionnement cryptographique (PKI HashiCorp Vault automatisée) jusqu'à la détection intelligente d'anomalies (Machine Learning), en passant par le chiffrement des communications (TLS~1.3 / mTLS), l'analyse réseau (IDS Suricata) et la centralisation des événements (SIEM Wazuh).
+
+\section*{Objectifs atteints}
+
+\begin{table}[H]
+\centering
+\caption{Bilan de réalisation des objectifs}
+\label{tab:objectifs}
+\begin{tabular}{clc}
+\toprule
+\textbf{ID} & \textbf{Objectif} & \textbf{Statut} \\
+\midrule
+O1 & Concevoir une architecture IoT sécurisée et segmentée & \textcolor{green!60!black}{\textbf{Atteint}} \\
+O2 & Déployer une PKI automatisée via HashiCorp Vault & \textcolor{green!60!black}{\textbf{Atteint}} \\
+O3 & Implémenter TLS~1.3 avec authentification mutuelle (mTLS) & \textcolor{green!60!black}{\textbf{Atteint}} \\
+O4 & Simuler une flotte de 50 dispositifs IoT hétérogènes & \textcolor{green!60!black}{\textbf{Atteint}} \\
+O5 & Déployer un IDS avec analyse native MQTT (Suricata) & \textcolor{green!60!black}{\textbf{Atteint}} \\
+O6 & Centraliser les événements dans un SIEM (Wazuh) & \textcolor{green!60!black}{\textbf{Atteint}} \\
+O7 & Développer un module ML de détection d'anomalies & \textcolor{green!60!black}{\textbf{Atteint}} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section*{Résultats quantitatifs clés}
+
+\begin{table}[H]
+\centering
+\caption{Résultats quantitatifs principaux du projet}
+\label{tab:key_results}
+\begin{tabular}{lr}
+\toprule
+\textbf{Métrique} & \textbf{Valeur} \\
+\midrule
+\multicolumn{2}{l}{\textit{Infrastructure et simulation}} \\
+Dispositifs IoT simulés & 50 \\
+Messages MQTT échangés & 76\,000 \\
+Temps de génération d'un certificat (Vault) & 87~ms \\
+Types d'attaques simulés & 7 \\
+\midrule
+\multicolumn{2}{l}{\textit{Sécurité réseau}} \\
+Alertes Suricata générées & 51 \\
+Règles Wazuh personnalisées & 12 \\
+Alertes corrélées dans le SIEM & 100\,\% \\
+\midrule
+\multicolumn{2}{l}{\textit{Machine Learning}} \\
+F1-Score -- Random Forest (binaire) & 0,994 \\
+ROC-AUC -- Random Forest & 0,999 \\
+F1-Score -- IsolationForest & 0,930 \\
+ROC-AUC -- IsolationForest & 0,959 \\
+\midrule
+\multicolumn{2}{l}{\textit{Performance TLS}} \\
+Surcoût RTT -- TLS vs TCP & +89\,\% \\
+RTT moyen sous TLS (QoS~1) & 7,9~ms \\
+Throughput sous TLS & 3\,050~msg/s \\
+Latence de connexion TLS & 40,8~ms \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section*{Contributions}
+
+Les principales contributions de ce travail sont les suivantes :
+
+\begin{enumerate}
+  \item \textbf{Architecture de référence} : proposition d'une architecture IoT sécurisée, segmentée et reproductible, entièrement simulée dans GNS3 avec des composants open source.
+  \item \textbf{Automatisation PKI} : démonstration de la faisabilité d'une PKI entièrement automatisée via HashiCorp Vault pour le provisionnement à grande échelle de certificats X.509 (87~ms par certificat).
+  \item \textbf{Validation du compromis sécurité/performance} : quantification rigoureuse du surcoût TLS~1.3/mTLS sur MQTT, démontrant son acceptabilité pour les contraintes IoT (RTT $<$ 8~ms, throughput $>$ 3\,000~msg/s).
+  \item \textbf{Pipeline de détection multi-niveaux} : mise en place d'une chaîne complète : IDS réseau (Suricata) $\to$ SIEM (Wazuh) $\to$ ML (IsolationForest + Random Forest), offrant une défense en profondeur.
+  \item \textbf{Approche méthodologique Scrum} : application d'une méthodologie agile adaptée au contexte d'un PFE, avec un Product Backlog structuré et six sprints itératifs.
+\end{enumerate}
+
+\section*{Limitations}
+
+Malgré les résultats encourageants, certaines limitations doivent être mentionnées :
+
+\begin{itemize}
+  \item \textbf{Environnement simulé} : l'infrastructure GNS3 ne reproduit pas parfaitement les conditions d'un réseau IoT de production (latences réalistes, contraintes matérielles des microcontrôleurs).
+  \item \textbf{Dataset partiellement synthétique} : les performances ML pourraient varier avec des données d'attaques réelles.
+  \item \textbf{Scalabilité} : tests limités à 50 dispositifs ; le passage à des milliers d'unités nécessiterait une validation supplémentaire.
+  \item \textbf{Révocation} : le mécanisme CRL/OCSP n'a pas été implémenté dans le prototype.
+  \item \textbf{Détection batch} : le pipeline ML fonctionne en mode batch et non en streaming temps réel sur le flux MQTT.
+\end{itemize}
+
+\section*{Perspectives}
+
+\paragraph{Court terme (3--6 mois).}
+Implémenter la révocation de certificats via OCSP stapling intégré à Vault ; déployer le pipeline ML en mode streaming avec Apache Kafka ou MQTT directement ; étendre le dataset avec des captures réseau réelles (pcap) ; ajouter le support TLS~1.3 0-RTT pour les reconnexions fréquentes.
+
+\paragraph{Moyen terme (6--12 mois).}
+Migrer l'architecture vers Kubernetes (K3s) pour l'orchestration en production ; intégrer des techniques de Deep Learning (LSTM, Autoencoders) pour la détection de séquences d'attaques temporelles ; implémenter un \textit{Digital Twin} de l'infrastructure IoT pour les tests de pénétration automatisés ; développer un tableau de bord unifié (Grafana) consolidant les métriques de sécurité et de performance.
+
+\paragraph{Long terme ($>$ 12 mois).}
+Évaluer le Post-Quantum TLS (ML-KEM / ML-DSA) pour anticiper la menace quantique sur la PKI~\cite{rfc9325} ; explorer la Federated Learning pour entraîner les modèles directement sur les passerelles IoT, sans centraliser les données ; proposer un framework open source packagé \og IoT-Sec-Framework \fg{} réutilisable ; étendre l'approche à d'autres protocoles : CoAP/DTLS, AMQP, LwM2M.
+
+\vspace{0.8cm}
+
+Ce projet a démontré qu'il est possible de sécuriser un écosystème IoT de bout en bout avec des outils exclusivement open source, tout en maintenant des performances compatibles avec les contraintes opérationnelles du domaine. La combinaison PKI automatisée + TLS~1.3/mTLS + IDS + SIEM + ML offre une défense en profondeur solide, modulaire et extensible, qui constitue une base de référence directement réutilisable par les équipes sécurité de \TT{} et, plus largement, par toute organisation engagée dans le déploiement d'infrastructures IoT à grande échelle.

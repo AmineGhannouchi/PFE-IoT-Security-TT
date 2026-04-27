@@ -1,0 +1,56 @@
+@startuml diag-topologie-reseau
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam linetype ortho
+skinparam shadowing false
+
+title Topologie Réseau Simulée (GNS3)\nPlan d'Adressage IP Complet
+
+cloud "Internet" as INET #F5F5F5
+
+node "pfSense CE\nFirewall / NAT\nWAN: DHCP | LAN: 192.168.1.1/24" as PFSENSE #EDE7F6
+
+node "MikroTik CHR v7\nRouteur L3 — Switch Inter-VLAN\n192.168.1.2/24" as MIKROTIK #E1BEE7
+
+INET -- PFSENSE
+PFSENSE -- MIKROTIK : Trunk 802.1Q
+
+package "VLAN 10 — Zone IoT Devices\n192.168.10.0/24 — GW: .1" #E8F5E9 {
+  node "fleet-simulator\n192.168.10.100\n50 devices simulés" as FLEET
+  node "device-001..050\n192.168.10.11..60\nMQTT/TLS" as DEVS
+}
+
+package "VLAN 20 — Zone DMZ Services\n192.168.20.0/24 — GW: .1" #FFF9C4 {
+  node "Mosquitto\n192.168.20.10\nPort 8883 (TLS/mTLS)" as MOSQ
+  node "Suricata IDS\n192.168.20.20\nMode AF_PACKET" as SUR
+}
+
+package "VLAN 30 — Zone PKI\n192.168.30.0/24 — GW: .1" #FCE4EC {
+  node "HashiCorp Vault\n192.168.20.20\nPort 8200" as VAULT
+}
+
+package "VLAN 40 — Zone SIEM / Management\n192.168.30.0/24 — GW: .1" #E3F2FD {
+  node "Wazuh OVA v4.7\n192.168.30.128\n8 GB RAM / 4 vCPU" as WAZUH
+}
+
+MIKROTIK -- FLEET : VLAN 10
+MIKROTIK -- DEVS : VLAN 10
+MIKROTIK -- MOSQ : VLAN 20
+MIKROTIK -- SUR : VLAN 20\n(port miroir)
+MIKROTIK -- VAULT : VLAN 30
+MIKROTIK -- WAZUH : VLAN 40
+
+note bottom of MIKROTIK
+  Règles Firewall :
+  ——————————————
+  IoT → DMZ (8883/tcp) : ACCEPT
+  IoT → PKI (8200/tcp) : ACCEPT
+  DMZ → SIEM (1514/tcp) : ACCEPT
+  IoT → SIEM : DROP
+  IoT → Analyse : DROP
+  Défaut inter-VLAN : DROP
+end note
+
+@enduml
