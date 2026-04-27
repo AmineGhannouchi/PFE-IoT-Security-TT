@@ -102,21 +102,21 @@ if (-not (Test-Path $texFile)) {
 
 $usePerl = $null -ne (Get-Command 'perl' -ErrorAction SilentlyContinue)
 $useLatexmk = $usePerl -and ($null -ne (Get-Command 'latexmk' -ErrorAction SilentlyContinue))
-$usePdflatex = $null -ne (Get-Command 'pdflatex' -ErrorAction SilentlyContinue)
+$useXelatex = $null -ne (Get-Command 'xelatex' -ErrorAction SilentlyContinue)
 $useBiber = $null -ne (Get-Command 'biber' -ErrorAction SilentlyContinue)
 
 if ($useLatexmk -and -not $Quick) {
-    Write-Host '[LATEX] Compilation avec latexmk...' -ForegroundColor Cyan
-    & latexmk -pdf -interaction=nonstopmode -shell-escape $texFile
-} elseif ($usePdflatex) {
+    Write-Host '[LATEX] Compilation avec latexmk (xelatex)...' -ForegroundColor Cyan
+    & latexmk -xelatex -interaction=nonstopmode -shell-escape $texFile
+} elseif ($useXelatex) {
     if ($Quick) {
-        Write-Host '[LATEX] Compilation rapide (1 passe)...' -ForegroundColor Cyan
-        & pdflatex -interaction=nonstopmode -shell-escape $texFile
+        Write-Host '[LATEX] Compilation rapide (1 passe xelatex)...' -ForegroundColor Cyan
+        & xelatex -interaction=nonstopmode -shell-escape $texFile
     } else {
-        Write-Host '[LATEX] Compilation complete (4 passes)...' -ForegroundColor Cyan
+        Write-Host '[LATEX] Compilation complete (4 passes xelatex)...' -ForegroundColor Cyan
 
-        Write-Host '  Passe 1/4 : pdflatex...' -ForegroundColor Gray
-        & pdflatex -interaction=nonstopmode -shell-escape $texFile | Out-Null
+        Write-Host '  Passe 1/4 : xelatex...' -ForegroundColor Gray
+        & xelatex -interaction=nonstopmode -shell-escape $texFile | Out-Null
 
         if ($useBiber) {
             Write-Host '  Passe 2/4 : biber...' -ForegroundColor Gray
@@ -125,14 +125,14 @@ if ($useLatexmk -and -not $Quick) {
             Write-Host '  [WARN] biber non trouve -- bibliographie non generee' -ForegroundColor Yellow
         }
 
-        Write-Host '  Passe 3/4 : pdflatex...' -ForegroundColor Gray
-        & pdflatex -interaction=nonstopmode -shell-escape $texFile | Out-Null
+        Write-Host '  Passe 3/4 : xelatex...' -ForegroundColor Gray
+        & xelatex -interaction=nonstopmode -shell-escape $texFile | Out-Null
 
-        Write-Host '  Passe 4/4 : pdflatex...' -ForegroundColor Gray
-        & pdflatex -interaction=nonstopmode -shell-escape $texFile | Out-Null
+        Write-Host '  Passe 4/4 : xelatex...' -ForegroundColor Gray
+        & xelatex -interaction=nonstopmode -shell-escape $texFile | Out-Null
     }
 } else {
-    Write-Host '[ERREUR] Ni latexmk ni pdflatex trouves. Installer TeX Live ou MiKTeX.' -ForegroundColor Red
+    Write-Host '[ERREUR] xelatex non trouve. Installer MiKTeX/TeXLive avec xelatex.' -ForegroundColor Red
     Pop-Location
     exit 1
 }

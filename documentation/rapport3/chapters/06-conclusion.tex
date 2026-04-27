@@ -6,27 +6,6 @@
 
 Ce projet de fin d'études a présenté la conception, l'implémentation et l'évaluation d'une architecture complète de sécurisation des flux de communication dans un écosystème IoT simulé. Les travaux ont été réalisés au sein de \TT{} en suivant la méthodologie Scrum, articulée en six sprints itératifs. L'approche adoptée couvre l'ensemble de la chaîne de sécurité, du provisionnement cryptographique (PKI HashiCorp Vault automatisée) jusqu'à la détection intelligente d'anomalies (Machine Learning), en passant par le chiffrement des communications (TLS~1.3 / mTLS), l'analyse réseau (IDS Suricata) et la centralisation des événements (SIEM Wazuh).
 
-\section*{Objectifs atteints}
-
-\begin{table}[H]
-\centering
-\caption{Bilan de réalisation des objectifs}
-\label{tab:objectifs}
-\begin{tabular}{clc}
-\toprule
-\textbf{ID} & \textbf{Objectif} & \textbf{Statut} \\
-\midrule
-O1 & Concevoir une architecture IoT sécurisée et segmentée & \textcolor{green!60!black}{\textbf{Atteint}} \\
-O2 & Déployer une PKI automatisée via HashiCorp Vault & \textcolor{green!60!black}{\textbf{Atteint}} \\
-O3 & Implémenter TLS~1.3 avec authentification mutuelle (mTLS) & \textcolor{green!60!black}{\textbf{Atteint}} \\
-O4 & Simuler une flotte de 50 dispositifs IoT hétérogènes & \textcolor{green!60!black}{\textbf{Atteint}} \\
-O5 & Déployer un IDS avec analyse native MQTT (Suricata) & \textcolor{green!60!black}{\textbf{Atteint}} \\
-O6 & Centraliser les événements dans un SIEM (Wazuh) & \textcolor{green!60!black}{\textbf{Atteint}} \\
-O7 & Développer un module ML de détection d'anomalies & \textcolor{green!60!black}{\textbf{Atteint}} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
 \section*{Résultats quantitatifs clés}
 
 \begin{table}[H]
@@ -96,7 +75,7 @@ Implémenter la révocation de certificats via OCSP stapling intégré à Vault 
 Migrer l'architecture vers Kubernetes (K3s) pour l'orchestration en production ; intégrer des techniques de Deep Learning (LSTM, Autoencoders) pour la détection de séquences d'attaques temporelles ; implémenter un \textit{Digital Twin} de l'infrastructure IoT pour les tests de pénétration automatisés ; développer un tableau de bord unifié (Grafana) consolidant les métriques de sécurité et de performance.
 
 \paragraph{Long terme ($>$ 12 mois).}
-Évaluer le Post-Quantum TLS (ML-KEM / ML-DSA) pour anticiper la menace quantique sur la PKI~\cite{rfc9325} ; explorer la Federated Learning pour entraîner les modèles directement sur les passerelles IoT, sans centraliser les données ; proposer un framework open source packagé \og IoT-Sec-Framework \fg{} réutilisable ; étendre l'approche à d'autres protocoles : CoAP/DTLS, AMQP, LwM2M.
+Évaluer le Post-Quantum TLS (ML-KEM / ML-DSA) pour anticiper la menace quantique sur la PKI~\cite{rfc9325} ; explorer la Federated Learning pour entraîner les modèles directement sur les passerelles IoT, sans centraliser les données ; proposer un framework open source packagé «~IoT-Sec-Framework~» réutilisable ; étendre l'approche à d'autres protocoles : CoAP/DTLS, AMQP, LwM2M.
 
 \vspace{0.8cm}
 

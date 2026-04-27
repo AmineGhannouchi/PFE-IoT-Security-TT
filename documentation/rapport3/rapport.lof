@@ -1,44 +1,43 @@
-\babel@toc {french}{}\relax 
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {1.1}{\ignorespaces Diagramme de Gantt -- planification du projet PFE}}{7}{figure.caption.12}%
-\contentsline {figure}{\numberline {1.2}{\ignorespaces Planification des sprints du projet PFE}}{7}{figure.caption.13}%
-\contentsline {figure}{\numberline {1.3}{\ignorespaces Diagramme de cas d'utilisation du système IoT sécurisé}}{8}{figure.caption.14}%
+\contentsline {figure}{\numberline {1.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Diagramme de Gantt -- planification du projet PFE}}{7}{figure.caption.11}%
+\contentsline {figure}{\numberline {1.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Planification des sprints du projet PFE}}{7}{figure.caption.12}%
+\contentsline {figure}{\numberline {1.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Diagramme de cas d'utilisation du système IoT sécurisé}}{8}{figure.caption.13}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {2.1}{\ignorespaces Handshake TLS~1.3 en mode mTLS (diagramme de séquence)}}{14}{figure.caption.18}%
-\contentsline {figure}{\numberline {2.2}{\ignorespaces Hiérarchie PKI -- diagramme de classes (CA Racine, CA Intermédiaire, Rôles)}}{15}{figure.caption.19}%
+\contentsline {figure}{\numberline {2.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Handshake TLS~1.3 en mode mTLS (diagramme de séquence)}}{14}{figure.caption.17}%
+\contentsline {figure}{\numberline {2.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Hiérarchie PKI -- diagramme de classes (CA Racine, CA Intermédiaire, Rôles)}}{15}{figure.caption.18}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces Architecture générale de l'écosystème IoT sécurisé}}{19}{figure.caption.22}%
-\contentsline {figure}{\numberline {3.2}{\ignorespaces Diagramme de composants logiciels et interfaces}}{20}{figure.caption.23}%
-\contentsline {figure}{\numberline {3.3}{\ignorespaces Flux E2E sécurisé -- diagramme de séquence}}{21}{figure.caption.24}%
-\contentsline {figure}{\numberline {3.4}{\ignorespaces Topologie réseau détaillée}}{22}{figure.caption.26}%
-\contentsline {figure}{\numberline {3.5}{\ignorespaces Topologie réseau dans l'interface GNS3}}{23}{figure.caption.27}%
-\contentsline {figure}{\numberline {3.6}{\ignorespaces Diagramme de déploiement -- infrastructure physique et virtuelle}}{23}{figure.caption.28}%
-\contentsline {figure}{\numberline {3.7}{\ignorespaces Hiérarchie PKI -- diagramme de classes}}{25}{figure.caption.29}%
-\contentsline {figure}{\numberline {3.8}{\ignorespaces Séquence d'émission d'un certificat via l'API Vault}}{27}{figure.caption.32}%
-\contentsline {figure}{\numberline {3.9}{\ignorespaces Handshake TLS~1.3 mTLS -- diagramme de séquence détaillé}}{29}{figure.caption.34}%
+\contentsline {figure}{\numberline {3.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Architecture générale de l'écosystème IoT sécurisé}}{19}{figure.caption.21}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Diagramme de composants logiciels et interfaces}}{20}{figure.caption.22}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Flux E2E sécurisé -- diagramme de séquence}}{21}{figure.caption.23}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces \xpg@aux {}{french}\ignorespaces Topologie réseau détaillée}}{22}{figure.caption.25}%
+\contentsline {figure}{\numberline {3.5}{\ignorespaces \xpg@aux {}{french}\ignorespaces Topologie réseau dans l'interface GNS3}}{23}{figure.caption.26}%
+\contentsline {figure}{\numberline {3.6}{\ignorespaces \xpg@aux {}{french}\ignorespaces Diagramme de déploiement -- infrastructure physique et virtuelle}}{23}{figure.caption.27}%
+\contentsline {figure}{\numberline {3.7}{\ignorespaces \xpg@aux {}{french}\ignorespaces Hiérarchie PKI -- diagramme de classes}}{25}{figure.caption.28}%
+\contentsline {figure}{\numberline {3.8}{\ignorespaces \xpg@aux {}{french}\ignorespaces Séquence d'émission d'un certificat via l'API Vault}}{27}{figure.caption.31}%
+\contentsline {figure}{\numberline {3.9}{\ignorespaces \xpg@aux {}{french}\ignorespaces Handshake TLS~1.3 mTLS -- diagramme de séquence détaillé}}{29}{figure.caption.33}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {4.1}{\ignorespaces Distribution des classes dans le dataset IoT}}{32}{figure.caption.37}%
-\contentsline {figure}{\numberline {4.2}{\ignorespaces Diagramme de classes du simulateur de flotte IoT}}{33}{figure.caption.38}%
-\contentsline {figure}{\numberline {4.3}{\ignorespaces Diagramme d'activité du simulateur de flotte IoT}}{34}{figure.caption.39}%
-\contentsline {figure}{\numberline {4.4}{\ignorespaces Processus de détection Suricata -- diagramme d'activité}}{36}{figure.caption.41}%
-\contentsline {figure}{\numberline {4.5}{\ignorespaces Alertes Suricata visibles dans le dashboard Wazuh}}{38}{figure.caption.44}%
-\contentsline {figure}{\numberline {4.6}{\ignorespaces Pipeline d'ingestion et de traitement Wazuh}}{39}{figure.caption.45}%
-\contentsline {figure}{\numberline {4.7}{\ignorespaces Dashboard Wazuh affichant les alertes IoT/MQTT}}{40}{figure.caption.47}%
+\contentsline {figure}{\numberline {4.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Distribution des classes dans le dataset IoT}}{32}{figure.caption.36}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Diagramme de classes du simulateur de flotte IoT}}{33}{figure.caption.37}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Diagramme d'activité du simulateur de flotte IoT}}{34}{figure.caption.38}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces \xpg@aux {}{french}\ignorespaces Processus de détection Suricata -- diagramme d'activité}}{36}{figure.caption.40}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces \xpg@aux {}{french}\ignorespaces Alertes Suricata visibles dans le dashboard Wazuh}}{38}{figure.caption.43}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces \xpg@aux {}{french}\ignorespaces Pipeline d'ingestion et de traitement Wazuh}}{39}{figure.caption.44}%
+\contentsline {figure}{\numberline {4.7}{\ignorespaces \xpg@aux {}{french}\ignorespaces Dashboard Wazuh affichant les alertes IoT/MQTT}}{40}{figure.caption.46}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces Pipeline de détection d'anomalies par ML -- diagramme d'activité}}{43}{figure.caption.49}%
-\contentsline {figure}{\numberline {5.2}{\ignorespaces Distribution des classes dans le dataset (EDA)}}{44}{figure.caption.50}%
-\contentsline {figure}{\numberline {5.3}{\ignorespaces Matrice de corrélation des features}}{44}{figure.caption.51}%
-\contentsline {figure}{\numberline {5.4}{\ignorespaces Boxplots des features par type d'attaque}}{45}{figure.caption.52}%
-\contentsline {figure}{\numberline {5.5}{\ignorespaces Matrice de confusion -- IsolationForest}}{46}{figure.caption.54}%
-\contentsline {figure}{\numberline {5.6}{\ignorespaces Distribution des scores d'anomalie -- IsolationForest}}{46}{figure.caption.55}%
-\contentsline {figure}{\numberline {5.7}{\ignorespaces Matrice de confusion et courbe ROC -- Random Forest}}{47}{figure.caption.57}%
-\contentsline {figure}{\numberline {5.8}{\ignorespaces Importance des features -- Random Forest}}{47}{figure.caption.58}%
-\contentsline {figure}{\numberline {5.9}{\ignorespaces Matrice de confusion multi-classe -- Random Forest}}{48}{figure.caption.59}%
-\contentsline {figure}{\numberline {5.10}{\ignorespaces Comparaison IsolationForest vs Random Forest}}{48}{figure.caption.60}%
-\contentsline {figure}{\numberline {5.11}{\ignorespaces Comparaison de la latence de connexion TCP vs TLS}}{50}{figure.caption.63}%
-\contentsline {figure}{\numberline {5.12}{\ignorespaces RTT des messages MQTT -- TCP vs TLS par QoS}}{51}{figure.caption.65}%
-\contentsline {figure}{\numberline {5.13}{\ignorespaces Throughput TCP vs TLS en fonction de la taille de payload}}{51}{figure.caption.67}%
-\contentsline {figure}{\numberline {5.14}{\ignorespaces Décomposition des phases du handshake TLS~1.3}}{52}{figure.caption.69}%
-\contentsline {figure}{\numberline {5.15}{\ignorespaces Comparaison synthétique des performances TCP vs TLS}}{52}{figure.caption.70}%
+\contentsline {figure}{\numberline {5.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Pipeline de détection d'anomalies par ML -- diagramme d'activité}}{43}{figure.caption.48}%
+\contentsline {figure}{\numberline {5.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Distribution des classes dans le dataset (EDA)}}{44}{figure.caption.49}%
+\contentsline {figure}{\numberline {5.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Matrice de corrélation des features}}{44}{figure.caption.50}%
+\contentsline {figure}{\numberline {5.4}{\ignorespaces \xpg@aux {}{french}\ignorespaces Boxplots des features par type d'attaque}}{45}{figure.caption.51}%
+\contentsline {figure}{\numberline {5.5}{\ignorespaces \xpg@aux {}{french}\ignorespaces Matrice de confusion -- IsolationForest}}{46}{figure.caption.53}%
+\contentsline {figure}{\numberline {5.6}{\ignorespaces \xpg@aux {}{french}\ignorespaces Distribution des scores d'anomalie -- IsolationForest}}{46}{figure.caption.54}%
+\contentsline {figure}{\numberline {5.7}{\ignorespaces \xpg@aux {}{french}\ignorespaces Matrice de confusion et courbe ROC -- Random Forest}}{47}{figure.caption.56}%
+\contentsline {figure}{\numberline {5.8}{\ignorespaces \xpg@aux {}{french}\ignorespaces Importance des features -- Random Forest}}{47}{figure.caption.57}%
+\contentsline {figure}{\numberline {5.9}{\ignorespaces \xpg@aux {}{french}\ignorespaces Matrice de confusion multi-classe -- Random Forest}}{48}{figure.caption.58}%
+\contentsline {figure}{\numberline {5.10}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison IsolationForest vs Random Forest}}{48}{figure.caption.59}%
+\contentsline {figure}{\numberline {5.11}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison de la latence de connexion TCP vs TLS}}{50}{figure.caption.62}%
+\contentsline {figure}{\numberline {5.12}{\ignorespaces \xpg@aux {}{french}\ignorespaces RTT des messages MQTT -- TCP vs TLS par QoS}}{51}{figure.caption.64}%
+\contentsline {figure}{\numberline {5.13}{\ignorespaces \xpg@aux {}{french}\ignorespaces Throughput TCP vs TLS en fonction de la taille de payload}}{51}{figure.caption.66}%
+\contentsline {figure}{\numberline {5.14}{\ignorespaces \xpg@aux {}{french}\ignorespaces Décomposition des phases du handshake TLS~1.3}}{52}{figure.caption.68}%
+\contentsline {figure}{\numberline {5.15}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison synthétique des performances TCP vs TLS}}{52}{figure.caption.69}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }

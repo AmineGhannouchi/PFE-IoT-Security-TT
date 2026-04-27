@@ -6,11 +6,16 @@
 %% Structure : 5 chapitres consolides
 \documentclass[12pt, a4paper, twoside]{report}
 
-%% Encodage & langue
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage[french]{babel}
-\usepackage{lmodern}
+%% Encodage & langue (XeLaTeX + polyglossia pour FR + AR)
+\usepackage{fontspec}
+\setmainfont{Latin Modern Roman}
+\setsansfont{Latin Modern Sans}
+\setmonofont{Latin Modern Mono}
+\usepackage{polyglossia}
+\setmainlanguage{french}
+\setotherlanguage{arabic}
+%% Police arabe : Traditional Arabic (livree avec Windows)
+\newfontfamily\arabicfont[Script=Arabic, Scale=1.4]{Traditional Arabic}
 
 %% Mise en page
 \usepackage[top=2.5cm, bottom=2.5cm, left=3cm, right=2.5cm]{geometry}
@@ -193,7 +198,6 @@
 
 \input{chapters/00-dedicace}
 \input{chapters/00-remerciements}
-\input{chapters/00-resume}
 
 %% Tables
 \tableofcontents
@@ -221,5 +225,8 @@
 \appendix
 \input{chapters/annexe-a}
 \input{chapters/annexe-b}
+
+%% Resumes (FR + EN + AR) en fin de rapport
+\input{chapters/00-resume}
 
 \end{document}

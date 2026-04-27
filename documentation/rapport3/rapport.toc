@@ -1,10 +1,9 @@
-\babel@toc {french}{}\relax 
+\xpg@aux {}{french}
 \contentsline {chapter}{Dédicace}{i}{chapter*.1}%
 \contentsline {chapter}{Remerciements}{iii}{chapter*.2}%
-\contentsline {chapter}{Résumé}{v}{chapter*.3}%
-\contentsline {chapter}{Liste des acronymes}{xiv}{chapter*.7}%
-\contentsline {chapter}{Introduction générale}{1}{chapter*.8}%
-\contentsline {paragraph}{Structure du rapport.}{1}{section*.9}%
+\contentsline {chapter}{Liste des acronymes}{xiii}{chapter*.6}%
+\contentsline {chapter}{Introduction générale}{1}{chapter*.7}%
+\contentsline {paragraph}{Structure du rapport.}{1}{section*.8}%
 \contentsline {chapter}{\numberline {1}Contexte du projet, problématique et méthodologie}{2}{chapter.1}%
 \contentsline {section}{\numberline {1.1}Introduction}{2}{section.1.1}%
 \contentsline {section}{\numberline {1.2}Présentation de l'organisme d'accueil}{2}{section.1.2}%
@@ -12,7 +11,7 @@
 \contentsline {subsection}{\numberline {1.2.2}Service d'accueil et contexte du stage}{3}{subsection.1.2.2}%
 \contentsline {section}{\numberline {1.3}Cadrage de la demande}{3}{section.1.3}%
 \contentsline {subsection}{\numberline {1.3.1}Contexte technique et motivations}{3}{subsection.1.3.1}%
-\contentsline {subsection}{\numberline {1.3.2}Problématique}{3}{subsection.1.3.2}%
+\contentsline {subsection}{\numberline {1.3.2}Problématique}{4}{subsection.1.3.2}%
 \contentsline {section}{\numberline {1.4}Méthodologie de travail et planification}{4}{section.1.4}%
 \contentsline {subsection}{\numberline {1.4.1}Méthodologie Scrum}{4}{subsection.1.4.1}%
 \contentsline {subsection}{\numberline {1.4.2}Product Backlog et planification des sprints}{5}{subsection.1.4.2}%
@@ -76,11 +75,11 @@
 \contentsline {subsection}{\numberline {5.3.5}Décomposition du handshake TLS}{52}{subsection.5.3.5}%
 \contentsline {subsection}{\numberline {5.3.6}Synthèse comparative et acceptabilité}{52}{subsection.5.3.6}%
 \contentsline {section}{\numberline {5.4}Conclusion}{54}{section.5.4}%
-\contentsline {chapter}{Conclusion générale et perspectives}{55}{chapter*.73}%
-\contentsline {paragraph}{Court terme (3--6 mois).}{57}{section*.82}%
-\contentsline {paragraph}{Moyen terme (6--12 mois).}{57}{section*.83}%
-\contentsline {paragraph}{Long terme ($>$ 12 mois).}{58}{section*.84}%
-\contentsline {chapter}{Références bibliographiques}{59}{chapter*.85}%
+\contentsline {chapter}{Conclusion générale et perspectives}{55}{chapter*.72}%
+\contentsline {paragraph}{Court terme (3--6 mois).}{57}{section*.79}%
+\contentsline {paragraph}{Moyen terme (6--12 mois).}{58}{section*.80}%
+\contentsline {paragraph}{Long terme ($>$ 12 mois).}{58}{section*.81}%
+\contentsline {chapter}{Références bibliographiques}{59}{chapter*.82}%
 \contentsline {chapter}{\numberline {A}Scripts et Code Source}{61}{appendix.A}%
 \contentsline {section}{\numberline {A.1}Bootstrap de la PKI --- Vault API}{61}{section.A.1}%
 \contentsline {section}{\numberline {A.2}Émission du certificat Mosquitto}{64}{section.A.2}%
@@ -99,4 +98,10 @@
 \contentsline {section}{\numberline {B.6}Dockerfile du simulateur de flotte}{78}{section.B.6}%
 \contentsline {section}{\numberline {B.7}Dockerfile Toolbox}{79}{section.B.7}%
 \contentsline {section}{\numberline {B.8}Commandes de création des réseaux Docker}{79}{section.B.8}%
-\contentsline {section}{\numberline {B.9}Variables d'environnement du projet}{81}{section.B.9}%
+\contentsline {section}{\numberline {B.9}Variables d'environnement du projet}{80}{section.B.9}%
+\contentsline {chapter}{Résumés}{81}{appendix*.84}%
+\contentsline {chapter}{Abstract}{82}{appendix*.85}%
+\contentsline {chapter}{\textarabic {ملخّص}}{83}{appendix*.86}%
+\xpg@aux {}{arabic}
+\xpg@aux {}{french}
+\contentsline {chapter}{Résumé}{85}{appendix*.87}%
