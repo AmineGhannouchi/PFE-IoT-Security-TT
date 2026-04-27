@@ -1,3 +1,35 @@
+%% Resume tri-langue compact -- doit tenir sur UNE seule page (derniere page du rapport)
+\cleardoublepage
+\thispagestyle{empty}
+\pagestyle{empty}
+
+\begingroup
+\setlength{\parskip}{2pt}
+\setlength{\parindent}{0pt}
+\small
+
+%% ----------- FR -----------
+\noindent\textbf{\large Résumé}\\[2pt]
+\textbf{Mots-clés :} IoT, sécurité, TLS 1.3, mTLS, PKI, HashiCorp Vault, MQTT, Suricata, Wazuh, SIEM, Machine Learning, GNS3, Scrum.\\[2pt]
+Ce projet, réalisé en partenariat avec \TT{}, propose une architecture de sécurisation de bout en bout des flux d'un écosystème IoT simulé sous GNS3. La solution combine une PKI HashiCorp Vault à deux niveaux, un broker MQTT Mosquitto en TLS~1.3/mTLS, un simulateur de 50 dispositifs rejouant 76\,000 messages, un IDS Suricata, un SIEM Wazuh et un pipeline ML (IsolationForest + RandomForest). Les résultats : F1=0,994 / ROC-AUC=0,999 (RF) ; surcoût TLS de +89\,\% sur le RTT (4,2$\to$7,9~ms), bien sous le seuil de 50~ms admis pour l'IoT industriel.
+
+\vspace{6pt}\hrule\vspace{6pt}
+
+%% ----------- EN -----------
+\noindent\textbf{\large Abstract}\\[2pt]
+\textbf{Keywords:} IoT, security, TLS 1.3, mTLS, PKI, HashiCorp Vault, MQTT, Suricata, Wazuh, SIEM, Machine Learning, GNS3, Scrum.\\[2pt]
+This project, carried out with Tunisie Telecom, proposes an end-to-end security architecture for a simulated IoT ecosystem under GNS3. The solution combines a two-level HashiCorp Vault PKI, a Mosquitto MQTT broker enforcing TLS~1.3/mTLS, a 50-device fleet simulator replaying 76\,000 messages, a Suricata IDS, a Wazuh SIEM and an ML pipeline (IsolationForest + RandomForest). Results: F1=0.994 / ROC-AUC=0.999 (RF); TLS overhead of +89\,\% on RTT (4.2$\to$7.9~ms), well below the 50~ms threshold accepted for industrial IoT.
+
+\vspace{6pt}\hrule\vspace{6pt}
+
+%% ----------- AR -----------
+\noindent\textbf{\large \textarabic{ملخّص}}\\[2pt]
+\begin{Arabic}
+\textbf{الكلمات المفتاحيّة:} إنترنت الأشياء، الأمن السيبراني، TLS~1.3، mTLS، PKI، HashiCorp Vault، MQTT، Suricata، Wazuh، التعلّم الآليّ، GNS3، Scrum.\\[2pt]
+يقترح هذا المشروع، المُنجَز بالشراكة مع \emph{اتّصالات تونس}، بنيةً لتأمين الاتّصالات من طرفٍ إلى طرف داخل منظومة إنترنت الأشياء مُحاكاة عبر GNS3. تجمع الحلّ بين بنية مفاتيح عموميّة على HashiCorp Vault بمستويَين، ووسيط MQTT (Mosquitto) بـ TLS~1.3/mTLS، ومحاكي 50 جهازًا يُعيد 76\,000 رسالة، ونظام Suricata، وSIEM Wazuh، وسلسلة تعلّم آليّ (IsolationForest + RandomForest). النتائج: F1=0,994 وROC-AUC=0,999 (RF)؛ زيادة TLS بنسبة 89\,\% في زمن الذهاب والإياب (من 4,2 إلى 7,9 ميلّي ثانية)، أي أدنى بكثير من العتبة 50 ميلّي ثانية المقبولة في إنترنت الأشياء الصناعيّ.
+\end{Arabic}
+
+\endgroup
 \cleardoublepage
 \chapter*{Résumé}
 \addcontentsline{toc}{chapter}{Résumés}
