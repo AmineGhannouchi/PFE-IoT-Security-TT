@@ -1,0 +1,109 @@
+\chapter{Introduction générale}
+\label{chap:introduction}
+
+\section{Contexte général}
+\label{sec:contexte-general}
+
+L'\textbf{Internet des Objets} (IoT, \emph{Internet of Things}) désigne l'interconnexion par réseau de dispositifs physiques --- capteurs, actionneurs, passerelles, équipements industriels --- capables de collecter, échanger et exploiter de l'information sans intervention humaine~\cite{meneghello2019iot}. En quelques années, ce paradigme s'est imposé dans des domaines aussi variés que la ville intelligente, l'industrie 4.0, l'agriculture connectée, la santé ou les réseaux d'opérateurs télécoms. Selon les estimations publiées par l'\acs{ENISA}, plus de 30~milliards de dispositifs IoT seraient déployés dans le monde à l'horizon 2025, générant un volume de trafic et une surface d'attaque sans précédent~\cite{enisa_iot}.
+
+Cette explosion s'accompagne d'une augmentation rapide des incidents de sécurité. L'attaque du \textbf{botnet Mirai}~\cite{kolias2017mirai,antonakakis2017mirai} a démontré, dès 2016, qu'un parc d'objets faiblement sécurisés pouvait être détourné en quelques heures pour conduire des attaques par déni de service distribué d'une ampleur inégalée. Plus généralement, les principales vulnérabilités identifiées par l'\acs{OWASP} dans son \emph{IoT Top~10}~\cite{owasp_iot} concernent : les mots de passe faibles ou par défaut, les services réseau non sécurisés, les interfaces d'écosystème mal protégées, l'absence de mise à jour, les transferts de données en clair et le manque de gestion de cycle de vie des dispositifs.
+
+Pour les opérateurs de télécommunications, dont \TT{} fait partie, ces enjeux sont d'autant plus critiques qu'ils opèrent à la fois comme \emph{fournisseurs de connectivité} et comme \emph{intégrateurs de services IoT verticaux} (smart metering, smart city, suivi de flotte, monitoring industriel). La sécurité de bout en bout des flux IoT --- de l'objet jusqu'aux applications métier hébergées dans le cloud opérateur --- constitue à ce titre un \textbf{prérequis stratégique} pour préserver la confiance des clients et la continuité des services.
+
+\section{Problématique}
+\label{sec:problematique}
+
+L'écosystème d'un opérateur télécom présente plusieurs spécificités qui rendent la sécurisation des flux IoT particulièrement délicate~:
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Hétérogénéité} des dispositifs (microcontrôleurs ESP32, passerelles industrielles, modems cellulaires) et des protocoles applicatifs (MQTT, CoAP, AMQP, LwM2M)~;
+  \item \textbf{Volumétrie} massive et asynchrone des messages (publications périodiques, événements rares mais critiques)~;
+  \item \textbf{Contraintes embarquées} : ressources CPU/mémoire limitées, batteries, latence radio variable~;
+  \item \textbf{Multi-tenance} et segmentation réseau : un même opérateur héberge plusieurs clients verticaux qui ne doivent jamais accéder aux flux des autres~;
+  \item \textbf{Gestion à grande échelle} d'identités cryptographiques (certificats X.509) pour des dizaines de milliers d'objets, avec des cycles de vie variables.
+\end{itemize}
+
+La problématique centrale de ce projet de fin d'études peut être formulée ainsi~:
+
+\begin{infobox}[Problématique]
+\textit{Comment concevoir, déployer et valider, dans un environnement simulé représentatif d'un opérateur télécom, une architecture de sécurisation \textbf{de bout en bout} des flux de communication d'un écosystème IoT, qui combine~: (i) un chiffrement et une authentification mutuelle systématiques entre objets et infrastructures~; (ii) une gestion automatisée du cycle de vie des certificats~; (iii) une supervision active des menaces par corrélation d'alertes réseau et apprentissage automatique~; (iv) tout en restant compatible avec les contraintes de performance et de scalabilité du domaine~?}
+\end{infobox}
+
+\section{Objectifs spécifiques}
+\label{sec:objectifs}
+
+À partir de cette problématique, sept objectifs spécifiques (\acs{O1}--\acs{O7}) structurent l'ensemble des travaux~:
+
+\begin{table}[H]
+\centering
+\caption{Objectifs spécifiques du projet}
+\label{tab:objectifs}
+\begin{tabularx}{\linewidth}{c X}
+\toprule
+\textbf{ID} & \textbf{Objectif} \\
+\midrule
+\acs{O1} & Concevoir une architecture IoT segmentée et reproductible, déployable dans un environnement simulé. \\
+\acs{O2} & Déployer une infrastructure à clés publiques (\acs{PKI}) automatisée fondée sur HashiCorp Vault. \\
+\acs{O3} & Imposer un chiffrement \acs{TLS}~1.3 avec authentification mutuelle (\acs{mTLS}) sur le broker MQTT. \\
+\acs{O4} & Simuler une flotte hétérogène de 50 dispositifs IoT et générer un trafic réaliste mêlant comportements légitimes et attaques. \\
+\acs{O5} & Mettre en place une analyse réseau native MQTT au moyen d'un \acs{IDS} Suricata. \\
+\acs{O6} & Centraliser et corréler les événements de sécurité dans un \acs{SIEM} Wazuh. \\
+\acs{O7} & Développer un module de détection d'anomalies par apprentissage automatique (IsolationForest et Random Forest) et évaluer son apport. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Solution proposée (vue d'ensemble)}
+\label{sec:solution-proposee}
+
+Pour répondre à la problématique et atteindre les objectifs ci-dessus, nous proposons une \textbf{architecture de défense en profondeur} composée de six briques complémentaires, intégralement déployée dans un laboratoire simulé sous \acs{GNS3}~\cite{gns3_docs} et Docker~\cite{docker_docs}~:
+
+\begin{enumerate}[leftmargin=*]
+  \item Une \textbf{infrastructure réseau segmentée} (VLANs IoT, services, monitoring, management) construite autour d'un pare-feu pfSense et d'un routeur MikroTik~;
+  \item Une \textbf{PKI automatisée} HashiCorp Vault à deux niveaux (CA racine hors ligne + CA intermédiaire en ligne), capable d'émettre à la demande des certificats X.509 pour les services et les objets~\cite{vault_pki}~;
+  \item Un \textbf{broker MQTT Mosquitto} configuré en \acs{TLS}~1.3 avec authentification mutuelle obligatoire et listes de contrôle d'accès par topic~\cite{mosquitto_tls}~;
+  \item Un \textbf{simulateur de flotte} de 50 dispositifs Python rejouant 76\,000 messages issus d'un jeu de données réel, dont sept catégories d'attaques~;
+  \item Une \textbf{chaîne de détection} comprenant un IDS Suricata avec règles MQTT personnalisées~\cite{suricata_mqtt} et un SIEM Wazuh~\cite{wazuh_docs} pour la corrélation et la visualisation~;
+  \item Un \textbf{pipeline de \acs{ML}} (IsolationForest~\cite{liu2008isolation} et Random Forest~\cite{breiman2001random}) entraîné sur les caractéristiques extraites du trafic, capable de détecter les anomalies non couvertes par les règles statiques.
+\end{enumerate}
+
+La figure~\ref{fig:archi-vue-intro} schématise cette vision globale, qui sera détaillée et justifiée dans les chapitres suivants.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\linewidth]{diag-architecture-generale.png}
+\caption{Vue d'ensemble de l'architecture de sécurisation proposée}
+\label{fig:archi-vue-intro}
+\end{figure}
+
+\section{Présentation de l'organisme d'accueil}
+\label{sec:organisme}
+
+\subsection{Tunisie Telecom}
+\label{subsec:tt-general}
+
+\TT{} (Société Nationale des Télécommunications, \emph{Itissalat Tounes}) est l'opérateur historique de télécommunications de la Tunisie, fondé en 1995~\cite{tunisie_telecom}. Présent à l'échelle nationale, l'opérateur fournit des services de téléphonie fixe et mobile, d'accès Internet (\acs{ADSL}, fibre, 4G/5G), d'hébergement, de cloud et de solutions entreprises. Avec un parc client de plusieurs millions d'abonnés et une infrastructure couvrant l'ensemble du territoire, \TT{} occupe une position centrale dans la transformation numérique du pays.
+
+Dans le domaine de l'IoT, \TT{} accompagne depuis plusieurs années des clients industriels et des acteurs publics dans le déploiement de solutions verticales (smart metering, suivi de flotte, surveillance de sites distants, agriculture connectée). Cette dynamique impose à l'opérateur de maîtriser non seulement la \emph{connectivité} (réseaux \acs{LPWAN}, cellulaire), mais également les \emph{couches applicatives} et les \emph{exigences de sécurité} associées.
+
+\subsection{Service d'accueil}
+\label{subsec:tt-service}
+
+Le présent projet a été réalisé au sein du service en charge des \emph{infrastructures de cybersécurité et des projets d'innovation}. Ce service intervient sur trois axes complémentaires~: (i) la \textbf{veille technologique} sur les nouvelles menaces et les contre-mesures émergentes ; (ii) le \textbf{prototypage} en environnement de laboratoire d'architectures candidates avant industrialisation ; (iii) la \textbf{validation expérimentale} de ces architectures par campagnes de tests fonctionnels, de sécurité et de performance.
+
+C'est dans ce cadre que s'inscrit notre travail~: concevoir un \emph{prototype de référence} de sécurisation des flux IoT, entièrement reproductible en environnement simulé, et utilisable comme socle pour les futures industrialisations.
+
+\section{Plan du rapport}
+\label{sec:plan-rapport}
+
+Le rapport est structuré en cinq chapitres~:
+
+\begin{itemize}[leftmargin=*]
+  \item Le \textbf{chapitre~\ref{chap:introduction}} (présent chapitre) introduit le contexte, formalise la problématique, énonce les objectifs et présente l'organisme d'accueil~;
+  \item Le \textbf{chapitre~\ref{chap:etat-art}} dresse un état de l'art des menaces, des protocoles, des outils et des approches existantes, accompagné du diagramme de cas d'utilisation et d'un positionnement du projet~;
+  \item Le \textbf{chapitre~\ref{chap:conception}} détaille la conception~: besoins fonctionnels et non fonctionnels, choix méthodologique (étude comparative Scrum / Kanban / XP), planification des sprints, \emph{Product Backlog}, diagrammes UML et planning de Gantt~;
+  \item Le \textbf{chapitre~\ref{chap:realisation}} présente la réalisation~: architecture détaillée, scénarios d'attaque, contre-mesures, pipeline ML, environnement de développement et captures d'écran des interfaces clés~;
+  \item Le \textbf{chapitre~\ref{chap:tests-conclusion}} expose le plan de tests, les résultats obtenus, les limites identifiées, les perspectives d'évolution et la conclusion générale.
+\end{itemize}
+
+Les annexes regroupent les configurations clés (Vault, Mosquitto, Suricata, Wazuh) et le code source des composants principaux.

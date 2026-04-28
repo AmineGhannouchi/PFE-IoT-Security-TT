@@ -1,0 +1,60 @@
+%% ============================================================
+%% RESUMES TRI-LANGUE -- une seule page, derniere du rapport
+%% FR / EN / AR -- chaque section <= 4 lignes + mots-cles
+%% ============================================================
+\cleardoublepage
+\thispagestyle{empty}
+\pagestyle{empty}
+
+\begingroup
+\setlength{\parskip}{0pt}
+\setlength{\parindent}{0pt}
+\renewcommand{\baselinestretch}{1.1}
+\footnotesize
+
+% ---------- Français ----------
+\begin{center}
+  \textbf{\normalsize Résumé}
+\end{center}
+\noindent\textbf{Mots-clés :} IoT, sécurité, TLS~1.3, mTLS, PKI, HashiCorp Vault, MQTT, Suricata, Wazuh, ML, GNS3.
+
+\smallskip
+\noindent Ce projet, mené avec \TT{}, conçoit et valide une architecture de sécurisation de bout en bout d'un
+écosystème IoT simulé sous GNS3. La solution associe une PKI HashiCorp Vault à deux niveaux, un broker MQTT
+en TLS~1.3/mTLS obligatoire, un IDS Suricata et un SIEM Wazuh. Un pipeline ML (IsolationForest + RandomForest)
+détecte les anomalies~: F1\,=\,0,994 et ROC-AUC\,=\,0,999 pour RF~; surcoût mTLS de l'ordre de \(+8\)\,\% sur le débit
+applicatif et \(+3{,}5\)\,ms de latence, sans impact opérationnel notable.
+
+\vspace{4pt}\noindent\rule{\linewidth}{0.4pt}\vspace{4pt}
+
+% ---------- English ----------
+\begin{center}
+  \textbf{\normalsize Abstract}
+\end{center}
+\noindent\textbf{Keywords:} IoT, security, TLS~1.3, mTLS, PKI, HashiCorp Vault, MQTT, Suricata, Wazuh, ML, GNS3.
+
+\smallskip
+\noindent This project, carried out with Tunisie Telecom, designs and validates an end-to-end security architecture for a
+simulated IoT ecosystem under GNS3. The solution combines a two-level HashiCorp Vault PKI, a Mosquitto MQTT
+broker enforcing TLS~1.3/mTLS, a Suricata IDS and a Wazuh SIEM. An ML pipeline (IsolationForest + RandomForest)
+performs anomaly detection: F1\,=\,0.994, ROC-AUC\,=\,0.999 (RF); mTLS overhead is about \(+8\)\,\% on application
+throughput and \(+3.5\)\,ms latency, with no noticeable operational impact.
+
+\vspace{4pt}\noindent\rule{\linewidth}{0.4pt}\vspace{4pt}
+
+% ---------- Arabic ----------
+\begin{center}
+  \textbf{\normalsize \textarabic{ملخّص}}
+\end{center}
+\begin{Arabic}
+\noindent\textbf{الكلمات المفتاحيّة:}
+إنترنت الأشياء، أمن سيبراني، TLS~1.3، mTLS، PKI، HashiCorp Vault، MQTT، Suricata، Wazuh، تعلّم آليّ، GNS3.
+
+\smallskip
+\noindent صمّم هذا المشروع، المُنجَز مع \emph{اتّصالات تونس}، بنيةً لتأمين الاتّصالات من طرف إلى طرف داخل منظومة
+إنترنت الأشياء المُحاكاة عبر GNS3. تجمع الحلّ بين بنية مفاتيح عموميّة (HashiCorp Vault)، ووسيط MQTT بـ TLS~1.3/mTLS،
+ونظام Suricata، ومنصّة Wazuh SIEM. يُحقّق نموذج RandomForest في سلسلة التعلّم الآليّ
+F1\,=\,0,994 وROC-AUC\,=\,0,999؛ ولا تتجاوز كلفة mTLS \(+8\)\,\% على الإنتاجيّة و\(+3{,}5\) ميلّي ثانية على زمن الاستجابة.
+\end{Arabic}
+
+\endgroup

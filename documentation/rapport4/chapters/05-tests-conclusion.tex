@@ -1,0 +1,192 @@
+\chapter{Tests, résultats et conclusion}
+\label{chap:tests-conclusion}
+
+\section{Introduction}
+\label{sec:tc-intro}
+
+Ce dernier chapitre valide la solution proposée. Nous décrivons le plan de tests, présentons les résultats quantitatifs (sécurité, performance, ML), discutons les limites observées, exposons les perspectives d'évolution et concluons sur les apports du projet.
+
+\section{Plan de tests}
+\label{sec:tc-plan}
+
+Quatre familles de tests ont été définies, conformément aux besoins formulés au chapitre~\ref{chap:conception}~:
+
+\begin{table}[H]
+\centering
+\caption{Plan de tests}
+\label{tab:plan-tests}
+\small
+\begin{tabularx}{\linewidth}{l X X}
+\toprule
+\textbf{Famille} & \textbf{Objectif} & \textbf{Outils} \\
+\midrule
+Tests unitaires & Vérifier scripts Vault, simulateur, ETL ML & pytest, scripts shell \\
+Tests d'intégration & Valider la chaîne PKI~$\to$~mTLS~$\to$~broker~$\to$~Suricata~$\to$~Wazuh & mosquitto\_pub/sub, eve.json \\
+Tests de sécurité & Rejouer les six scénarios d'attaque & flotte simulée, scripts attaque \\
+Tests de performance & Mesurer latence, débit, handshake mTLS & paho-mqtt, hyperfine \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Résultats de sécurité}
+\label{sec:tc-secu}
+
+Les six scénarios d'attaque définis en \S\ref{sec:re-attaques} ont été rejoués 10~fois chacun. Les taux de détection observés sont consignés dans le tableau~\ref{tab:detection-secu}.
+
+\begin{table}[H]
+\centering
+\caption{Taux de détection des scénarios d'attaque (10 rejeux par scénario)}
+\label{tab:detection-secu}
+\begin{tabularx}{\linewidth}{X c c c}
+\toprule
+\textbf{Scénario} & \textbf{Suricata} & \textbf{Wazuh (corr.)} & \textbf{ML} \\
+\midrule
+S1 -- MITM TLS désactivé        & 10/10 & 10/10 & N/A \\
+S2 -- Sniffing MQTT clair       & 10/10 & 10/10 & N/A \\
+S3 -- Brute-force CONNECT       & 10/10 & 10/10 & 9/10 \\
+S4 -- Topic non autorisé        &  8/10 & 10/10 & 10/10 \\
+S5 -- Flood CONNECT             & 10/10 & 10/10 & 9/10 \\
+S6 -- Compromission certificat  &  3/10 &  6/10 & 10/10 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{resultbox}[Lecture]
+La complémentarité \emph{règles}~$+$~\emph{ML} est clairement démontrée~: les attaques exploitant un vecteur réseau identifiable (S1, S2, S3, S5) sont parfaitement couvertes par les règles ; en revanche, le scénario~S6 (certificat valide réutilisé) n'est détecté de manière fiable que par le module ML, qui repère l'écart comportemental.
+\end{resultbox}
+
+\section{Résultats du module ML}
+\label{sec:tc-ml}
+
+\subsection{Isolation Forest}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.48\linewidth}
+  \includegraphics[width=\linewidth]{iso_forest_confusion_matrix.png}
+  \caption{Matrice de confusion}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\linewidth}
+  \includegraphics[width=\linewidth]{iso_forest_scores_distribution.png}
+  \caption{Distribution des scores d'anomalie}
+\end{subfigure}
+\caption{Évaluation Isolation Forest}
+\label{fig:iso-eval}
+\end{figure}
+
+\subsection{Random Forest}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\linewidth]{rf_confusion_roc.png}
+\caption{Random Forest~: matrice de confusion et courbe ROC}
+\label{fig:rf-eval}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.48\linewidth}
+  \includegraphics[width=\linewidth]{rf_multiclass_confusion.png}
+  \caption{Confusion multi-classes (8 classes)}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\linewidth}
+  \includegraphics[width=\linewidth]{rf_feature_importance.png}
+  \caption{Importance des features}
+\end{subfigure}
+\caption{Random Forest -- analyses détaillées}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Performances ML (validation 5-fold)}
+\label{tab:perf-ml}
+\begin{tabularx}{\linewidth}{X c c c c}
+\toprule
+\textbf{Modèle} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
+\midrule
+Isolation Forest (binaire)  & 0{,}962 & 0{,}918 & 0{,}947 & 0{,}932 \\
+Random Forest (multi-classe)& 0{,}994 & 0{,}993 & 0{,}993 & 0{,}993 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{models_comparison.png}
+\caption{Comparaison synthétique des modèles}
+\end{figure}
+
+\section{Résultats de performance}
+\label{sec:tc-perf}
+
+\subsection{Handshake TLS et latence}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.48\linewidth}
+  \includegraphics[width=\linewidth]{perf_tls_handshake.png}
+  \caption{Distribution du handshake mTLS}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\linewidth}
+  \includegraphics[width=\linewidth]{perf_connection_latency.png}
+  \caption{Latence de connexion}
+\end{subfigure}
+\caption{Mesures TLS}
+\end{figure}
+
+Le handshake mTLS médian s'établit à \(\sim 38\)~ms (95\textsuperscript{e} percentile~: 47~ms), conforme à \acs{BNF-2}.
+
+\subsection{Débit et RTT}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.48\linewidth}
+  \includegraphics[width=\linewidth]{perf_throughput.png}
+  \caption{Débit applicatif}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\linewidth}
+  \includegraphics[width=\linewidth]{perf_rtt_messages.png}
+  \caption{RTT par taille de message}
+\end{subfigure}
+\caption{Performance applicative}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{perf_protocols_comparison.png}
+\caption{Comparaison MQTT clair vs MQTT/TLS vs MQTT/mTLS}
+\end{figure}
+
+\begin{resultbox}[Surcoût mTLS]
+Le surcoût lié au mTLS représente $\sim 8$\,\% du débit applicatif et $\sim 3{,}5$~ms de latence supplémentaire en moyenne~: un coût négligeable au regard des bénéfices sécurité.
+\end{resultbox}
+
+\section{Limites identifiées}
+\label{sec:tc-limites}
+
+\begin{itemize}[leftmargin=*]
+  \item Environnement entièrement \emph{simulé}~: les mesures de performance ne reflètent pas les conditions radio réelles d'un réseau cellulaire.
+  \item Volume de la flotte limité à 50 dispositifs~; au-delà, les ressources de la station hôte deviennent contraignantes.
+  \item Le pipeline ML est entraîné \emph{hors ligne}~: l'intégration en streaming (Kafka + scoring temps réel) reste à explorer.
+  \item La rotation automatique des certificats est déclenchée manuellement~; une intégration complète au cycle ACME serait souhaitable.
+\end{itemize}
+
+\section{Perspectives}
+\label{sec:tc-perspectives}
+
+\textbf{Court terme} ($<$~3~mois)~: industrialisation des scripts (Ansible), intégration ACME/Vault, extension de la flotte à 200 clients.\\
+\textbf{Moyen terme} (3--12~mois)~: portage en environnement cellulaire réel (4G/5G), intégration aux outils \acs{SOC} de \TT{}, entraînement ML continu.\\
+\textbf{Long terme} ($>$~12~mois)~: évolution vers une architecture \emph{Zero Trust} IoT, intégration aux services LoRaWAN/NB-IoT, déploiement multi-tenant cloud.
+
+\section{Conclusion générale}
+\label{sec:tc-conclusion}
+
+Ce projet de fin d'études a permis de concevoir, déployer et valider une architecture complète de sécurisation de bout en bout des flux IoT, dans un environnement simulé représentatif d'un opérateur télécom. Les sept objectifs initiaux (\acs{O1}--\acs{O7}) sont atteints~: l'environnement GNS3 est reproductible, la PKI Vault automatisée, le broker mTLS fonctionnel, la flotte simulée opérationnelle, la chaîne IDS+SIEM en place, le module ML évalué.
+
+Les résultats expérimentaux confirment trois propriétés essentielles~: (i)~la \textbf{complémentarité} entre règles statiques et ML, qui couvrent ensemble la quasi-totalité des scénarios d'attaque ; (ii)~le \textbf{coût marginal} du mTLS, négligeable au regard des bénéfices sécuritaires ; (iii)~la \textbf{reproductibilité} de l'ensemble, condition d'une éventuelle industrialisation chez \TT{}.
+
+Au-delà du livrable technique, ce travail a constitué une expérience pédagogique riche en synthèse de domaines (réseaux, cryptographie, conteneurisation, supervision, apprentissage automatique, méthodologie agile). Les perspectives ouvertes --- du portage cellulaire à l'évolution Zero Trust --- offrent un terrain d'extension naturel pour de futurs travaux.

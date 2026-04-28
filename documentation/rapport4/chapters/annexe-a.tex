@@ -1,0 +1,407 @@
+\chapter{Scripts et Code Source}
+\label{annexe:scripts}
+
+Cette annexe regroupe l'ensemble des scripts développés pour le projet. Ils sont classés par fonction.
+
+\section{Bootstrap de la PKI --- Vault API}
+\label{sec:script_pki}
+
+Ce script initialise la hiérarchie PKI complète dans HashiCorp Vault via l'API HTTP : activation des moteurs PKI root et intermédiaire, génération de la Root CA (RSA 4096 bits, TTL 10 ans), génération et signature de l'Intermediate CA, et création des rôles \texttt{iot-services} et \texttt{iot-devices}.
+
+\begin{lstlisting}[language=bash, caption={bootstrap-pki-api.sh --- Initialisation PKI via Vault API}, label={lst:bootstrap_pki}]
+#!/bin/sh
+set -e
+
+VAULT="http://192.168.30.10:8200"
+ROOT_TOKEN_FILE="/work/vault/root_token.txt"
+
+if [ ! -f "$ROOT_TOKEN_FILE" ]; then
+  echo "root_token.txt introuvable. Fais d'abord init/unseal."
+  exit 1
+fi
+
+ROOT_TOKEN=$(cut -d= -f2 "$ROOT_TOKEN_FILE")
+
+h() { echo "==> $1"; }
+req() {
+  method=$1; path=$2; data=$3
+  if [ -n "$data" ]; then
+    curl -sS -X "$method" \
+      -H "X-Vault-Token: $ROOT_TOKEN" \
+      -H "Content-Type: application/json" \
+      --data "$data" \
+      "$VAULT$path"
+  else
+    curl -sS -X "$method" \
+      -H "X-Vault-Token: $ROOT_TOKEN" \
+      "$VAULT$path"
+  fi
+}
+
+# 1) Enable PKI engines
+h "Enable PKI root at /pki"
+req POST "/v1/sys/mounts/pki" \
+  '{"type":"pki","config":{"max_lease_ttl":"87600h"}}' || true
+
+h "Enable PKI intermediate at /pki_int"
+req POST "/v1/sys/mounts/pki_int" \
+  '{"type":"pki","config":{"max_lease_ttl":"43800h"}}' || true
+
+# 2) Generate Root CA (internal)
+h "Generate Root CA"
+req POST "/v1/pki/root/generate/internal" '{
+  "common_name":"PFE-IoT-Security Root CA",
+  "organization":"FST / Tunisie Telecom",
+  "country":"TN",
+  "ttl":"87600h",
+  "key_type":"rsa",
+  "key_bits":4096
+}' | tee /work/vault/root-ca.json >/dev/null
+
+# 3) Generate Intermediate CSR
+h "Generate Intermediate CSR"
+req POST "/v1/pki_int/intermediate/generate/internal" '{
+  "common_name":"PFE-IoT-Security Intermediate CA",
+  "organization":"FST / Tunisie Telecom",
+  "ttl":"43800h",
+  "key_type":"rsa",
+  "key_bits":4096
+}' | tee /work/vault/int-csr.json >/dev/null
+
+CSR=$(jq -r '.data.csr' /work/vault/int-csr.json)
+
+# 4) Sign Intermediate with Root
+h "Sign Intermediate CSR with Root"
+req POST "/v1/pki/root/sign-intermediate" \
+  "$(jq -n --arg csr "$CSR" '{
+    csr:$csr,
+    common_name:"PFE-IoT-Security Intermediate CA",
+    ttl:"43800h"
+  }')" | tee /work/vault/int-signed.json >/dev/null
+
+CERT=$(jq -r '.data.certificate' /work/vault/int-signed.json)
+
+# 5) Set signed Intermediate cert
+h "Set signed Intermediate cert"
+req POST "/v1/pki_int/intermediate/set-signed" \
+  "$(jq -n --arg cert "$CERT" '{certificate:$cert}')" >/dev/null
+
+# 6) Create roles
+h "Create role iot-services"
+req POST "/v1/pki_int/roles/iot-services" '{
+  "allowed_domains":"iot-pfe.local,dmz.iot-pfe.local",
+  "allow_subdomains":true,
+  "allow_bare_domains":true,
+  "max_ttl":"8760h",
+  "ttl":"720h",
+  "key_type":"rsa",
+  "key_bits":2048,
+  "server_flag":true,
+  "client_flag":true
+}' >/dev/null
+
+h "Create role iot-devices"
+req POST "/v1/pki_int/roles/iot-devices" '{
+  "allowed_domains":"iot-pfe.local,iot.iot-pfe.local",
+  "allow_subdomains":true,
+  "max_ttl":"720h",
+  "ttl":"24h",
+  "key_type":"rsa",
+  "key_bits":2048,
+  "server_flag":false,
+  "client_flag":true
+}' >/dev/null
+
+echo "PKI bootstrap done."
+\end{lstlisting}
+
+\section{Émission du certificat Mosquitto}
+\label{sec:script_issue_mosquitto}
+
+\begin{lstlisting}[language=bash, caption={issue-mosquitto-cert-api.sh --- Émission du certificat du broker}, label={lst:issue_mosquitto}]
+#!/bin/sh
+set -e
+VAULT="http://192.168.30.10:8200"
+ROOT_TOKEN=$(cut -d= -f2 /work/vault/root_token.txt)
+
+mkdir -p /work/vault/certs
+
+curl -sS -X POST \
+  -H "X-Vault-Token: $ROOT_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data '{
+    "common_name":"mosquitto.dmz.iot-pfe.local",
+    "alt_names":"mqtt.iot-pfe.local,localhost",
+    "ip_sans":"192.168.20.10,127.0.0.1",
+    "ttl":"720h"
+  }' \
+  "$VAULT/v1/pki_int/issue/iot-services" \
+  | tee /work/vault/certs/mosquitto.json | jq .
+
+jq -r '.data.certificate' \
+  /work/vault/certs/mosquitto.json > /work/vault/certs/mosquitto.crt
+jq -r '.data.private_key' \
+  /work/vault/certs/mosquitto.json > /work/vault/certs/mosquitto.key
+jq -r '.data.issuing_ca' \
+  /work/vault/certs/mosquitto.json > /work/vault/certs/intermediate-ca.crt
+
+echo "Certificat Mosquitto emis avec succes."
+\end{lstlisting}
+
+\section{Génération des certificats devices}
+\label{sec:script_gen_certs}
+
+Ce script itère sur la liste des 50 dispositifs et émet un certificat client X.509 pour chacun via le rôle \texttt{iot-devices} de Vault.
+
+\begin{lstlisting}[language=bash, caption={generate\_device\_certs.sh --- Certificats pour 50 devices IoT}, label={lst:gen_certs}]
+#!/bin/sh
+set -e
+
+VAULT="http://192.168.30.10:8200"
+ROOT_TOKEN="$(cut -d= -f2 /work/vault/root_token.txt)"
+LIST="/work/fleet-sim/out/devices_top50.txt"
+OUT="/work/fleet-sim/certs"
+
+if [ ! -f "$LIST" ]; then
+  echo "Liste devices introuvable: $LIST"
+  exit 1
+fi
+
+mkdir -p "$OUT"
+
+# CA chain
+cp /work/vault/certs/ca-chain.crt "$OUT/ca-chain.crt"
+
+echo "==> Generating device certs"
+
+i=0
+while IFS= read -r DEV; do
+  DEV=$(echo "$DEV" | tr -d '\r')
+  [ -z "$DEV" ] && continue
+  i=$((i+1))
+  echo "[$i] $DEV"
+
+  DEV_DNS=$(echo "$DEV" | tr '_' '-')
+  mkdir -p "$OUT/$DEV"
+
+  curl -sS -X POST \
+    -H "X-Vault-Token: $ROOT_TOKEN" \
+    -H "Content-Type: application/json" \
+    --data "{\"common_name\":\"$DEV_DNS.iot.iot-pfe.local\",\"ttl\":\"720h\"}" \
+    "$VAULT/v1/pki_int/issue/iot-devices" \
+    > "$OUT/$DEV/issue.json"
+
+  jq -r '.data.certificate' "$OUT/$DEV/issue.json" > "$OUT/$DEV/client.crt"
+  jq -r '.data.private_key' "$OUT/$DEV/issue.json" > "$OUT/$DEV/client.key"
+done < "$LIST"
+
+echo "Done. Generated $i device certs."
+\end{lstlisting}
+
+\section{Génération du fichier ACL Mosquitto}
+\label{sec:script_acl}
+
+\begin{lstlisting}[language=bash, caption={generate\_aclfile.sh --- Création des ACL par device}, label={lst:gen_acl}]
+#!/bin/sh
+set -e
+
+LIST="/work/fleet-sim/out/devices_top50.txt"
+ACL="/work/fleet-sim/out/aclfile"
+
+echo "# ACL Mosquitto -- Fleet top50" > "$ACL"
+
+while IFS= read -r DEV || [ -n "$DEV" ]; do
+  DEV="$(echo "$DEV" | tr -d '\r' | xargs)"
+  [ -z "$DEV" ] && continue
+
+  DEV_DNS="$(echo "$DEV" | tr '_' '-')"
+  USER="${DEV_DNS}.iot.iot-pfe.local"
+  echo "user $USER" >> "$ACL"
+  echo "topic write iot/+/${DEV}/#" >> "$ACL"
+  echo "topic read  iot/commands/$DEV/#" >> "$ACL"
+  echo "" >> "$ACL"
+done < "$LIST"
+
+echo "Wrote $ACL"
+\end{lstlisting}
+
+\section{Tests de connectivité réseau}
+\label{sec:script_connectivity}
+
+\begin{lstlisting}[language=bash, caption={test-connectivity.sh --- Validation de la segmentation réseau}, label={lst:test_connectivity}]
+#!/bin/bash
+# PFE IoT Security TT -- Test de Connectivite Reseau
+pass=0; fail=0
+
+test_ping() {
+  local from=$1; local to_ip=$2; local desc=$3; local expected=$4
+  result=$(docker exec $from ping -c 1 -W 2 $to_ip 2>&1)
+  if echo "$result" | grep -q "1 received"; then
+    if [ "$expected" = "pass" ]; then
+      echo "PASS -- $desc ($from -> $to_ip)"; ((pass++))
+    else
+      echo "FAIL -- $desc ($from -> $to_ip) -- DEVRAIT ETRE BLOQUE"; ((fail++))
+    fi
+  else
+    if [ "$expected" = "fail" ]; then
+      echo "BLOQUE (attendu) -- $desc ($from -> $to_ip)"; ((pass++))
+    else
+      echo "FAIL -- $desc ($from -> $to_ip) -- PAS DE REPONSE"; ((fail++))
+    fi
+  fi
+}
+
+# Tests de connectivite autorisee
+test_ping "test-iot"  "192.168.10.1"  "IoT -> Gateway MikroTik"  "pass"
+test_ping "test-dmz"  "192.168.20.1"  "DMZ -> Gateway MikroTik"  "pass"
+test_ping "test-pki"  "192.168.30.1"  "PKI -> Gateway MikroTik"  "pass"
+
+# Tests de segmentation (doit etre bloque)
+test_ping "test-iot"  "192.168.40.10" "IoT -> SIEM (BLOQUE)"     "fail"
+test_ping "test-iot"  "192.168.50.10" "IoT -> Analyse (BLOQUE)"  "fail"
+
+echo "Resultats : $pass PASS / $fail FAIL"
+\end{lstlisting}
+
+\section{Tests de performance MQTT}
+\label{sec:script_perf}
+
+Le script complet de tests de performance (601 lignes) mesure la latence de connexion, le RTT des messages, le throughput et l'overhead TLS. Il supporte deux modes : \texttt{--mode real} (connexion au broker GNS3) et \texttt{--mode simulate} (données réalistes). Seule la structure principale est reproduite ci-dessous ; le code complet est disponible dans le dépôt (\texttt{tests/performance/mqtt\_perf\_test.py}).
+
+\begin{lstlisting}[language=Python, caption={mqtt\_perf\_test.py --- Structure du script de performance}, label={lst:perf_test}]
+Phase 9 -- Tests de performance MQTT
+PFE -- Securisation des flux de communication IoT
+FST / Tunisie Telecom | Amine Ghannouchi
+
+import argparse, json, os, ssl, time, threading, statistics
+import numpy as np, matplotlib.pyplot as plt
+
+BROKER_HOST     = '192.168.20.10'
+BROKER_PORT_TLS = 8883
+BROKER_PORT_TCP = 1883
+N_MESSAGES      = 200
+N_CONNECTIONS   = 50
+PAYLOAD_SIZES   = [64, 256, 1024, 4096]
+
+def run_real_tests():
+    """Connexion reelle au broker GNS3 via paho-mqtt."""
+    # Test 1: Latence connexion TLS vs TCP
+    # Test 2: RTT message (publish -> subscribe)
+    # Test 3: Debit (messages/seconde)
+    ...
+
+def run_simulation():
+    """Donnees realistes basees sur RFC 8446 et benchmarks."""
+    rng = np.random.default_rng(42)
+    conn_tcp = rng.normal(loc=8.5,  scale=2.1,  size=N_CONNECTIONS)
+    conn_tls = rng.normal(loc=42.3, scale=7.8,  size=N_CONNECTIONS)
+    rtt_tcp  = rng.normal(loc=4.2,  scale=1.1,  size=N_MESSAGES)
+    rtt_tls  = rng.normal(loc=7.8,  scale=1.9,  size=N_MESSAGES)
+    ...
+
+def generate_plots(data):
+    """5 graphiques: connexion, RTT, throughput, protocoles, handshake."""
+    ...
+
+def print_summary(data):
+    """Resume textuel + export JSON."""
+    ...
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--mode', choices=['real', 'simulate'],
+                        default='simulate')
+    args = parser.parse_args()
+    data = run_real_tests() if args.mode == 'real' else run_simulation()
+    generate_plots(data)
+    print_summary(data)
+\end{lstlisting}
+
+\section{Simulateur de flotte IoT}
+\label{sec:script_fleet}
+
+Le simulateur (\texttt{fleet\_sim.py}, 180 lignes) relit le dataset CSV, sélectionne les 50 premiers devices par fréquence, et rejoue les messages en mTLS vers le broker Mosquitto. Chaque device se connecte avec son propre certificat client.
+
+\begin{lstlisting}[language=Python, caption={fleet\_sim.py --- Simulateur de flotte IoT (structure)}, label={lst:fleet_sim}]
+import argparse, json, os, ssl, time, pandas as pd
+import paho.mqtt.client as mqtt
+
+def connect_mqtt(broker_host, broker_port, cafile,
+                 certfile, keyfile, client_id):
+    """Connexion mTLS 1.3 au broker MQTT."""
+    client = mqtt.Client(client_id=client_id)
+    ctx = ssl.create_default_context(cafile=cafile)
+    ctx.load_cert_chain(certfile=certfile, keyfile=keyfile)
+    ctx.minimum_version = ssl.TLSVersion.TLSv1_3
+    client.tls_set_context(ctx)
+    client.connect(broker_host, broker_port, keepalive=60)
+    client.loop_start()
+    return client
+
+def replay_device(df_dev, args, device_id):
+    """Rejoue les messages d'un device en respectant le timing."""
+    client = connect_mqtt(...)
+    for _, row in df_dev.iterrows():
+        topic = f"iot/{row['tenant_id']}/{row['device_id']}/telemetry"
+        payload = json.dumps({...})
+        # Comportements d'attaque: DoS burst, replay
+        if row["attack_type"] == "dos":
+            for _ in range(args.dos_burst):
+                client.publish(topic, payload, qos=1)
+        else:
+            client.publish(topic, payload, qos=1)
+    client.disconnect()
+
+def main():
+    df = pd.read_csv(args.csv)
+    chosen = df["device_id"].value_counts().head(50).index
+    for device_id in chosen:
+        replay_device(df[df["device_id"] == device_id], args, device_id)
+
+if __name__ == "__main__":
+    main()
+\end{lstlisting}
+
+\section{Analyse des événements Suricata}
+\label{sec:script_analyze_eve}
+
+\begin{lstlisting}[language=Python, caption={analyze\_eve.py --- Analyse du fichier eve.json Suricata}, label={lst:analyze_eve}]
+#!/usr/bin/env python3
+"""Analyse du eve.json Suricata - Phase 6"""
+import json, pandas as pd, matplotlib.pyplot as plt
+from pathlib import Path
+from collections import Counter
+
+EVE = Path("results/analysis/step6/suricata-v2/eve.json")
+
+events = []
+with open(EVE) as f:
+    for line in f:
+        if line.strip():
+            events.append(json.loads(line))
+
+df = pd.DataFrame(events)
+df["timestamp"] = pd.to_datetime(df["timestamp"], utc=True)
+
+print(f"Total events : {len(df)}")
+print(f"Event types  : {df['event_type'].value_counts().to_dict()}")
+
+# Connexions TLS
+tls = df[df["event_type"] == "tls"]
+print(f"TLS connections : {len(tls)}")
+
+# Alertes Suricata
+alerts = df[df["event_type"] == "alert"]
+print(f"Alerts : {len(alerts)}")
+if not alerts.empty:
+    sigs = alerts["alert"].apply(lambda x: x.get("signature", "?"))
+    print(sigs.value_counts().to_string())
+
+# Timeline des connexions TLS
+if not tls.empty:
+    tls = tls.set_index("timestamp").sort_index()
+    fig, ax = plt.subplots(figsize=(12, 4))
+    tls.resample("5s")["src_ip"].count().plot(ax=ax, color="steelblue")
+    ax.set_title("Connexions TLS/MQTT par tranche de 5 secondes")
+    plt.savefig("results/analysis/step6/tls_connections_timeline.png")
+\end{lstlisting}

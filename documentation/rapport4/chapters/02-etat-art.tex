@@ -1,0 +1,123 @@
+\chapter{État de l'art}
+\label{chap:etat-art}
+
+\section{Introduction}
+\label{sec:ea-intro}
+
+Avant de concevoir une architecture de sécurisation des flux IoT, il est indispensable de cadrer le sujet sur trois plans complémentaires~: (i)~caractériser les \textbf{menaces} qui pèsent spécifiquement sur les écosystèmes IoT à grande échelle ; (ii)~recenser les \textbf{technologies et protocoles} candidats pour le transport, l'authentification et la supervision ; (iii)~analyser les \textbf{travaux et solutions existants} afin d'en extraire les bonnes pratiques et de positionner notre contribution. Ce chapitre est structuré autour de ces trois axes, suivi de la description des \textbf{cas d'utilisation} retenus, d'une analyse critique et d'une synthèse positionnant le projet.
+
+\section{Menaces et vulnérabilités spécifiques à l'IoT}
+\label{sec:ea-menaces}
+
+\subsection{Surface d'attaque étendue}
+
+Les écosystèmes IoT présentent une surface d'attaque significativement plus large que les systèmes informatiques classiques. Meneghello \emph{et al.}~\cite{meneghello2019iot} en distinguent quatre couches~: (i)~la couche \emph{matérielle} (composants embarqués, JTAG/UART exposés, attaques par canal auxiliaire) ; (ii)~la couche \emph{firmware} (mises à jour non signées, exécution de code arbitraire) ; (iii)~la couche \emph{réseau} (transports en clair, protocoles propriétaires faibles) ; (iv)~la couche \emph{services et écosystème} (\acs{API} non authentifiées, applications mobiles vulnérables, multi-tenance mal cloisonnée).
+
+\subsection{OWASP IoT Top 10 et menaces réseau}
+
+L'OWASP synthétise dans son \emph{IoT Top~10}~\cite{owasp_iot} les dix risques applicatifs majeurs~: mots de passe faibles ou par défaut, services réseau non sécurisés, interfaces écosystème non protégées, mécanisme de mise à jour absent, composants obsolètes, protection insuffisante de la vie privée, transferts et stockage non chiffrés, absence de gestion des dispositifs, paramètres par défaut non sûrs, absence de hardening physique. Dans ce projet, nous nous concentrons sur les menaces \textbf{réseau} et \textbf{applicatives}~: interception (\emph{sniffing}), \emph{man-in-the-middle}, force brute, exfiltration applicative, déni de service, vol/abus de certificats.
+
+\subsection{Études de cas de référence}
+
+L'analyse de l'attaque \textbf{Mirai}~\cite{kolias2017mirai,antonakakis2017mirai} illustre toutes ces faiblesses simultanément~: le botnet exploitait des couples identifiant/mot de passe par défaut sur des objets exposés en SSH/Telnet, recrutait des centaines de milliers de dispositifs en quelques jours, et générait des attaques DDoS dépassant 1~Tbit/s. Le rapport \emph{ENISA Threat Landscape for IoT}~\cite{enisa_iot} confirme que ces vecteurs restent dominants et identifie comme contre-mesures prioritaires~: l'authentification forte, le chiffrement systématique, la segmentation réseau et la supervision active. Ces orientations rejoignent les recommandations du NIST~\cite{nist_sp800213} pour la cybersécurité des dispositifs IoT.
+
+\section{Protocoles applicatifs IoT}
+\label{sec:ea-protocoles}
+
+Le tableau~\ref{tab:protocoles} compare quatre protocoles applicatifs représentatifs.
+
+\begin{table}[H]
+\centering
+\caption{Comparaison des principaux protocoles applicatifs IoT}
+\label{tab:protocoles}
+\small
+\begin{tabularx}{\linewidth}{l X X X X}
+\toprule
+\textbf{Critère} & \textbf{MQTT 5} & \textbf{CoAP} & \textbf{AMQP 1.0} & \textbf{HTTP/REST} \\
+\midrule
+Modèle & Pub/Sub & Req/Rep & Pub/Sub + queues & Req/Rep \\
+Transport & TCP/TLS & UDP/DTLS & TCP/TLS & TCP/TLS \\
+Empreinte & Très faible & Très faible & Moyenne & Moyenne/élevée \\
+QoS & 0/1/2 & Confirmable & 0/1 & Aucun natif \\
+Sécurité native & TLS+ACL & DTLS+OSCORE & SASL+TLS & TLS+JWT \\
+Maturité IoT & Très large & Large & Industrielle & Universelle \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Le choix de \textbf{MQTT~5}~\cite{mqtt5} pour ce projet repose sur trois critères~: empreinte mémoire et réseau adaptée aux microcontrôleurs ; large adoption dans les écosystèmes industriels et les opérateurs IoT ; existence de mécanismes natifs d'authentification (\acs{TLS}+\acs{ACL}) facilement combinables avec mTLS.
+
+\section{Sécurisation du transport : TLS et mTLS}
+\label{sec:ea-tls}
+
+\subsection{TLS 1.3}
+
+Le protocole \acs{TLS}~1.3~\cite{rfc8446} apporte par rapport à TLS~1.2 une simplification significative~: suppression des suites cryptographiques obsolètes, négociation en \textbf{1-RTT} (et 0-RTT optionnel), \emph{forward secrecy} obligatoire, signatures et échanges de clés modernisés (ECDHE, EdDSA, AES-GCM, ChaCha20-Poly1305). Les recommandations opérationnelles publiées dans la \acs{RFC}~9325~\cite{rfc9325} guident le choix des paramètres et la durée de vie des certificats.
+
+\subsection{Authentification mutuelle}
+
+Dans un déploiement classique, seul le serveur s'authentifie auprès du client. Le \textbf{mTLS} (\emph{mutual TLS}) impose en outre au client de présenter un certificat X.509 valide signé par une autorité de confiance. Cette double authentification permet~: (i) d'éviter qu'un objet illégitime se connecte au broker ; (ii) de chiffrer chaque session par bout ; (iii) de tracer chaque message via l'identité cryptographique de son émetteur. Cette propriété est essentielle pour la mise en place ultérieure d'\acs{ACL} par certificat dans Mosquitto~\cite{mosquitto_tls}.
+
+\section{Gestion des identités : PKI et automatisation}
+\label{sec:ea-pki}
+
+Une PKI à deux niveaux (CA racine \emph{offline} + CA intermédiaire \emph{online}) constitue la pratique recommandée~\cite{nist_sp800213}~: la CA racine ne signe que des CA intermédiaires, et reste hors ligne ; les CA intermédiaires signent les certificats opérationnels (services, dispositifs). En cas de compromission d'une CA intermédiaire, seul le sous-arbre concerné doit être révoqué.
+
+L'automatisation de l'émission est indispensable lorsque le parc dépasse quelques dizaines d'objets. \textbf{HashiCorp Vault}~\cite{vault_pki} fournit un \emph{secrets engine} \texttt{pki} qui expose une API HTTP de demande de certificats avec contrôle fin (rôles, ACL, TTL). C'est la solution retenue dans ce projet.
+
+\section{Détection d'intrusion et supervision}
+\label{sec:ea-ids-siem}
+
+\subsection{IDS réseau orienté MQTT}
+
+\textbf{Suricata} est un IDS/IPS open source qui dispose, depuis la version 6, d'un \emph{parser} natif MQTT capable d'extraire les champs \texttt{CONNECT}, \texttt{PUBLISH}, \texttt{SUBSCRIBE}~\cite{suricata_mqtt}. Cette capacité permet de définir des règles métier (par exemple~: alerter sur un \texttt{CONNECT} sans \texttt{ClientID} reconnu, ou sur une rafale de \texttt{CONNECT} indiquant un \emph{brute force}) qui ne seraient pas accessibles à un IDS générique.
+
+\subsection{SIEM Wazuh}
+
+\textbf{Wazuh}~\cite{wazuh_docs} est une plateforme de \emph{Security Information and Event Management} qui agrège les journaux d'agents endpoint, de sources réseau (Suricata) et applicatifs (Vault, Mosquitto). Elle s'intègre nativement à OpenSearch pour le stockage et au tableau de bord Wazuh Dashboard pour la visualisation et la corrélation. Sa modularité (règles XML, décodeurs personnalisables) en fait un candidat naturel pour la consolidation des alertes IoT.
+
+\section{Apprentissage automatique pour la détection d'anomalies}
+\label{sec:ea-ml}
+
+Les approches par règles statiques sont efficaces pour les attaques connues mais peinent à détecter les comportements nouveaux. Hasan \emph{et al.}~\cite{hasan2020securing} ont montré qu'un classifieur supervisé entraîné sur des features réseau et applicatives obtient des taux de détection supérieurs à 99~\% sur sept catégories d'attaques IoT. Les algorithmes les plus utilisés sont~:
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Isolation Forest}~\cite{liu2008isolation}~: méthode non supervisée d'isolement, particulièrement efficace en haute dimension et adaptée aux scénarios où les anomalies sont rares ;
+  \item \textbf{Random Forest}~\cite{breiman2001random}~: ensemble d'arbres de décision, robuste, interprétable (\emph{feature importance}) et performant en classification multi-classes.
+\end{itemize}
+
+La bibliothèque \emph{scikit-learn}~\cite{scikit_learn} fournit des implémentations matures de ces deux algorithmes ; elle constitue le socle de notre pipeline ML.
+
+\section{Cas d'utilisation}
+\label{sec:ea-cas-utilisation}
+
+Trois acteurs principaux interagissent avec la plateforme proposée~: le \textbf{dispositif IoT} (publie des télémesures), l'\textbf{administrateur} (configure et supervise) et l'\textbf{analyste sécurité} (consulte les alertes et investigue). La figure~\ref{fig:cas-utilisation} synthétise leurs cas d'utilisation.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\linewidth]{diag-cas-utilisation.png}
+\caption{Diagramme de cas d'utilisation de la plateforme}
+\label{fig:cas-utilisation}
+\end{figure}
+
+\section{Analyse critique de l'existant}
+\label{sec:ea-analyse}
+
+Plusieurs approches ont été proposées pour sécuriser les flux IoT~: gateways IoT propriétaires (AWS IoT Core, Azure IoT Hub), distributions intégrées (ThingsBoard, Eclipse Kura), ou architectures sur mesure. Notre analyse fait ressortir quatre limitations récurrentes~:
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Verrouillage fournisseur} pour les solutions cloud commerciales, peu compatible avec une stratégie souveraine d'opérateur télécom ;
+  \item \textbf{Couverture partielle} de la sécurité chez les distributions intégrées (souvent TLS oui, mais pas mTLS systématique ni PKI automatisée) ;
+  \item \textbf{Faible intégration} entre la couche réseau (IDS) et la couche applicative (broker, ML) ;
+  \item \textbf{Reproductibilité limitée} des architectures publiées dans la littérature, rarement accompagnées d'un environnement de simulation complet.
+\end{enumerate}
+
+\section{Positionnement et synthèse}
+\label{sec:ea-positionnement}
+
+Au regard de cet état de l'art, le présent projet se positionne comme une \textbf{architecture de référence open source} pour la sécurisation des flux IoT chez un opérateur télécom, avec quatre contributions distinctives~: (1)~déploiement de bout en bout reproductible sous GNS3+Docker ; (2)~PKI Vault entièrement automatisée avec mTLS systématique ; (3)~chaîne de détection unifiée Suricata~+~Wazuh avec règles MQTT spécifiques ; (4)~couplage de cette détection signature avec un module ML (IsolationForest~+~RandomForest) pour couvrir les anomalies non connues.
+
+\section{Conclusion}
+\label{sec:ea-conclusion}
+
+Ce chapitre a établi le socle conceptuel du projet~: panorama des menaces, comparaison des protocoles, principes de TLS/mTLS, mécanismes PKI, outils de détection et apport de l'apprentissage automatique. Les cas d'utilisation et le positionnement synthétisent les contributions visées. Le chapitre suivant traduit ces orientations en \textbf{conception détaillée}~: besoins, méthodologie, planification, backlog et modélisation UML.

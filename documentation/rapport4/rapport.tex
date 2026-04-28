@@ -1,0 +1,173 @@
+%% rapport.tex - Document principal (rapport4)
+%% PFE : Securisation des flux de communication pour un ecosysteme IoT simule
+%% FST / Tunisie Telecom - 2025-2026
+%% Auteur : Amine Ghannouchi
+%% Structure : 5 chapitres (max 90 pages corps)
+\documentclass[12pt, a4paper, twoside]{report}
+
+\usepackage{fontspec}
+\setmainfont{Latin Modern Roman}
+\setsansfont{Latin Modern Sans}
+\setmonofont{Latin Modern Mono}
+\usepackage{polyglossia}
+\setmainlanguage{french}
+\setotherlanguage{arabic}
+\newfontfamily\arabicfont[Script=Arabic, Scale=1.4]{Traditional Arabic}
+
+\usepackage[top=2.5cm, bottom=2.5cm, left=3cm, right=2.5cm]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{emptypage}
+
+\usepackage[dvipsnames, table]{xcolor}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+%% Cap global : aucune figure ne depasse la largeur de la zone texte
+%% ni 78 % de la hauteur de page (rapport d'aspect conserve).
+\setkeys{Gin}{max width=\linewidth, max totalheight=0.78\textheight, keepaspectratio}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\small\nouppercase{\leftmark}}
+\fancyhead[RE,LO]{\small\textit{PFE -- IoT Security}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{array}
+\renewcommand{\arraystretch}{1.3}
+\usepackage{colortbl}
+
+\usepackage{listings}
+\usepackage{lstautogobble}
+\definecolor{codebg}{RGB}{255,255,255}
+\definecolor{codeframe}{RGB}{0,0,0}
+\definecolor{keywordcolor}{RGB}{0,0,0}
+\definecolor{commentcolor}{RGB}{0,0,0}
+\definecolor{stringcolor}{RGB}{0,0,0}
+\lstset{
+  backgroundcolor=\color{codebg}, frame=single, rulecolor=\color{codeframe},
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{keywordcolor}\bfseries,
+  commentstyle=\color{commentcolor}\itshape,
+  stringstyle=\color{stringcolor},
+  numbers=left, numberstyle=\tiny\color{gray},
+  stepnumber=1, numbersep=8pt,
+  breaklines=true, breakatwhitespace=true,
+  captionpos=b, showstringspaces=false,
+  autogobble=true, tabsize=2,
+  aboveskip=8pt, belowskip=8pt,
+  extendedchars=true, inputencoding=utf8,
+  literate=
+    {à}{{\`a}}1 {â}{{\^a}}1 {ä}{{\"a}}1
+    {é}{{\'e}}1 {è}{{\`e}}1 {ê}{{\^e}}1 {ë}{{\"e}}1
+    {î}{{\^i}}1 {ï}{{\"i}}1
+    {ô}{{\^o}}1 {ö}{{\"o}}1
+    {ù}{{\`u}}1 {û}{{\^u}}1 {ü}{{\"u}}1
+    {ç}{{\c{c}}}1
+    {À}{{\`A}}1 {Â}{{\^A}}1
+    {É}{{\'E}}1 {È}{{\`E}}1 {Ê}{{\^E}}1
+    {Î}{{\^I}}1 {Ô}{{\^O}}1
+    {Ù}{{\`U}}1 {Û}{{\^U}}1
+    {Ç}{{\c{C}}}1
+    {œ}{{\oe}}1 {æ}{{\ae}}1
+    {«}{{\guillemotleft}}1 {»}{{\guillemotright}}1
+}
+\lstdefinelanguage{yaml}{keywords={true,false,null,yes,no},keywordstyle=\color{keywordcolor}\bfseries,sensitive=false,comment=[l]{\#},morestring=[b]',morestring=[b]"}
+\lstdefinelanguage{json}{keywords={true,false,null},keywordstyle=\color{keywordcolor}\bfseries,sensitive=false,morestring=[b]",comment=[l]{//},morecomment=[s]{/*}{*/}}
+\lstdefinelanguage{hcl}{keywords={resource,variable,output,module,provider,terraform,locals,data,for,if,in},keywordstyle=\color{keywordcolor}\bfseries,sensitive=false,morestring=[b]",comment=[l]{\#},morecomment=[l]{//}}
+\lstdefinelanguage{bash}{keywords={sudo,apt,git,docker,python3,pip,echo,export,mkdir,chmod,cp,rm,systemctl},keywordstyle=\color{keywordcolor}\bfseries,comment=[l]{\#},morestring=[b]',morestring=[b]"}
+
+\usepackage{amsmath, amssymb, amsfonts}
+
+\usepackage[
+  hidelinks,
+  bookmarks=true,
+  bookmarksnumbered=true,
+  pdftitle={PFE -- Securisation des flux IoT (rapport4)},
+  pdfauthor={Amine Ghannouchi},
+  pdfsubject={IoT Security, TLS/mTLS, PKI, SIEM, Machine Learning},
+  pdfkeywords={IoT, TLS 1.3, mTLS, PKI, Vault, MQTT, Suricata, Wazuh, Machine Learning, Scrum}
+]{hyperref}
+\usepackage{bookmark}
+
+\usepackage[backend=biber, style=ieee, sorting=none]{biblatex}
+\addbibresource{bibliography.bib}
+
+\usepackage{microtype}
+\usepackage{csquotes}
+\usepackage{acronym}
+\usepackage{enumitem}
+\usepackage{pifont}
+\usepackage{mdframed}
+%% Boites neutres : pas de cadre colore, juste un titre en gras
+%% suivi du contenu, separes par un mince filet noir.
+\newenvironment{infobox}[1][Note]%
+  {\par\medskip\noindent\textbf{#1}\par\nobreak\vspace{-2pt}\noindent\rule{\linewidth}{0.3pt}\par\nobreak\smallskip\noindent\ignorespaces}%
+  {\par\medskip}
+\newenvironment{warningbox}[1][Avertissement]%
+  {\par\medskip\noindent\textbf{#1}\par\nobreak\vspace{-2pt}\noindent\rule{\linewidth}{0.3pt}\par\nobreak\smallskip\noindent\ignorespaces}%
+  {\par\medskip}
+\newenvironment{resultbox}[1][Resultat]%
+  {\par\medskip\noindent\textbf{#1}\par\nobreak\vspace{-2pt}\noindent\rule{\linewidth}{0.3pt}\par\nobreak\smallskip\noindent\ignorespaces}%
+  {\par\medskip}
+\newenvironment{attackbox}[1][Scenario]%
+  {\par\medskip\noindent\textbf{#1}\par\nobreak\vspace{-2pt}\noindent\rule{\linewidth}{0.3pt}\par\nobreak\smallskip\noindent\ignorespaces}%
+  {\par\medskip}
+
+\newcommand{\TT}{\textit{Tunisie Telecom}}
+\newcommand{\FST}{\textit{Faculté des Sciences de Tunis}}
+\newcommand{\code}[1]{\texttt{#1}}
+
+\graphicspath{{figures/}{diagrams/}}
+
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{3}
+
+\begin{document}
+
+%% Page de garde
+\input{chapters/00-pagedegarde}
+
+%% Pages preliminaires (numerotation romaine)
+\pagenumbering{roman}
+\setcounter{page}{1}
+\input{chapters/00-dedicace}
+\input{chapters/00-remerciements}
+
+\tableofcontents
+\listoffigures
+\listoftables
+\input{chapters/00-acronymes}
+
+%% Corps du rapport (numerotation arabe)
+\cleardoublepage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\input{chapters/01-introduction}
+%% Bibliographie placee dans le chapitre 1 (selon contrainte)
+\printbibliography[heading=bibintoc, title={Références bibliographiques}]
+
+\input{chapters/02-etat-art}
+\input{chapters/03-conception}
+\input{chapters/04-realisation}
+\input{chapters/05-tests-conclusion}
+
+%% Annexes
+\appendix
+\input{chapters/annexe-a}
+\input{chapters/annexe-b}
+
+%% Resumes tri-langue (1 page finale)
+\input{chapters/00-resume}
+
+\end{document}

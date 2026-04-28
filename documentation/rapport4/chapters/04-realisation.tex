@@ -1,0 +1,213 @@
+\chapter{Réalisation}
+\label{chap:realisation}
+
+\section{Introduction}
+\label{sec:re-intro}
+
+Ce chapitre présente la mise en \oe{}uvre concrète de l'architecture conçue précédemment. Nous décrivons successivement~: l'environnement de développement, l'architecture globale et la topologie réseau, la PKI Vault, le broker MQTT en TLS/mTLS, les scénarios d'attaque retenus avec leurs contre-mesures, le pipeline d'apprentissage automatique (présenté \emph{après} la couche de défense statique pour respecter une logique de défense en profondeur), puis les captures d'écran des interfaces clés (Vault UI, Wazuh, GNS3).
+
+\section{Environnement de développement}
+\label{sec:re-env}
+
+Le laboratoire est entièrement reproductible sur une station Windows~10/11 (16~Go de RAM minimum). Les principaux composants logiciels sont résumés dans le tableau~\ref{tab:env}.
+
+\begin{table}[H]
+\centering
+\caption{Composants de l'environnement de développement}
+\label{tab:env}
+\small
+\begin{tabularx}{\linewidth}{l l X}
+\toprule
+\textbf{Composant} & \textbf{Version} & \textbf{Rôle} \\
+\midrule
+GNS3 & 2.2.x & Émulation de la topologie réseau \\
+Docker Engine & 24.x & Conteneurs services et clients IoT \\
+HashiCorp Vault & 1.15 & PKI à deux niveaux et secrets engine \\
+Eclipse Mosquitto & 2.0 & Broker MQTT avec TLS~1.3 + mTLS \\
+Suricata & 6.0 & IDS réseau, parser MQTT \\
+Wazuh & 4.7 & SIEM, agrégation et corrélation \\
+pfSense & 2.7 & Pare-feu inter-VLAN \\
+MikroTik RouterOS & 7.x & Routage / NAT \\
+Python & 3.11 & Simulateur de flotte, ML \\
+scikit-learn & 1.4 & Algorithmes ML \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Architecture globale et topologie réseau}
+\label{sec:re-archi}
+
+L'architecture cible (figure~\ref{fig:archi}) repose sur quatre VLANs isolés~: \texttt{IoT}, \texttt{Services} (Vault, Mosquitto), \texttt{Monitoring} (Suricata, Wazuh), \texttt{Management}. La séparation est imposée par pfSense, qui filtre les flux inter-VLAN selon une politique \emph{deny-by-default}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\linewidth]{diag-architecture-generale.png}
+\caption{Architecture globale en défense en profondeur}
+\label{fig:archi}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\linewidth]{diag-topologie-reseau.png}
+\caption{Topologie réseau détaillée (VLANs et plan d'adressage)}
+\label{fig:topo}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\linewidth]{diag-flux-e2e.png}
+\caption{Flux de bout en bout sécurisés (publication mTLS, journalisation, alertes)}
+\label{fig:flux-e2e}
+\end{figure}
+
+\section{Infrastructure à clés publiques (Vault)}
+\label{sec:re-pki}
+
+\subsection{Hiérarchie}
+
+La PKI suit le modèle à deux niveaux préconisé par le NIST~\cite{nist_sp800213}~: une CA racine \emph{offline} (générée hors ligne, conservée chiffrée) signe une unique CA intermédiaire en ligne, gérée par Vault~\cite{vault_pki}. La figure~\ref{fig:pki-hier} illustre cette hiérarchie.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{diag-pki-hierarchy.png}
+\caption{Hiérarchie de la PKI}
+\label{fig:pki-hier}
+\end{figure}
+
+\subsection{Rôles Vault et émission}
+
+Deux rôles PKI ont été définis~: \texttt{role-server} (TTL 90~jours, usage \emph{server\_auth}) et \texttt{role-device} (TTL 30~jours, usage \emph{client\_auth}, \emph{Common Name} contraint au pattern \texttt{dev-XXX.iot.lab}). L'émission d'un certificat client se réduit à un appel HTTP authentifié par jeton AppRole.
+
+\begin{lstlisting}[language=bash, caption={Émission d'un certificat client via Vault}]
+vault write -format=json pki_int/issue/role-device \
+    common_name="dev-042.iot.lab" \
+    ttl="720h"
+\end{lstlisting}
+
+\section{Broker MQTT en TLS 1.3 + mTLS}
+\label{sec:re-mqtt}
+
+Mosquitto est configuré avec~\cite{mosquitto_tls}~: \texttt{require\_certificate true}, \texttt{use\_identity\_as\_username true}, et un fichier d'\acs{ACL} liant chaque \emph{Common Name} à ses topics autorisés. La figure~\ref{fig:tls-handshake} retrace le \emph{handshake} TLS~1.3 mutuel observé entre un dispositif et le broker.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\linewidth]{diag-tls-handshake.png}
+\caption{Handshake TLS~1.3 avec authentification mutuelle}
+\label{fig:tls-handshake}
+\end{figure}
+
+\section{Scénarios d'attaque et contre-mesures}
+\label{sec:re-attaques}
+
+Six scénarios ont été conçus pour couvrir les principales catégories d'attaques applicables à un broker MQTT. Chaque scénario est défini par un \emph{vecteur}, une \emph{méthode de détection} et une \emph{contre-mesure}. Les scénarios sont rejoués depuis la flotte simulée et corroborés par les alertes Suricata/Wazuh.
+
+\begin{attackbox}[Scénario 1 -- Man-in-the-Middle (TLS désactivé)]
+\textbf{Vecteur~:} un dispositif tente de se connecter sur le port 1883 (MQTT en clair) au lieu de 8883 (TLS). Un attaquant en position MITM peut alors capturer puis modifier les messages.\\
+\textbf{Détection~:} règle Suricata sur tout flux TCP/1883.\\
+\textbf{Contre-mesure~:} pare-feu pfSense bloquant 1883 ; broker écoutant uniquement sur 8883 avec \texttt{require\_certificate}.
+\end{attackbox}
+
+\begin{attackbox}[Scénario 2 -- Sniffing MQTT en clair]
+\textbf{Vecteur~:} interception passive du trafic MQTT non chiffré sur le segment IoT.\\
+\textbf{Détection~:} alerte Suricata si un \texttt{PUBLISH} apparaît hors de la session TLS.\\
+\textbf{Contre-mesure~:} TLS~1.3 obligatoire ; suites cryptographiques restreintes (RFC~9325~\cite{rfc9325}).
+\end{attackbox}
+
+\begin{attackbox}[Scénario 3 -- Brute-force d'authentification]
+\textbf{Vecteur~:} 500~tentatives de \texttt{CONNECT} en moins de 60~s avec des certificats forgés.\\
+\textbf{Détection~:} règle Suricata MQTT (seuil de \texttt{CONNECT} par IP source).\\
+\textbf{Contre-mesure~:} certificats clients signés par CA Vault ; \emph{rate-limit} pfSense sur le port 8883.
+\end{attackbox}
+
+\begin{attackbox}[Scénario 4 -- Exfiltration via topic non autorisé]
+\textbf{Vecteur~:} un dispositif compromis tente de \texttt{SUBSCRIBE} à \texttt{tt/admin/\#}.\\
+\textbf{Détection~:} log Mosquitto \texttt{ACL denied} ; règle Wazuh corrélant N occurrences/15~min.\\
+\textbf{Contre-mesure~:} ACL stricte par \emph{Common Name}, granularité au topic.
+\end{attackbox}
+
+\begin{attackbox}[Scénario 5 -- Déni de service par flood CONNECT]
+\textbf{Vecteur~:} client malveillant ouvrant plusieurs milliers de connexions TLS partielles.\\
+\textbf{Détection~:} alertes Suricata sur taux d'ouvertures TLS anormal.\\
+\textbf{Contre-mesure~:} \texttt{max\_connections} Mosquitto, \texttt{state-table-limit} pfSense, blacklist dynamique Wazuh.
+\end{attackbox}
+
+\begin{attackbox}[Scénario 6 -- Compromission de certificat client]
+\textbf{Vecteur~:} certificat \texttt{dev-017} volé puis réutilisé depuis une IP non habituelle.\\
+\textbf{Détection~:} module ML (Isolation Forest) signalant l'écart comportemental ; corrélation Wazuh IP$\leftrightarrow$identité.\\
+\textbf{Contre-mesure~:} révocation Vault (\texttt{vault write pki\_int/revoke serial=...}) et \emph{rotation} immédiate de la CRL.
+\end{attackbox}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\linewidth]{diag-suricata-detection.png}
+\caption{Chaîne de détection Suricata $\rightarrow$ Wazuh}
+\label{fig:detection}
+\end{figure}
+
+\section{Pipeline d'apprentissage automatique}
+\label{sec:re-ml}
+
+Le pipeline ML intervient \emph{après} la défense statique~: il complète la détection signature en repérant les comportements anormaux non couverts par les règles. Il est constitué de cinq étapes (figure~\ref{fig:ml-pipeline})~: collecte du trafic, extraction de features, entraînement, évaluation, intégration dans le SIEM.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\linewidth]{diag-ml-pipeline.png}
+\caption{Pipeline d'apprentissage automatique}
+\label{fig:ml-pipeline}
+\end{figure}
+
+\subsection{Données et features}
+
+Le jeu de données utilisé contient 76\,000 enregistrements répartis en huit classes (1 normale + 7 attaques)~\cite{hasan2020securing}. Les figures~\ref{fig:eda-classes}--\ref{fig:eda-corr} présentent l'analyse exploratoire.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.48\linewidth}
+  \includegraphics[width=\linewidth]{eda_classes_distribution.png}
+  \caption{Distribution des classes}\label{fig:eda-classes}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\linewidth}
+  \includegraphics[width=\linewidth]{eda_correlation_heatmap.png}
+  \caption{Matrice de corrélation}\label{fig:eda-corr}
+\end{subfigure}
+\caption{Analyse exploratoire des données}
+\end{figure}
+
+\subsection{Modèles}
+
+Deux modèles complémentaires sont entraînés via \emph{scikit-learn}~\cite{scikit_learn}~:
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Isolation Forest}~\cite{liu2008isolation}~: détection non supervisée d'anomalies sur trafic légitime majoritaire ;
+  \item \textbf{Random Forest}~\cite{breiman2001random}~: classification supervisée multi-classes des sept attaques.
+\end{itemize}
+
+\section{Captures d'écran des interfaces}
+\label{sec:re-captures}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\linewidth]{vault-pki-hierarchy.png}
+\caption{Vault UI -- vue de la hiérarchie PKI}
+\label{fig:cap-vault}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\linewidth]{wazuh-dashboard.png}
+\caption{Wazuh Dashboard -- alertes corrélées}
+\label{fig:cap-wazuh}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\linewidth]{gns3-topology.png}
+\caption{GNS3 -- topologie déployée du laboratoire}
+\label{fig:cap-gns3}
+\end{figure}
+
+\section{Conclusion}
+\label{sec:re-conclusion}
+
+Ce chapitre a détaillé la réalisation effective~: environnement, architecture, PKI, broker mTLS, scénarios d'attaque et pipeline ML. Toutes les briques fonctionnent et communiquent. Le chapitre suivant en présente la \textbf{validation expérimentale}~: plan de tests, résultats quantitatifs, limites et perspectives.

@@ -1,0 +1,25 @@
+@startgantt
+title Planification du projet PFE
+project starts 2025-02-03
+saturday are closed
+sunday are closed
+printscale weekly zoom 2
+
+[Sprint 0 : Cadrage] lasts 10 days
+[Sprint 1 : Infrastructure GNS3] lasts 15 days
+[Sprint 2 : PKI et MQTT/TLS] lasts 15 days
+[Sprint 3 : Simulation flotte] lasts 10 days
+[Sprint 4 : Detection (Suricata/Wazuh/ML)] lasts 15 days
+[Sprint 5 : Redaction] lasts 15 days
+
+[Sprint 1 : Infrastructure GNS3] starts at [Sprint 0 : Cadrage]'s end
+[Sprint 2 : PKI et MQTT/TLS] starts at [Sprint 1 : Infrastructure GNS3]'s end
+[Sprint 3 : Simulation flotte] starts at [Sprint 2 : PKI et MQTT/TLS]'s end
+[Sprint 4 : Detection (Suricata/Wazuh/ML)] starts at [Sprint 3 : Simulation flotte]'s end
+[Sprint 5 : Redaction] starts at [Sprint 4 : Detection (Suricata/Wazuh/ML)]'s end
+
+[Cahier des charges valide] happens at [Sprint 0 : Cadrage]'s end
+[PKI operationnelle] happens at [Sprint 2 : PKI et MQTT/TLS]'s end
+[Detection ML validee] happens at [Sprint 4 : Detection (Suricata/Wazuh/ML)]'s end
+
+@endgantt
