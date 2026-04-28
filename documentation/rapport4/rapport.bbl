@@ -92,7 +92,7 @@
       \field{title}{{ENISA Threat Landscape for IoT}}
       \field{urlday}{15}
       \field{urlmonth}{2}
-      \field{urlyear}{2025}
+      \field{urlyear}{2026}
       \field{year}{2023}
       \field{urldateera}{ce}
     \endentry
@@ -202,7 +202,7 @@
       \field{title}{{OWASP Internet of Things Top 10}}
       \field{urlday}{18}
       \field{urlmonth}{2}
-      \field{urlyear}{2025}
+      \field{urlyear}{2026}
       \field{year}{2018}
       \field{urldateera}{ce}
     \endentry
@@ -228,7 +228,7 @@
       \field{title}{{GNS3 Documentation}}
       \field{urlday}{25}
       \field{urlmonth}{2}
-      \field{urlyear}{2025}
+      \field{urlyear}{2026}
       \field{year}{2024}
       \field{urldateera}{ce}
     \endentry
@@ -254,7 +254,7 @@
       \field{title}{{Docker Documentation}}
       \field{urlday}{10}
       \field{urlmonth}{2}
-      \field{urlyear}{2025}
+      \field{urlyear}{2026}
       \field{year}{2024}
       \field{urldateera}{ce}
     \endentry
@@ -280,7 +280,7 @@
       \field{title}{{Vault PKI Secrets Engine -- Documentation}}
       \field{urlday}{20}
       \field{urlmonth}{3}
-      \field{urlyear}{2025}
+      \field{urlyear}{2026}
       \field{year}{2024}
       \field{urldateera}{ce}
     \endentry
@@ -306,7 +306,7 @@
       \field{title}{{Eclipse Mosquitto -- TLS/SSL Configuration}}
       \field{urlday}{25}
       \field{urlmonth}{3}
-      \field{urlyear}{2025}
+      \field{urlyear}{2026}
       \field{year}{2023}
       \field{urldateera}{ce}
     \endentry
@@ -332,7 +332,7 @@
       \field{title}{{Suricata -- MQTT Protocol Support}}
       \field{urlday}{5}
       \field{urlmonth}{4}
-      \field{urlyear}{2025}
+      \field{urlyear}{2026}
       \field{year}{2023}
       \field{urldateera}{ce}
     \endentry
@@ -358,7 +358,7 @@
       \field{title}{{Wazuh Documentation -- Integration with Suricata}}
       \field{urlday}{10}
       \field{urlmonth}{4}
-      \field{urlyear}{2025}
+      \field{urlyear}{2026}
       \field{year}{2024}
       \field{urldateera}{ce}
     \endentry
@@ -457,7 +457,7 @@
       \field{title}{{Tunisie Telecom -- Profil de l'entreprise}}
       \field{urlday}{5}
       \field{urlmonth}{2}
-      \field{urlyear}{2025}
+      \field{urlyear}{2026}
       \field{year}{2024}
       \field{urldateera}{ce}
     \endentry
@@ -513,7 +513,7 @@
       \field{title}{{MQTT Version 5.0 -- OASIS Standard}}
       \field{urlday}{20}
       \field{urlmonth}{2}
-      \field{urlyear}{2025}
+      \field{urlyear}{2026}
       \field{year}{2019}
       \field{urldateera}{ce}
     \endentry
@@ -545,7 +545,7 @@
       \field{type}{Request for Comments}
       \field{urlday}{15}
       \field{urlmonth}{3}
-      \field{urlyear}{2025}
+      \field{urlyear}{2026}
       \field{year}{2018}
       \field{urldateera}{ce}
       \verb{urlraw}
@@ -593,7 +593,7 @@
       \field{type}{Request for Comments}
       \field{urlday}{15}
       \field{urlmonth}{3}
-      \field{urlyear}{2025}
+      \field{urlyear}{2026}
       \field{year}{2022}
       \field{urldateera}{ce}
       \verb{urlraw}
@@ -777,7 +777,7 @@
       \field{title}{{The Scrum Guide}}
       \field{urlday}{10}
       \field{urlmonth}{2}
-      \field{urlyear}{2025}
+      \field{urlyear}{2026}
       \field{year}{2020}
       \field{urldateera}{ce}
     \endentry

@@ -23,9 +23,10 @@
 \usepackage{graphicx}
 \usepackage[export]{adjustbox}
 %% Cap global : aucune figure ne depasse la largeur de la zone texte
-%% ni 78 % de la hauteur de page (rapport d'aspect conserve).
-\setkeys{Gin}{max width=\linewidth, max totalheight=0.78\textheight, keepaspectratio}
+%% ni 68 % de la hauteur de page (caption comprise avec marge de securite).
+\setkeys{Gin}{max width=\linewidth, max totalheight=0.68\textheight, keepaspectratio}
 \usepackage{float}
+\usepackage[section]{placeins}
 \usepackage{subcaption}
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds}
@@ -33,6 +34,7 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
+\setlength{\headheight}{14.5pt}
 \fancyhead[LE,RO]{\small\nouppercase{\leftmark}}
 \fancyhead[RE,LO]{\small\textit{PFE -- IoT Security}}
 \fancyfoot[C]{\thepage}
@@ -154,13 +156,13 @@
 \setcounter{page}{1}
 
 \input{chapters/01-introduction}
-%% Bibliographie placee dans le chapitre 1 (selon contrainte)
-\printbibliography[heading=bibintoc, title={Références bibliographiques}]
-
 \input{chapters/02-etat-art}
 \input{chapters/03-conception}
 \input{chapters/04-realisation}
 \input{chapters/05-tests-conclusion}
+
+\cleardoublepage
+\printbibliography[heading=bibintoc, title={Références bibliographiques}]
 
 %% Annexes
 \appendix

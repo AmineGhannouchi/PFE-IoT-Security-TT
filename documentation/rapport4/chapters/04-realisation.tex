@@ -78,7 +78,7 @@ Le flux complet est décomposé en cinq phases présentées séparément (figure
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.95\linewidth,height=0.45\textheight,keepaspectratio]{diag-flux-phase4.png}
+\includegraphics[width=0.92\linewidth,height=0.38\textheight,keepaspectratio]{diag-flux-phase4.png}
 \caption{Flux E2E --- Phase 4 : détection et supervision}
 \label{fig:flux-p4}
 \end{figure}
@@ -89,6 +89,7 @@ Le flux complet est décomposé en cinq phases présentées séparément (figure
 \caption{Flux E2E --- Phase 5 : rotation automatique des certificats}
 \label{fig:flux-p5}
 \end{figure}
+\FloatBarrier
 
 \section{Infrastructure à clés publiques (Vault)}
 \label{sec:re-pki}
@@ -169,10 +170,11 @@ Six scénarios ont été conçus pour couvrir les principales catégories d'atta
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.85\linewidth,height=0.85\textheight,keepaspectratio]{diag-suricata-detection.png}
+\includegraphics[width=0.75\linewidth,height=0.66\textheight,keepaspectratio]{diag-suricata-detection.png}
 \caption{Chaîne de détection Suricata $\rightarrow$ Wazuh}
 \label{fig:detection}
 \end{figure}
+\FloatBarrier
 
 \section{Pipeline d'apprentissage automatique}
 \label{sec:re-ml}
@@ -181,7 +183,7 @@ Le pipeline ML intervient \emph{après} la défense statique~: il complète la d
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.95\linewidth]{diag-ml-pipeline.png}
+\includegraphics[width=0.78\linewidth,height=0.58\textheight,keepaspectratio]{diag-ml-pipeline.png}
 \caption{Pipeline d'apprentissage automatique}
 \label{fig:ml-pipeline}
 \end{figure}
@@ -203,6 +205,7 @@ Le jeu de données utilisé contient 76\,000 enregistrements répartis en huit c
 \caption{Analyse exploratoire --- matrice de corrélation des features numériques}
 \label{fig:eda-corr}
 \end{figure}
+\FloatBarrier
 
 \subsection{Modèles}
 

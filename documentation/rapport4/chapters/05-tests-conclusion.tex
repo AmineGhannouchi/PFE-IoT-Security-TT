@@ -62,18 +62,18 @@ La complémentarité \emph{règles}~$+$~\emph{ML} est clairement démontrée~: l
 
 \begin{figure}[!htbp]
 \centering
-\begin{subfigure}{0.48\linewidth}
-  \includegraphics[width=\linewidth]{iso_forest_confusion_matrix.png}
-  \caption{Matrice de confusion}
-\end{subfigure}
-\hfill
-\begin{subfigure}{0.48\linewidth}
-  \includegraphics[width=\linewidth]{iso_forest_scores_distribution.png}
-  \caption{Distribution des scores d'anomalie}
-\end{subfigure}
-\caption{Évaluation Isolation Forest}
+\includegraphics[width=0.88\linewidth,height=0.55\textheight,keepaspectratio]{iso_forest_confusion_matrix.png}
+\caption{Isolation Forest -- matrice de confusion}
 \label{fig:iso-eval}
 \end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.88\linewidth,height=0.55\textheight,keepaspectratio]{iso_forest_scores_distribution.png}
+\caption{Isolation Forest -- distribution des scores d'anomalie}
+\label{fig:iso-scores}
+\end{figure}
+\FloatBarrier
 
 \subsection{Random Forest}
 
@@ -86,17 +86,16 @@ La complémentarité \emph{règles}~$+$~\emph{ML} est clairement démontrée~: l
 
 \begin{figure}[!htbp]
 \centering
-\begin{subfigure}{0.48\linewidth}
-  \includegraphics[width=\linewidth]{rf_multiclass_confusion.png}
-  \caption{Confusion multi-classes (8 classes)}
-\end{subfigure}
-\hfill
-\begin{subfigure}{0.48\linewidth}
-  \includegraphics[width=\linewidth]{rf_feature_importance.png}
-  \caption{Importance des features}
-\end{subfigure}
-\caption{Random Forest -- analyses détaillées}
+\includegraphics[width=0.88\linewidth,height=0.55\textheight,keepaspectratio]{rf_multiclass_confusion.png}
+\caption{Random Forest -- confusion multi-classes (8 classes)}
 \end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.90\linewidth,height=0.55\textheight,keepaspectratio]{rf_feature_importance.png}
+\caption{Random Forest -- importance des features}
+\end{figure}
+\FloatBarrier
 
 \begin{table}[H]
 \centering
@@ -125,17 +124,16 @@ Random Forest (multi-classe)& 0{,}994 & 0{,}993 & 0{,}993 & 0{,}993 \\
 
 \begin{figure}[!htbp]
 \centering
-\begin{subfigure}{0.48\linewidth}
-  \includegraphics[width=\linewidth]{perf_tls_handshake.png}
-  \caption{Distribution du handshake mTLS}
-\end{subfigure}
-\hfill
-\begin{subfigure}{0.48\linewidth}
-  \includegraphics[width=\linewidth]{perf_connection_latency.png}
-  \caption{Latence de connexion}
-\end{subfigure}
-\caption{Mesures TLS}
+\includegraphics[width=0.88\linewidth,height=0.55\textheight,keepaspectratio]{perf_tls_handshake.png}
+\caption{Distribution du handshake mTLS}
 \end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.88\linewidth,height=0.55\textheight,keepaspectratio]{perf_connection_latency.png}
+\caption{Latence de connexion}
+\end{figure}
+\FloatBarrier
 
 Le handshake mTLS médian s'établit à \(\sim 38\)~ms (95\textsuperscript{e} percentile~: 47~ms), conforme à \acs{BNF-2}.
 
@@ -143,17 +141,16 @@ Le handshake mTLS médian s'établit à \(\sim 38\)~ms (95\textsuperscript{e} pe
 
 \begin{figure}[!htbp]
 \centering
-\begin{subfigure}{0.48\linewidth}
-  \includegraphics[width=\linewidth]{perf_throughput.png}
-  \caption{Débit applicatif}
-\end{subfigure}
-\hfill
-\begin{subfigure}{0.48\linewidth}
-  \includegraphics[width=\linewidth]{perf_rtt_messages.png}
-  \caption{RTT par taille de message}
-\end{subfigure}
-\caption{Performance applicative}
+\includegraphics[width=0.88\linewidth,height=0.55\textheight,keepaspectratio]{perf_throughput.png}
+\caption{Débit applicatif}
 \end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.88\linewidth,height=0.55\textheight,keepaspectratio]{perf_rtt_messages.png}
+\caption{RTT par taille de message}
+\end{figure}
+\FloatBarrier
 
 \begin{figure}[!htbp]
 \centering
