@@ -101,9 +101,11 @@
 \contentsline {section}{\numberline {B.9}Variables d'environnement du projet}{80}{section.B.9}%
 \xpg@aux {}{arabic}
 \xpg@aux {}{french}
-\contentsline {chapter}{Résumés}{83}{appendix*.84}%
-\contentsline {chapter}{Abstract}{84}{appendix*.85}%
-\contentsline {chapter}{\textarabic {ملخّص}}{85}{appendix*.86}%
 \xpg@aux {}{arabic}
 \xpg@aux {}{french}
-\contentsline {chapter}{Résumé}{87}{appendix*.87}%
+\contentsline {chapter}{Résumés}{85}{appendix*.84}%
+\contentsline {chapter}{Abstract}{86}{appendix*.85}%
+\contentsline {chapter}{\textarabic {ملخّص}}{87}{appendix*.86}%
+\xpg@aux {}{arabic}
+\xpg@aux {}{french}
+\contentsline {chapter}{Résumé}{89}{appendix*.87}%
