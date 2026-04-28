@@ -104,7 +104,7 @@ S6 -- ML \& bilan & 2~semaines & Modèles IsolationForest+RandomForest, évaluat
 
 La figure~\ref{fig:sprints} illustre l'enchaînement des sprints et leurs dépendances internes.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.85\linewidth]{diag-scrum-sprints.png}
 \caption{Enchaînement des six sprints}
@@ -154,7 +154,7 @@ Soit un total estimé à \(96\) story points sur 6~sprints (\(\sim 16\) SP/sprin
 
 Le simulateur de flotte est structuré autour de quatre classes principales~: \texttt{DeviceProfile} (caractéristiques d'un type de dispositif), \texttt{IoTDevice} (instance simulée), \texttt{TrafficGenerator} (orchestration du rejeu) et \texttt{AttackInjector} (injection des sept catégories d'attaques). La figure~\ref{fig:classes} en donne la vue.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.95\linewidth]{diag-classe-fleet-sim.png}
 \caption{Diagramme de classes du simulateur de flotte}
@@ -165,18 +165,18 @@ Le simulateur de flotte est structuré autour de quatre classes principales~: \t
 
 L'émission d'un certificat suit un échange en cinq étapes entre le dispositif (ou le script de provisionnement), Vault et la CA intermédiaire (figure~\ref{fig:seq-pki}).
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.9\linewidth]{diag-pki-sequence.png}
+\includegraphics[width=0.85\linewidth,height=0.78\textheight,keepaspectratio]{diag-pki-sequence.png}
 \caption{Séquence d'émission d'un certificat client}
 \label{fig:seq-pki}
 \end{figure}
 
 \subsection{Diagramme d'activité~: cycle de publication mTLS}
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.85\linewidth]{diag-fleet-activity.png}
+\includegraphics[width=0.70\linewidth,height=0.85\textheight,keepaspectratio]{diag-fleet-activity.png}
 \caption{Activité d'un dispositif~: chargement des secrets, handshake, publication}
 \label{fig:activity}
 \end{figure}
@@ -186,9 +186,9 @@ L'émission d'un certificat suit un échange en cinq étapes entre le dispositif
 
 Le diagramme de Gantt (figure~\ref{fig:gantt}) consolide l'ensemble des sprints, les jalons académiques et les principales dépendances. La granularité retenue est \emph{semi-hebdomadaire} pour faciliter la lecture, sans surcharger le visuel.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
-\includegraphics[width=\linewidth]{diag-gantt.png}
+\includegraphics[width=\linewidth,height=0.80\textheight,keepaspectratio]{diag-gantt.png}
 \caption{Diagramme de Gantt du projet}
 \label{fig:gantt}
 \end{figure}

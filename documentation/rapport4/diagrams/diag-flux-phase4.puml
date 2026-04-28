@@ -1,0 +1,34 @@
+@startuml diag-flux-phase4
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam sequenceMessageAlign center
+skinparam shadowing false
+
+title Phase 4 — Détection et Supervision
+
+participant "MikroTik\nRouteur L3" as RTR
+participant "Mosquitto\nBroker MQTT" as BROKER
+participant "Suricata\nIDS" as IDS
+participant "Wazuh\nSIEM" as SIEM
+participant "ML Engine\nDétection" as ML
+
+RTR -> IDS : Port mirroring\n(copie du trafic VLAN 20)
+activate IDS
+IDS -> IDS : Inspection DPI\nApplication des règles MQTT\n(DoS, injection, scanning)
+IDS -> SIEM : Alertes EVE JSON\n(si anomalie détectée)
+deactivate IDS
+
+BROKER -> SIEM : Logs MQTT\n(connexions, publications)
+activate SIEM
+SIEM -> SIEM : Corrélation multi-sources\nApplication règles custom\n(niveaux 3 à 10)
+SIEM -> ML : Export données\npour analyse ML
+deactivate SIEM
+
+activate ML
+ML -> ML : IsolationForest → score anomalie\nRandomForest → classification attaque
+ML --> SIEM : Résultats détection\n(Normal / Attaque + type)
+deactivate ML
+
+@enduml

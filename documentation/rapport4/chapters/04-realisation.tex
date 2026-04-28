@@ -39,25 +39,55 @@ scikit-learn & 1.4 & Algorithmes ML \\
 
 L'architecture cible (figure~\ref{fig:archi}) repose sur quatre VLANs isolés~: \texttt{IoT}, \texttt{Services} (Vault, Mosquitto), \texttt{Monitoring} (Suricata, Wazuh), \texttt{Management}. La séparation est imposée par pfSense, qui filtre les flux inter-VLAN selon une politique \emph{deny-by-default}.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.95\linewidth]{diag-architecture-generale.png}
 \caption{Architecture globale en défense en profondeur}
 \label{fig:archi}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.95\linewidth]{diag-topologie-reseau.png}
 \caption{Topologie réseau détaillée (VLANs et plan d'adressage)}
 \label{fig:topo}
 \end{figure}
 
-\begin{figure}[H]
+Le flux complet est décomposé en cinq phases présentées séparément (figures~\ref{fig:flux-p1}--\ref{fig:flux-p5}) afin d'en améliorer la lisibilité.
+
+\begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.95\linewidth]{diag-flux-e2e.png}
-\caption{Flux de bout en bout sécurisés (publication mTLS, journalisation, alertes)}
-\label{fig:flux-e2e}
+\includegraphics[width=0.85\linewidth,height=0.32\textheight,keepaspectratio]{diag-flux-phase1.png}
+\caption{Flux E2E --- Phase 1 : provisionnement de l'identité}
+\label{fig:flux-p1}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.95\linewidth,height=0.40\textheight,keepaspectratio]{diag-flux-phase2.png}
+\caption{Flux E2E --- Phase 2 : établissement de la connexion TLS~1.3 mTLS}
+\label{fig:flux-p2}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.85\linewidth,height=0.30\textheight,keepaspectratio]{diag-flux-phase3.png}
+\caption{Flux E2E --- Phase 3 : publication des données IoT}
+\label{fig:flux-p3}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.95\linewidth,height=0.45\textheight,keepaspectratio]{diag-flux-phase4.png}
+\caption{Flux E2E --- Phase 4 : détection et supervision}
+\label{fig:flux-p4}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.80\linewidth,height=0.28\textheight,keepaspectratio]{diag-flux-phase5.png}
+\caption{Flux E2E --- Phase 5 : rotation automatique des certificats}
+\label{fig:flux-p5}
 \end{figure}
 
 \section{Infrastructure à clés publiques (Vault)}
@@ -67,7 +97,7 @@ L'architecture cible (figure~\ref{fig:archi}) repose sur quatre VLANs isolés~: 
 
 La PKI suit le modèle à deux niveaux préconisé par le NIST~\cite{nist_sp800213}~: une CA racine \emph{offline} (générée hors ligne, conservée chiffrée) signe une unique CA intermédiaire en ligne, gérée par Vault~\cite{vault_pki}. La figure~\ref{fig:pki-hier} illustre cette hiérarchie.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.85\linewidth]{diag-pki-hierarchy.png}
 \caption{Hiérarchie de la PKI}
@@ -89,7 +119,7 @@ vault write -format=json pki_int/issue/role-device \
 
 Mosquitto est configuré avec~\cite{mosquitto_tls}~: \texttt{require\_certificate true}, \texttt{use\_identity\_as\_username true}, et un fichier d'\acs{ACL} liant chaque \emph{Common Name} à ses topics autorisés. La figure~\ref{fig:tls-handshake} retrace le \emph{handshake} TLS~1.3 mutuel observé entre un dispositif et le broker.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.9\linewidth]{diag-tls-handshake.png}
 \caption{Handshake TLS~1.3 avec authentification mutuelle}
@@ -137,9 +167,9 @@ Six scénarios ont été conçus pour couvrir les principales catégories d'atta
 \textbf{Contre-mesure~:} révocation Vault (\texttt{vault write pki\_int/revoke serial=...}) et \emph{rotation} immédiate de la CRL.
 \end{attackbox}
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.9\linewidth]{diag-suricata-detection.png}
+\includegraphics[width=0.85\linewidth,height=0.85\textheight,keepaspectratio]{diag-suricata-detection.png}
 \caption{Chaîne de détection Suricata $\rightarrow$ Wazuh}
 \label{fig:detection}
 \end{figure}
@@ -149,7 +179,7 @@ Six scénarios ont été conçus pour couvrir les principales catégories d'atta
 
 Le pipeline ML intervient \emph{après} la défense statique~: il complète la détection signature en repérant les comportements anormaux non couverts par les règles. Il est constitué de cinq étapes (figure~\ref{fig:ml-pipeline})~: collecte du trafic, extraction de features, entraînement, évaluation, intégration dans le SIEM.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.95\linewidth]{diag-ml-pipeline.png}
 \caption{Pipeline d'apprentissage automatique}
@@ -160,18 +190,18 @@ Le pipeline ML intervient \emph{après} la défense statique~: il complète la d
 
 Le jeu de données utilisé contient 76\,000 enregistrements répartis en huit classes (1 normale + 7 attaques)~\cite{hasan2020securing}. Les figures~\ref{fig:eda-classes}--\ref{fig:eda-corr} présentent l'analyse exploratoire.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
-\begin{subfigure}{0.48\linewidth}
-  \includegraphics[width=\linewidth]{eda_classes_distribution.png}
-  \caption{Distribution des classes}\label{fig:eda-classes}
-\end{subfigure}
-\hfill
-\begin{subfigure}{0.48\linewidth}
-  \includegraphics[width=\linewidth]{eda_correlation_heatmap.png}
-  \caption{Matrice de corrélation}\label{fig:eda-corr}
-\end{subfigure}
-\caption{Analyse exploratoire des données}
+\includegraphics[width=0.85\linewidth,height=0.38\textheight,keepaspectratio]{eda_classes_distribution.png}
+\caption{Analyse exploratoire --- distribution des classes}
+\label{fig:eda-classes}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.95\linewidth,height=0.45\textheight,keepaspectratio]{eda_correlation_heatmap.png}
+\caption{Analyse exploratoire --- matrice de corrélation des features numériques}
+\label{fig:eda-corr}
 \end{figure}
 
 \subsection{Modèles}
@@ -186,21 +216,21 @@ Deux modèles complémentaires sont entraînés via \emph{scikit-learn}~\cite{sc
 \section{Captures d'écran des interfaces}
 \label{sec:re-captures}
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.92\linewidth]{vault-pki-hierarchy.png}
 \caption{Vault UI -- vue de la hiérarchie PKI}
 \label{fig:cap-vault}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.92\linewidth]{wazuh-dashboard.png}
 \caption{Wazuh Dashboard -- alertes corrélées}
 \label{fig:cap-wazuh}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.92\linewidth]{gns3-topology.png}
 \caption{GNS3 -- topologie déployée du laboratoire}

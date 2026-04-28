@@ -1,0 +1,22 @@
+@startuml diag-flux-phase3
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam sequenceMessageAlign center
+skinparam shadowing false
+
+title Phase 3 — Publication des Données IoT
+
+actor "Dispositif IoT" as DEV
+participant "Mosquitto\nBroker MQTT" as BROKER
+
+DEV -> BROKER : [TLS] MQTT CONNECT\n(ClientID + CN certificat)
+BROKER --> DEV : MQTT CONNACK (RC=0, succès)
+
+loop Pour chaque mesure du capteur
+  DEV -> BROKER : [TLS] MQTT PUBLISH\nTopic: iot/sensors/device-XXX/temperature\nPayload: {"temp": 23.5, "ts": "..."}
+  BROKER --> DEV : MQTT PUBACK (QoS 1)
+end
+
+@enduml

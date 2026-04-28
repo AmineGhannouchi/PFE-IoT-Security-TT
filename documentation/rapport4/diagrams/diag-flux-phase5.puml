@@ -1,0 +1,23 @@
+@startuml diag-flux-phase5
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam sequenceMessageAlign center
+skinparam shadowing false
+
+title Phase 5 — Rotation Automatique des Certificats
+
+actor "Dispositif IoT" as DEV
+participant "HashiCorp\nVault (PKI)" as VAULT
+
+note over DEV, VAULT
+  Avant expiration du TTL (24h),
+  le dispositif renouvelle son certificat
+  automatiquement via l'API Vault.
+end note
+
+DEV -> VAULT : Renouvellement certificat\n(nouveau CSR)
+VAULT --> DEV : Nouveau certificat X.509\n(TTL = 24h)
+
+@enduml

@@ -1,0 +1,29 @@
+@startuml diag-flux-phase1
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam sequenceMessageAlign center
+skinparam shadowing false
+
+title Phase 1 — Provisionnement de l'Identité
+
+actor "Dispositif IoT" as DEV
+participant "HashiCorp\nVault (PKI)" as VAULT
+
+DEV -> VAULT : Requête API REST\nDemande certificat X.509\n(CN = device-XXX.devices.pfe-iot.local)
+activate VAULT
+VAULT -> VAULT : Validation de l'identité\nGénération clé RSA-2048\nSignature par CA Intermédiaire
+VAULT --> DEV : Certificat X.509 + Clé privée\n+ Chaîne CA (TTL = 24h)
+deactivate VAULT
+
+note over DEV, VAULT
+  Le certificat contient :
+  — CN : device-XXX.devices.pfe-iot.local
+  — SAN : IP du dispositif
+  — Key Usage : digitalSignature, keyEncipherment
+  — Extended Key Usage : clientAuth
+  — Validité : 24 heures
+end note
+
+@enduml
