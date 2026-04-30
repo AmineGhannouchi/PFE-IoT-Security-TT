@@ -1,10 +1,10 @@
-\chapter{Tests, résultats et conclusion}
+\chapter{Tests, résultats et validation}
 \label{chap:tests-conclusion}
 
 \section{Introduction}
 \label{sec:tc-intro}
 
-Ce dernier chapitre valide la solution proposée. Nous décrivons le plan de tests, présentons les résultats quantitatifs (sécurité, performance, ML), discutons les limites observées, exposons les perspectives d'évolution et concluons sur les apports du projet.
+Ce dernier chapitre valide la solution proposée. Nous décrivons le plan de tests, présentons les résultats quantitatifs (sécurité, performance, ML), discutons les limites observées et exposons les perspectives d'évolution qui alimentent la conclusion générale du rapport.
 
 \section{Plan de tests}
 \label{sec:tc-plan}
@@ -179,11 +179,7 @@ Le surcoût lié au mTLS représente $\sim 8$\,\% du débit applicatif et $\sim 
 \textbf{Moyen terme} (3--12~mois)~: portage en environnement cellulaire réel (4G/5G), intégration aux outils \acs{SOC} de \TT{}, entraînement ML continu.\\
 \textbf{Long terme} ($>$~12~mois)~: évolution vers une architecture \emph{Zero Trust} IoT, intégration aux services LoRaWAN/NB-IoT, déploiement multi-tenant cloud.
 
-\section{Conclusion générale}
-\label{sec:tc-conclusion}
+\section{Synthèse du chapitre}
+\label{sec:tc-synthese}
 
-Ce projet de fin d'études a permis de concevoir, déployer et valider une architecture complète de sécurisation de bout en bout des flux IoT, dans un environnement simulé représentatif d'un opérateur télécom. Les sept objectifs initiaux (\acs{O1}--\acs{O7}) sont atteints~: l'environnement GNS3 est reproductible, la PKI Vault automatisée, le broker mTLS fonctionnel, la flotte simulée opérationnelle, la chaîne IDS+SIEM en place, le module ML évalué.
-
-Les résultats expérimentaux confirment trois propriétés essentielles~: (i)~la \textbf{complémentarité} entre règles statiques et ML, qui couvrent ensemble la quasi-totalité des scénarios d'attaque ; (ii)~le \textbf{coût marginal} du mTLS, négligeable au regard des bénéfices sécuritaires ; (iii)~la \textbf{reproductibilité} de l'ensemble, condition d'une éventuelle industrialisation chez \TT{}.
-
-Au-delà du livrable technique, ce travail a constitué une expérience pédagogique riche en synthèse de domaines (réseaux, cryptographie, conteneurisation, supervision, apprentissage automatique, méthodologie agile). Les perspectives ouvertes --- du portage cellulaire à l'évolution Zero Trust --- offrent un terrain d'extension naturel pour de futurs travaux.
+Les tests réalisés confirment la validité fonctionnelle et expérimentale de l'architecture proposée. La chaîne de sécurité combine correctement authentification forte, chiffrement mTLS, contrôle d'accès, supervision IDS/SIEM et détection par apprentissage automatique. Les limites identifiées concernent principalement le caractère simulé de l'environnement, la taille réduite de la flotte et l'intégration encore hors ligne du module ML. Ces résultats servent de base à la conclusion générale, qui synthétise l'ensemble du projet et ouvre les perspectives de continuité.

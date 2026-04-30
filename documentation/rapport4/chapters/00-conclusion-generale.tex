@@ -1,0 +1,21 @@
+% Conclusion generale non numerotee
+\clearpage
+\phantomsection
+\markboth{Conclusion générale}{Conclusion générale}
+\addcontentsline{toc}{chapter}{Conclusion générale}
+\begin{center}
+{\Large\bfseries Conclusion générale}
+\end{center}
+\vspace{0.4cm}
+
+Ce projet de fin d'études avait pour objectif de concevoir, mettre en place et évaluer une architecture de sécurisation des flux de communication dans un écosystème IoT simulé. Le travail est parti d'un constat simple : les dispositifs connectés produisent des échanges nombreux, hétérogènes et parfois critiques, alors que leurs contraintes matérielles et opérationnelles rendent difficile l'application directe des mécanismes de sécurité classiques. Dans un contexte proche d'un environnement opérateur, la protection des flux doit donc combiner plusieurs niveaux : segmentation réseau, authentification forte, chiffrement, gestion des identités, supervision et détection d'anomalies.
+
+La solution réalisée répond à cette logique de défense en profondeur. Elle s'appuie sur une topologie segmentée sous GNS3, une infrastructure PKI automatisée avec HashiCorp Vault, un broker Mosquitto configuré en TLS 1.3 avec authentification mutuelle, ainsi qu'une flotte simulée de dispositifs IoT générant un trafic réaliste. À cette base sécurisée s'ajoutent Suricata pour l'inspection réseau, Wazuh pour la corrélation des alertes, puis un module d'apprentissage automatique combinant Isolation Forest et Random Forest.
+
+Les expérimentations montrent que les objectifs définis au début du projet ont été atteints. Les certificats peuvent être émis et utilisés pour authentifier les clients, les communications MQTT sont protégées par mTLS, les accès applicatifs sont limités par des ACL, et les principaux scénarios d'attaque simulés sont détectés par la chaîne IDS/SIEM ou par le module ML. Les mesures de performance indiquent aussi que le coût du mTLS reste acceptable dans le cadre du laboratoire, avec un surcoût limité au regard des bénéfices apportés en confidentialité, intégrité et authentification.
+
+L'apport principal de ce travail réside dans l'intégration cohérente de plusieurs briques de sécurité autour d'un cas d'usage IoT complet. Le projet ne se limite pas à la configuration isolée d'un broker ou d'un outil de supervision : il propose une chaîne bout en bout, reproductible, documentée et testable. Cette approche fournit une base exploitable pour de futurs essais plus proches d'un environnement réel.
+
+Certaines limites demeurent néanmoins. L'environnement reste simulé et ne reproduit pas toutes les contraintes d'un réseau radio réel : latence variable, pertes de paquets, mobilité ou limitations énergétiques. La taille de la flotte reste aussi réduite par les ressources de la machine hôte, et le pipeline d'apprentissage automatique est évalué hors ligne.
+
+Les perspectives consistent à automatiser le déploiement, intégrer la rotation continue des certificats, étendre la flotte simulée, puis tester l'architecture dans un environnement cellulaire ou LPWAN réel. Une évolution vers une approche Zero Trust IoT avec scoring ML en temps réel constituerait aussi une suite pertinente. Ainsi, ce PFE fournit une base expérimentale solide pour les travaux futurs.
