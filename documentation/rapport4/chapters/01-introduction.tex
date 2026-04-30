@@ -1,14 +1,13 @@
-\chapter{Introduction générale}
+\chapter{Contexte général du projet}
+\label{chap:contexte-general}
 \label{chap:introduction}
 
-\section{Contexte général}
+\section{Cadre général du projet}
 \label{sec:contexte-general}
 
-L'\textbf{Internet des Objets} (IoT, \emph{Internet of Things}) désigne l'interconnexion par réseau de dispositifs physiques --- capteurs, actionneurs, passerelles, équipements industriels --- capables de collecter, échanger et exploiter de l'information sans intervention humaine~\cite{meneghello2019iot}. En quelques années, ce paradigme s'est imposé dans des domaines aussi variés que la ville intelligente, l'industrie 4.0, l'agriculture connectée, la santé ou les réseaux d'opérateurs télécoms. Selon les estimations publiées par l'\acs{ENISA}, plus de 30~milliards de dispositifs IoT seraient déployés dans le monde à l'horizon 2025, générant un volume de trafic et une surface d'attaque sans précédent~\cite{enisa_iot}.
+Ce premier chapitre précise le cadre dans lequel s'inscrit le projet. Il présente l'environnement d'accueil, le besoin opérationnel identifié, la problématique de sécurité traitée, les objectifs techniques retenus et la solution proposée. L'introduction générale ayant déjà posé les enjeux globaux de l'IoT, ce chapitre se concentre sur le contexte concret du PFE et sur les choix qui orientent la suite du rapport.
 
-Cette explosion s'accompagne d'une augmentation rapide des incidents de sécurité. L'attaque du \textbf{botnet Mirai}~\cite{kolias2017mirai,antonakakis2017mirai} a démontré, dès 2016, qu'un parc d'objets faiblement sécurisés pouvait être détourné en quelques heures pour conduire des attaques par déni de service distribué d'une ampleur inégalée. Plus généralement, les principales vulnérabilités identifiées par l'\acs{OWASP} dans son \emph{IoT Top~10}~\cite{owasp_iot} concernent : les mots de passe faibles ou par défaut, les services réseau non sécurisés, les interfaces d'écosystème mal protégées, l'absence de mise à jour, les transferts de données en clair et le manque de gestion de cycle de vie des dispositifs.
-
-Pour les opérateurs de télécommunications, dont \TT{} fait partie, ces enjeux sont d'autant plus critiques qu'ils opèrent à la fois comme \emph{fournisseurs de connectivité} et comme \emph{intégrateurs de services IoT verticaux} (smart metering, smart city, suivi de flotte, monitoring industriel). La sécurité de bout en bout des flux IoT --- de l'objet jusqu'aux applications métier hébergées dans le cloud opérateur --- constitue à ce titre un \textbf{prérequis stratégique} pour préserver la confiance des clients et la continuité des services.
+Dans le cadre de ce travail, l'objectif est de construire un prototype expérimental capable de sécuriser les flux de communication d'un écosystème IoT simulé. Le projet s'appuie sur une architecture représentative d'un environnement opérateur : segmentation réseau, services de confiance, broker MQTT, supervision de sécurité et analyse comportementale. Cette approche permet de valider les mécanismes proposés avant toute projection vers un déploiement réel à plus grande échelle.
 
 \section{Problématique}
 \label{sec:problematique}
@@ -93,17 +92,7 @@ Le présent projet a été réalisé au sein du service en charge des \emph{infr
 
 C'est dans ce cadre que s'inscrit notre travail~: concevoir un \emph{prototype de référence} de sécurisation des flux IoT, entièrement reproductible en environnement simulé, et utilisable comme socle pour les futures industrialisations.
 
-\section{Plan du rapport}
-\label{sec:plan-rapport}
+\section{Conclusion}
+\label{sec:contexte-conclusion}
 
-Le rapport est structuré en cinq chapitres~:
-
-\begin{itemize}[leftmargin=*]
-  \item Le \textbf{chapitre~\ref{chap:introduction}} (présent chapitre) introduit le contexte, formalise la problématique, énonce les objectifs et présente l'organisme d'accueil~;
-  \item Le \textbf{chapitre~\ref{chap:etat-art}} dresse un état de l'art des menaces, des protocoles, des outils et des approches existantes, accompagné du diagramme de cas d'utilisation et d'un positionnement du projet~;
-  \item Le \textbf{chapitre~\ref{chap:conception}} détaille la conception~: besoins fonctionnels et non fonctionnels, choix méthodologique (étude comparative Scrum / Kanban / XP), planification des sprints, \emph{Product Backlog}, diagrammes UML et planning de Gantt~;
-  \item Le \textbf{chapitre~\ref{chap:realisation}} présente la réalisation~: architecture détaillée, scénarios d'attaque, contre-mesures, pipeline ML, environnement de développement et captures d'écran des interfaces clés~;
-  \item Le \textbf{chapitre~\ref{chap:tests-conclusion}} expose le plan de tests, les résultats obtenus, les limites identifiées, les perspectives d'évolution et la conclusion générale.
-\end{itemize}
-
-Les annexes regroupent les configurations clés (Vault, Mosquitto, Suricata, Wazuh) et le code source des composants principaux.
+Ce chapitre a défini le contexte général du projet, son ancrage au sein de \TT{}, la problématique de sécurisation des flux IoT, les objectifs spécifiques et la solution proposée. Le chapitre suivant complète ce cadrage par l'état de l'art des menaces, protocoles, standards et outils mobilisés dans cette architecture.
