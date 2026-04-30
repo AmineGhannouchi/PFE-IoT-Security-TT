@@ -2,57 +2,34 @@
 
 skinparam backgroundColor #FFFFFF
 skinparam defaultFontName Arial
+skinparam defaultFontSize 11
 skinparam shadowing false
-
-title Planification Scrum du Projet PFE\nSprints et Livrables
-
-!define DONE ✅
-!define WIP 🔄
-
-rectangle "**Sprint 0 – Cadrage**\n(2 semaines)" as S0 #E3F2FD {
-  card "Analyse des besoins" as S0T1
-  card "Étude bibliographique" as S0T2
-  card "Choix technologiques" as S0T3
-  card "Rédaction cahier des charges" as S0T4
+skinparam monochrome true
+skinparam linetype ortho
+skinparam nodesep 35
+skinparam ranksep 30
+skinparam rectangle {
+  BorderColor Black
+  BackgroundColor White
+  FontColor Black
+  RoundCorner 12
 }
+skinparam ArrowColor Black
+skinparam ArrowThickness 1.2
 
-rectangle "**Sprint 1 – Infrastructure**\n(3 semaines)" as S1 #E8F5E9 {
-  card "Installation GNS3 + VMware" as S1T1
-  card "Topologie réseau (VLANs)" as S1T2
-  card "Déploiement pfSense + MikroTik" as S1T3
-  card "Tests de connectivité" as S1T4
-}
+title Enchaînement des six sprints\nVue chronologique des livrables
 
-rectangle "**Sprint 2 – PKI & Broker**\n(3 semaines)" as S2 #FFF3E0 {
-  card "Déploiement Vault (PKI)" as S2T1
-  card "CA Racine + Intermédiaire" as S2T2
-  card "Mosquitto TLS 1.3 / mTLS" as S2T3
-  card "Génération des certificats" as S2T4
-}
+rectangle "**S1 -- Cadrage & réseau**\n2 semaines\nTopologie GNS3 segmentée\nPlan d'adressage VLAN\nConteneurs de base" as S1
+rectangle "**S2 -- PKI Vault**\n2 semaines\nVault déployé\nCA racine + intermédiaire\nScripts d'émission" as S2
+rectangle "**S3 -- Broker mTLS**\n2 semaines\nMosquitto TLS 1.3 + mTLS\nACL par certificat\nTests d'authentification" as S3
+rectangle "**S4 -- Flotte simulée**\n2 semaines\n50 clients Python\nGénération de trafic\nRejeu de 76 000 messages" as S4
+rectangle "**S5 -- Détection IDS + SIEM**\n2 semaines\nRègles Suricata MQTT\nIntégration Wazuh\nDashboards et alertes" as S5
+rectangle "**S6 -- ML & bilan**\n2 semaines\nIsolation Forest + Random Forest\nÉvaluation des performances\nRédaction finale" as S6
 
-rectangle "**Sprint 3 – Simulation**\n(2 semaines)" as S3 #FCE4EC {
-  card "Développement fleet-sim" as S3T1
-  card "Injection du dataset CSV" as S3T2
-  card "Validation des 76\u202F000 messages" as S3T3
-}
-
-rectangle "**Sprint 4 – Détection**\n(3 semaines)" as S4 #F3E5F5 {
-  card "Déploiement Suricata + règles" as S4T1
-  card "Wazuh OVA + ingestion" as S4T2
-  card "Pipeline ML (IF + RF)" as S4T3
-  card "Tests de performance" as S4T4
-}
-
-rectangle "**Sprint 5 – Synthèse**\n(2 semaines)" as S5 #ECEFF1 {
-  card "Rédaction du rapport" as S5T1
-  card "Génération des diagrammes" as S5T2
-  card "Préparation de la soutenance" as S5T3
-}
-
-S0 -down-> S1
-S1 -down-> S2
+S1 -right-> S2
 S2 -down-> S3
-S3 -down-> S4
+S3 -left-> S4
 S4 -down-> S5
+S5 -right-> S6
 
 @enduml
