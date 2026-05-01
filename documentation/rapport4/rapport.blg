@@ -1,15 +1,15 @@
 [0] Config.pm:328> INFO - This is Biber 2.21
 [0] Config.pm:331> INFO - Logfile is 'rapport.blg'
-[132] biber-MSWIN64:342> INFO - === 
-[173] Biber.pm:421> INFO - Reading 'rapport.bcf'
-[319] Biber.pm:1002> INFO - Found 23 citekeys in bib section 0
-[343] Biber.pm:4487> INFO - Processing section 0
-[360] Biber.pm:4678> INFO - Looking for bibtex file 'bibliography.bib' for section 0
-[420] bibtex.pm:1713> INFO - LaTeX decoding ...
-[461] bibtex.pm:1519> INFO - Found BibTeX data source 'bibliography.bib'
-[640] UCollate.pm:68> INFO - Overriding locale 'fr-FR' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[640] UCollate.pm:68> INFO - Overriding locale 'fr-FR' defaults 'variable = shifted' with 'variable = non-ignorable'
-[640] Biber.pm:4307> INFO - Sorting list 'none/global//global/global/global' of type 'entry' with template 'none' and locale 'fr-FR'
-[640] Biber.pm:4313> INFO - No sort tailoring available for locale 'fr-FR'
-[666] bbl.pm:676> INFO - Writing 'rapport.bbl' with encoding 'UTF-8'
-[683] bbl.pm:779> INFO - Output to rapport.bbl
+[135] biber-MSWIN64:342> INFO - === 
+[177] Biber.pm:421> INFO - Reading 'rapport.bcf'
+[316] Biber.pm:1002> INFO - Found 23 citekeys in bib section 0
+[333] Biber.pm:4487> INFO - Processing section 0
+[346] Biber.pm:4678> INFO - Looking for bibtex file 'bibliography.bib' for section 0
+[398] bibtex.pm:1713> INFO - LaTeX decoding ...
+[441] bibtex.pm:1519> INFO - Found BibTeX data source 'bibliography.bib'
+[615] UCollate.pm:68> INFO - Overriding locale 'fr-FR' defaults 'variable = shifted' with 'variable = non-ignorable'
+[615] UCollate.pm:68> INFO - Overriding locale 'fr-FR' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[615] Biber.pm:4307> INFO - Sorting list 'none/global//global/global/global' of type 'entry' with template 'none' and locale 'fr-FR'
+[615] Biber.pm:4313> INFO - No sort tailoring available for locale 'fr-FR'
+[639] bbl.pm:676> INFO - Writing 'rapport.bbl' with encoding 'UTF-8'
+[654] bbl.pm:779> INFO - Output to rapport.bbl

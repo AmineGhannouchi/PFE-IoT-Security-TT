@@ -9,6 +9,59 @@ Ce premier chapitre précise le cadre dans lequel s'inscrit le projet. Il prése
 
 Dans le cadre de ce travail, l'objectif est de construire un prototype expérimental capable de sécuriser les flux de communication d'un écosystème IoT simulé. Le projet s'appuie sur une architecture représentative d'un environnement opérateur : segmentation réseau, services de confiance, broker MQTT, supervision de sécurité et analyse comportementale. Cette approche permet de valider les mécanismes proposés avant toute projection vers un déploiement réel à plus grande échelle.
 
+\section{Présentation de l'organisme d'accueil}
+\label{sec:organisme}
+
+\TT{} est l'opérateur historique de télécommunications en Tunisie. Fondée en 1995, l'entreprise joue un rôle clé dans le développement des infrastructures de communication du pays et dans la fourniture de services de téléphonie, d'Internet et de transmission de données~\cite{tunisie_telecom}. La figure~\ref{fig:logo-tt} présente le logo de Tunisie Telecom.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.34\linewidth,height=0.16\textheight,keepaspectratio]{chap1/tt.png}
+\caption{Logo de Tunisie Telecom}
+\label{fig:logo-tt}
+\end{figure}
+
+L'opérateur propose une large gamme de services destinés aussi bien aux particuliers qu'aux entreprises, incluant~:
+
+\begin{itemize}[leftmargin=*]
+  \item la téléphonie fixe et mobile ;
+  \item l'accès à Internet haut débit et très haut débit ;
+  \item les services de données et de connectivité ;
+  \item les solutions cloud et les services numériques.
+\end{itemize}
+
+Grâce à un vaste réseau d'infrastructures couvrant l'ensemble du territoire national, Tunisie Telecom contribue activement à la transformation numérique du pays. L'entreprise investit également dans des technologies émergentes telles que la 5G, l'Internet des objets et les solutions de cybersécurité afin de répondre aux besoins croissants en connectivité et en sécurité.
+
+Dans ce contexte, l'opérateur développe des initiatives visant à renforcer la sécurité des infrastructures réseau et des services numériques, notamment face à l'augmentation des cybermenaces.
+
+\subsection{Service d'accueil}
+\label{subsec:tt-service}
+
+La structure organisationnelle de Tunisie Telecom est constituée d'une direction générale, de neuf directions centrales et de 24 directions régionales. Chacune des parties prenantes de l'organisation joue un rôle indéniablement important. Cette organisation est illustrée dans la figure~\ref{fig:organigramme-tt}.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.9\linewidth,height=0.42\textheight,keepaspectratio]{chap1/organigramme-tt.png}
+\caption{Organigramme de Tunisie Telecom}
+\label{fig:organigramme-tt}
+\end{figure}
+
+Le projet a été réalisé au sein du service technique chargé des infrastructures réseau et de la sécurité des systèmes de communication. Ce service joue un rôle essentiel dans la gestion, la supervision et la protection des infrastructures utilisées pour les services télécom et les plateformes numériques.
+
+Les principales activités du service incluent~:
+
+\begin{itemize}[leftmargin=*]
+  \item la gestion et l'administration des infrastructures réseau ;
+  \item la supervision du trafic et des performances des systèmes ;
+  \item la mise en œuvre de solutions de cybersécurité ;
+  \item l'analyse des incidents et des menaces de sécurité ;
+  \item l'évaluation et l'intégration de nouvelles technologies.
+\end{itemize}
+
+Dans ce cadre, le service s'intéresse particulièrement aux problématiques de sécurité liées aux architectures modernes telles que les environnements cloud, les réseaux virtualisés et les écosystèmes IoT.
+
+Le stage réalisé dans ce service offre ainsi l'opportunité de travailler sur des problématiques concrètes liées à la sécurisation des communications dans les systèmes IoT.
+
 \section{Problématique}
 \label{sec:problematique}
 
@@ -74,23 +127,6 @@ La figure~\ref{fig:archi-vue-intro} schématise cette vision globale, qui sera d
 \caption{Vue d'ensemble de l'architecture de sécurisation proposée}
 \label{fig:archi-vue-intro}
 \end{figure}
-
-\section{Présentation de l'organisme d'accueil}
-\label{sec:organisme}
-
-\subsection{Tunisie Telecom}
-\label{subsec:tt-general}
-
-\TT{} (Société Nationale des Télécommunications, \emph{Itissalat Tounes}) est l'opérateur historique de télécommunications de la Tunisie, fondé en 1995~\cite{tunisie_telecom}. Présent à l'échelle nationale, l'opérateur fournit des services de téléphonie fixe et mobile, d'accès Internet (\acs{ADSL}, fibre, 4G/5G), d'hébergement, de cloud et de solutions entreprises. Avec un parc client de plusieurs millions d'abonnés et une infrastructure couvrant l'ensemble du territoire, \TT{} occupe une position centrale dans la transformation numérique du pays.
-
-Dans le domaine de l'IoT, \TT{} accompagne depuis plusieurs années des clients industriels et des acteurs publics dans le déploiement de solutions verticales (smart metering, suivi de flotte, surveillance de sites distants, agriculture connectée). Cette dynamique impose à l'opérateur de maîtriser non seulement la \emph{connectivité} (réseaux \acs{LPWAN}, cellulaire), mais également les \emph{couches applicatives} et les \emph{exigences de sécurité} associées.
-
-\subsection{Service d'accueil}
-\label{subsec:tt-service}
-
-Le présent projet a été réalisé au sein du service en charge des \emph{infrastructures de cybersécurité et des projets d'innovation}. Ce service intervient sur trois axes complémentaires~: (i) la \textbf{veille technologique} sur les nouvelles menaces et les contre-mesures émergentes ; (ii) le \textbf{prototypage} en environnement de laboratoire d'architectures candidates avant industrialisation ; (iii) la \textbf{validation expérimentale} de ces architectures par campagnes de tests fonctionnels, de sécurité et de performance.
-
-C'est dans ce cadre que s'inscrit notre travail~: concevoir un \emph{prototype de référence} de sécurisation des flux IoT, entièrement reproductible en environnement simulé, et utilisable comme socle pour les futures industrialisations.
 
 \section{Conclusion}
 \label{sec:contexte-conclusion}
