@@ -52,7 +52,7 @@ S6 -- Compromission certificat  &  3/10 &  6/10 & 10/10 \\
 \end{table}
 
 \begin{resultbox}[Lecture]
-La complémentarité \emph{règles}~$+$~\emph{ML} est clairement démontrée~: les attaques exploitant un vecteur réseau identifiable (S1, S2, S3, S5) sont parfaitement couvertes par les règles ; en revanche, le scénario~S6 (certificat valide réutilisé) n'est détecté de manière fiable que par le module ML, qui repère l'écart comportemental.
+La complémentarité \emph{règles}~$+$~\emph{ML} est clairement démontrée~: les attaques exploitant un vecteur réseau identifiable (S1, S2, S3, S5) sont parfaitement couvertes par les règles . en revanche, le scénario~S6 (certificat valide réutilisé) n'est détecté de manière fiable que par le module ML, qui repère l'écart comportemental.
 \end{resultbox}
 
 \section{Résultats du module ML}
@@ -167,9 +167,9 @@ Le surcoût lié au mTLS représente $\sim 8$\,\% du débit applicatif et $\sim 
 
 \begin{itemize}[leftmargin=*]
   \item Environnement entièrement \emph{simulé}~: les mesures de performance ne reflètent pas les conditions radio réelles d'un réseau cellulaire.
-  \item Volume de la flotte limité à 50 dispositifs~; au-delà, les ressources de la station hôte deviennent contraignantes.
+  \item Volume de la flotte limité à 50 dispositifs~. au-delà, les ressources de la station hôte deviennent contraignantes.
   \item Le pipeline ML est entraîné \emph{hors ligne}~: l'intégration en streaming (Kafka + scoring temps réel) reste à explorer.
-  \item La rotation automatique des certificats est déclenchée manuellement~; une intégration complète au cycle ACME serait souhaitable.
+  \item La rotation automatique des certificats est déclenchée manuellement~. une intégration complète au cycle ACME serait souhaitable.
 \end{itemize}
 
 \section{Perspectives}

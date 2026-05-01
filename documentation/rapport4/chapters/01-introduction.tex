@@ -2,10 +2,12 @@
 \label{chap:contexte-general}
 \label{chap:introduction}
 
+\section{Introduction}
+
+Ce chapitre présente le cadre général dans lequel s'inscrit le projet de fin d'études. Il situe d'abord le travail au sein de Tunisie Telecom, puis expose le contexte opérationnel, la problématique de sécurité, les objectifs retenus et la solution proposée. L'introduction générale ayant déjà posé les enjeux globaux de l'IoT, ce chapitre se concentre sur le contexte concret du PFE et sur les choix qui orientent la suite du rapport.
+
 \section{Cadre général du projet}
 \label{sec:contexte-general}
-
-Ce premier chapitre précise le cadre dans lequel s'inscrit le projet. Il présente l'environnement d'accueil, le besoin opérationnel identifié, la problématique de sécurité traitée, les objectifs techniques retenus et la solution proposée. L'introduction générale ayant déjà posé les enjeux globaux de l'IoT, ce chapitre se concentre sur le contexte concret du PFE et sur les choix qui orientent la suite du rapport.
 
 Dans le cadre de ce travail, l'objectif est de construire un prototype expérimental capable de sécuriser les flux de communication d'un écosystème IoT simulé. Le projet s'appuie sur une architecture représentative d'un environnement opérateur : segmentation réseau, services de confiance, broker MQTT, supervision de sécurité et analyse comportementale. Cette approche permet de valider les mécanismes proposés avant toute projection vers un déploiement réel à plus grande échelle.
 
@@ -24,9 +26,9 @@ Dans le cadre de ce travail, l'objectif est de construire un prototype expérime
 L'opérateur propose une large gamme de services destinés aussi bien aux particuliers qu'aux entreprises, incluant~:
 
 \begin{itemize}[leftmargin=*]
-  \item la téléphonie fixe et mobile ;
-  \item l'accès à Internet haut débit et très haut débit ;
-  \item les services de données et de connectivité ;
+  \item la téléphonie fixe et mobile .
+  \item l'accès à Internet haut débit et très haut débit .
+  \item les services de données et de connectivité .
   \item les solutions cloud et les services numériques.
 \end{itemize}
 
@@ -51,10 +53,10 @@ Le projet a été réalisé au sein du service technique chargé des infrastruct
 Les principales activités du service incluent~:
 
 \begin{itemize}[leftmargin=*]
-  \item la gestion et l'administration des infrastructures réseau ;
-  \item la supervision du trafic et des performances des systèmes ;
-  \item la mise en œuvre de solutions de cybersécurité ;
-  \item l'analyse des incidents et des menaces de sécurité ;
+  \item la gestion et l'administration des infrastructures réseau .
+  \item la supervision du trafic et des performances des systèmes .
+  \item la mise en œuvre de solutions de cybersécurité .
+  \item l'analyse des incidents et des menaces de sécurité .
   \item l'évaluation et l'intégration de nouvelles technologies.
 \end{itemize}
 
@@ -68,17 +70,17 @@ Le stage réalisé dans ce service offre ainsi l'opportunité de travailler sur 
 L'écosystème d'un opérateur télécom présente plusieurs spécificités qui rendent la sécurisation des flux IoT particulièrement délicate~:
 
 \begin{itemize}[leftmargin=*]
-  \item \textbf{Hétérogénéité} des dispositifs (microcontrôleurs ESP32, passerelles industrielles, modems cellulaires) et des protocoles applicatifs (MQTT, CoAP, AMQP, LwM2M)~;
-  \item \textbf{Volumétrie} massive et asynchrone des messages (publications périodiques, événements rares mais critiques)~;
-  \item \textbf{Contraintes embarquées} : ressources CPU/mémoire limitées, batteries, latence radio variable~;
-  \item \textbf{Multi-tenance} et segmentation réseau : un même opérateur héberge plusieurs clients verticaux qui ne doivent jamais accéder aux flux des autres~;
-  \item \textbf{Gestion à grande échelle} d'identités cryptographiques (certificats X.509) pour des dizaines de milliers d'objets, avec des cycles de vie variables.
+  \item \textbf{Hétérogénéité} des dispositifs (microcontrôleurs ESP32, passerelles industrielles, modems cellulaires) et des protocoles applicatifs (MQTT, CoAP, AMQP, LwM2M)~.
+  \item \textbf{Volumétrie} massive et asynchrone des messages (publications périodiques, événements rares mais critiques)~.
+  \item \textbf{Contraintes embarquées} : ressources CPU/mémoire limitées, batteries, latence radio variable~.
+  \item \textbf{Multi-tenance} et segmentation réseau : un même opérateur héberge plusieurs clients verticaux qui ne doivent jamais accéder aux flux des autres~.
+  \item \textbf{Gestion à grande échelle} d'identités cryptographiques (certificats X.509) pour des dizaines de milliers d'objets, avec des cycles de vie variables~.
 \end{itemize}
 
 La problématique centrale de ce projet de fin d'études peut être formulée ainsi~:
 
 \begin{infobox}[Problématique]
-\textit{Comment concevoir, déployer et valider, dans un environnement simulé représentatif d'un opérateur télécom, une architecture de sécurisation \textbf{de bout en bout} des flux de communication d'un écosystème IoT, qui combine~: (i) un chiffrement et une authentification mutuelle systématiques entre objets et infrastructures~; (ii) une gestion automatisée du cycle de vie des certificats~; (iii) une supervision active des menaces par corrélation d'alertes réseau et apprentissage automatique~; (iv) tout en restant compatible avec les contraintes de performance et de scalabilité du domaine~?}
+\textit{Comment concevoir, déployer et valider, dans un environnement simulé représentatif d'un opérateur télécom, une architecture de sécurisation \textbf{de bout en bout} des flux de communication d'un écosystème IoT, qui combine~: (i) un chiffrement et une authentification mutuelle systématiques entre objets et infrastructures~. (ii) une gestion automatisée du cycle de vie des certificats~. (iii) une supervision active des menaces par corrélation d'alertes réseau et apprentissage automatique~. (iv) tout en restant compatible avec les contraintes de performance et de scalabilité du domaine~?}
 \end{infobox}
 
 \section{Objectifs spécifiques}
@@ -111,11 +113,11 @@ La problématique centrale de ce projet de fin d'études peut être formulée ai
 Pour répondre à la problématique et atteindre les objectifs ci-dessus, nous proposons une \textbf{architecture de défense en profondeur} composée de six briques complémentaires, intégralement déployée dans un laboratoire simulé sous \acs{GNS3}~\cite{gns3_docs} et Docker~\cite{docker_docs}~:
 
 \begin{enumerate}[leftmargin=*]
-  \item Une \textbf{infrastructure réseau segmentée} (VLANs IoT, services, monitoring, management) construite autour d'un pare-feu pfSense et d'un routeur MikroTik~;
-  \item Une \textbf{PKI automatisée} HashiCorp Vault à deux niveaux (CA racine hors ligne + CA intermédiaire en ligne), capable d'émettre à la demande des certificats X.509 pour les services et les objets~\cite{vault_pki}~;
-  \item Un \textbf{broker MQTT Mosquitto} configuré en \acs{TLS}~1.3 avec authentification mutuelle obligatoire et listes de contrôle d'accès par topic~\cite{mosquitto_tls}~;
-  \item Un \textbf{simulateur de flotte} de 50 dispositifs Python rejouant 76\,000 messages issus d'un jeu de données réel, dont sept catégories d'attaques~;
-  \item Une \textbf{chaîne de détection} comprenant un IDS Suricata avec règles MQTT personnalisées~\cite{suricata_mqtt} et un SIEM Wazuh~\cite{wazuh_docs} pour la corrélation et la visualisation~;
+  \item Une \textbf{infrastructure réseau segmentée} (VLANs IoT, services, monitoring, management) construite autour d'un pare-feu pfSense et d'un routeur MikroTik~.
+  \item Une \textbf{PKI automatisée} HashiCorp Vault à deux niveaux (CA racine hors ligne + CA intermédiaire en ligne), capable d'émettre à la demande des certificats X.509 pour les services et les objets~\cite{vault_pki}~.
+  \item Un \textbf{broker MQTT Mosquitto} configuré en \acs{TLS}~1.3 avec authentification mutuelle obligatoire et listes de contrôle d'accès par topic~\cite{mosquitto_tls}~.
+  \item Un \textbf{simulateur de flotte} de 50 dispositifs Python rejouant 76\,000 messages issus d'un jeu de données réel, dont sept catégories d'attaques~.
+  \item Une \textbf{chaîne de détection} comprenant un IDS Suricata avec règles MQTT personnalisées~\cite{suricata_mqtt} et un SIEM Wazuh~\cite{wazuh_docs} pour la corrélation et la visualisation~.
   \item Un \textbf{pipeline de \acs{ML}} (IsolationForest~\cite{liu2008isolation} et Random Forest~\cite{breiman2001random}) entraîné sur les caractéristiques extraites du trafic, capable de détecter les anomalies non couvertes par les règles statiques.
 \end{enumerate}
 

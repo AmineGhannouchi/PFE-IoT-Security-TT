@@ -4,14 +4,14 @@
 \section{Introduction}
 \label{sec:ea-intro}
 
-Avant de concevoir une architecture de sécurisation des flux IoT, il est indispensable de cadrer le sujet sur trois plans complémentaires~: (i)~caractériser les \textbf{menaces} qui pèsent spécifiquement sur les écosystèmes IoT à grande échelle ; (ii)~recenser les \textbf{technologies et protocoles} candidats pour le transport, l'authentification et la supervision ; (iii)~analyser les \textbf{travaux et solutions existants} afin d'en extraire les bonnes pratiques et de positionner notre contribution. Ce chapitre est structuré autour de ces trois axes, suivi de la description des \textbf{cas d'utilisation} retenus, d'une analyse critique et d'une synthèse positionnant le projet.
+Avant de concevoir une architecture de sécurisation des flux IoT, il est indispensable de cadrer le sujet sur trois plans complémentaires~: (i)~caractériser les \textbf{menaces} qui pèsent spécifiquement sur les écosystèmes IoT à grande échelle . (ii)~recenser les \textbf{technologies et protocoles} candidats pour le transport, l'authentification et la supervision . (iii)~analyser les \textbf{travaux et solutions existants} afin d'en extraire les bonnes pratiques et de positionner notre contribution. Ce chapitre est structuré autour de ces trois axes, suivi de la description des \textbf{cas d'utilisation} retenus, d'une analyse critique et d'une synthèse positionnant le projet.
 
 \section{Menaces et vulnérabilités spécifiques à l'IoT}
 \label{sec:ea-menaces}
 
 \subsection{Surface d'attaque étendue}
 
-Les écosystèmes IoT présentent une surface d'attaque significativement plus large que les systèmes informatiques classiques. Meneghello \emph{et al.}~\cite{meneghello2019iot} en distinguent quatre couches~: (i)~la couche \emph{matérielle} (composants embarqués, JTAG/UART exposés, attaques par canal auxiliaire) ; (ii)~la couche \emph{firmware} (mises à jour non signées, exécution de code arbitraire) ; (iii)~la couche \emph{réseau} (transports en clair, protocoles propriétaires faibles) ; (iv)~la couche \emph{services et écosystème} (\acs{API} non authentifiées, applications mobiles vulnérables, multi-tenance mal cloisonnée).
+Les écosystèmes IoT présentent une surface d'attaque significativement plus large que les systèmes informatiques classiques. Meneghello \emph{et al.}~\cite{meneghello2019iot} en distinguent quatre couches~: (i)~la couche \emph{matérielle} (composants embarqués, JTAG/UART exposés, attaques par canal auxiliaire) . (ii)~la couche \emph{firmware} (mises à jour non signées, exécution de code arbitraire) . (iii)~la couche \emph{réseau} (transports en clair, protocoles propriétaires faibles) . (iv)~la couche \emph{services et écosystème} (\acs{API} non authentifiées, applications mobiles vulnérables, multi-tenance mal cloisonnée).
 
 \subsection{OWASP IoT Top 10 et menaces réseau}
 
@@ -45,7 +45,7 @@ Maturité IoT & Très large & Large & Industrielle & Universelle \\
 \end{tabularx}
 \end{table}
 
-Le choix de \textbf{MQTT~5}~\cite{mqtt5} pour ce projet repose sur trois critères~: empreinte mémoire et réseau adaptée aux microcontrôleurs ; large adoption dans les écosystèmes industriels et les opérateurs IoT ; existence de mécanismes natifs d'authentification (\acs{TLS}+\acs{ACL}) facilement combinables avec mTLS.
+Le choix de \textbf{MQTT~5}~\cite{mqtt5} pour ce projet repose sur trois critères~: empreinte mémoire et réseau adaptée aux microcontrôleurs . large adoption dans les écosystèmes industriels et les opérateurs IoT . existence de mécanismes natifs d'authentification (\acs{TLS}+\acs{ACL}) facilement combinables avec mTLS.
 
 \section{Sécurisation du transport : TLS et mTLS}
 \label{sec:ea-tls}
@@ -56,12 +56,12 @@ Le protocole \acs{TLS}~1.3~\cite{rfc8446} apporte par rapport à TLS~1.2 une sim
 
 \subsection{Authentification mutuelle}
 
-Dans un déploiement classique, seul le serveur s'authentifie auprès du client. Le \textbf{mTLS} (\emph{mutual TLS}) impose en outre au client de présenter un certificat X.509 valide signé par une autorité de confiance. Cette double authentification permet~: (i) d'éviter qu'un objet illégitime se connecte au broker ; (ii) de chiffrer chaque session par bout ; (iii) de tracer chaque message via l'identité cryptographique de son émetteur. Cette propriété est essentielle pour la mise en place ultérieure d'\acs{ACL} par certificat dans Mosquitto~\cite{mosquitto_tls}.
+Dans un déploiement classique, seul le serveur s'authentifie auprès du client. Le \textbf{mTLS} (\emph{mutual TLS}) impose en outre au client de présenter un certificat X.509 valide signé par une autorité de confiance. Cette double authentification permet~: (i) d'éviter qu'un objet illégitime se connecte au broker . (ii) de chiffrer chaque session par bout . (iii) de tracer chaque message via l'identité cryptographique de son émetteur. Cette propriété est essentielle pour la mise en place ultérieure d'\acs{ACL} par certificat dans Mosquitto~\cite{mosquitto_tls}.
 
 \section{Gestion des identités : PKI et automatisation}
 \label{sec:ea-pki}
 
-Une PKI à deux niveaux (CA racine \emph{offline} + CA intermédiaire \emph{online}) constitue la pratique recommandée~\cite{nist_sp800213}~: la CA racine ne signe que des CA intermédiaires, et reste hors ligne ; les CA intermédiaires signent les certificats opérationnels (services, dispositifs). En cas de compromission d'une CA intermédiaire, seul le sous-arbre concerné doit être révoqué.
+Une PKI à deux niveaux (CA racine \emph{offline} + CA intermédiaire \emph{online}) constitue la pratique recommandée~\cite{nist_sp800213}~: la CA racine ne signe que des CA intermédiaires, et reste hors ligne . les CA intermédiaires signent les certificats opérationnels (services, dispositifs). En cas de compromission d'une CA intermédiaire, seul le sous-arbre concerné doit être révoqué.
 
 L'automatisation de l'émission est indispensable lorsque le parc dépasse quelques dizaines d'objets. \textbf{HashiCorp Vault}~\cite{vault_pki} fournit un \emph{secrets engine} \texttt{pki} qui expose une API HTTP de demande de certificats avec contrôle fin (rôles, ACL, TTL). C'est la solution retenue dans ce projet.
 
@@ -82,11 +82,11 @@ L'automatisation de l'émission est indispensable lorsque le parc dépasse quelq
 Les approches par règles statiques sont efficaces pour les attaques connues mais peinent à détecter les comportements nouveaux. Hasan \emph{et al.}~\cite{hasan2020securing} ont montré qu'un classifieur supervisé entraîné sur des features réseau et applicatives obtient des taux de détection supérieurs à 99~\% sur sept catégories d'attaques IoT. Les algorithmes les plus utilisés sont~:
 
 \begin{itemize}[leftmargin=*]
-  \item \textbf{Isolation Forest}~\cite{liu2008isolation}~: méthode non supervisée d'isolement, particulièrement efficace en haute dimension et adaptée aux scénarios où les anomalies sont rares ;
+  \item \textbf{Isolation Forest}~\cite{liu2008isolation}~: méthode non supervisée d'isolement, particulièrement efficace en haute dimension et adaptée aux scénarios où les anomalies sont rares .
   \item \textbf{Random Forest}~\cite{breiman2001random}~: ensemble d'arbres de décision, robuste, interprétable (\emph{feature importance}) et performant en classification multi-classes.
 \end{itemize}
 
-La bibliothèque \emph{scikit-learn}~\cite{scikit_learn} fournit des implémentations matures de ces deux algorithmes ; elle constitue le socle de notre pipeline ML.
+La bibliothèque \emph{scikit-learn}~\cite{scikit_learn} fournit des implémentations matures de ces deux algorithmes . elle constitue le socle de notre pipeline ML.
 
 \section{Cas d'utilisation}
 \label{sec:ea-cas-utilisation}
@@ -106,16 +106,16 @@ Trois acteurs principaux interagissent avec la plateforme proposée~: le \textbf
 Plusieurs approches ont été proposées pour sécuriser les flux IoT~: gateways IoT propriétaires (AWS IoT Core, Azure IoT Hub), distributions intégrées (ThingsBoard, Eclipse Kura), ou architectures sur mesure. Notre analyse fait ressortir quatre limitations récurrentes~:
 
 \begin{enumerate}[leftmargin=*]
-  \item \textbf{Verrouillage fournisseur} pour les solutions cloud commerciales, peu compatible avec une stratégie souveraine d'opérateur télécom ;
-  \item \textbf{Couverture partielle} de la sécurité chez les distributions intégrées (souvent TLS oui, mais pas mTLS systématique ni PKI automatisée) ;
-  \item \textbf{Faible intégration} entre la couche réseau (IDS) et la couche applicative (broker, ML) ;
+  \item \textbf{Verrouillage fournisseur} pour les solutions cloud commerciales, peu compatible avec une stratégie souveraine d'opérateur télécom .
+  \item \textbf{Couverture partielle} de la sécurité chez les distributions intégrées (souvent TLS oui, mais pas mTLS systématique ni PKI automatisée) .
+  \item \textbf{Faible intégration} entre la couche réseau (IDS) et la couche applicative (broker, ML) .
   \item \textbf{Reproductibilité limitée} des architectures publiées dans la littérature, rarement accompagnées d'un environnement de simulation complet.
 \end{enumerate}
 
 \section{Positionnement et synthèse}
 \label{sec:ea-positionnement}
 
-Au regard de cet état de l'art, le présent projet se positionne comme une \textbf{architecture de référence open source} pour la sécurisation des flux IoT chez un opérateur télécom, avec quatre contributions distinctives~: (1)~déploiement de bout en bout reproductible sous GNS3+Docker ; (2)~PKI Vault entièrement automatisée avec mTLS systématique ; (3)~chaîne de détection unifiée Suricata~+~Wazuh avec règles MQTT spécifiques ; (4)~couplage de cette détection signature avec un module ML (IsolationForest~+~RandomForest) pour couvrir les anomalies non connues.
+Au regard de cet état de l'art, le présent projet se positionne comme une \textbf{architecture de référence open source} pour la sécurisation des flux IoT chez un opérateur télécom, avec quatre contributions distinctives~: (1)~déploiement de bout en bout reproductible sous GNS3+Docker . (2)~PKI Vault entièrement automatisée avec mTLS systématique . (3)~chaîne de détection unifiée Suricata~+~Wazuh avec règles MQTT spécifiques . (4)~couplage de cette détection signature avec un module ML (IsolationForest~+~RandomForest) pour couvrir les anomalies non connues.
 
 \section{Conclusion}
 \label{sec:ea-conclusion}

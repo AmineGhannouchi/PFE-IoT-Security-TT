@@ -1,43 +1,43 @@
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {1.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Logo de Tunisie Telecom}}{3}{figure.caption.8}%
-\contentsline {figure}{\numberline {1.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Organigramme de Tunisie Telecom}}{4}{figure.caption.9}%
-\contentsline {figure}{\numberline {1.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Vue d'ensemble de l'architecture de sécurisation proposée}}{7}{figure.caption.52}%
+\contentsline {figure}{\numberline {1.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Logo de Tunisie Telecom}}{2}{figure.caption.8}%
+\contentsline {figure}{\numberline {1.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Organigramme de Tunisie Telecom}}{3}{figure.caption.9}%
+\contentsline {figure}{\numberline {1.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Vue d'ensemble de l'architecture de sécurisation proposée}}{6}{figure.caption.52}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {2.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Diagramme de cas d'utilisation de la plateforme}}{12}{figure.caption.60}%
+\contentsline {figure}{\numberline {2.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Diagramme de cas d'utilisation de la plateforme}}{11}{figure.caption.60}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Enchaînement des six sprints}}{16}{figure.caption.101}%
-\contentsline {figure}{\numberline {3.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Diagramme de classes du simulateur de flotte}}{18}{figure.caption.103}%
-\contentsline {figure}{\numberline {3.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Séquence d'émission d'un certificat client}}{19}{figure.caption.104}%
-\contentsline {figure}{\numberline {3.4}{\ignorespaces \xpg@aux {}{french}\ignorespaces Activité d'un dispositif~: chargement des secrets, handshake, publication}}{20}{figure.caption.105}%
-\contentsline {figure}{\numberline {3.5}{\ignorespaces \xpg@aux {}{french}\ignorespaces Diagramme de Gantt du projet}}{21}{figure.caption.106}%
+\contentsline {figure}{\numberline {3.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Enchaînement des six sprints}}{15}{figure.caption.101}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Diagramme de classes du simulateur de flotte}}{17}{figure.caption.103}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Séquence d'émission d'un certificat client}}{18}{figure.caption.104}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces \xpg@aux {}{french}\ignorespaces Activité d'un dispositif~: chargement des secrets, handshake, publication}}{19}{figure.caption.105}%
+\contentsline {figure}{\numberline {3.5}{\ignorespaces \xpg@aux {}{french}\ignorespaces Diagramme de Gantt du projet}}{20}{figure.caption.106}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {4.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Architecture globale en défense en profondeur}}{23}{figure.caption.108}%
-\contentsline {figure}{\numberline {4.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Topologie réseau détaillée (VLANs et plan d'adressage)}}{24}{figure.caption.109}%
-\contentsline {figure}{\numberline {4.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Flux E2E --- Phase 1 : provisionnement de l'identité}}{24}{figure.caption.110}%
-\contentsline {figure}{\numberline {4.4}{\ignorespaces \xpg@aux {}{french}\ignorespaces Flux E2E --- Phase 2 : établissement de la connexion TLS~1.3 mTLS}}{25}{figure.caption.111}%
-\contentsline {figure}{\numberline {4.5}{\ignorespaces \xpg@aux {}{french}\ignorespaces Flux E2E --- Phase 3 : publication des données IoT}}{25}{figure.caption.112}%
-\contentsline {figure}{\numberline {4.6}{\ignorespaces \xpg@aux {}{french}\ignorespaces Flux E2E --- Phase 4 : détection et supervision}}{26}{figure.caption.113}%
-\contentsline {figure}{\numberline {4.7}{\ignorespaces \xpg@aux {}{french}\ignorespaces Flux E2E --- Phase 5 : rotation automatique des certificats}}{26}{figure.caption.114}%
-\contentsline {figure}{\numberline {4.8}{\ignorespaces \xpg@aux {}{french}\ignorespaces Hiérarchie de la PKI}}{28}{figure.caption.115}%
-\contentsline {figure}{\numberline {4.9}{\ignorespaces \xpg@aux {}{french}\ignorespaces Handshake TLS~1.3 avec authentification mutuelle}}{30}{figure.caption.117}%
-\contentsline {figure}{\numberline {4.10}{\ignorespaces \xpg@aux {}{french}\ignorespaces Chaîne de détection Suricata $\rightarrow $ Wazuh}}{32}{figure.caption.118}%
-\contentsline {figure}{\numberline {4.11}{\ignorespaces \xpg@aux {}{french}\ignorespaces Pipeline d'apprentissage automatique}}{33}{figure.caption.119}%
-\contentsline {figure}{\numberline {4.12}{\ignorespaces \xpg@aux {}{french}\ignorespaces Analyse exploratoire --- distribution des classes}}{34}{figure.caption.120}%
-\contentsline {figure}{\numberline {4.13}{\ignorespaces \xpg@aux {}{french}\ignorespaces Analyse exploratoire --- matrice de corrélation des features numériques}}{34}{figure.caption.121}%
-\contentsline {figure}{\numberline {4.14}{\ignorespaces \xpg@aux {}{french}\ignorespaces Vault UI -- vue de la hiérarchie PKI}}{35}{figure.caption.122}%
-\contentsline {figure}{\numberline {4.15}{\ignorespaces \xpg@aux {}{french}\ignorespaces Wazuh Dashboard -- alertes corrélées}}{35}{figure.caption.123}%
-\contentsline {figure}{\numberline {4.16}{\ignorespaces \xpg@aux {}{french}\ignorespaces GNS3 -- topologie déployée du laboratoire}}{36}{figure.caption.124}%
+\contentsline {figure}{\numberline {4.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Architecture globale en défense en profondeur}}{22}{figure.caption.108}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Topologie réseau détaillée (VLANs et plan d'adressage)}}{23}{figure.caption.109}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Flux E2E --- Phase 1 : provisionnement de l'identité}}{23}{figure.caption.110}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces \xpg@aux {}{french}\ignorespaces Flux E2E --- Phase 2 : établissement de la connexion TLS~1.3 mTLS}}{24}{figure.caption.111}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces \xpg@aux {}{french}\ignorespaces Flux E2E --- Phase 3 : publication des données IoT}}{24}{figure.caption.112}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces \xpg@aux {}{french}\ignorespaces Flux E2E --- Phase 4 : détection et supervision}}{25}{figure.caption.113}%
+\contentsline {figure}{\numberline {4.7}{\ignorespaces \xpg@aux {}{french}\ignorespaces Flux E2E --- Phase 5 : rotation automatique des certificats}}{25}{figure.caption.114}%
+\contentsline {figure}{\numberline {4.8}{\ignorespaces \xpg@aux {}{french}\ignorespaces Hiérarchie de la PKI}}{27}{figure.caption.115}%
+\contentsline {figure}{\numberline {4.9}{\ignorespaces \xpg@aux {}{french}\ignorespaces Handshake TLS~1.3 avec authentification mutuelle}}{29}{figure.caption.117}%
+\contentsline {figure}{\numberline {4.10}{\ignorespaces \xpg@aux {}{french}\ignorespaces Chaîne de détection Suricata $\rightarrow $ Wazuh}}{31}{figure.caption.118}%
+\contentsline {figure}{\numberline {4.11}{\ignorespaces \xpg@aux {}{french}\ignorespaces Pipeline d'apprentissage automatique}}{32}{figure.caption.119}%
+\contentsline {figure}{\numberline {4.12}{\ignorespaces \xpg@aux {}{french}\ignorespaces Analyse exploratoire --- distribution des classes}}{33}{figure.caption.120}%
+\contentsline {figure}{\numberline {4.13}{\ignorespaces \xpg@aux {}{french}\ignorespaces Analyse exploratoire --- matrice de corrélation des features numériques}}{33}{figure.caption.121}%
+\contentsline {figure}{\numberline {4.14}{\ignorespaces \xpg@aux {}{french}\ignorespaces Vault UI -- vue de la hiérarchie PKI}}{34}{figure.caption.122}%
+\contentsline {figure}{\numberline {4.15}{\ignorespaces \xpg@aux {}{french}\ignorespaces Wazuh Dashboard -- alertes corrélées}}{34}{figure.caption.123}%
+\contentsline {figure}{\numberline {4.16}{\ignorespaces \xpg@aux {}{french}\ignorespaces GNS3 -- topologie déployée du laboratoire}}{35}{figure.caption.124}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Isolation Forest -- matrice de confusion}}{38}{figure.caption.127}%
-\contentsline {figure}{\numberline {5.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Isolation Forest -- distribution des scores d'anomalie}}{39}{figure.caption.128}%
-\contentsline {figure}{\numberline {5.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Random Forest~: matrice de confusion et courbe ROC}}{39}{figure.caption.129}%
-\contentsline {figure}{\numberline {5.4}{\ignorespaces \xpg@aux {}{french}\ignorespaces Random Forest -- confusion multi-classes (8 classes)}}{40}{figure.caption.130}%
-\contentsline {figure}{\numberline {5.5}{\ignorespaces \xpg@aux {}{french}\ignorespaces Random Forest -- importance des features}}{40}{figure.caption.131}%
-\contentsline {figure}{\numberline {5.6}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison synthétique des modèles}}{41}{figure.caption.133}%
-\contentsline {figure}{\numberline {5.7}{\ignorespaces \xpg@aux {}{french}\ignorespaces Distribution du handshake mTLS}}{41}{figure.caption.134}%
-\contentsline {figure}{\numberline {5.8}{\ignorespaces \xpg@aux {}{french}\ignorespaces Latence de connexion}}{42}{figure.caption.135}%
-\contentsline {figure}{\numberline {5.9}{\ignorespaces \xpg@aux {}{french}\ignorespaces Débit applicatif}}{42}{figure.caption.137}%
-\contentsline {figure}{\numberline {5.10}{\ignorespaces \xpg@aux {}{french}\ignorespaces RTT par taille de message}}{42}{figure.caption.138}%
-\contentsline {figure}{\numberline {5.11}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison MQTT clair vs MQTT/TLS vs MQTT/mTLS}}{43}{figure.caption.139}%
+\contentsline {figure}{\numberline {5.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Isolation Forest -- matrice de confusion}}{37}{figure.caption.127}%
+\contentsline {figure}{\numberline {5.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Isolation Forest -- distribution des scores d'anomalie}}{38}{figure.caption.128}%
+\contentsline {figure}{\numberline {5.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Random Forest~: matrice de confusion et courbe ROC}}{38}{figure.caption.129}%
+\contentsline {figure}{\numberline {5.4}{\ignorespaces \xpg@aux {}{french}\ignorespaces Random Forest -- confusion multi-classes (8 classes)}}{39}{figure.caption.130}%
+\contentsline {figure}{\numberline {5.5}{\ignorespaces \xpg@aux {}{french}\ignorespaces Random Forest -- importance des features}}{39}{figure.caption.131}%
+\contentsline {figure}{\numberline {5.6}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison synthétique des modèles}}{40}{figure.caption.133}%
+\contentsline {figure}{\numberline {5.7}{\ignorespaces \xpg@aux {}{french}\ignorespaces Distribution du handshake mTLS}}{40}{figure.caption.134}%
+\contentsline {figure}{\numberline {5.8}{\ignorespaces \xpg@aux {}{french}\ignorespaces Latence de connexion}}{41}{figure.caption.135}%
+\contentsline {figure}{\numberline {5.9}{\ignorespaces \xpg@aux {}{french}\ignorespaces Débit applicatif}}{41}{figure.caption.137}%
+\contentsline {figure}{\numberline {5.10}{\ignorespaces \xpg@aux {}{french}\ignorespaces RTT par taille de message}}{41}{figure.caption.138}%
+\contentsline {figure}{\numberline {5.11}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison MQTT clair vs MQTT/TLS vs MQTT/mTLS}}{42}{figure.caption.139}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }

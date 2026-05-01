@@ -135,24 +135,24 @@ Six scénarios ont été conçus pour couvrir les principales catégories d'atta
 \begin{attackbox}[Scénario 1 -- Man-in-the-Middle (TLS désactivé)]
 \textbf{Vecteur~:} un dispositif tente de se connecter sur le port 1883 (MQTT en clair) au lieu de 8883 (TLS). Un attaquant en position MITM peut alors capturer puis modifier les messages.\\
 \textbf{Détection~:} règle Suricata sur tout flux TCP/1883.\\
-\textbf{Contre-mesure~:} pare-feu pfSense bloquant 1883 ; broker écoutant uniquement sur 8883 avec \texttt{require\_certificate}.
+\textbf{Contre-mesure~:} pare-feu pfSense bloquant 1883 . broker écoutant uniquement sur 8883 avec \texttt{require\_certificate}.
 \end{attackbox}
 
 \begin{attackbox}[Scénario 2 -- Sniffing MQTT en clair]
 \textbf{Vecteur~:} interception passive du trafic MQTT non chiffré sur le segment IoT.\\
 \textbf{Détection~:} alerte Suricata si un \texttt{PUBLISH} apparaît hors de la session TLS.\\
-\textbf{Contre-mesure~:} TLS~1.3 obligatoire ; suites cryptographiques restreintes (RFC~9325~\cite{rfc9325}).
+\textbf{Contre-mesure~:} TLS~1.3 obligatoire . suites cryptographiques restreintes (RFC~9325~\cite{rfc9325}).
 \end{attackbox}
 
 \begin{attackbox}[Scénario 3 -- Brute-force d'authentification]
 \textbf{Vecteur~:} 500~tentatives de \texttt{CONNECT} en moins de 60~s avec des certificats forgés.\\
 \textbf{Détection~:} règle Suricata MQTT (seuil de \texttt{CONNECT} par IP source).\\
-\textbf{Contre-mesure~:} certificats clients signés par CA Vault ; \emph{rate-limit} pfSense sur le port 8883.
+\textbf{Contre-mesure~:} certificats clients signés par CA Vault . \emph{rate-limit} pfSense sur le port 8883.
 \end{attackbox}
 
 \begin{attackbox}[Scénario 4 -- Exfiltration via topic non autorisé]
 \textbf{Vecteur~:} un dispositif compromis tente de \texttt{SUBSCRIBE} à \texttt{tt/admin/\#}.\\
-\textbf{Détection~:} log Mosquitto \texttt{ACL denied} ; règle Wazuh corrélant N occurrences/15~min.\\
+\textbf{Détection~:} log Mosquitto \texttt{ACL denied} . règle Wazuh corrélant N occurrences/15~min.\\
 \textbf{Contre-mesure~:} ACL stricte par \emph{Common Name}, granularité au topic.
 \end{attackbox}
 
@@ -164,7 +164,7 @@ Six scénarios ont été conçus pour couvrir les principales catégories d'atta
 
 \begin{attackbox}[Scénario 6 -- Compromission de certificat client]
 \textbf{Vecteur~:} certificat \texttt{dev-017} volé puis réutilisé depuis une IP non habituelle.\\
-\textbf{Détection~:} module ML (Isolation Forest) signalant l'écart comportemental ; corrélation Wazuh IP$\leftrightarrow$identité.\\
+\textbf{Détection~:} module ML (Isolation Forest) signalant l'écart comportemental . corrélation Wazuh IP$\leftrightarrow$identité.\\
 \textbf{Contre-mesure~:} révocation Vault (\texttt{vault write pki\_int/revoke serial=...}) et \emph{rotation} immédiate de la CRL.
 \end{attackbox}
 
@@ -212,7 +212,7 @@ Le jeu de données utilisé contient 76\,000 enregistrements répartis en huit c
 Deux modèles complémentaires sont entraînés via \emph{scikit-learn}~\cite{scikit_learn}~:
 
 \begin{itemize}[leftmargin=*]
-  \item \textbf{Isolation Forest}~\cite{liu2008isolation}~: détection non supervisée d'anomalies sur trafic légitime majoritaire ;
+  \item \textbf{Isolation Forest}~\cite{liu2008isolation}~: détection non supervisée d'anomalies sur trafic légitime majoritaire .
   \item \textbf{Random Forest}~\cite{breiman2001random}~: classification supervisée multi-classes des sept attaques.
 \end{itemize}
 
