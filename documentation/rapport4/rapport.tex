@@ -21,11 +21,21 @@
 \usepackage{emptypage}
 
 \usepackage{titlesec}
+\usepackage{needspace}
 \titleformat{\chapter}[display]
   {\normalfont\bfseries\Large}
   {Chapitre \thechapter}
   {0.5cm}
   {\LARGE}
+\titleformat{\section}
+  {\needspace{4\baselineskip}\normalfont\bfseries\large}
+  {\thesection}{1em}{}
+\titleformat{\subsection}
+  {\needspace{3\baselineskip}\normalfont\bfseries\normalsize}
+  {\thesubsection}{1em}{}
+\titleformat{\subsubsection}
+  {\needspace{3\baselineskip}\normalfont\bfseries\small}
+  {\thesubsubsection}{1em}{}
 \titlespacing*{\chapter}{0pt}{-0.4cm}{0.8cm}
 \titlespacing*{\section}{0pt}{0.6cm plus 0.1cm minus 0.1cm}{0.25cm}
 \titlespacing*{\subsection}{0pt}{0.4cm plus 0.1cm minus 0.1cm}{0.2cm}
