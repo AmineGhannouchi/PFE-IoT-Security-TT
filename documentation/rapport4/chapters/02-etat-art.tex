@@ -31,17 +31,16 @@ Le tableau~\ref{tab:protocoles} compare quatre protocoles applicatifs représent
 \caption{Comparaison des principaux protocoles applicatifs IoT}
 \label{tab:protocoles}
 \small
-\begin{tabularx}{\linewidth}{l X X X X}
-\toprule
+\begin{tabularx}{\linewidth}{|l|X|X|X|X|}
+\hline
 \textbf{Critère} & \textbf{MQTT 5} & \textbf{CoAP} & \textbf{AMQP 1.0} & \textbf{HTTP/REST} \\
-\midrule
-Modèle & Pub/Sub & Req/Rep & Pub/Sub + queues & Req/Rep \\
-Transport & TCP/TLS & UDP/DTLS & TCP/TLS & TCP/TLS \\
-Empreinte & Très faible & Très faible & Moyenne & Moyenne/élevée \\
-QoS & 0/1/2 & Confirmable & 0/1 & Aucun natif \\
-Sécurité native & TLS+ACL & DTLS+OSCORE & SASL+TLS & TLS+JWT \\
-Maturité IoT & Très large & Large & Industrielle & Universelle \\
-\bottomrule
+\hline
+Modèle & Pub/Sub & Req/Rep & Pub/Sub + queues & Req/Rep \\ \hline
+Transport & TCP/TLS & UDP/DTLS & TCP/TLS & TCP/TLS \\ \hline
+Empreinte & Très faible & Très faible & Moyenne & Moyenne/élevée \\ \hline
+QoS & 0/1/2 & Confirmable & 0/1 & Aucun natif \\ \hline
+Sécurité native & TLS+ACL & DTLS+OSCORE & SASL+TLS & TLS+JWT \\ \hline
+Maturité IoT & Très large & Large & Industrielle & Universelle \\ \hline
 \end{tabularx}
 \end{table}
 

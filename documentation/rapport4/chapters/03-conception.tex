@@ -15,17 +15,16 @@ Ce chapitre traduit les besoins exprimés au chapitre précédent en une concept
 \centering
 \caption{Besoins fonctionnels}
 \label{tab:bf}
-\begin{tabularx}{\linewidth}{c X}
-\toprule
+\begin{tabularx}{\linewidth}{|c|X|}
+\hline
 \textbf{ID} & \textbf{Description} \\
-\midrule
-\acs{BF-1} & Émettre, renouveler et révoquer automatiquement des certificats X.509 pour services et dispositifs. \\
-\acs{BF-2} & Imposer le chiffrement TLS~1.3 et l'authentification mutuelle (mTLS) sur le broker MQTT. \\
-\acs{BF-3} & Restreindre l'accès aux topics MQTT par dispositif via des listes de contrôle d'accès. \\
-\acs{BF-4} & Simuler une flotte hétérogène de 50 dispositifs IoT générant un trafic réaliste. \\
-\acs{BF-5} & Détecter les attaques réseau et applicatives par règles IDS et corréler les alertes dans un SIEM. \\
-\acs{BF-6} & Détecter les anomalies non couvertes par les règles via un modèle d'apprentissage automatique. \\
-\bottomrule
+\hline
+\acs{BF-1} & Émettre, renouveler et révoquer automatiquement des certificats X.509 pour services et dispositifs. \\ \hline
+\acs{BF-2} & Imposer le chiffrement TLS~1.3 et l'authentification mutuelle (mTLS) sur le broker MQTT. \\ \hline
+\acs{BF-3} & Restreindre l'accès aux topics MQTT par dispositif via des listes de contrôle d'accès. \\ \hline
+\acs{BF-4} & Simuler une flotte hétérogène de 50 dispositifs IoT générant un trafic réaliste. \\ \hline
+\acs{BF-5} & Détecter les attaques réseau et applicatives par règles IDS et corréler les alertes dans un SIEM. \\ \hline
+\acs{BF-6} & Détecter les anomalies non couvertes par les règles via un modèle d'apprentissage automatique. \\ \hline
 \end{tabularx}
 \end{table}
 
@@ -35,17 +34,16 @@ Ce chapitre traduit les besoins exprimés au chapitre précédent en une concept
 \centering
 \caption{Besoins non fonctionnels}
 \label{tab:bnf}
-\begin{tabularx}{\linewidth}{c X}
-\toprule
+\begin{tabularx}{\linewidth}{|c|X|}
+\hline
 \textbf{ID} & \textbf{Description} \\
-\midrule
-\acs{BNF-1} & \textbf{Sécurité}~: aucun flux IoT en clair . rotation des secrets . séparation CA racine / intermédiaire. \\
-\acs{BNF-2} & \textbf{Performance}~: latence handshake mTLS \(<50\) ms . débit broker \(>500\) msg/s par client. \\
-\acs{BNF-3} & \textbf{Reproductibilité}~: l'environnement complet doit être réinstallable à partir des scripts fournis. \\
-\acs{BNF-4} & \textbf{Scalabilité}~: l'architecture doit accepter sans refonte au moins 200 dispositifs. \\
-\acs{BNF-5} & \textbf{Maintenabilité}~: configurations versionnées, modules indépendants, journalisation centralisée. \\
-\acs{BNF-6} & \textbf{Observabilité}~: tableau de bord Wazuh accessible aux analystes en moins de 3 clics. \\
-\bottomrule
+\hline
+\acs{BNF-1} & \textbf{Sécurité}~: aucun flux IoT en clair . rotation des secrets . séparation CA racine / intermédiaire. \\ \hline
+\acs{BNF-2} & \textbf{Performance}~: latence handshake mTLS \(<50\) ms . débit broker \(>500\) msg/s par client. \\ \hline
+\acs{BNF-3} & \textbf{Reproductibilité}~: l'environnement complet doit être réinstallable à partir des scripts fournis. \\ \hline
+\acs{BNF-4} & \textbf{Scalabilité}~: l'architecture doit accepter sans refonte au moins 200 dispositifs. \\ \hline
+\acs{BNF-5} & \textbf{Maintenabilité}~: configurations versionnées, modules indépendants, journalisation centralisée. \\ \hline
+\acs{BNF-6} & \textbf{Observabilité}~: tableau de bord Wazuh accessible aux analystes en moins de 3 clics. \\ \hline
 \end{tabularx}
 \end{table}
 
@@ -59,20 +57,18 @@ Trois méthodologies agiles candidates ont été évaluées~: \textbf{Scrum}~\ci
 \caption{Comparaison Scrum vs Kanban vs XP}
 \label{tab:methodo}
 \small
-\begin{tabularx}{\linewidth}{l X X X}
-\toprule
+\begin{tabularx}{\linewidth}{|l|X|X|X|}
+\hline
 \textbf{Critère} & \textbf{Scrum} & \textbf{Kanban} & \textbf{XP} \\
-\midrule
-Cadre de travail & Itératif (sprints) & Continu (flux) & Itératif court \\
-Taille équipe & 3--9 personnes & Variable & 2--12 \\
-Gestion des changements & Encadrée (entre sprints) & Très flexible & Flexible \\
-Cycle de livraison & 1--4 semaines & Continu & 1--3 semaines \\
-Documentation & Modérée (US, backlog) & Faible & Faible \\
-Pratiques d'ingénierie & Indépendantes & Indépendantes & Strictes (TDD, pair-prog) \\
-Courbe d'apprentissage & Modérée & Faible & Élevée \\
-\midrule
-\textbf{Adaptation au PFE} & \textbf{Très adaptée} & Peu adaptée (jalons académiques) & Peu adaptée (équipe solo) \\
-\bottomrule
+\hline
+Cadre de travail & Itératif (sprints) & Continu (flux) & Itératif court \\ \hline
+Taille équipe & 3--9 personnes & Variable & 2--12 \\ \hline
+Gestion des changements & Encadrée (entre sprints) & Très flexible & Flexible \\ \hline
+Cycle de livraison & 1--4 semaines & Continu & 1--3 semaines \\ \hline
+Documentation & Modérée (US, backlog) & Faible & Faible \\ \hline
+Pratiques d'ingénierie & Indépendantes & Indépendantes & Strictes (TDD, pair-prog) \\ \hline
+Courbe d'apprentissage & Modérée & Faible & Élevée \\ \hline
+\textbf{Adaptation au PFE} & \textbf{Très adaptée} & Peu adaptée (jalons académiques) & Peu adaptée (équipe solo) \\ \hline
 \end{tabularx}
 \end{table}
 
@@ -98,17 +94,16 @@ Six sprints de deux semaines structurent la phase de réalisation. Le tableau~\r
 \caption{Planification des sprints}
 \label{tab:sprints}
 \small
-\begin{tabularx}{\linewidth}{l l X}
-\toprule
+\begin{tabularx}{\linewidth}{|l|l|X|}
+\hline
 \textbf{Sprint} & \textbf{Durée} & \textbf{Objectif principal} \\
-\midrule
-S1 -- Cadrage \& réseau & 2~semaines & Topologie GNS3 segmentée, conteneurs de base, plan d'adressage. \\
-S2 -- PKI Vault & 2~semaines & Vault déployé, CA racine + intermédiaire, rôles PKI, scripts d'émission. \\
-S3 -- Broker mTLS & 2~semaines & Mosquitto en TLS~1.3+mTLS, ACL par certificat, tests d'authentification. \\
-S4 -- Flotte simulée & 2~semaines & 50 clients Python, génération de trafic, rejeu de 76\,000 messages. \\
-S5 -- Détection IDS+SIEM & 2~semaines & Règles Suricata MQTT, intégration Wazuh, dashboards. \\
-S6 -- ML \& bilan & 2~semaines & Modèles IsolationForest+RandomForest, évaluation, rédaction finale. \\
-\bottomrule
+\hline
+S1 -- Cadrage \& réseau & 2~semaines & Topologie GNS3 segmentée, conteneurs de base, plan d'adressage. \\ \hline
+S2 -- PKI Vault & 2~semaines & Vault déployé, CA racine + intermédiaire, rôles PKI, scripts d'émission. \\ \hline
+S3 -- Broker mTLS & 2~semaines & Mosquitto en TLS~1.3+mTLS, ACL par certificat, tests d'authentification. \\ \hline
+S4 -- Flotte simulée & 2~semaines & 50 clients Python, génération de trafic, rejeu de 76\,000 messages. \\ \hline
+S5 -- Détection IDS+SIEM & 2~semaines & Règles Suricata MQTT, intégration Wazuh, dashboards. \\ \hline
+S6 -- ML \& bilan & 2~semaines & Modèles IsolationForest+RandomForest, évaluation, rédaction finale. \\ \hline
 \end{tabularx}
 \end{table}
 
@@ -131,27 +126,26 @@ Le \emph{Product Backlog} regroupe les \emph{User Stories} priorisées selon la 
 \caption{Product Backlog (extrait priorisé)}
 \label{tab:backlog}
 \small
-\begin{tabularx}{\linewidth}{l l X c c c}
-\toprule
+\begin{tabularx}{\linewidth}{|l|l|X|c|c|c|}
+\hline
 \textbf{ID} & \textbf{Acteur} & \textbf{User Story} & \textbf{Prio.} & \textbf{SP} & \textbf{Sprint} \\
-\midrule
-US-01 & Admin & Déployer une topologie réseau segmentée sous GNS3 & M & 8 & S1 \\
-US-02 & Admin & Définir un plan d'adressage par VLAN & M & 3 & S1 \\
-US-03 & Admin & Démarrer Vault et initialiser une CA racine & M & 5 & S2 \\
-US-04 & Admin & Provisionner une CA intermédiaire et des rôles PKI & M & 8 & S2 \\
-US-05 & Admin & Émettre des certificats serveur/client à la demande & M & 5 & S2 \\
-US-06 & Admin & Configurer Mosquitto en TLS~1.3 + mTLS & M & 8 & S3 \\
-US-07 & Admin & Définir des ACL par identifiant client & M & 5 & S3 \\
-US-08 & Dispositif & Établir une session mTLS et publier sur son topic & M & 5 & S3 \\
-US-09 & Admin & Simuler 50 dispositifs hétérogènes & M & 8 & S4 \\
-US-10 & Admin & Rejouer un dataset de 76\,000 messages & S & 5 & S4 \\
-US-11 & Analyste & Détecter une connexion non autorisée & M & 5 & S5 \\
-US-12 & Analyste & Détecter un brute-force d'authentification & M & 5 & S5 \\
-US-13 & Analyste & Visualiser les alertes corrélées dans Wazuh & M & 5 & S5 \\
-US-14 & Analyste & Détecter une anomalie via IsolationForest & S & 8 & S6 \\
-US-15 & Analyste & Classifier les attaques via Random Forest & S & 8 & S6 \\
-US-16 & Analyste & Comparer ML vs règles IDS & C & 5 & S6 \\
-\bottomrule
+\hline
+US-01 & Admin & Déployer une topologie réseau segmentée sous GNS3 & M & 8 & S1 \\ \hline
+US-02 & Admin & Définir un plan d'adressage par VLAN & M & 3 & S1 \\ \hline
+US-03 & Admin & Démarrer Vault et initialiser une CA racine & M & 5 & S2 \\ \hline
+US-04 & Admin & Provisionner une CA intermédiaire et des rôles PKI & M & 8 & S2 \\ \hline
+US-05 & Admin & Émettre des certificats serveur/client à la demande & M & 5 & S2 \\ \hline
+US-06 & Admin & Configurer Mosquitto en TLS~1.3 + mTLS & M & 8 & S3 \\ \hline
+US-07 & Admin & Définir des ACL par identifiant client & M & 5 & S3 \\ \hline
+US-08 & Dispositif & Établir une session mTLS et publier sur son topic & M & 5 & S3 \\ \hline
+US-09 & Admin & Simuler 50 dispositifs hétérogènes & M & 8 & S4 \\ \hline
+US-10 & Admin & Rejouer un dataset de 76\,000 messages & S & 5 & S4 \\ \hline
+US-11 & Analyste & Détecter une connexion non autorisée & M & 5 & S5 \\ \hline
+US-12 & Analyste & Détecter un brute-force d'authentification & M & 5 & S5 \\ \hline
+US-13 & Analyste & Visualiser les alertes corrélées dans Wazuh & M & 5 & S5 \\ \hline
+US-14 & Analyste & Détecter une anomalie via IsolationForest & S & 8 & S6 \\ \hline
+US-15 & Analyste & Classifier les attaques via Random Forest & S & 8 & S6 \\ \hline
+US-16 & Analyste & Comparer ML vs règles IDS & C & 5 & S6 \\ \hline
 \end{tabularx}
 \end{table}
 

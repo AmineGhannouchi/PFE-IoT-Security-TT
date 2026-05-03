@@ -320,18 +320,17 @@ docker network create --driver bridge \
 \centering
 \caption{Variables d'environnement principales du projet}
 \label{tab:env_vars}
-\begin{tabular}{llp{6cm}}
-\toprule
+\begin{tabular}{|l|l|p{6cm}|}
+\hline
 \textbf{Variable} & \textbf{Valeur} & \textbf{Description} \\
-\midrule
-\texttt{VAULT\_ADDR} & \texttt{http://192.168.30.10:8200} & Adresse de l'API Vault \\
-\texttt{VAULT\_TOKEN} & \texttt{<root\_token>} & Token d'authentification \\
-\texttt{MQTT\_BROKER} & \texttt{192.168.20.10} & IP du broker Mosquitto \\
-\texttt{MQTT\_PORT\_TLS} & \texttt{8883} & Port MQTT sécurisé \\
-\texttt{MQTT\_PORT\_TCP} & \texttt{1883} & Port MQTT non sécurisé \\
-\texttt{CA\_CERT} & \texttt{/certs/ca-chain.crt} & Chaîne CA (root + intermediate) \\
-\texttt{WAZUH\_MANAGER} & \texttt{192.168.40.10} & IP du manager Wazuh \\
-\texttt{SURICATA\_EVE} & \texttt{/var/log/suricata/eve.json} & Fichier événements Suricata \\
-\bottomrule
+\hline
+\texttt{VAULT\_ADDR} & \texttt{http://192.168.30.10:8200} & Adresse de l'API Vault \\ \hline
+\texttt{VAULT\_TOKEN} & \texttt{<root\_token>} & Token d'authentification \\ \hline
+\texttt{MQTT\_BROKER} & \texttt{192.168.20.10} & IP du broker Mosquitto \\ \hline
+\texttt{MQTT\_PORT\_TLS} & \texttt{8883} & Port MQTT sécurisé \\ \hline
+\texttt{MQTT\_PORT\_TCP} & \texttt{1883} & Port MQTT non sécurisé \\ \hline
+\texttt{CA\_CERT} & \texttt{/certs/ca-chain.crt} & Chaîne CA (root + intermediate) \\ \hline
+\texttt{WAZUH\_MANAGER} & \texttt{192.168.40.10} & IP du manager Wazuh \\ \hline
+\texttt{SURICATA\_EVE} & \texttt{/var/log/suricata/eve.json} & Fichier événements Suricata \\ \hline
 \end{tabular}
 \end{table}

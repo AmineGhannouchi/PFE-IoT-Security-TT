@@ -16,15 +16,14 @@ Quatre familles de tests ont été définies, conformément aux besoins formulé
 \caption{Plan de tests}
 \label{tab:plan-tests}
 \small
-\begin{tabularx}{\linewidth}{l X X}
-\toprule
+\begin{tabularx}{\linewidth}{|l|X|X|}
+\hline
 \textbf{Famille} & \textbf{Objectif} & \textbf{Outils} \\
-\midrule
-Tests unitaires & Vérifier scripts Vault, simulateur, ETL ML & pytest, scripts shell \\
-Tests d'intégration & Valider la chaîne PKI~$\to$~mTLS~$\to$~broker~$\to$~Suricata~$\to$~Wazuh & mosquitto\_pub/sub, eve.json \\
-Tests de sécurité & Rejouer les six scénarios d'attaque & flotte simulée, scripts attaque \\
-Tests de performance & Mesurer latence, débit, handshake mTLS & paho-mqtt, hyperfine \\
-\bottomrule
+\hline
+Tests unitaires & Vérifier scripts Vault, simulateur, ETL ML & pytest, scripts shell \\ \hline
+Tests d'intégration & Valider la chaîne PKI~$\to$~mTLS~$\to$~broker~$\to$~Suricata~$\to$~Wazuh & mosquitto\_pub/sub, eve.json \\ \hline
+Tests de sécurité & Rejouer les six scénarios d'attaque & flotte simulée, scripts attaque \\ \hline
+Tests de performance & Mesurer latence, débit, handshake mTLS & paho-mqtt, hyperfine \\ \hline
 \end{tabularx}
 \end{table}
 
@@ -37,17 +36,16 @@ Les six scénarios d'attaque définis en \S\ref{sec:re-attaques} ont été rejou
 \centering
 \caption{Taux de détection des scénarios d'attaque (10 rejeux par scénario)}
 \label{tab:detection-secu}
-\begin{tabularx}{\linewidth}{X c c c}
-\toprule
+\begin{tabularx}{\linewidth}{|X|c|c|c|}
+\hline
 \textbf{Scénario} & \textbf{Suricata} & \textbf{Wazuh (corr.)} & \textbf{ML} \\
-\midrule
-S1 -- MITM TLS désactivé        & 10/10 & 10/10 & N/A \\
-S2 -- Sniffing MQTT clair       & 10/10 & 10/10 & N/A \\
-S3 -- Brute-force CONNECT       & 10/10 & 10/10 & 9/10 \\
-S4 -- Topic non autorisé        &  8/10 & 10/10 & 10/10 \\
-S5 -- Flood CONNECT             & 10/10 & 10/10 & 9/10 \\
-S6 -- Compromission certificat  &  3/10 &  6/10 & 10/10 \\
-\bottomrule
+\hline
+S1 -- MITM TLS désactivé        & 10/10 & 10/10 & N/A \\ \hline
+S2 -- Sniffing MQTT clair       & 10/10 & 10/10 & N/A \\ \hline
+S3 -- Brute-force CONNECT       & 10/10 & 10/10 & 9/10 \\ \hline
+S4 -- Topic non autorisé        &  8/10 & 10/10 & 10/10 \\ \hline
+S5 -- Flood CONNECT             & 10/10 & 10/10 & 9/10 \\ \hline
+S6 -- Compromission certificat  &  3/10 &  6/10 & 10/10 \\ \hline
 \end{tabularx}
 \end{table}
 
@@ -101,13 +99,12 @@ La complémentarité \emph{règles}~$+$~\emph{ML} est clairement démontrée~: l
 \centering
 \caption{Performances ML (validation 5-fold)}
 \label{tab:perf-ml}
-\begin{tabularx}{\linewidth}{X c c c c}
-\toprule
+\begin{tabularx}{\linewidth}{|X|c|c|c|c|}
+\hline
 \textbf{Modèle} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
-\midrule
-Isolation Forest (binaire)  & 0{,}962 & 0{,}918 & 0{,}947 & 0{,}932 \\
-Random Forest (multi-classe)& 0{,}994 & 0{,}993 & 0{,}993 & 0{,}993 \\
-\bottomrule
+\hline
+Isolation Forest (binaire)  & 0{,}962 & 0{,}918 & 0{,}947 & 0{,}932 \\ \hline
+Random Forest (multi-classe)& 0{,}994 & 0{,}993 & 0{,}993 & 0{,}993 \\ \hline
 \end{tabularx}
 \end{table}
 
