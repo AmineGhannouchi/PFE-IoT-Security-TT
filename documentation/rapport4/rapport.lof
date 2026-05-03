@@ -12,7 +12,7 @@
 \contentsline {figure}{\numberline {3.5}{\ignorespaces \xpg@aux {}{french}\ignorespaces Diagramme de Gantt du projet}}{21}{figure.caption.106}%
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {4.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Architecture globale en défense en profondeur}}{23}{figure.caption.108}%
-\contentsline {figure}{\numberline {4.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Topologie réseau détaillée (VLANs et plan d'adressage)}}{23}{figure.caption.109}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Topologie réseau détaillée (VLANs et plan d'adressage)}}{24}{figure.caption.109}%
 \contentsline {figure}{\numberline {4.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Flux E2E --- Phase 1 : provisionnement de l'identité}}{24}{figure.caption.110}%
 \contentsline {figure}{\numberline {4.4}{\ignorespaces \xpg@aux {}{french}\ignorespaces Flux E2E --- Phase 2 : établissement de la connexion TLS~1.3 mTLS}}{25}{figure.caption.111}%
 \contentsline {figure}{\numberline {4.5}{\ignorespaces \xpg@aux {}{french}\ignorespaces Flux E2E --- Phase 3 : publication des données IoT}}{25}{figure.caption.112}%

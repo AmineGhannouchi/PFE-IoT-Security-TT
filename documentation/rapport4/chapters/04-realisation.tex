@@ -44,6 +44,9 @@ L'architecture cible (figure~\ref{fig:archi}) repose sur quatre VLANs isolés~: 
 \caption{Architecture globale en défense en profondeur}
 \label{fig:archi}
 \end{figure}
+\FloatBarrier
+
+Cette vue synthétise les six briques de la solution (réseau segmenté, PKI Vault, broker mTLS, flotte simulée, IDS/SIEM et module ML) et matérialise la stratégie de défense en profondeur en plaçant chaque contrôle de sécurité sur une couche distincte.
 
 \begin{figure}[!htbp]
 \centering
@@ -51,6 +54,9 @@ L'architecture cible (figure~\ref{fig:archi}) repose sur quatre VLANs isolés~: 
 \caption{Topologie réseau détaillée (VLANs et plan d'adressage)}
 \label{fig:topo}
 \end{figure}
+\FloatBarrier
+
+La topologie détaille les quatre VLANs isolés ainsi que le plan d'adressage IP associé à chaque segment, mettant en évidence le rôle de pfSense comme point unique d'application de la politique de filtrage inter-VLAN.
 
 Le flux complet est décomposé en cinq phases présentées séparément (figures~\ref{fig:flux-p1}--\ref{fig:flux-p5}) afin d'en améliorer la lisibilité.
 
@@ -60,6 +66,9 @@ Le flux complet est décomposé en cinq phases présentées séparément (figure
 \caption{Flux E2E --- Phase 1 : provisionnement de l'identité}
 \label{fig:flux-p1}
 \end{figure}
+\FloatBarrier
+
+Cette phase initiale décrit la demande d'un certificat client par le dispositif auprès de Vault, depuis l'authentification AppRole jusqu'à la signature par la CA intermédiaire et la livraison sécurisée du couple clé/certificat.
 
 \begin{figure}[!htbp]
 \centering
@@ -67,6 +76,9 @@ Le flux complet est décomposé en cinq phases présentées séparément (figure
 \caption{Flux E2E --- Phase 2 : établissement de la connexion TLS~1.3 mTLS}
 \label{fig:flux-p2}
 \end{figure}
+\FloatBarrier
+
+Le schéma détaille les échanges du \emph{handshake} TLS~1.3 mutuel entre le dispositif et le broker, en mettant en évidence la vérification croisée des certificats et la dérivation des clés de session.
 
 \begin{figure}[!htbp]
 \centering
@@ -74,6 +86,9 @@ Le flux complet est décomposé en cinq phases présentées séparément (figure
 \caption{Flux E2E --- Phase 3 : publication des données IoT}
 \label{fig:flux-p3}
 \end{figure}
+\FloatBarrier
+
+Une fois la session sécurisée établie, le dispositif publie ses messages MQTT sur ses topics autorisés~; le broker applique alors les ACL liées au \emph{Common Name} avant toute redistribution aux abonnés.
 
 \begin{figure}[!htbp]
 \centering
@@ -81,6 +96,9 @@ Le flux complet est décomposé en cinq phases présentées séparément (figure
 \caption{Flux E2E --- Phase 4 : détection et supervision}
 \label{fig:flux-p4}
 \end{figure}
+\FloatBarrier
+
+Cette phase illustre la chaîne d'observation~: les flux sont analysés par Suricata, les événements transmis à Wazuh pour corrélation, et les alertes restituées à l'analyste via le tableau de bord.
 
 \begin{figure}[!htbp]
 \centering
@@ -88,6 +106,9 @@ Le flux complet est décomposé en cinq phases présentées séparément (figure
 \caption{Flux E2E --- Phase 5 : rotation automatique des certificats}
 \label{fig:flux-p5}
 \end{figure}
+\FloatBarrier
+
+La dernière phase montre comment Vault déclenche, à l'approche de l'expiration ou suite à une révocation, la régénération d'un certificat et son redéploiement transparent sur le dispositif sans interruption de service.
 \FloatBarrier
 
 \section{Infrastructure à clés publiques (Vault)}
@@ -197,6 +218,9 @@ Le jeu de données utilisé contient 76\,000 enregistrements répartis en huit c
 \caption{Analyse exploratoire --- distribution des classes}
 \label{fig:eda-classes}
 \end{figure}
+\FloatBarrier
+
+Ce graphique met en évidence le fort déséquilibre du jeu de données entre la classe normale, largement majoritaire, et les sept catégories d'attaques~; ce constat justifie le recours à des stratégies de rééquilibrage et le choix d'un détecteur d'anomalies non supervisé en complément.
 
 \begin{figure}[!htbp]
 \centering
@@ -204,6 +228,9 @@ Le jeu de données utilisé contient 76\,000 enregistrements répartis en huit c
 \caption{Analyse exploratoire --- matrice de corrélation des features numériques}
 \label{fig:eda-corr}
 \end{figure}
+\FloatBarrier
+
+La matrice de corrélation révèle les variables fortement liées entre elles, ce qui permet d'écarter les features redondantes et de retenir un sous-ensemble informatif pour l'entraînement des modèles.
 \FloatBarrier
 
 \subsection{Modèles}
