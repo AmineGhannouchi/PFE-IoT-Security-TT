@@ -76,7 +76,17 @@ Courbe d'apprentissage & Modérée & Faible & Élevée \\
 \end{tabularx}
 \end{table}
 
-\textbf{Justification du choix Scrum.} Le PFE impose des jalons académiques fixes (revues d'avancement, rapport intermédiaire, soutenance), ce qui correspond naturellement à la cadence des sprints. La taille modeste de l'équipe (un étudiant + un encadrant universitaire + un encadrant industriel) reste compatible avec les rituels Scrum. Enfin, Scrum offre un compromis entre la rigueur (revues systématiques) et la flexibilité (réajustement du backlog entre sprints), ce qui le rend supérieur à Kanban (trop ouvert pour un projet calendaire) et à XP (pratiques d'ingénierie disproportionnées pour un solo).
+Scrum a été retenu comme méthodologie de gestion de projet en raison de son adéquation avec les contraintes spécifiques d'un PFE technique à durée fixe. Sa structure itérative et incrémentale permet d'avancer de façon contrôlée tout en s'adaptant aux découvertes techniques en cours de réalisation. Les principaux avantages de Scrum dans ce contexte sont~:
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Alignement avec les jalons académiques~:} les revues de sprint coïncident naturellement avec les points d'avancement imposés (rapport intermédiaire, soutenance), offrant une visibilité régulière sur l'état du projet~;
+  \item \textbf{Flexibilité face aux imprévus techniques~:} le réajustement du backlog entre deux sprints permet de réagir rapidement à un blocage (configuration réseau, problème de certificats, etc.) sans remettre en cause l'ensemble du planning~;
+  \item \textbf{Traçabilité des livrables~:} chaque sprint produit un incrément fonctionnel documenté (topologie déployée, PKI opérationnelle, broker sécurisé…), ce qui facilite la rédaction du rapport au fil de l'avancement~;
+  \item \textbf{Communication structurée~:} les rituels Scrum (revue, rétrospective) formalisent les échanges entre l'étudiant, l'encadrant universitaire et l'encadrant industriel, même dans une équipe de taille réduite~;
+  \item \textbf{Maîtrise du périmètre~:} la priorisation du backlog garantit que les fonctionnalités essentielles sont livrées en premier, limitant le risque de ne pas finaliser les parties critiques avant la date de soutenance.
+\end{itemize}
+
+Ces avantages placent Scrum devant Kanban, dont l'absence de cadence fixe est inadaptée à un projet soumis à des jalons académiques, et devant XP, dont les pratiques d'ingénierie (TDD, pair-programming) sont disproportionnées pour un développement solo.
 
 \section{Planification des sprints}
 \label{sec:co-sprints}

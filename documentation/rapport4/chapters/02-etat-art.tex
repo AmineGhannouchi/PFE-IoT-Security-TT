@@ -112,7 +112,7 @@ Plusieurs approches ont été proposées pour sécuriser les flux IoT~: gateways
   \item \textbf{Reproductibilité limitée} des architectures publiées dans la littérature, rarement accompagnées d'un environnement de simulation complet.
 \end{enumerate}
 
-\section{Positionnement et synthèse}
+\section{Synthèse du chapitre}
 \label{sec:ea-positionnement}
 
 Au regard de cet état de l'art, le présent projet se positionne comme une \textbf{architecture de référence open source} pour la sécurisation des flux IoT chez un opérateur télécom, avec quatre contributions distinctives~: (1)~déploiement de bout en bout reproductible sous GNS3+Docker . (2)~PKI Vault entièrement automatisée avec mTLS systématique . (3)~chaîne de détection unifiée Suricata~+~Wazuh avec règles MQTT spécifiques . (4)~couplage de cette détection signature avec un module ML (IsolationForest~+~RandomForest) pour couvrir les anomalies non connues.
