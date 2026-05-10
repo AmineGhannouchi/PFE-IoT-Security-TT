@@ -38,27 +38,44 @@ Ces composants ne fonctionnent pas de manière indépendante~: ils s'articulent 
 \section{Architecture globale et topologie réseau}
 \label{sec:re-archi}
 
-L'architecture cible (figure~\ref{fig:archi}) repose sur quatre VLANs isolés~: \texttt{IoT}, \texttt{Services} (Vault, Mosquitto), \texttt{Monitoring} (Suricata, Wazuh), \texttt{Management}. La séparation est imposée par pfSense, qui filtre les flux inter-VLAN selon une politique \emph{deny-by-default}.
+\subsection{Architecture de déploiement}
+
+La figure~\ref{fig:archi} présente l'architecture \textbf{de déploiement} effective, c'est-à-dire la traduction concrète sur la machine hôte des briques conceptuelles décrites au chapitre~\ref{chap:contexte-general} (figure~\ref{fig:archi-vue-intro}).
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.95\linewidth]{diag-architecture-generale.png}
-\caption{Architecture globale en défense en profondeur}
+\includegraphics[width=\textwidth]{diag-composants.png}
+\caption{Architecture de déploiement~: stacks Docker, ports et dépendances effectives}
 \label{fig:archi}
 \end{figure}
 \FloatBarrier
 
-Cette vue synthétise les six briques de la solution (réseau segmenté, PKI Vault, broker mTLS, flotte simulée, IDS/SIEM et module ML) et matérialise la stratégie de défense en profondeur en plaçant chaque contrôle de sécurité sur une couche distincte.
+\begin{infobox}{Différence entre la figure~\ref{fig:archi-vue-intro} (Ch.~1) et la figure~\ref{fig:archi} (Ch.~4)}
+La figure~\ref{fig:archi-vue-intro} est une vue \textbf{conceptuelle}~: elle présente les zones réseau logiques (IoT, DMZ, PKI, SIEM, Analyse), les flux de données et les technologies retenues. Elle répond à la question \emph{«~quoi~?~»}.
+
+La figure~\ref{fig:archi} est une vue \textbf{d'implémentation}~: elle matérialise la réalisation concrète sur la machine hôte (Intel i3-1215U / 16~Go de RAM, Windows~11) en détaillant~:
+\begin{itemize}[leftmargin=*]
+  \item les stacks Docker déployés dans la VM GNS3 (\emph{Stack IoT Simulée}, \emph{Stack Broker / Gateway}, \emph{Stack PKI}, \emph{Stack SIEM}, \emph{Stack ML / Analyse})~;
+  \item les noms de conteneurs et services effectifs (\texttt{mosquitto}, \texttt{vault}, \texttt{suricata}, \texttt{wazuh-manager}, \texttt{opensearch}, \texttt{ml-engine})~;
+  \item les ports d'écoute réels (8883 pour MQTT/TLS, 8200 pour Vault, 9200 pour OpenSearch, 5601 pour les Dashboards, 1514/1515 pour Wazuh)~;
+  \item les relations inter-services~: port miroir MikroTik vers Suricata, routage inter-VLAN, flux \texttt{EVE JSON} de Suricata vers Wazuh.
+\end{itemize}
+Elle répond à la question \emph{«~comment~?~»} et constitue la référence de reproduction de l'environnement.
+\end{infobox}
+
+Le diagramme de composants montre en outre les deux niveaux d'exécution du laboratoire~: (i)~la \textbf{VM GNS3} (VMware Workstation, 4~Go de RAM alloués) héberge les équipements réseau virtualisés (pfSense, MikroTik) qui assurent la segmentation des VLANs et le port miroir pour l'IDS~; (ii)~le \textbf{Docker Engine} intégré à cette VM exécute les cinq stacks applicatifs. Cette séparation garantit que le cloisonnement réseau est appliqué au niveau hyperviseur, en amont de toute couche logicielle applicative.
+
+\subsection{Topologie réseau}
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.95\linewidth]{diag-topologie-reseau.png}
-\caption{Topologie réseau détaillée (VLANs et plan d'adressage)}
+\includegraphics[width=\textwidth]{diag-topologie-reseau.png}
+\caption{Topologie réseau détaillée~: VLANs, plan d'adressage IP et politique de filtrage}
 \label{fig:topo}
 \end{figure}
 \FloatBarrier
 
-La topologie détaille les quatre VLANs isolés ainsi que le plan d'adressage IP associé à chaque segment, mettant en évidence le rôle de pfSense comme point unique d'application de la politique de filtrage inter-VLAN.
+La figure~\ref{fig:topo} détaille la topologie réseau effective déployée dans GNS3. Quatre VLANs sont isolés~: le VLAN \textbf{IoT} (\texttt{192.168.10.0/24}) concentre les 50 dispositifs simulés~; le VLAN \textbf{Services/DMZ} (\texttt{192.168.20.0/24}) héberge le broker Mosquitto et les passerelles~; le VLAN \textbf{PKI} (\texttt{192.168.30.0/24}) isole Vault dont l'API REST est accessible uniquement depuis les zones autorisées~; le VLAN \textbf{SIEM/Monitoring} (\texttt{192.168.40.0/24}) regroupe Suricata, Wazuh et OpenSearch. pfSense applique une politique \emph{deny-by-default} à tous les flux inter-VLAN et n'autorise que les flux explicitement définis dans les règles (MQTT/8883, Vault API/8200, Syslog/1514). Le port miroir MikroTik sur le segment DMZ permet à Suricata d'analyser passivement la totalité du trafic MQTT sans être dans le chemin de données.
 
 Le flux complet est décomposé en cinq phases présentées séparément (figures~\ref{fig:flux-p1}--\ref{fig:flux-p5}) afin d'en améliorer la lisibilité.
 
@@ -104,13 +121,13 @@ Cette phase illustre la chaîne d'observation~: les flux sont analysés par Suri
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.80\linewidth,height=0.28\textheight,keepaspectratio]{diag-flux-phase5.png}
-\caption{Flux E2E --- Phase 5 : rotation automatique des certificats}
+\includegraphics[width=0.80\linewidth,height=0.30\textheight,keepaspectratio]{diag-flux-phase5.png}
+\caption{Flux E2E~--- Phase~5~: rotation automatique des certificats}
 \label{fig:flux-p5}
 \end{figure}
 \FloatBarrier
 
-La dernière phase montre comment Vault déclenche, à l'approche de l'expiration ou suite à une révocation, la régénération d'un certificat et son redéploiement transparent sur le dispositif sans interruption de service.
+La dernière phase montre comment Vault déclenche, à l'approche de l'expiration ou suite à une révocation, la régénération d'un certificat et son redéploiement transparent sur le dispositif sans interruption de service. La rotation est automatisée par un agent de renouvellement côté dispositif (minuteur basé sur le TTL reçu lors de l'émission), qui relance la séquence de la phase~1 avant expiration, garantissant une continuité de service sans intervention manuelle.
 \FloatBarrier
 
 \section{Infrastructure à clés publiques (Vault)}
@@ -123,9 +140,11 @@ La PKI suit le modèle à deux niveaux préconisé par le NIST~\cite{nist_sp8002
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.85\linewidth]{diag-pki-hierarchy.png}
-\caption{Hiérarchie de la PKI}
+\caption{Hiérarchie de la PKI à deux niveaux (CA racine \emph{offline} + CA intermédiaire Vault)}
 \label{fig:pki-hier}
 \end{figure}
+
+Le diagramme distingue les trois niveaux de confiance de la hiérarchie~: (i)~la \textbf{CA racine} (RSA-4096, self-signed, TTL~10~ans) est conservée hors ligne et ne signe que les CA intermédiaires~; sa clé privée n'est jamais exposée dans la VM GNS3~; (ii)~la \textbf{CA intermédiaire} (RSA-2048, TTL~5~ans) est embarquée dans le \emph{secrets engine PKI} de Vault et signe les certificats opérationnels à la demande via API REST~; (iii)~les \textbf{certificats finaux} sont émis selon deux rôles distincts~: \texttt{role-server} (TTL~90~jours, usage \texttt{serverAuth}, pour Mosquitto et Vault), et \texttt{role-device} (TTL~30~jours, usage \texttt{clientAuth}, CN contrôlé au pattern \texttt{dev-XXX.iot.lab}). La séparation des rôles empêche qu'un certificat de service soit utilisé pour s'authentifier comme dispositif, et inversement.
 
 \subsection{Rôles Vault et émission}
 
@@ -149,9 +168,18 @@ Mosquitto est configuré avec~\cite{mosquitto_tls}~: \texttt{require\_certificat
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.9\linewidth]{diag-tls-handshake.png}
-\caption{Handshake TLS~1.3 avec authentification mutuelle}
+\caption{\emph{Handshake} TLS~1.3 avec authentification mutuelle (mTLS)}
 \label{fig:tls-handshake}
 \end{figure}
+
+Le diagramme de séquence se lit selon quatre phases distinctes~:
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{ClientHello} (dispositif~\textrightarrow~broker)~: le dispositif annonce les suites cryptographiques qu'il supporte et propose les paramètres de partage de clé (ECDHE)~;
+  \item \textbf{ServerHello + CertificateVerify} (broker~\textrightarrow~dispositif)~: le broker sélectionne la suite, transmet son certificat X.509 signé par la CA Vault et prouve la possession de sa clé privée~;
+  \item \textbf{Certificate (client)} (dispositif~\textrightarrow~broker)~: le dispositif présente son propre certificat (rôle \texttt{role-device}, CN \texttt{dev-XXX.iot.lab})~; le broker vérifie sa validité, son appartenance à la chaîne PKI et l'absence de révocation dans la CRL Vault~;
+  \item \textbf{Finished + Application Data}~: les deux parties dérivent les clés de session symétriques (HKDF sur secret ECDHE) et la session chiffrée est établie en \textbf{1-RTT}.
+\end{enumerate}
+L'authentification mutuelle garantit qu'aucun dispositif sans certificat valide ne peut accéder au broker, et qu'aucun broker frauduleux ne peut se faire passer pour Mosquitto.
 
 L'architecture de confiance est ainsi opérationnelle~: les identités sont gérées par Vault, le canal de communication est chiffré et les accès applicatifs sont restreints par ACL par certificat. Pour valider la robustesse de cet ensemble, six scénarios d'attaque ont été conçus en s'appuyant directement sur les vecteurs identifiés dans l'état de l'art~: interception, usurpation d'identité, déni de service et exfiltration applicative.
 
@@ -199,10 +227,12 @@ Six scénarios ont été conçus pour couvrir les principales catégories d'atta
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.75\linewidth,height=0.66\textheight,keepaspectratio]{diag-suricata-detection.png}
-\caption{Chaîne de détection Suricata $\rightarrow$ Wazuh}
+\caption{Chaîne de détection Suricata~\textrightarrow~Wazuh (IDS+SIEM)}
 \label{fig:detection}
 \end{figure}
 \FloatBarrier
+
+Le diagramme décrit le flux d'une alerte depuis sa génération jusqu'à sa restitution à l'analyste. Suricata analyse le trafic en mode passif (port miroir MikroTik) et produit des événements au format \texttt{EVE JSON} dans \texttt{/var/log/suricata/eve.json}. L'agent Filebeat (déployé sur le conteneur Suricata) lit ce fichier et le transmet au serveur Wazuh via le protocole Syslog/1514. Wazuh applique ses décodeurs XML (parsing du champ \texttt{alert.signature}) et ses règles de corrélation (par exemple~: si plus de 5~alertes \texttt{ET MQTT brute-force} en moins de 60~s depuis la même IP source, escalader en alarme critique). OpenSearch indexe les événements et le tableau de bord Wazuh les restitue à l'analyste avec des visualisations filtrable par type d'attaque, VLAN source et période.
 
 \section{Pipeline d'apprentissage automatique}
 \label{sec:re-ml}
@@ -212,9 +242,11 @@ Les scénarios d'attaque ont mis en évidence une limite inhérente aux approche
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.78\linewidth,height=0.58\textheight,keepaspectratio]{diag-ml-pipeline.png}
-\caption{Pipeline d'apprentissage automatique}
+\caption{Pipeline d'apprentissage automatique (collecte, features, entraînement, évaluation, SIEM)}
 \label{fig:ml-pipeline}
 \end{figure}
+
+Le pipeline se lit de gauche à droite~: (1)~\textbf{Collecte}~: les captures de trafic (PCAP ou logs Mosquitto) générées lors des six sprints alimentent le jeu de données~; (2)~\textbf{Feature engineering}~: 12~attributs sont extraits par message (inter-arrival time, payload length, topic depth, QoS level, type de commande MQTT, fréquence de reconnexion, etc.)~; (3)~\textbf{Entraînement}~: IsolationForest est entraîné sur le trafic normal uniquement (non supervisé), Random Forest est entraîné sur le jeu étiqueté complet (supervisé)~; (4)~\textbf{Évaluation}~: les métriques F1, précision et rappel sont calculées sur le jeu de test (20~\% du dataset)~; (5)~\textbf{Intégration}~: les scores d'anomalie sont transmis à Wazuh comme événements JSON, permettant leur corrélation avec les alertes Suricata pour une détection multicouche.
 
 \subsection{Données et features}
 
@@ -255,24 +287,30 @@ Deux modèles complémentaires sont entraînés via \emph{scikit-learn}~\cite{sc
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.92\linewidth]{vault-pki-hierarchy.png}
-\caption{Vault UI -- vue de la hiérarchie PKI}
+\includegraphics[width=\textwidth]{vault-pki-hierarchy.png}
+\caption{Vault UI~: vue de la hiérarchie PKI (CA racine et CA intermédiaire actives)}
 \label{fig:cap-vault}
 \end{figure}
 
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.92\linewidth]{wazuh-dashboard.png}
-\caption{Wazuh Dashboard -- alertes corrélées}
-\label{fig:cap-wazuh}
-\end{figure}
+L'interface Vault confirme la structure à deux niveaux~: la CA racine (\emph{offline}) apparaît avec un statut \emph{expired} volontaire (sa clé privée n'est pas chargée en mémoire), tandis que la CA intermédiaire est marquée \emph{active} et prend en charge l'émission des certificats opérationnels.
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.92\linewidth]{gns3-topology.png}
-\caption{GNS3 -- topologie déployée du laboratoire}
+\includegraphics[width=\textwidth]{wazuh-dashboard.png}
+\caption{Wazuh Dashboard~: alertes corrélées issues des scénarios d'attaque}
+\label{fig:cap-wazuh}
+\end{figure}
+
+Le tableau de bord Wazuh synthétise les événements collectés lors du rejeu des six scénarios d'attaque. La vue \emph{Top rules} met en évidence les règles les plus déclenchées~; le filtre temporel permet d'isoler les alertes par sprint et de vérifier la corrélation entre les injections du simulateur et les détections effectives.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{gns3-topology.png}
+\caption{GNS3~: topologie déployée du laboratoire (VMs et conteneurs Docker visibles)}
 \label{fig:cap-gns3}
 \end{figure}
+
+La capture GNS3 montre la topologie telle qu'elle est réellement déployée~: pfSense, MikroTik CHR et les conteneurs Docker apparaissent comme des nœuds distints. Les liens entre nœuds représentent des connexions Ethernet virtuelles gachées dans des VLANs séparés. Cette vue confirme la reproductibilité de l'architecture~: l'ensemble du projet GNS3 est versionné et peut être importé sur une autre station disposant de GNS3~2.2.x et VMware Workstation.
 
 \section{Conclusion}
 \label{sec:re-conclusion}
