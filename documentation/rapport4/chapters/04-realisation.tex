@@ -33,6 +33,8 @@ scikit-learn & 1.4 & Algorithmes ML \\ \hline
 \end{tabularx}
 \end{table}
 
+Ces composants ne fonctionnent pas de manière indépendante~: ils s'articulent en une \textbf{architecture de défense en profondeur} où chaque couche renforce les autres. La section suivante décrit cette organisation globale et le flux de données de bout en bout, avant d'entrer dans le détail de chaque brique.
+
 \section{Architecture globale et topologie réseau}
 \label{sec:re-archi}
 
@@ -135,6 +137,8 @@ vault write -format=json pki_int/issue/role-device \
     ttl="720h"
 \end{lstlisting}
 
+La PKI étant opérationnelle, chaque composant~-- dispositif comme service~-- dispose d'une identité cryptographique vérifiable par tous les pairs. C'est sur cette fondation que repose la couche transport~: le broker MQTT peut désormais exiger la présentation d'un certificat signé par la CA intermédiaire avant d'accepter toute connexion, comme décrit dans la section suivante.
+
 \section{Broker MQTT en TLS 1.3 + mTLS}
 \label{sec:re-mqtt}
 
@@ -146,6 +150,8 @@ Mosquitto est configuré avec~\cite{mosquitto_tls}~: \texttt{require\_certificat
 \caption{Handshake TLS~1.3 avec authentification mutuelle}
 \label{fig:tls-handshake}
 \end{figure}
+
+L'architecture de confiance est ainsi opérationnelle~: les identités sont gérées par Vault, le canal de communication est chiffré et les accès applicatifs sont restreints par ACL par certificat. Pour valider la robustesse de cet ensemble, six scénarios d'attaque ont été conçus en s'appuyant directement sur les vecteurs identifiés dans l'état de l'art~: interception, usurpation d'identité, déni de service et exfiltration applicative.
 
 \section{Scénarios d'attaque et contre-mesures}
 \label{sec:re-attaques}
@@ -199,7 +205,7 @@ Six scénarios ont été conçus pour couvrir les principales catégories d'atta
 \section{Pipeline d'apprentissage automatique}
 \label{sec:re-ml}
 
-Le pipeline ML intervient \emph{après} la défense statique~: il complète la détection signature en repérant les comportements anormaux non couverts par les règles. Il est constitué de cinq étapes (figure~\ref{fig:ml-pipeline})~: collecte du trafic, extraction de features, entraînement, évaluation, intégration dans le SIEM.
+Les scénarios d'attaque ont mis en évidence une limite inhérente aux approches par règles~: le scénario~S6 (certificat valide réutilisé depuis un contexte inhabituel) n'est détecté que partiellement par Suricata et Wazuh. Le pipeline ML intervient précisément pour combler cette lacune~: il complète la détection par signature en repérant les comportements anormaux que les règles statiques ne peuvent pas anticiper. Il est constitué de cinq étapes (figure~\ref{fig:ml-pipeline})~: collecte du trafic, extraction de features, entraînement, évaluation, intégration dans le SIEM.
 
 \begin{figure}[!htbp]
 \centering
@@ -269,4 +275,4 @@ Deux modèles complémentaires sont entraînés via \emph{scikit-learn}~\cite{sc
 \section{Conclusion}
 \label{sec:re-conclusion}
 
-Ce chapitre a détaillé la réalisation effective~: environnement, architecture, PKI, broker mTLS, scénarios d'attaque et pipeline ML. Toutes les briques fonctionnent et communiquent. Le chapitre suivant en présente la \textbf{validation expérimentale}~: plan de tests, résultats quantitatifs, limites et perspectives.
+Ce chapitre a décrit la mise en \oe{}uvre concrète de l'architecture conçue~: un environnement reproductible sous GNS3 et Docker, une PKI Vault à deux niveaux assurant l'émission et la révocation automatisées, un broker Mosquitto imposant mTLS à toutes les connexions, une flotte de 50 dispositifs simulant 76\,000 messages réalistes, six scénarios d'attaque couvrant les principaux vecteurs IoT, et un pipeline ML complémentaire. Chacune de ces briques répond directement à l'un des objectifs O1--O7 définis au chapitre~\ref{chap:introduction}~: la réalisation valide ainsi la conception dans ses dimensions fonctionnelles et sécuritaires. Il reste à \textbf{mesurer} ces réalisations de façon rigoureuse~: c'est l'objet du chapitre suivant.

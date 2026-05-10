@@ -47,6 +47,8 @@ Ce chapitre traduit les besoins exprimés au chapitre précédent en une concept
 \end{tabularx}
 \end{table}
 
+Ces besoins définissent le \emph{quoi} de la solution~: les fonctionnalités attendues et les contraintes opérationnelles à respecter. Il reste à préciser le \emph{comment}~: quelle démarche adopter pour organiser le travail, garantir la progression et livrer les incréments dans le délai académique imposé~? La section suivante répond à cette question en comparant trois méthodologies agiles candidates.
+
 \section{Choix méthodologique~: étude comparative}
 \label{sec:co-methodologie}
 
@@ -151,6 +153,8 @@ US-16 & Analyste & Comparer ML vs règles IDS & C & 5 & S6 \\ \hline
 
 Soit un total estimé à \(96\) story points sur 6~sprints (\(\sim 16\) SP/sprint), conforme à la capacité d'une équipe solo avec encadrement.
 
+Le backlog ainsi constitué traduit les objectifs en livrables concrets, chacun affecté à un sprint précis. Pour compléter cette conception, il est nécessaire de modéliser les interactions entre les composants~: les diagrammes UML présentés dans la section suivante formalisent le simulateur de flotte, le cycle d'émission des certificats et le comportement d'un dispositif, fournissant une référence de conception pour la phase de réalisation.
+
 \section{Conception UML}
 \label{sec:co-uml}
 
@@ -201,4 +205,4 @@ Le diagramme de Gantt (figure~\ref{fig:gantt}) consolide l'ensemble des sprints.
 \section{Conclusion}
 \label{sec:co-conclusion}
 
-Ce chapitre a formalisé les besoins (BF/BNF), justifié le choix méthodologique de Scrum sur la base d'une comparaison structurée, planifié les six sprints \emph{avant} de présenter le \emph{Product Backlog}, et fourni les vues UML clés ainsi que le planning de Gantt. Le chapitre suivant détaille la \textbf{réalisation} effective de cette conception.
+Ce chapitre a posé les fondations formelles du projet~: les besoins fonctionnels et non fonctionnels délimitent le périmètre de la solution, le choix argumenté de Scrum garantit une gestion adaptée aux contraintes académiques et techniques, et la planification en six sprints assure que les livrables critiques sont produits en priorité. Les diagrammes UML et le Gantt constituent la référence de conception sur laquelle s'appuie la réalisation. Le chapitre suivant décrit précisément \textbf{comment} chaque élément a été mis en \oe{}uvre~: de l'environnement GNS3 à la PKI Vault, du broker mTLS au pipeline ML, en passant par les scénarios d'attaque.

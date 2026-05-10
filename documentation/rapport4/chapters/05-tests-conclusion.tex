@@ -53,6 +53,8 @@ S6 -- Compromission certificat  &  3/10 &  6/10 & 10/10 \\ \hline
 La complémentarité \emph{règles}~$+$~\emph{ML} est clairement démontrée~: les attaques exploitant un vecteur réseau identifiable (S1, S2, S3, S5) sont parfaitement couvertes par les règles . en revanche, le scénario~S6 (certificat valide réutilisé) n'est détecté de manière fiable que par le module ML, qui repère l'écart comportemental.
 \end{resultbox}
 
+Ces résultats de sécurité établissent la couverture globale de la chaîne de détection. Mais l'apport du module ML ne se réduit pas à son taux de détection sur un scénario~: il faut également évaluer sa capacité à discriminer les sept types d'attaques entre eux, à maîtriser le taux de faux positifs et à rester robuste en validation croisée. La section suivante présente ces métriques détaillées.
+
 \section{Résultats du module ML}
 \label{sec:tc-ml}
 
@@ -114,6 +116,8 @@ Random Forest (multi-classe)& 0{,}994 & 0{,}993 & 0{,}993 & 0{,}993 \\ \hline
 \caption{Comparaison synthétique des modèles}
 \end{figure}
 
+Les performances du module ML confirment l'apport de cette couche complémentaire à la détection par règles. Cependant, la pertinence opérationnelle d'une architecture de sécurité ne saurait s'apprécier uniquement sous l'angle de la détection~: un mécanisme de protection trop coûteux en ressources serait incompatible avec les contraintes de l'IoT. La section suivante quantifie précisément le surcoût induit par le mTLS sur les communications légitimes.
+
 \section{Résultats de performance}
 \label{sec:tc-perf}
 
@@ -159,6 +163,8 @@ Le handshake mTLS médian s'établit à \(\sim 38\)~ms (95\textsuperscript{e} pe
 Le surcoût lié au mTLS représente $\sim 8$\,\% du débit applicatif et $\sim 3{,}5$~ms de latence supplémentaire en moyenne~: un coût négligeable au regard des bénéfices sécurité.
 \end{resultbox}
 
+Les mesures de performance confirment la compatibilité de l'architecture avec les contraintes opérationnelles de l'IoT. Pour compléter cette évaluation, il est nécessaire d'examiner avec honnêteté les \textbf{limites} de l'expérimentation~: elles conditionnent la portée des conclusions et orientent les travaux futurs.
+
 \section{Limites identifiées}
 \label{sec:tc-limites}
 
@@ -179,4 +185,4 @@ Le surcoût lié au mTLS représente $\sim 8$\,\% du débit applicatif et $\sim 
 \section{Conclusion}
 \label{sec:tc-synthese}
 
-Les tests réalisés confirment la validité fonctionnelle et expérimentale de l'architecture proposée. La chaîne de sécurité combine correctement authentification forte, chiffrement mTLS, contrôle d'accès, supervision IDS/SIEM et détection par apprentissage automatique. Les limites identifiées concernent principalement le caractère simulé de l'environnement, la taille réduite de la flotte et l'intégration encore hors ligne du module ML. Ces résultats servent de base à la conclusion générale, qui synthétise l'ensemble du projet et ouvre les perspectives de continuité.
+Les tests réalisés confirment la validité fonctionnelle et expérimentale de l'architecture proposée. Les sept objectifs spécifiques (O1--O7) définis au chapitre~\ref{chap:introduction} sont tous attestés~: la topologie segmentée est opérationnelle~(O1), la PKI Vault émet et révoque des certificats de façon automatisée~(O2), le broker impose mTLS à toutes les connexions~(O3), la flotte de 50 dispositifs génère un trafic réaliste~(O4), Suricata détecte les attaques réseau avec des règles MQTT dédiées~(O5), Wazuh corrèle les événements de sécurité~(O6) et le module ML atteint un F1 de 0{,}993 en classification multi-classes~(O7). Les limites identifiées~-- environnement simulé, flotte réduite, pipeline hors ligne~-- délimitent clairement le périmètre de validité de ces résultats et constituent autant de pistes pour des travaux futurs, synthétisées dans la conclusion générale.
