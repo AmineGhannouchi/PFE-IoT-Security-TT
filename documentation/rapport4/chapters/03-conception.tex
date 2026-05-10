@@ -4,7 +4,7 @@
 \section{Introduction}
 \label{sec:co-intro}
 
-Ce chapitre traduit les besoins exprimés au chapitre précédent en une conception structurée. Nous formalisons d'abord les besoins fonctionnels et non fonctionnels. Nous comparons ensuite trois méthodologies agiles candidates (Scrum, Kanban, XP) et justifions le choix de Scrum. La planification des sprints précède la présentation du \emph{Product Backlog} afin de garantir une lecture chronologique cohérente. Enfin, nous présentons les diagrammes UML de conception et le diagramme de Gantt récapitulatif.
+Ce chapitre traduit les besoins exprimés au chapitre précédent en une conception structurée. Nous formalisons d'abord les besoins fonctionnels et non fonctionnels, illustrés par le diagramme de cas d'utilisation qui synthetise les interactions entre acteurs et système. La planification en six sprints Scrum~--- dont la justification méthodologique figure au chapitre~\ref{chap:contexte-general}~--- précède la présentation du \emph{Product Backlog}. Enfin, les diagrammes UML de conception et le diagramme de Gantt constituent la référence formelle pour la phase de réalisation.
 
 \section{Spécification des besoins}
 \label{sec:co-besoins}
@@ -47,44 +47,20 @@ Ce chapitre traduit les besoins exprimés au chapitre précédent en une concept
 \end{tabularx}
 \end{table}
 
-Ces besoins définissent le \emph{quoi} de la solution~: les fonctionnalités attendues et les contraintes opérationnelles à respecter. Il reste à préciser le \emph{comment}~: quelle démarche adopter pour organiser le travail, garantir la progression et livrer les incréments dans le délai académique imposé~? La section suivante répond à cette question en comparant trois méthodologies agiles candidates.
+Ces besoins définissent le \emph{quoi} de la solution~: les fonctionnalités attendues et les contraintes opérationnelles à respecter. Le diagramme de cas d'utilisation (figure~\ref{fig:cas-utilisation}) synthétise ces besoins sous forme d'interactions entre les trois acteurs de la plateforme.
 
-\section{Choix méthodologique~: étude comparative}
-\label{sec:co-methodologie}
+\subsection{Diagramme de cas d'utilisation}
 
-Trois méthodologies agiles candidates ont été évaluées~: \textbf{Scrum}~\cite{scrum_guide}, \textbf{Kanban}~\cite{anderson2010kanban} et \textbf{Extreme Programming (XP)}~\cite{beck2004xp}. Le tableau~\ref{tab:methodo} résume la comparaison sur sept critères.
+Trois acteurs principaux interagissent avec la plateforme~: le \textbf{dispositif IoT} (publie des télémesures via MQTT/mTLS), l'\textbf{administrateur} (déploie, configure et maintient l'infrastructure) et l'\textbf{analyste sécurité} (consulte les alertes et investigue les incidents). Les flèches d'inclusion (\texttt{\textless\textless include\textgreater\textgreater}) indiquent des sous-cas obligatoires~: par exemple, tout acte de publication MQTT \emph{inclut} nécessairement l'étape de négociation mTLS~; toute connexion d'un dispositif \emph{inclut} la validation de son certificat X.509 par la PKI Vault. Les flèches d'extension (\texttt{\textless\textless extend\textgreater\textgreater}) représentent les comportements optionnels~: l'IDS Suricata peut \emph{étendre} la réponse en bloquant activement un flux détecté comme malveillant, et le module ML peut \emph{étendre} la détection en signalant une anomalie non couverte par les règles statiques.
 
-\begin{table}[!htbp]
+\begin{figure}[!htbp]
 \centering
-\caption{Comparaison Scrum vs Kanban vs XP}
-\label{tab:methodo}
-\small
-\begin{tabularx}{\linewidth}{|l|X|X|X|}
-\hline
-\textbf{Critère} & \textbf{Scrum} & \textbf{Kanban} & \textbf{XP} \\
-\hline
-Cadre de travail & Itératif (sprints) & Continu (flux) & Itératif court \\ \hline
-Taille équipe & 3--9 personnes & Variable & 2--12 \\ \hline
-Gestion des changements & Encadrée (entre sprints) & Très flexible & Flexible \\ \hline
-Cycle de livraison & 1--4 semaines & Continu & 1--3 semaines \\ \hline
-Documentation & Modérée (US, backlog) & Faible & Faible \\ \hline
-Pratiques d'ingénierie & Indépendantes & Indépendantes & Strictes (TDD, pair-prog) \\ \hline
-Courbe d'apprentissage & Modérée & Faible & Élevée \\ \hline
-\textbf{Adaptation au PFE} & \textbf{Très adaptée} & Peu adaptée (jalons académiques) & Peu adaptée (équipe solo) \\ \hline
-\end{tabularx}
-\end{table}
+\includegraphics[width=0.88\linewidth,height=0.60\textheight,keepaspectratio]{diag-cas-utilisation.png}
+\caption{Diagramme de cas d'utilisation de la plateforme de sécurisation IoT}
+\label{fig:cas-utilisation}
+\end{figure}
 
-Scrum a été retenu comme méthodologie de gestion de projet en raison de son adéquation avec les contraintes spécifiques d'un PFE technique à durée fixe. Sa structure itérative et incrémentale permet d'avancer de façon contrôlée tout en s'adaptant aux découvertes techniques en cours de réalisation. Les principaux avantages de Scrum dans ce contexte sont~:
-
-\begin{itemize}[leftmargin=*]
-  \item \textbf{Alignement avec les jalons académiques~:} les revues de sprint coïncident naturellement avec les points d'avancement imposés (rapport intermédiaire, soutenance), offrant une visibilité régulière sur l'état du projet~;
-  \item \textbf{Flexibilité face aux imprévus techniques~:} le réajustement du backlog entre deux sprints permet de réagir rapidement à un blocage (configuration réseau, problème de certificats, etc.) sans remettre en cause l'ensemble du planning~;
-  \item \textbf{Traçabilité des livrables~:} chaque sprint produit un incrément fonctionnel documenté (topologie déployée, PKI opérationnelle, broker sécurisé…), ce qui facilite la rédaction du rapport au fil de l'avancement~;
-  \item \textbf{Communication structurée~:} les rituels Scrum (revue, rétrospective) formalisent les échanges entre l'étudiant, l'encadrant universitaire et l'encadrant industriel, même dans une équipe de taille réduite~;
-  \item \textbf{Maîtrise du périmètre~:} la priorisation du backlog garantit que les fonctionnalités essentielles sont livrées en premier, limitant le risque de ne pas finaliser les parties critiques avant la date de soutenance.
-\end{itemize}
-
-Ces avantages placent Scrum devant Kanban, dont l'absence de cadence fixe est inadaptée à un projet soumis à des jalons académiques, et devant XP, dont les pratiques d'ingénierie (TDD, pair-programming) sont disproportionnées pour un développement solo.
+La démarche Scrum retenue au chapitre~\ref{chap:contexte-general} structure la réalisation en six sprints~; la section suivante en détaille la planification et les livrables.
 
 \section{Planification des sprints}
 \label{sec:co-sprints}
@@ -109,12 +85,12 @@ S6 -- ML \& bilan & 2~semaines & Modèles IsolationForest+RandomForest, évaluat
 \end{tabularx}
 \end{table}
 
-La figure~\ref{fig:sprints} illustre l'enchaînement des sprints et leurs dépendances internes.
+La figure~\ref{fig:sprints} illustre l'enchaînement des six sprints, leurs dépendances et les jalons de validation associés. On observe que les sprints S1 à S3 forment un bloc séquentiel strict~: la topologie réseau (S1) est un prérequis à l'installation de Vault (S2), elle-même prérequis à la configuration du broker mTLS (S3). À partir de S4, les flux peuvent se paralléliser partiellement~: la flotte simulée et la chaîne de détection IDS+SIEM (S5) peuvent être développées simultanément dès lors que le broker est opérationnel, et le pipeline ML (S6) consomme les données capturées lors de S4--S5.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.86\linewidth,height=0.16\textheight,keepaspectratio]{diag-scrum-sprints.png}
-\caption{Enchaînement des six sprints}
+\caption{Enchaînement des six sprints et leurs dépendances}
 \label{fig:sprints}
 \end{figure}
 
@@ -169,6 +145,8 @@ Le simulateur de flotte est structuré autour de quatre classes principales~: \t
 \label{fig:classes}
 \end{figure}
 
+La relation de \textbf{composition} entre \texttt{DeviceProfile} et \texttt{IoTDevice} traduit le fait qu'un dispositif simulé ne peut exister sans son profil de configuration (identité MQTT, chemin vers les certificats, fréquence de publication, niveau de bande passante). L'\textbf{association navigable} de \texttt{TrafficGenerator} vers \texttt{IoTDevice} exprime le contrôle du cycle de vie~: l'orchestrateur instancie et révoque les dispositifs selon le scénario en cours. L'\texttt{AttackInjector} référence \texttt{IoTDevice} en \textbf{association de dépendance}~: il injecte des comportements déviants (brute-force, flood, replay) sur des instances préalablement créées, sans en modifier la structure interne.
+
 \subsection{Diagramme de séquence~: émission d'un certificat client}
 
 L'émission d'un certificat suit un échange en cinq étapes entre le dispositif (ou le script de provisionnement), Vault et la CA intermédiaire (figure~\ref{fig:seq-pki}).
@@ -180,12 +158,16 @@ L'émission d'un certificat suit un échange en cinq étapes entre le dispositif
 \label{fig:seq-pki}
 \end{figure}
 
+Le diagramme se lit de gauche à droite en suivant les messages numérotés~: (1)~le script de provisionnement envoie une requête \texttt{POST /v1/pki\_int/issue/<rôle>} à l'API Vault avec les paramètres CN, SANs et TTL~; (2)~Vault contrôle que le token présenté possède la policy autorisant l'émission sur ce rôle~; (3)~Vault transmet la demande signée à la CA intermédiaire embarquée dans le \emph{secrets engine PKI}~; (4)~la CA signe le certificat et retourne le bundle (certificat + chaîne) à Vault~; (5)~Vault retourne le bundle au demandeur, qui écrit le certificat et la clé dans le système de fichiers du conteneur. Le TTL de la réponse déclenche automatiquement un minuteur de renouvellement côté dispositif.
+
 \subsection{Diagramme d'activité~: cycle de publication mTLS}
+
+Le diagramme d'activité (figure~\ref{fig:activity}) modélise le cycle complet d'un dispositif simulé, depuis le chargement des secrets jusqu'à la publication des messages. Les étapes préalables~-- chargement du certificat client, de la clé privée et du certificat CA~-- conditionnent l'ensemble du flux~: une clé ou un certificat invalide provoque une terminaison immédiate (branche \emph{Erreur}). Le nœud de décision central représente la double vérification mutuelle du \emph{handshake} TLS~: le dispositif valide le certificat du serveur (non-répudiation du broker), et le broker valide le certificat du client (auth du dispositif). Un seul échec oriente vers la branche \emph{Reconnexion} avec back-off exponentiel, empêchant une boucle de connexion aveugle. Le nœud de bouclage sur \emph{Publier} représente la publication périodique à la fréquence configurée dans \texttt{DeviceProfile}, jusqu'à réception du signal d'arrêt.
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.62\linewidth,height=0.66\textheight,keepaspectratio]{diag-fleet-activity.png}
-\caption{Activité d'un dispositif~: chargement des secrets, handshake, publication}
+\caption{Activité d'un dispositif~: chargement des secrets, handshake mTLS, publication}
 \label{fig:activity}
 \end{figure}
 \FloatBarrier
@@ -193,7 +175,7 @@ L'émission d'un certificat suit un échange en cinq étapes entre le dispositif
 \section{Diagramme de Gantt}
 \label{sec:co-gantt}
 
-Le diagramme de Gantt (figure~\ref{fig:gantt}) consolide l'ensemble des sprints.
+Le diagramme de Gantt (figure~\ref{fig:gantt}) consolide l'ensemble des sprints sur la durée totale du projet. L'axe horizontal représente le temps en semaines~; les barres horizontales correspondent aux périodes de réalisation de chaque sprint. On observe que les trois premiers sprints occupent la moitié de la durée totale et constituent le socle technique~: sans une PKI fonctionnelle (S2) et un broker sécurisé (S3), aucune donnée de trafic chiffré ne peut être générée ni analysée. Les flèches de dépendance illustrent les contraintes de précédence~: S4 ne démarre qu'après la validation du broker (fin S3), et S6 ne peut débuter sans les captures de trafic produites par S4--S5.
 
 \begin{figure}[!htbp]
 \centering

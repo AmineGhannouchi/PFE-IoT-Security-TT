@@ -42,13 +42,13 @@ Face à ces enjeux, plusieurs approches de sécurisation sont envisageables. Le 
 \caption{Comparaison des approches de sécurisation IoT pour les opérateurs}
 \label{tab:approches-secu}
 \small
-\begin{tabularx}{\linewidth}{|l|X|X|}
+\begin{tabularx}{\linewidth}{|X|X|X|}
 \hline
 \textbf{Approche} & \textbf{Avantages} & \textbf{Limites pour un opérateur} \\
 \hline
-Plateformes cloud commerciales \newline (AWS IoT, Azure IoT Hub) & Déploiement rapide, fonctionnalités riches, mises à jour gérées & Dépendance fournisseur, souveraineté des données, coûts récurrents variables \\ \hline
-Distributions open source intégrées \newline (ThingsBoard, Eclipse Kura) & Open source, personnalisable, large communauté & TLS souvent optionnel, PKI non intégrée, supervision et corrélation limitées \\ \hline
-Architecture sur mesure \newline (composants open source) & Contrôle total, souveraineté, adaptabilité au contexte opérateur & Complexité initiale de mise en œuvre, nécessite expertise interne \\ \hline
+Plateformes cloud commerciales (AWS IoT, Azure IoT Hub) & Déploiement rapide, fonctionnalités riches, mises à jour gérées & Dépendance fournisseur, souveraineté des données, coûts récurrents variables \\ \hline
+Distributions open source intégrées (ThingsBoard, Eclipse Kura) & Open source, personnalisable, large communauté & TLS souvent optionnel, PKI non intégrée, supervision et corrélation limitées \\ \hline
+Architecture sur mesure (composants open source) & Contrôle total, souveraineté, adaptabilité au contexte opérateur & Complexité initiale de mise en œuvre, nécessite expertise interne \\ \hline
 \end{tabularx}
 \end{table}
 
@@ -230,7 +230,7 @@ La réalisation de ce projet s'est inscrite dans un ensemble de contraintes tech
 
 \begin{itemize}[leftmargin=*]
   \item \textbf{Contrainte matérielle}~: l'ensemble de l'infrastructure est simulé sur une station Windows~10/11 dotée de 16~Go de RAM minimum, sans accès à un environnement cloud dédié ni à des équipements physiques IoT réels. Cette contrainte délimite la taille de la flotte simulable et le niveau de réalisme des mesures de performance~;
-  \item \textbf{Contrainte temporelle}~: le stage d'une durée de six mois impose une priorisation stricte des livrables. La méthodologie Scrum, décrite en détail au chapitre~\ref{chap:conception}, garantit que les fonctionnalités critiques (PKI, mTLS, détection) sont livrées et testées en priorité~;
+  \item \textbf{Contrainte temporelle}~: le stage d'une durée de six mois impose une priorisation stricte des livrables. La méthodologie Scrum, adoptée pour ce projet et décrite dans la section suivante, garantit que les fonctionnalités critiques (PKI, mTLS, détection) sont livrées et testées en priorité~;
   \item \textbf{Contrainte de reproductibilité}~: l'ensemble de l'environnement doit être reconstituable depuis zéro à partir des scripts et configurations versionnés, sans intervention manuelle non documentée~;
   \item \textbf{Contrainte de souveraineté technologique}~: tous les composants retenus sont open source, afin de garantir la transparence, la maîtrise du code et l'absence de dépendance envers un fournisseur commercial.
 \end{itemize}
@@ -244,6 +244,41 @@ Trois hypothèses structurent l'expérimentation conduite dans ce projet~:
   \item Les performances mesurées dans l'environnement simulé (latence du handshake mTLS, débit du broker) constituent des ordres de grandeur valides pour une évaluation comparative, sans prétention à reproduire exactement un réseau radio réel avec ses contraintes de propagation et de mobilité~;
   \item La détection par règles statiques (Suricata + Wazuh) et la détection par apprentissage automatique sont traitées comme des couches complémentaires et non substituables, chacune couvrant un sous-ensemble différent du spectre des menaces.
 \end{enumerate}
+
+\section{Démarche méthodologique}
+\label{sec:methodo}
+
+Le pilotage d'un projet technique de cette envergure dans un délai académique contraint requiert une méthodologie explicitement choisie. Trois cadres agiles ont été évalués~: \textbf{Scrum}~\cite{scrum_guide}, \textbf{Kanban}~\cite{anderson2010kanban} et \textbf{Extreme Programming (XP)}~\cite{beck2004xp}. Le tableau~\ref{tab:methodo} en présente la comparaison sur sept critères déterminants.
+
+\begin{table}[!htbp]
+\centering
+\caption{Comparaison Scrum, Kanban et XP}
+\label{tab:methodo}
+\small
+\begin{tabularx}{\linewidth}{|l|X|X|X|}
+\hline
+\textbf{Critère} & \textbf{Scrum} & \textbf{Kanban} & \textbf{XP} \\
+\hline
+Cadre de travail & Itératif (sprints) & Continu (flux) & Itératif court \\ \hline
+Taille équipe & 3--9 personnes & Variable & 2--12 \\ \hline
+Gestion des changements & Encadrée (entre sprints) & Très flexible & Flexible \\ \hline
+Cycle de livraison & 1--4 semaines & Continu & 1--3 semaines \\ \hline
+Documentation & Modérée (US, backlog) & Faible & Faible \\ \hline
+Pratiques d'ingénierie & Indépendantes & Indépendantes & Strictes (TDD, pair-prog) \\ \hline
+Courbe d'apprentissage & Modérée & Faible & Élevée \\ \hline
+\textbf{Adaptation au PFE} & \textbf{Très adaptée} & Peu adaptée & Peu adaptée \\ \hline
+\end{tabularx}
+\end{table}
+
+\textbf{Scrum} a été retenu pour trois raisons décisives~:
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Alignement avec les jalons académiques~:} les revues de sprint coïncident naturellement avec les points d'avancement imposés (rapport intermédiaire, soutenance), offrant une visibilité régulière sur l'état du projet~;
+  \item \textbf{Flexibilité face aux imprévus techniques~:} le réajustement du backlog entre deux sprints permet de réagir à un blocage (configuration réseau, problème de certificats) sans remettre en cause l'ensemble du planning~;
+  \item \textbf{Maîtrise du périmètre~:} la priorisation du backlog garantit que les fonctionnalités essentielles sont livrées en premier, limitant le risque de ne pas finaliser les parties critiques avant la soutenance.
+\end{itemize}
+
+Kanban, dont l'absence de cadence fixe est inadaptée à un projet soumis à des jalons académiques, et XP, dont les pratiques d'ingénierie (TDD, \emph{pair-programming}) sont disproportionnées pour un développement solo, ont été écartés. Six sprints de deux semaines structurent la phase de réalisation ; leur planification détaillée figure au chapitre~\ref{chap:conception}.
 
 \section{Solution proposée (vue d'ensemble)}
 \label{sec:solution-proposee}

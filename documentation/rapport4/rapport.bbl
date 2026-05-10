@@ -241,6 +241,97 @@
       \verb 10.1016/j.iot.2019.100059
       \endverb
     \endentry
+    \entry{scrum_guide}{misc}{}{}
+      \name{author}{2}{}{%
+        {{hash=ee6f08fcba839e09471a0bc69152b6a5}{%
+           family={Schwaber},
+           familyi={S\bibinitperiod},
+           given={Ken},
+           giveni={K\bibinitperiod}}}%
+        {{hash=6e3f26f6f816a26c6ab36bc7a899bcde}{%
+           family={Sutherland},
+           familyi={S\bibinitperiod},
+           given={Jeff},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{303ea1dc92fd8c772eac56316b2074ef}
+      \strng{fullhash}{303ea1dc92fd8c772eac56316b2074ef}
+      \strng{fullhashraw}{303ea1dc92fd8c772eac56316b2074ef}
+      \strng{bibnamehash}{303ea1dc92fd8c772eac56316b2074ef}
+      \strng{authorbibnamehash}{303ea1dc92fd8c772eac56316b2074ef}
+      \strng{authornamehash}{303ea1dc92fd8c772eac56316b2074ef}
+      \strng{authorfullhash}{303ea1dc92fd8c772eac56316b2074ef}
+      \strng{authorfullhashraw}{303ea1dc92fd8c772eac56316b2074ef}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://scrumguides.org/scrum-guide.html}}
+      \field{title}{{The Scrum Guide}}
+      \field{urlday}{10}
+      \field{urlmonth}{2}
+      \field{urlyear}{2026}
+      \field{year}{2020}
+      \field{urldateera}{ce}
+    \endentry
+    \entry{anderson2010kanban}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=0a973851a43085e15cf35614e386cd69}{%
+           family={Anderson},
+           familyi={A\bibinitperiod},
+           given={David\bibnamedelima J.},
+           giveni={D\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Blue Hole Press}%
+      }
+      \strng{namehash}{0a973851a43085e15cf35614e386cd69}
+      \strng{fullhash}{0a973851a43085e15cf35614e386cd69}
+      \strng{fullhashraw}{0a973851a43085e15cf35614e386cd69}
+      \strng{bibnamehash}{0a973851a43085e15cf35614e386cd69}
+      \strng{authorbibnamehash}{0a973851a43085e15cf35614e386cd69}
+      \strng{authornamehash}{0a973851a43085e15cf35614e386cd69}
+      \strng{authorfullhash}{0a973851a43085e15cf35614e386cd69}
+      \strng{authorfullhashraw}{0a973851a43085e15cf35614e386cd69}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{{Kanban: Successful Evolutionary Change for Your Technology Business}}
+      \field{year}{2010}
+    \endentry
+    \entry{beck2004xp}{book}{}{}
+      \name{author}{2}{}{%
+        {{hash=c5dcbe71f60a8d55caa11fe1493614d0}{%
+           family={Beck},
+           familyi={B\bibinitperiod},
+           given={Kent},
+           giveni={K\bibinitperiod}}}%
+        {{hash=db962664752cf07563d309bf97320bc5}{%
+           family={Andres},
+           familyi={A\bibinitperiod},
+           given={Cynthia},
+           giveni={C\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Addison-Wesley}%
+      }
+      \strng{namehash}{05a972d2322d7190412c8633c5806a97}
+      \strng{fullhash}{05a972d2322d7190412c8633c5806a97}
+      \strng{fullhashraw}{05a972d2322d7190412c8633c5806a97}
+      \strng{bibnamehash}{05a972d2322d7190412c8633c5806a97}
+      \strng{authorbibnamehash}{05a972d2322d7190412c8633c5806a97}
+      \strng{authornamehash}{05a972d2322d7190412c8633c5806a97}
+      \strng{authorfullhash}{05a972d2322d7190412c8633c5806a97}
+      \strng{authorfullhashraw}{05a972d2322d7190412c8633c5806a97}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{2}
+      \field{title}{{Extreme Programming Explained: Embrace Change}}
+      \field{year}{2004}
+    \endentry
     \entry{gns3_docs}{misc}{}{}
       \name{author}{1}{}{%
         {{hash=555a10a29ea0dac04cc14d70d65815c2}{%
@@ -255,8 +346,8 @@
       \strng{authornamehash}{555a10a29ea0dac04cc14d70d65815c2}
       \strng{authorfullhash}{555a10a29ea0dac04cc14d70d65815c2}
       \strng{authorfullhashraw}{555a10a29ea0dac04cc14d70d65815c2}
-      \field{sortinit}{9}
-      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{\url{https://docs.gns3.com}}
@@ -484,8 +575,8 @@
       \strng{authornamehash}{b0d7a4bf1a0878d4e92cdd7461e48710}
       \strng{authorfullhash}{b0d7a4bf1a0878d4e92cdd7461e48710}
       \strng{authorfullhashraw}{b0d7a4bf1a0878d4e92cdd7461e48710}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{\url{https://owasp.org/www-project-internet-of-things/}}
@@ -524,8 +615,8 @@
       \strng{authornamehash}{6d43186da6c35f11ff964e08f3d7c484}
       \strng{authorfullhash}{0ef2e5c1e4f4156f9066d6abddbc8386}
       \strng{authorfullhashraw}{0ef2e5c1e4f4156f9066d6abddbc8386}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{26th USENIX Security Symposium}
@@ -747,97 +838,6 @@
       \field{year}{2011}
       \field{pages}{2825\bibrangedash 2830}
       \range{pages}{6}
-    \endentry
-    \entry{scrum_guide}{misc}{}{}
-      \name{author}{2}{}{%
-        {{hash=ee6f08fcba839e09471a0bc69152b6a5}{%
-           family={Schwaber},
-           familyi={S\bibinitperiod},
-           given={Ken},
-           giveni={K\bibinitperiod}}}%
-        {{hash=6e3f26f6f816a26c6ab36bc7a899bcde}{%
-           family={Sutherland},
-           familyi={S\bibinitperiod},
-           given={Jeff},
-           giveni={J\bibinitperiod}}}%
-      }
-      \strng{namehash}{303ea1dc92fd8c772eac56316b2074ef}
-      \strng{fullhash}{303ea1dc92fd8c772eac56316b2074ef}
-      \strng{fullhashraw}{303ea1dc92fd8c772eac56316b2074ef}
-      \strng{bibnamehash}{303ea1dc92fd8c772eac56316b2074ef}
-      \strng{authorbibnamehash}{303ea1dc92fd8c772eac56316b2074ef}
-      \strng{authornamehash}{303ea1dc92fd8c772eac56316b2074ef}
-      \strng{authorfullhash}{303ea1dc92fd8c772eac56316b2074ef}
-      \strng{authorfullhashraw}{303ea1dc92fd8c772eac56316b2074ef}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{howpublished}{\url{https://scrumguides.org/scrum-guide.html}}
-      \field{title}{{The Scrum Guide}}
-      \field{urlday}{10}
-      \field{urlmonth}{2}
-      \field{urlyear}{2026}
-      \field{year}{2020}
-      \field{urldateera}{ce}
-    \endentry
-    \entry{anderson2010kanban}{book}{}{}
-      \name{author}{1}{}{%
-        {{hash=0a973851a43085e15cf35614e386cd69}{%
-           family={Anderson},
-           familyi={A\bibinitperiod},
-           given={David\bibnamedelima J.},
-           giveni={D\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
-      }
-      \list{publisher}{1}{%
-        {Blue Hole Press}%
-      }
-      \strng{namehash}{0a973851a43085e15cf35614e386cd69}
-      \strng{fullhash}{0a973851a43085e15cf35614e386cd69}
-      \strng{fullhashraw}{0a973851a43085e15cf35614e386cd69}
-      \strng{bibnamehash}{0a973851a43085e15cf35614e386cd69}
-      \strng{authorbibnamehash}{0a973851a43085e15cf35614e386cd69}
-      \strng{authornamehash}{0a973851a43085e15cf35614e386cd69}
-      \strng{authorfullhash}{0a973851a43085e15cf35614e386cd69}
-      \strng{authorfullhashraw}{0a973851a43085e15cf35614e386cd69}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{title}{{Kanban: Successful Evolutionary Change for Your Technology Business}}
-      \field{year}{2010}
-    \endentry
-    \entry{beck2004xp}{book}{}{}
-      \name{author}{2}{}{%
-        {{hash=c5dcbe71f60a8d55caa11fe1493614d0}{%
-           family={Beck},
-           familyi={B\bibinitperiod},
-           given={Kent},
-           giveni={K\bibinitperiod}}}%
-        {{hash=db962664752cf07563d309bf97320bc5}{%
-           family={Andres},
-           familyi={A\bibinitperiod},
-           given={Cynthia},
-           giveni={C\bibinitperiod}}}%
-      }
-      \list{publisher}{1}{%
-        {Addison-Wesley}%
-      }
-      \strng{namehash}{05a972d2322d7190412c8633c5806a97}
-      \strng{fullhash}{05a972d2322d7190412c8633c5806a97}
-      \strng{fullhashraw}{05a972d2322d7190412c8633c5806a97}
-      \strng{bibnamehash}{05a972d2322d7190412c8633c5806a97}
-      \strng{authorbibnamehash}{05a972d2322d7190412c8633c5806a97}
-      \strng{authornamehash}{05a972d2322d7190412c8633c5806a97}
-      \strng{authorfullhash}{05a972d2322d7190412c8633c5806a97}
-      \strng{authorfullhashraw}{05a972d2322d7190412c8633c5806a97}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{edition}{2}
-      \field{title}{{Extreme Programming Explained: Embrace Change}}
-      \field{year}{2004}
     \endentry
   \enddatalist
 \endrefsection

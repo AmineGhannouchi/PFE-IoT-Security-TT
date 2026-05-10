@@ -4,7 +4,7 @@
 \section{Introduction}
 \label{sec:ea-intro}
 
-Avant de concevoir une architecture de sécurisation des flux IoT, il est indispensable de cadrer le sujet sur trois plans complémentaires~: (i)~caractériser les \textbf{menaces} qui pèsent spécifiquement sur les écosystèmes IoT à grande échelle . (ii)~recenser les \textbf{technologies et protocoles} candidats pour le transport, l'authentification et la supervision . (iii)~analyser les \textbf{travaux et solutions existants} afin d'en extraire les bonnes pratiques et de positionner notre contribution. Ce chapitre est structuré autour de ces trois axes, suivi de la description des \textbf{cas d'utilisation} retenus, d'une analyse critique et d'une synthèse positionnant le projet.
+Avant de concevoir une architecture de sécurisation des flux IoT, il est indispensable de cadrer le sujet sur trois plans complémentaires~: (i)~caractériser les \textbf{menaces} qui pèsent spécifiquement sur les écosystèmes IoT à grande échelle~; (ii)~recenser et évaluer de manière critique les \textbf{technologies et protocoles} candidats pour le transport, l'authentification et la supervision~; (iii)~analyser les \textbf{travaux et solutions existants} afin d'en extraire les bonnes pratiques, d'identifier leurs limites et de positionner notre contribution. Ce chapitre est structuré autour de ces trois axes, suivi d'une analyse critique de l'existant et d'une synthèse positionnant le projet.
 
 \section{Menaces et vulnérabilités spécifiques à l'IoT}
 \label{sec:ea-menaces}
@@ -63,12 +63,20 @@ Dans un déploiement classique, seul le serveur s'authentifie auprès du client.
 
 L'authentification mutuelle par certificats suppose cependant l'existence d'une infrastructure capable d'\textbf{émettre, renouveler et révoquer} ces certificats à l'échelle d'un parc de dispositifs~: c'est précisément le rôle d'une PKI automatisée, dont les principes sont analysés dans la section suivante.
 
+\begin{resultbox}{Positionnement critique~: TLS 1.3 + mTLS}
+Le choix de TLS~1.3 en remplacement de TLS~1.2 répond à trois arguments techniques précis~: (i)~la suppression des suites vulnérables (RC4, DES, RSA pur sans \emph{forward secrecy}) réduit la surface cryptographique exploitable~; (ii)~la négociation en 1-RTT diminue la latence du \emph{handshake}, critique pour les dispositifs contraints~; (iii)~la \emph{forward secrecy} obligatoire garantit que la compromission ultérieure d'une clé privée ne met pas en péril les sessions passées. L'ajout du mTLS va au-delà du chiffrement~: il substitue à une authentification par mot de passe (facilement rejouable) une preuve cryptographique d'identité non duplicable sans accès à la clé privée du dispositif. Cette double garantie~-- confidentialité \emph{et} authenticité mutuelle~-- est la seule combinaison capable de fermer simultanément les vecteurs d'interception et d'usurpation identifiés dans la cartographie des menaces.
+\end{resultbox}
+
 \section{Gestion des identités : PKI et automatisation}
 \label{sec:ea-pki}
 
 Une PKI à deux niveaux (CA racine \emph{offline} + CA intermédiaire \emph{online}) constitue la pratique recommandée~\cite{nist_sp800213}~: la CA racine ne signe que des CA intermédiaires, et reste hors ligne . les CA intermédiaires signent les certificats opérationnels (services, dispositifs). En cas de compromission d'une CA intermédiaire, seul le sous-arbre concerné doit être révoqué.
 
 L'automatisation de l'émission est indispensable lorsque le parc dépasse quelques dizaines d'objets. \textbf{HashiCorp Vault}~\cite{vault_pki} fournit un \emph{secrets engine} \texttt{pki} qui expose une API HTTP de demande de certificats avec contrôle fin (rôles, ACL, TTL). C'est la solution retenue dans ce projet.
+
+\begin{resultbox}{Positionnement critique~: Vault vs alternatives PKI}
+Trois alternatives à HashiCorp Vault ont été évaluées~: (i)~\textbf{OpenSSL CLI}~: complet techniquement mais entièrement manuel~; toute émission de certificat requiert une intervention humaine, ce qui l'exclut dès que le parc dépasse une dizaine de dispositifs~; (ii)~\textbf{EJBCA (Keyfactor)}~: solution PKI d'entreprise mature, mais sa complexité de déploiement et sa courbe d'apprentissage sont disproportionnées pour un projet académique de six mois~; (iii)~\textbf{Let's Encrypt / ACME}~: idéal pour les certificats TLS publics, mais inadapté à la PKI interne d'un réseau IoT isolé (absence de validation domaine interne, pas de certificats client mTLS natifs). Vault a été retenu car il est le seul à réunir~: API REST d'émission automatisée, gestion fine des rôles et TTL, intégration aux pipelines DevOps, et déploiement entièrement on-premise~-- critère non négociable dans un contexte opérateur télécom soucieux de souveraineté des données.
+\end{resultbox}
 
 Même avec une PKI robuste et un chiffrement bout en bout, il n'est pas possible d'exclure tout incident~: un certificat peut être volé, un dispositif légitime peut adopter un comportement déviant, ou une configuration insuffisante peut ouvrir un vecteur non anticipé. La \textbf{supervision active}~-- combinant IDS réseau et SIEM~-- constitue le filet de sécurité complémentaire à ces mécanismes préventifs.
 
@@ -143,18 +151,6 @@ Les approches par règles statiques sont efficaces pour les attaques connues mai
 \end{itemize}
 
 La mobilisation conjointe de ces deux algorithmes n'est pas arbitraire~: elle répond à deux exigences analytiquement distinctes. Isolation Forest est \textbf{non supervisé}~: il modélise la normalité sans nécessiter de données étiquetées, ce qui le rend indispensable pour détecter les anomalies \emph{inconnues}~-- typiquement, l'utilisation d'un certificat valide depuis un contexte comportemental inhabituel (scénario~S6). Random Forest est \textbf{supervisé}~: entraîné sur des exemples d'attaques étiquetées, il fournit une classification précise en sept catégories et une mesure d'importance par feature permettant d'identifier les attributs les plus discriminants. Ces deux algorithmes sont donc complémentaires~: l'un couvre l'inconnu, l'autre maximise la précision sur le connu. La bibliothèque \emph{scikit-learn}~\cite{scikit_learn} fournit des implémentations matures de ces deux algorithmes . elle constitue le socle de notre pipeline ML.
-
-\section{Cas d'utilisation}
-\label{sec:ea-cas-utilisation}
-
-Trois acteurs principaux interagissent avec la plateforme proposée~: le \textbf{dispositif IoT} (publie des télémesures), l'\textbf{administrateur} (configure et supervise) et l'\textbf{analyste sécurité} (consulte les alertes et investigue). La figure~\ref{fig:cas-utilisation} synthétise leurs cas d'utilisation.
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.82\linewidth,height=0.58\textheight,keepaspectratio]{diag-cas-utilisation.png}
-\caption{Diagramme de cas d'utilisation de la plateforme}
-\label{fig:cas-utilisation}
-\end{figure}
 
 \section{Analyse critique de l'existant}
 \label{sec:ea-analyse}
