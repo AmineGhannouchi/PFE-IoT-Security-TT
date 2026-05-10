@@ -27,8 +27,8 @@ package "Zone IoT\n192.168.10.0/24" <<IoT>> #E8F5E9 {
 
 package "Zone DMZ — Services\n192.168.20.0/24" <<Security>> #FFF9C4 {
   [Broker MQTT\nMosquitto v2.0\nPort 8883 (TLS/mTLS)] <<Security>> as BROKER
-  [Gateway CoAP\naiocoap\nPort 5684 (DTLS)] <<Security>> as COAP_GW
-  [Gateway HTTP\nnginx\nPort 443 (HTTPS)] <<Security>> as HTTP_GW
+  [GW CoAP (aiocoap)\nPort 5684 (DTLS)] <<Security>> as COAP_GW
+  [GW HTTP (nginx)\nPort 443 (HTTPS)] <<Security>> as HTTP_GW
 }
 
 package "Zone PKI\n192.168.30.0/24" <<PKI>> #FCE4EC {
@@ -52,7 +52,7 @@ package "Zone Analyse\n192.168.50.0/24" <<ML>> #E0F2F1 {
 }
 
 package "Infrastructure Réseau" <<Network>> #F3E5F5 {
-  [pfSense CE\nFirewall / NAT] <<Network>> as PFSENSE
+  [pfSense CE\n(FW/NAT)] <<Network>> as PFSENSE
   [MikroTik CHR\nRouteur L3 / VLAN] <<Network>> as MIKROTIK
 }
 

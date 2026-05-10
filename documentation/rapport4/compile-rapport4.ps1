@@ -49,7 +49,7 @@ if (-not $NoDiagrams) {
             $errors = 0
             foreach ($puml in $pumlFiles) {
                 Write-Host "  $($puml.Name)..." -ForegroundColor Gray
-                java -jar $plantumlJar -tpng -o $diagramsDir $puml.FullName 2>&1 | Out-Null
+                java -jar $plantumlJar -Sdpi=150 -tpng -o $diagramsDir $puml.FullName 2>&1 | Out-Null
                 if ($LASTEXITCODE -ne 0) { $errors++ }
             }
             $pngCount = (Get-ChildItem -Path $diagramsDir -Filter '*.png' -ErrorAction SilentlyContinue).Count
