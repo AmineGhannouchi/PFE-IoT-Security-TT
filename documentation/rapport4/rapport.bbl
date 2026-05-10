@@ -70,6 +70,78 @@
       \verb 10.1109/JIOT.2019.2935189
       \endverb
     \endentry
+    \entry{enisa_iot}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=5f0e758bd03c86f599b64eab1cb40ba4}{%
+           family={{ENISA}},
+           familyi={E\bibinitperiod}}}%
+      }
+      \strng{namehash}{5f0e758bd03c86f599b64eab1cb40ba4}
+      \strng{fullhash}{5f0e758bd03c86f599b64eab1cb40ba4}
+      \strng{fullhashraw}{5f0e758bd03c86f599b64eab1cb40ba4}
+      \strng{bibnamehash}{5f0e758bd03c86f599b64eab1cb40ba4}
+      \strng{authorbibnamehash}{5f0e758bd03c86f599b64eab1cb40ba4}
+      \strng{authornamehash}{5f0e758bd03c86f599b64eab1cb40ba4}
+      \strng{authorfullhash}{5f0e758bd03c86f599b64eab1cb40ba4}
+      \strng{authorfullhashraw}{5f0e758bd03c86f599b64eab1cb40ba4}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{\url{https://www.enisa.europa.eu/publications/enisa-threat-landscape-for-internet-of-things}}
+      \field{title}{{ENISA Threat Landscape for IoT}}
+      \field{urlday}{15}
+      \field{urlmonth}{2}
+      \field{urlyear}{2026}
+      \field{year}{2023}
+      \field{urldateera}{ce}
+    \endentry
+    \entry{kolias2017mirai}{article}{}{}
+      \name{author}{4}{}{%
+        {{hash=1b9116293efb898cb4fcfec1cea5daa2}{%
+           family={Kolias},
+           familyi={K\bibinitperiod},
+           given={Constantinos},
+           giveni={C\bibinitperiod}}}%
+        {{hash=3de7aa7e992bb6cafda7bff2d7390c76}{%
+           family={Kambourakis},
+           familyi={K\bibinitperiod},
+           given={Georgios},
+           giveni={G\bibinitperiod}}}%
+        {{hash=a60826786eea1e72364eecd44bd4dff7}{%
+           family={Stavrou},
+           familyi={S\bibinitperiod},
+           given={Angelos},
+           giveni={A\bibinitperiod}}}%
+        {{hash=881ed9cd38fc701dbb120de7d034fecc}{%
+           family={Voas},
+           familyi={V\bibinitperiod},
+           given={Jeffrey},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{716dde99b28c6248d6a1789e5114eee1}
+      \strng{fullhash}{9e230eb25701a84f1644a692b868b101}
+      \strng{fullhashraw}{9e230eb25701a84f1644a692b868b101}
+      \strng{bibnamehash}{9e230eb25701a84f1644a692b868b101}
+      \strng{authorbibnamehash}{9e230eb25701a84f1644a692b868b101}
+      \strng{authornamehash}{716dde99b28c6248d6a1789e5114eee1}
+      \strng{authorfullhash}{9e230eb25701a84f1644a692b868b101}
+      \strng{authorfullhashraw}{9e230eb25701a84f1644a692b868b101}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Computer}
+      \field{number}{7}
+      \field{title}{{DDoS in the IoT: Mirai and Other Botnets}}
+      \field{volume}{50}
+      \field{year}{2017}
+      \field{pages}{80\bibrangedash 84}
+      \range{pages}{5}
+      \verb{doi}
+      \verb 10.1109/MC.2017.201
+      \endverb
+    \endentry
     \entry{tunisie_telecom}{misc}{}{}
       \name{author}{1}{}{%
         {{hash=ca7c2e36b20465c7d6647d2146f3ce79}{%
@@ -84,8 +156,8 @@
       \strng{authornamehash}{ca7c2e36b20465c7d6647d2146f3ce79}
       \strng{authorfullhash}{ca7c2e36b20465c7d6647d2146f3ce79}
       \strng{authorfullhashraw}{ca7c2e36b20465c7d6647d2146f3ce79}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{\url{https://www.tunisietelecom.tn}}
@@ -95,6 +167,79 @@
       \field{urlyear}{2026}
       \field{year}{2024}
       \field{urldateera}{ce}
+    \endentry
+    \entry{nist_sp800213}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=a44b6b00e5eebd7494e1fd00658685e2}{%
+           family={{NIST}},
+           familyi={N\bibinitperiod}}}%
+      }
+      \list{institution}{2}{%
+        {National Institute of Standards}%
+        {Technology}%
+      }
+      \strng{namehash}{a44b6b00e5eebd7494e1fd00658685e2}
+      \strng{fullhash}{a44b6b00e5eebd7494e1fd00658685e2}
+      \strng{fullhashraw}{a44b6b00e5eebd7494e1fd00658685e2}
+      \strng{bibnamehash}{a44b6b00e5eebd7494e1fd00658685e2}
+      \strng{authorbibnamehash}{a44b6b00e5eebd7494e1fd00658685e2}
+      \strng{authornamehash}{a44b6b00e5eebd7494e1fd00658685e2}
+      \strng{authorfullhash}{a44b6b00e5eebd7494e1fd00658685e2}
+      \strng{authorfullhashraw}{a44b6b00e5eebd7494e1fd00658685e2}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{number}{SP 800-213}
+      \field{title}{{IoT Device Cybersecurity Guidance for the Federal Government}}
+      \field{type}{techreport}
+      \field{year}{2021}
+      \verb{doi}
+      \verb 10.6028/NIST.SP.800-213
+      \endverb
+    \endentry
+    \entry{hasan2020securing}{article}{}{}
+      \name{author}{4}{}{%
+        {{hash=fc15d2fb4681a5b7c98cb0e2cf09d8c8}{%
+           family={Hasan},
+           familyi={H\bibinitperiod},
+           given={Mahmudul},
+           giveni={M\bibinitperiod}}}%
+        {{hash=6e1a9a0e4ede9f730c31e7e9f9d479e8}{%
+           family={Islam},
+           familyi={I\bibinitperiod},
+           given={Md.\bibnamedelimi Milon},
+           giveni={M\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+        {{hash=43332789238e02fd7c97954596454073}{%
+           family={Zarif},
+           familyi={Z\bibinitperiod},
+           given={Md.\bibnamedelimi Ishrak\bibnamedelima Islam},
+           giveni={M\bibinitperiod\bibinitdelim I\bibinitperiod\bibinitdelim I\bibinitperiod}}}%
+        {{hash=0a2748dabd462a239096f730e1cf9f2e}{%
+           family={Hashem},
+           familyi={H\bibinitperiod},
+           given={M.\bibnamedelimi M.\bibnamedelimi A.},
+           giveni={M\bibinitperiod\bibinitdelim M\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+      }
+      \strng{namehash}{f7e7c0de881adfa7efab72d79fc47785}
+      \strng{fullhash}{538fde8936abb2e2bd462a8ad5f35bd5}
+      \strng{fullhashraw}{538fde8936abb2e2bd462a8ad5f35bd5}
+      \strng{bibnamehash}{538fde8936abb2e2bd462a8ad5f35bd5}
+      \strng{authorbibnamehash}{538fde8936abb2e2bd462a8ad5f35bd5}
+      \strng{authornamehash}{f7e7c0de881adfa7efab72d79fc47785}
+      \strng{authorfullhash}{538fde8936abb2e2bd462a8ad5f35bd5}
+      \strng{authorfullhashraw}{538fde8936abb2e2bd462a8ad5f35bd5}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Internet of Things}
+      \field{title}{{Attack and Anomaly Detection in IoT Sensors in IoT Sites Using Machine Learning Approaches}}
+      \field{volume}{7}
+      \field{year}{2019}
+      \verb{doi}
+      \verb 10.1016/j.iot.2019.100059
+      \endverb
     \endentry
     \entry{gns3_docs}{misc}{}{}
       \name{author}{1}{}{%
@@ -110,8 +255,8 @@
       \strng{authornamehash}{555a10a29ea0dac04cc14d70d65815c2}
       \strng{authorfullhash}{555a10a29ea0dac04cc14d70d65815c2}
       \strng{authorfullhashraw}{555a10a29ea0dac04cc14d70d65815c2}
-      \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{\url{https://docs.gns3.com}}
@@ -136,8 +281,8 @@
       \strng{authornamehash}{4bd3b392874c74fba4ed57a24eae0ac1}
       \strng{authorfullhash}{4bd3b392874c74fba4ed57a24eae0ac1}
       \strng{authorfullhashraw}{4bd3b392874c74fba4ed57a24eae0ac1}
-      \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{\url{https://docs.docker.com/}}
@@ -162,8 +307,8 @@
       \strng{authornamehash}{1129ea7ef173c0128f37020fea647cec}
       \strng{authorfullhash}{1129ea7ef173c0128f37020fea647cec}
       \strng{authorfullhashraw}{1129ea7ef173c0128f37020fea647cec}
-      \field{sortinit}{5}
-      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{\url{https://developer.hashicorp.com/vault/docs/secrets/pki}}
@@ -188,8 +333,8 @@
       \strng{authornamehash}{ba965a2360c8acdc8182fb5f00ea04f0}
       \strng{authorfullhash}{ba965a2360c8acdc8182fb5f00ea04f0}
       \strng{authorfullhashraw}{ba965a2360c8acdc8182fb5f00ea04f0}
-      \field{sortinit}{6}
-      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{\url{https://mosquitto.org/man/mosquitto-conf-5.html}}
@@ -214,8 +359,8 @@
       \strng{authornamehash}{b6d6e10c9d27afa7c6422192caa546d5}
       \strng{authorfullhash}{b6d6e10c9d27afa7c6422192caa546d5}
       \strng{authorfullhashraw}{b6d6e10c9d27afa7c6422192caa546d5}
-      \field{sortinit}{7}
-      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{\url{https://docs.suricata.io/en/latest/rules/mqtt-keywords.html}}
@@ -240,8 +385,8 @@
       \strng{authornamehash}{9a6e4115f6bc6af764e68fcaae1eebfd}
       \strng{authorfullhash}{9a6e4115f6bc6af764e68fcaae1eebfd}
       \strng{authorfullhashraw}{9a6e4115f6bc6af764e68fcaae1eebfd}
-      \field{sortinit}{8}
-      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{\url{https://documentation.wazuh.com/current/proof-of-concept-guide/detect-network-attacks-suricata.html}}
@@ -281,8 +426,8 @@
       \strng{authornamehash}{facf64454d5633117a12faa599e65058}
       \strng{authorfullhash}{b38d2601a5a1a63e9c41ca76b68a2df4}
       \strng{authorfullhashraw}{b38d2601a5a1a63e9c41ca76b68a2df4}
-      \field{sortinit}{9}
-      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{2008 Eighth IEEE International Conference on Data Mining}
@@ -351,52 +496,6 @@
       \field{year}{2018}
       \field{urldateera}{ce}
     \endentry
-    \entry{kolias2017mirai}{article}{}{}
-      \name{author}{4}{}{%
-        {{hash=1b9116293efb898cb4fcfec1cea5daa2}{%
-           family={Kolias},
-           familyi={K\bibinitperiod},
-           given={Constantinos},
-           giveni={C\bibinitperiod}}}%
-        {{hash=3de7aa7e992bb6cafda7bff2d7390c76}{%
-           family={Kambourakis},
-           familyi={K\bibinitperiod},
-           given={Georgios},
-           giveni={G\bibinitperiod}}}%
-        {{hash=a60826786eea1e72364eecd44bd4dff7}{%
-           family={Stavrou},
-           familyi={S\bibinitperiod},
-           given={Angelos},
-           giveni={A\bibinitperiod}}}%
-        {{hash=881ed9cd38fc701dbb120de7d034fecc}{%
-           family={Voas},
-           familyi={V\bibinitperiod},
-           given={Jeffrey},
-           giveni={J\bibinitperiod}}}%
-      }
-      \strng{namehash}{716dde99b28c6248d6a1789e5114eee1}
-      \strng{fullhash}{9e230eb25701a84f1644a692b868b101}
-      \strng{fullhashraw}{9e230eb25701a84f1644a692b868b101}
-      \strng{bibnamehash}{9e230eb25701a84f1644a692b868b101}
-      \strng{authorbibnamehash}{9e230eb25701a84f1644a692b868b101}
-      \strng{authornamehash}{716dde99b28c6248d6a1789e5114eee1}
-      \strng{authorfullhash}{9e230eb25701a84f1644a692b868b101}
-      \strng{authorfullhashraw}{9e230eb25701a84f1644a692b868b101}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{journaltitle}{Computer}
-      \field{number}{7}
-      \field{title}{{DDoS in the IoT: Mirai and Other Botnets}}
-      \field{volume}{50}
-      \field{year}{2017}
-      \field{pages}{80\bibrangedash 84}
-      \range{pages}{5}
-      \verb{doi}
-      \verb 10.1109/MC.2017.201
-      \endverb
-    \endentry
     \entry{antonakakis2017mirai}{inproceedings}{}{}
       \true{moreauthor}
       \true{morelabelname}
@@ -435,62 +534,6 @@
       \field{pages}{1093\bibrangedash 1110}
       \range{pages}{18}
     \endentry
-    \entry{enisa_iot}{misc}{}{}
-      \name{author}{1}{}{%
-        {{hash=5f0e758bd03c86f599b64eab1cb40ba4}{%
-           family={{ENISA}},
-           familyi={E\bibinitperiod}}}%
-      }
-      \strng{namehash}{5f0e758bd03c86f599b64eab1cb40ba4}
-      \strng{fullhash}{5f0e758bd03c86f599b64eab1cb40ba4}
-      \strng{fullhashraw}{5f0e758bd03c86f599b64eab1cb40ba4}
-      \strng{bibnamehash}{5f0e758bd03c86f599b64eab1cb40ba4}
-      \strng{authorbibnamehash}{5f0e758bd03c86f599b64eab1cb40ba4}
-      \strng{authornamehash}{5f0e758bd03c86f599b64eab1cb40ba4}
-      \strng{authorfullhash}{5f0e758bd03c86f599b64eab1cb40ba4}
-      \strng{authorfullhashraw}{5f0e758bd03c86f599b64eab1cb40ba4}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{howpublished}{\url{https://www.enisa.europa.eu/publications/enisa-threat-landscape-for-internet-of-things}}
-      \field{title}{{ENISA Threat Landscape for IoT}}
-      \field{urlday}{15}
-      \field{urlmonth}{2}
-      \field{urlyear}{2026}
-      \field{year}{2023}
-      \field{urldateera}{ce}
-    \endentry
-    \entry{nist_sp800213}{report}{}{}
-      \name{author}{1}{}{%
-        {{hash=a44b6b00e5eebd7494e1fd00658685e2}{%
-           family={{NIST}},
-           familyi={N\bibinitperiod}}}%
-      }
-      \list{institution}{2}{%
-        {National Institute of Standards}%
-        {Technology}%
-      }
-      \strng{namehash}{a44b6b00e5eebd7494e1fd00658685e2}
-      \strng{fullhash}{a44b6b00e5eebd7494e1fd00658685e2}
-      \strng{fullhashraw}{a44b6b00e5eebd7494e1fd00658685e2}
-      \strng{bibnamehash}{a44b6b00e5eebd7494e1fd00658685e2}
-      \strng{authorbibnamehash}{a44b6b00e5eebd7494e1fd00658685e2}
-      \strng{authornamehash}{a44b6b00e5eebd7494e1fd00658685e2}
-      \strng{authorfullhash}{a44b6b00e5eebd7494e1fd00658685e2}
-      \strng{authorfullhashraw}{a44b6b00e5eebd7494e1fd00658685e2}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{number}{SP 800-213}
-      \field{title}{{IoT Device Cybersecurity Guidance for the Federal Government}}
-      \field{type}{techreport}
-      \field{year}{2021}
-      \verb{doi}
-      \verb 10.6028/NIST.SP.800-213
-      \endverb
-    \endentry
     \entry{mqtt5}{misc}{}{}
       \name{author}{1}{}{%
         {{hash=6ec60ab9ce327f5a12fbab109e691c73}{%
@@ -505,8 +548,8 @@
       \strng{authornamehash}{6ec60ab9ce327f5a12fbab109e691c73}
       \strng{authorfullhash}{6ec60ab9ce327f5a12fbab109e691c73}
       \strng{authorfullhashraw}{6ec60ab9ce327f5a12fbab109e691c73}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{\url{https://docs.oasis-open.org/mqtt/mqtt/v5.0/mqtt-v5.0.html}}
@@ -536,8 +579,8 @@
       \strng{authornamehash}{bd42c50208f9f4dd2ec56d5c273c13c9}
       \strng{authorfullhash}{bd42c50208f9f4dd2ec56d5c273c13c9}
       \strng{authorfullhashraw}{bd42c50208f9f4dd2ec56d5c273c13c9}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{number}{RFC 8446}
@@ -584,8 +627,8 @@
       \strng{authornamehash}{410928c5f254fb94180d78ead36d50ea}
       \strng{authorfullhash}{ba9cd69ce037ec668ddedb73aac27f90}
       \strng{authorfullhashraw}{ba9cd69ce037ec668ddedb73aac27f90}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{number}{RFC 9325}
@@ -601,49 +644,6 @@
       \endverb
       \verb{url}
       \verb https://www.rfc-editor.org/rfc/rfc9325
-      \endverb
-    \endentry
-    \entry{hasan2020securing}{article}{}{}
-      \name{author}{4}{}{%
-        {{hash=fc15d2fb4681a5b7c98cb0e2cf09d8c8}{%
-           family={Hasan},
-           familyi={H\bibinitperiod},
-           given={Mahmudul},
-           giveni={M\bibinitperiod}}}%
-        {{hash=6e1a9a0e4ede9f730c31e7e9f9d479e8}{%
-           family={Islam},
-           familyi={I\bibinitperiod},
-           given={Md.\bibnamedelimi Milon},
-           giveni={M\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
-        {{hash=43332789238e02fd7c97954596454073}{%
-           family={Zarif},
-           familyi={Z\bibinitperiod},
-           given={Md.\bibnamedelimi Ishrak\bibnamedelima Islam},
-           giveni={M\bibinitperiod\bibinitdelim I\bibinitperiod\bibinitdelim I\bibinitperiod}}}%
-        {{hash=0a2748dabd462a239096f730e1cf9f2e}{%
-           family={Hashem},
-           familyi={H\bibinitperiod},
-           given={M.\bibnamedelimi M.\bibnamedelimi A.},
-           giveni={M\bibinitperiod\bibinitdelim M\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
-      }
-      \strng{namehash}{f7e7c0de881adfa7efab72d79fc47785}
-      \strng{fullhash}{538fde8936abb2e2bd462a8ad5f35bd5}
-      \strng{fullhashraw}{538fde8936abb2e2bd462a8ad5f35bd5}
-      \strng{bibnamehash}{538fde8936abb2e2bd462a8ad5f35bd5}
-      \strng{authorbibnamehash}{538fde8936abb2e2bd462a8ad5f35bd5}
-      \strng{authornamehash}{f7e7c0de881adfa7efab72d79fc47785}
-      \strng{authorfullhash}{538fde8936abb2e2bd462a8ad5f35bd5}
-      \strng{authorfullhashraw}{538fde8936abb2e2bd462a8ad5f35bd5}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{journaltitle}{Internet of Things}
-      \field{title}{{Attack and Anomaly Detection in IoT Sensors in IoT Sites Using Machine Learning Approaches}}
-      \field{volume}{7}
-      \field{year}{2019}
-      \verb{doi}
-      \verb 10.1016/j.iot.2019.100059
       \endverb
     \endentry
     \entry{scikit_learn}{article}{}{}
@@ -737,8 +737,8 @@
       \strng{authornamehash}{3a097aa3ebf2b8c2acf988341dde9710}
       \strng{authorfullhash}{7a67607c66e4af944b5f16461d6d0a87}
       \strng{authorfullhashraw}{7a67607c66e4af944b5f16461d6d0a87}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Journal of Machine Learning Research}
@@ -769,8 +769,8 @@
       \strng{authornamehash}{303ea1dc92fd8c772eac56316b2074ef}
       \strng{authorfullhash}{303ea1dc92fd8c772eac56316b2074ef}
       \strng{authorfullhashraw}{303ea1dc92fd8c772eac56316b2074ef}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{howpublished}{\url{https://scrumguides.org/scrum-guide.html}}
@@ -800,8 +800,8 @@
       \strng{authornamehash}{0a973851a43085e15cf35614e386cd69}
       \strng{authorfullhash}{0a973851a43085e15cf35614e386cd69}
       \strng{authorfullhashraw}{0a973851a43085e15cf35614e386cd69}
-      \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{{Kanban: Successful Evolutionary Change for Your Technology Business}}

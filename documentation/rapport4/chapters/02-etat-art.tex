@@ -79,9 +79,56 @@ Même avec une PKI robuste et un chiffrement bout en bout, il n'est pas possible
 
 \textbf{Suricata} est un IDS/IPS open source qui dispose, depuis la version 6, d'un \emph{parser} natif MQTT capable d'extraire les champs \texttt{CONNECT}, \texttt{PUBLISH}, \texttt{SUBSCRIBE}~\cite{suricata_mqtt}. Cette capacité permet de définir des règles métier (par exemple~: alerter sur un \texttt{CONNECT} sans \texttt{ClientID} reconnu, ou sur une rafale de \texttt{CONNECT} indiquant un \emph{brute force}) qui ne seraient pas accessibles à un IDS générique.
 
+Le tableau~\ref{tab:ids-compare} compare trois solutions IDS open source représentatives sur les critères déterminants pour ce projet.
+
+\begin{table}[!htbp]
+\centering
+\caption{Comparaison des solutions IDS open source}
+\label{tab:ids-compare}
+\small
+\begin{tabularx}{\linewidth}{|l|X|X|X|}
+\hline
+\textbf{Critère} & \textbf{Suricata 6} & \textbf{Snort 3} & \textbf{Zeek 6} \\
+\hline
+Parser MQTT natif    & Oui (v6+)     & Non           & Partiel (scripts) \\ \hline
+IDS/IPS actif        & Oui           & Oui           & Non (analyse seule) \\ \hline
+Multi-threading      & Oui (natif)   & Oui (v3)      & Oui \\ \hline
+Intégration Wazuh    & Native (eve.json) & Adaptateur requis & Scripts Lua \\ \hline
+Règles Sigma/Suricata & Native       & Conversion requise & Non \\ \hline
+Maturité IoT         & Élevée        & Moyenne       & Élevée (analytique) \\ \hline
+\textbf{Verdict}     & \textbf{Retenu} & Non retenu   & Complémentaire \\ \hline
+\end{tabularx}
+\end{table}
+
+Suricata est retenu pour trois raisons décisives~: (i)~son parser MQTT natif élimine tout besoin de post-traitement applicatif~; (ii)~son format de sortie \texttt{eve.json} est nativement consommé par Wazuh, réduisant la complexité d'intégration~; (iii)~son moteur multi-thread garantit une analyse sans dégradation de débit sur les segments IoT à forte densité de messages.
+
 \subsection{SIEM Wazuh}
 
 \textbf{Wazuh}~\cite{wazuh_docs} est une plateforme de \emph{Security Information and Event Management} qui agrège les journaux d'agents endpoint, de sources réseau (Suricata) et applicatifs (Vault, Mosquitto). Elle s'intègre nativement à OpenSearch pour le stockage et au tableau de bord Wazuh Dashboard pour la visualisation et la corrélation. Sa modularité (règles XML, décodeurs personnalisables) en fait un candidat naturel pour la consolidation des alertes IoT.
+
+Le tableau~\ref{tab:siem-compare} compare Wazuh aux deux autres plates-formes SIEM courantes sur les critères déterminants pour un projet IoT académique à contraintes de coût et de souveraineté.
+
+\begin{table}[!htbp]
+\centering
+\caption{Comparaison des solutions SIEM}
+\label{tab:siem-compare}
+\small
+\begin{tabularx}{\linewidth}{|l|X|X|X|}
+\hline
+\textbf{Critère} & \textbf{Wazuh 4.7} & \textbf{ELK Stack} & \textbf{Splunk Free} \\
+\hline
+Licence              & Open source (OSS)   & Open source    & Propriétaire (limité) \\ \hline
+Intégration Suricata & Native (eve.json)   & Via Filebeat    & Via add-on HEC \\ \hline
+Corrélation native   & Oui (règles XML)    & Non (Elastic SIEM en payant) & Oui (SPL) \\ \hline
+Agents endpoint      & Oui (Wazuh agent)   & Non natif       & Oui (UF) \\ \hline
+Volume journaux (gratuit) & Illimité       & Illimité        & 500 MB/j \\ \hline
+Courbe d'apprentissage & Modérée          & Élevée (tuning) & Modérée \\ \hline
+Souveraineté données & Totale (on-premise) & Totale          & Partielle (cloud) \\ \hline
+\textbf{Verdict}     & \textbf{Retenu}     & Non retenu      & Non retenu \\ \hline
+\end{tabularx}
+\end{table}
+
+Wazuh est retenu pour sa triple intégration native~: avec Suricata (format \texttt{eve.json} sans transformation), avec les agents endpoint sur les conteneurs Docker du laboratoire, et avec OpenSearch pour un stockage illimité. La licence open source garantit en outre la souveraineté des données, critère non négociable dans le contexte opérateur télécom.
 
 Les règles IDS, aussi précises soient-elles, ne peuvent couvrir que les attaques \textbf{déjà connues et formalisées}. Pour détecter des comportements nouveaux ou subtils~-- comme l'utilisation d'un certificat valide depuis un contexte comportemental anormal~-- une couche d'apprentissage automatique est nécessaire. La section suivante en présente les approches retenues.
 
@@ -95,7 +142,7 @@ Les approches par règles statiques sont efficaces pour les attaques connues mai
   \item \textbf{Random Forest}~\cite{breiman2001random}~: ensemble d'arbres de décision, robuste, interprétable (\emph{feature importance}) et performant en classification multi-classes.
 \end{itemize}
 
-La bibliothèque \emph{scikit-learn}~\cite{scikit_learn} fournit des implémentations matures de ces deux algorithmes . elle constitue le socle de notre pipeline ML.
+La mobilisation conjointe de ces deux algorithmes n'est pas arbitraire~: elle répond à deux exigences analytiquement distinctes. Isolation Forest est \textbf{non supervisé}~: il modélise la normalité sans nécessiter de données étiquetées, ce qui le rend indispensable pour détecter les anomalies \emph{inconnues}~-- typiquement, l'utilisation d'un certificat valide depuis un contexte comportemental inhabituel (scénario~S6). Random Forest est \textbf{supervisé}~: entraîné sur des exemples d'attaques étiquetées, il fournit une classification précise en sept catégories et une mesure d'importance par feature permettant d'identifier les attributs les plus discriminants. Ces deux algorithmes sont donc complémentaires~: l'un couvre l'inconnu, l'autre maximise la précision sur le connu. La bibliothèque \emph{scikit-learn}~\cite{scikit_learn} fournit des implémentations matures de ces deux algorithmes . elle constitue le socle de notre pipeline ML.
 
 \section{Cas d'utilisation}
 \label{sec:ea-cas-utilisation}

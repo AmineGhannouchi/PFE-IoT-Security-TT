@@ -137,6 +137,8 @@ vault write -format=json pki_int/issue/role-device \
     ttl="720h"
 \end{lstlisting}
 
+Le choix des TTL résulte d'une analyse du compromis \textbf{sécurité / coût opérationnel}~: un TTL court réduit la fenêtre d'exposition en cas de vol de clé privée, mais impose une rotation fréquente, source de charge et d'erreur. Pour les services (broker, Vault), un TTL de 90~jours équilibre la stabilité des configurations et la rotation régulière~; pour les dispositifs, un TTL de 30~jours est préférable car ces objets ont un cycle de vie moins maîtrisé et la rotation est automatisée par Vault, rendant son surcoût négligeable. Ce choix est cohérent avec les recommandations du NIST~\cite{nist_sp800213} qui préconise des TTL inférieurs à 90~jours pour les certificats d'entité terminale dans les environnements IoT.
+
 La PKI étant opérationnelle, chaque composant~-- dispositif comme service~-- dispose d'une identité cryptographique vérifiable par tous les pairs. C'est sur cette fondation que repose la couche transport~: le broker MQTT peut désormais exiger la présentation d'un certificat signé par la CA intermédiaire avant d'accepter toute connexion, comme décrit dans la section suivante.
 
 \section{Broker MQTT en TLS 1.3 + mTLS}
