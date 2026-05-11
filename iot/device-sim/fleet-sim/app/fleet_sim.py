@@ -9,6 +9,7 @@ from dateutil import parser as dtparser
 
 import pandas as pd
 import paho.mqtt.client as mqtt
+from paho.mqtt.client import CallbackAPIVersion
 
 
 def pad_payload(payload: dict, target_bytes: int) -> dict:
@@ -44,7 +45,11 @@ def connect_mqtt(broker_host, broker_port, cafile, certfile, keyfile, client_id,
             f"Missing certificate file(s) for client '{client_id}': {missing_list}"
         )
 
-    client = mqtt.Client(client_id=client_id, protocol=mqtt.MQTTv311, clean_session=True)
+    try:
+        client = mqtt.Client(callback_api_version=CallbackAPIVersion.VERSION2, client_id=client_id, protocol=mqtt.MQTTv311, clean_session=True)
+    except TypeError:
+        # paho-mqtt < 2.0 fallback
+        client = mqtt.Client(client_id=client_id, protocol=mqtt.MQTTv311, clean_session=True)
 
     # TLS context
     ctx = ssl.create_default_context(ssl.Purpose.SERVER_AUTH, cafile=cafile)
@@ -168,6 +173,9 @@ def main():
             replay_device(df_dev, args, device_id)
         except FileNotFoundError as exc:
             print(f"[WARN] Skip device {device_id}: {exc}")
+            skipped_devices.append(device_id)
+        except OSError as exc:
+            print(f"[WARN] Skip device {device_id} - broker unreachable: {exc}")
             skipped_devices.append(device_id)
 
     if skipped_devices:

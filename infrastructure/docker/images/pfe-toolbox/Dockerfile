@@ -23,6 +23,9 @@ RUN apk add --no-cache \
     tzdata \
   && update-ca-certificates
 
+RUN python3 -m pip install --no-cache-dir \
+    paho-mqtt==2.1.0
+
 # Confort
 RUN adduser -D pfe && mkdir -p /work && chown -R pfe:pfe /work
 WORKDIR /work
