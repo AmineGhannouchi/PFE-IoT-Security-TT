@@ -5,6 +5,7 @@ skinparam defaultFontName Arial
 skinparam shadowing false
 skinparam classAttributeIconSize 0
 skinparam classFontStyle bold
+hide circle
 
 title Diagramme de Classes --- Partie 1 : Orchestration de la simulation
 

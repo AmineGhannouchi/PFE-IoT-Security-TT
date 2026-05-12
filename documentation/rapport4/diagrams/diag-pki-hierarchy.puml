@@ -4,6 +4,7 @@ skinparam backgroundColor #FFFFFF
 skinparam defaultFontName Arial
 skinparam shadowing false
 skinparam classAttributeIconSize 0
+hide circle
 
 skinparam class {
   BackgroundColor #FAFAFA
