@@ -24,6 +24,25 @@ OUTPUT_DIR="${OUTPUT_DIR:-/work/attacks/A1-flood}"
 
 mkdir -p "$OUTPUT_DIR"
 
+echo "=== atk-iot :: MQTT/TLS flood launcher ==="
+echo "[1/3] Preparing bounded flood scenario A1"
+echo "Broker       : ${BROKER_HOST}:${BROKER_PORT}"
+echo "Device ID    : ${DEVICE_ID}"
+echo "Tenant ID    : ${TENANT_ID}"
+echo "Topic type   : ${MESSAGE_TYPE}"
+echo "Connections  : ${CONNECTIONS}"
+echo "Workers      : ${WORKERS}"
+echo "Msgs/conn    : ${MESSAGES_PER_CONNECTION}"
+echo "Payload      : ${PAYLOAD_BYTES} bytes"
+echo "Output dir   : ${OUTPUT_DIR}"
+if [ "$#" -gt 0 ]; then
+  echo "Extra args   : $*"
+fi
+echo "[2/3] Launching python attack script"
+echo "Command      : python3 ${SCRIPT} --broker-host ${BROKER_HOST} --broker-port ${BROKER_PORT} ..."
+echo "[3/3] Streaming per-connection results below"
+echo ""
+
 exec python3 "$SCRIPT" \
   --broker-host "$BROKER_HOST" \
   --broker-port "$BROKER_PORT" \

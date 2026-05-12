@@ -23,7 +23,36 @@ Créer un template Docker basé sur l'image `pfe-attack-mqtt:latest`.
 - Console command : `bash`
 - Adapters : `1`
 - Persistent volume : `/work`
-- Start command : `sleep infinity`
+- Start command : `/usr/local/bin/start-mqtt-flood-node.sh`
+
+Le lanceur affiche dans la console GNS3 les actions utiles pour les captures d'écran, puis ouvre un shell interactif.
+Le `CMD` du Dockerfile doit rester `sleep infinity` : si le lanceur est placé directement comme commande par défaut de l'image, la console GNS3 peut ne plus s'attacher correctement au n\oe ud.
+Les certificats éventuellement présents dans `iot/device-sim/fleet-sim/certs` sont embarqués dans l'image sous `/opt/pfe-attack/bootstrap-certs`, puis recopiés vers `/work/fleet-sim/certs` au démarrage si le volume `/work` est vide.
+
+## Mode auto-start optionnel
+
+Pour lancer automatiquement le scénario dès le démarrage du n\oe ud `atk-iot`, définir dans le template ou le n\oe ud GNS3 :
+
+- Environment : `AUTO_START=1`
+
+Le script configure d'abord l'interface réseau du conteneur, vérifie la route vers le broker, exécute ensuite `run-mqtt-flood.sh`, affiche le code retour, puis laisse un shell ouvert pour les vérifications et screenshots de fin d'exécution.
+
+Variables d'environnement utiles :
+
+- `AUTO_START=1` : lance automatiquement le scénario A1.
+- `NETWORK_AUTO_CONFIG=1` : applique automatiquement l'IP statique et la route par défaut.
+- `NODE_IP_CIDR=192.168.10.101/24` : adresse du n\oe ud `atk-iot`.
+- `NODE_GATEWAY=192.168.10.1` : passerelle du VLAN IoT.
+- `BROKER_HOST=192.168.20.10` : IP du broker Mosquitto à joindre.
+
+Pour un n\oe ud externe de type `atk-ext`, remplacer par exemple :
+
+```text
+AUTO_START=1
+NODE_IP_CIDR=192.168.40.101/24
+NODE_GATEWAY=192.168.40.1
+BROKER_HOST=192.168.20.10
+```
 
 ## Réseau recommandé
 
@@ -45,7 +74,21 @@ Le script attend :
 - `/work/fleet-sim/certs/<device-id>/client.crt`
 - `/work/fleet-sim/certs/<device-id>/client.key`
 
+Si le volume GNS3 `/work` est vide au premier démarrage, le lanceur tente de l'initialiser automatiquement depuis `/opt/pfe-attack/bootstrap-certs`. Si aucun certificat n'est embarqué dans l'image, il faut toujours monter ou générer ces fichiers manuellement.
+
 ## Exécution dans le nœud GNS3
+
+### Séquence console recommandée pour les screenshots
+
+À l'ouverture de la console, le lanceur rappelle déjà les commandes utiles. La séquence recommandée pour le rapport est la suivante :
+
+```bash
+ip addr show eth0
+ping -c 2 192.168.20.10
+run-mqtt-flood.sh
+ls -1 /work/attacks/A1-flood
+cat /work/attacks/A1-flood/<timestamp>/summary.json
+```
 
 ### Variante 1 — commande simple
 
