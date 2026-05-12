@@ -162,16 +162,29 @@ Le backlog ainsi constitué traduit les objectifs en livrables concrets, chacun 
 
 \subsection{Diagramme de classes du simulateur}
 
-Le simulateur de flotte est structuré autour de quatre classes principales~: \texttt{DeviceProfile} (caractéristiques d'un type de dispositif), \texttt{IoTDevice} (instance simulée), \texttt{TrafficGenerator} (orchestration du rejeu) et \texttt{AttackInjector} (injection des sept catégories d'attaques). La figure~\ref{fig:classes} en donne la vue.
+Le simulateur de flotte (\texttt{fleet\_sim.py}) est structuré en cinq classes réparties en deux groupes logiques~: le cœur d'orchestration (\texttt{FleetOrchestrator}, \texttt{DeviceSimulator}, \texttt{DeviceStats}) et les composants de configuration et de gestion PKI (\texttt{BrokerConfig}, \texttt{CertificateManager}, \texttt{CertBundle}). Le diagramme est présenté en deux parties pour faciliter la lecture.
+
+\paragraph{Partie 1 — Orchestration de la simulation.}
+La figure~\ref{fig:classe-p1} montre la hiérarchie de contrôle~: \texttt{FleetOrchestrator} crée jusqu'à 50 instances \texttt{DeviceSimulator} (composition), chacune maintenant un agrégat \texttt{DeviceStats} pour la collecte des métriques (messages envoyés/échoués, débit, types d'attaques injectées). La méthode \texttt{\_inject\_dos\_pattern()} de \texttt{DeviceSimulator} module dynamiquement le taux d'émission pour simuler les attaques par inondation du jeu de données.
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.95\linewidth]{diag-classe-fleet-sim.png}
-\caption{Diagramme de classes du simulateur de flotte}
-\label{fig:classes}
+\includegraphics[width=0.75\linewidth]{diag-classe-part1.png}
+\caption{Diagramme de classes --- Partie~1~: orchestration (\texttt{FleetOrchestrator}, \texttt{DeviceSimulator}, \texttt{DeviceStats})}
+\label{fig:classe-p1}
 \end{figure}
+\FloatBarrier
 
-La relation de \textbf{composition} entre \texttt{DeviceProfile} et \texttt{IoTDevice} traduit le fait qu'un dispositif simulé ne peut exister sans son profil de configuration (identité MQTT, chemin vers les certificats, fréquence de publication, niveau de bande passante). L'\textbf{association navigable} de \texttt{TrafficGenerator} vers \texttt{IoTDevice} exprime le contrôle du cycle de vie~: l'orchestrateur instancie et révoque les dispositifs selon le scénario en cours. L'\texttt{AttackInjector} référence \texttt{IoTDevice} en \textbf{association de dépendance}~: il injecte des comportements déviants (brute-force, flood, replay) sur des instances préalablement créées, sans en modifier la structure interne.
+\paragraph{Partie 2 — Configuration, PKI et dépendances externes.}
+La figure~\ref{fig:classe-p2} détaille les composants de support~: \texttt{BrokerConfig} encapsule les paramètres TLS du broker (hôte, port 8883, chemin du CA, QoS)~; \texttt{CertificateManager} interroge l'API Vault pour émettre, vérifier et renouveler les certificats X.509~; \texttt{CertBundle} (dataclass) transporte le triplet certificat/clé privée/chaîne CA. Les dépendances externes (\texttt{paho.mqtt.Client}, \texttt{pandas.DataFrame}) sont représentées en gris pour les distinguer du code du projet.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.95\linewidth]{diag-classe-part2.png}
+\caption{Diagramme de classes --- Partie~2~: configuration, PKI et dépendances externes (\texttt{BrokerConfig}, \texttt{CertificateManager}, \texttt{CertBundle})}
+\label{fig:classe-p2}
+\end{figure}
+\FloatBarrier
 
 \subsection{Diagramme de séquence~: émission d'un certificat client}
 

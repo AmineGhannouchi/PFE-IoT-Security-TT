@@ -1,0 +1,77 @@
+@startuml diag-classe-part2
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam classFontStyle bold
+
+title Diagramme de Classes --- Partie 2 : Configuration, PKI et dépendances externes
+
+package "fleet_sim" <<Frame>> {
+
+  class DeviceSimulator {
+    - device_id : str
+    - broker_config : BrokerConfig
+    - cert_path : str
+    --
+    - _configure_tls() : None
+    + run() : None
+    + disconnect() : None
+  }
+
+  class BrokerConfig <<dataclass>> {
+    + host : str = "192.168.20.10"
+    + port : int = 8883
+    + keepalive : int = 60
+    + qos : int = 1
+    + ca_cert : str
+    + use_tls : bool = True
+  }
+
+  class CertificateManager {
+    - vault_addr : str
+    - vault_token : str
+    - cert_dir : str
+    --
+    + request_cert(device_id: str, ttl: str) : CertBundle
+    + verify_chain(cert_path: str) : bool
+    + renew_if_expired(device_id: str) : CertBundle
+  }
+
+  class CertBundle <<dataclass>> {
+    + certificate : str
+    + private_key : str
+    + ca_chain : str
+    + serial : str
+    + expiry : datetime
+  }
+
+  class FleetOrchestrator {
+    --
+    + launch() : None
+  }
+
+}
+
+package "paho.mqtt" <<External>> #DDDDDD {
+  class "mqtt.Client" as MqttClient {
+    + tls_set(...)
+    + connect(host, port, keepalive)
+    + publish(topic, payload, qos)
+    + loop_start() / loop_stop()
+    + disconnect()
+  }
+}
+
+package "pandas" <<External>> #DDDDDD {
+  class "DataFrame" as DF
+}
+
+DeviceSimulator --> BrokerConfig : utilise >
+DeviceSimulator --> MqttClient : délègue MQTT >
+DeviceSimulator ..> DF : itère events >
+FleetOrchestrator --> CertificateManager : provisionne certs >
+CertificateManager --> CertBundle : retourne >
+
+@enduml

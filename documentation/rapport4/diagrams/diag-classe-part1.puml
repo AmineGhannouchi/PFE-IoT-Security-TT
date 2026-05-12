@@ -1,0 +1,62 @@
+@startuml diag-classe-part1
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam classFontStyle bold
+
+title Diagramme de Classes --- Partie 1 : Orchestration de la simulation
+
+package "fleet_sim" <<Frame>> {
+
+  class FleetOrchestrator {
+    - config : dict
+    - dataset : pd.DataFrame
+    - devices : List[DeviceSimulator]
+    - thread_pool : ThreadPoolExecutor
+    --
+    + __init__(config_path: str)
+    + load_dataset(csv_path: str) : pd.DataFrame
+    + partition_events(n_devices: int) : List[pd.DataFrame]
+    + launch() : None
+    + wait_completion() : None
+    + generate_report() : dict
+  }
+
+  class DeviceSimulator {
+    - device_id : str
+    - broker_config : dict
+    - cert_path : str
+    - events : pd.DataFrame
+    - client : mqtt.Client
+    - stats : DeviceStats
+    --
+    + __init__(device_id, broker_config, cert_path, events)
+    - _configure_tls() : None
+    - _format_payload(event: pd.Series) : dict
+    - _inject_dos_pattern(base_rate: float) : float
+    + run() : None
+    + disconnect() : None
+  }
+
+  class DeviceStats {
+    - messages_sent : int
+    - messages_failed : int
+    - start_time : float
+    - end_time : float
+    - attack_types : Counter
+    --
+    + record_send(success: bool) : None
+    + record_attack(attack_type: str) : None
+    + duration() : float
+    + throughput() : float
+    + to_dict() : dict
+  }
+
+}
+
+FleetOrchestrator "1" *-- "50" DeviceSimulator : crée et orchestre >
+DeviceSimulator "1" *-- "1" DeviceStats : collecte stats >
+
+@enduml
