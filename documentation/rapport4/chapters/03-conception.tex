@@ -47,18 +47,44 @@ Ce chapitre traduit les besoins exprimés au chapitre précédent en une concept
 \end{tabularx}
 \end{table}
 
-Ces besoins définissent le \emph{quoi} de la solution~: les fonctionnalités attendues et les contraintes opérationnelles à respecter. Le diagramme de cas d'utilisation (figure~\ref{fig:cas-utilisation}) synthétise ces besoins sous forme d'interactions entre les trois acteurs de la plateforme.
+Ces besoins définissent le \emph{quoi} de la solution~: les fonctionnalités attendues et les contraintes opérationnelles à respecter. Le diagramme de cas d'utilisation est présenté en trois parties, une par acteur de la plateforme.
 
 \subsection{Diagramme de cas d'utilisation}
 
-Trois acteurs principaux interagissent avec la plateforme~: le \textbf{dispositif IoT} (publie des télémesures via MQTT/mTLS), l'\textbf{administrateur} (déploie, configure et maintient l'infrastructure) et l'\textbf{analyste sécurité} (consulte les alertes et investigue les incidents). Les flèches d'inclusion (\texttt{\textless\textless include\textgreater\textgreater}) indiquent des sous-cas obligatoires~: par exemple, tout acte de publication MQTT \emph{inclut} nécessairement l'étape de négociation mTLS~; toute connexion d'un dispositif \emph{inclut} la validation de son certificat X.509 par la PKI Vault. Les flèches d'extension (\texttt{\textless\textless extend\textgreater\textgreater}) représentent les comportements optionnels~: l'IDS Suricata peut \emph{étendre} la réponse en bloquant activement un flux détecté comme malveillant, et le module ML peut \emph{étendre} la détection en signalant une anomalie non couverte par les règles statiques.
+Trois acteurs principaux interagissent avec la plateforme~: le \textbf{dispositif IoT}, l'\textbf{administrateur sécurité} et l'\textbf{opérateur SOC}. Les flèches \texttt{<<include>>} indiquent des sous-cas obligatoires (la connexion MQTT \emph{inclut} toujours l'authentification mTLS et le chiffrement TLS~1.3). Les flèches \texttt{<<extend>>} représentent des comportements optionnels (l'IDS peut \emph{étendre} la réponse par un blocage actif~; le module ML peut \emph{étendre} la détection au-delà des règles statiques).
+
+\paragraph{Partie 1 — Dispositif IoT.}
+La figure~\ref{fig:uc-p1} détaille les quatre cas d'utilisation du capteur~: demande de certificat X.509 (\texttt{<<include>>} vérification de la chaîne CA), connexion au broker MQTT (\texttt{<<include>>} authentification mTLS et chiffrement TLS~1.3), publication de télémétrie et renouvellement automatique du certificat.
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.88\linewidth,height=0.60\textheight,keepaspectratio]{diag-cas-utilisation.png}
-\caption{Diagramme de cas d'utilisation de la plateforme de sécurisation IoT}
-\label{fig:cas-utilisation}
+\includegraphics[width=0.88\linewidth]{diag-uc-part1.png}
+\caption{Cas d'utilisation --- Partie~1~: Dispositif IoT (authentification, publication, renouvellement)}
+\label{fig:uc-p1}
 \end{figure}
+\FloatBarrier
+
+\paragraph{Partie 2 — Administrateur sécurité.}
+La figure~\ref{fig:uc-p2} montre les quatre cas d'utilisation de l'administrateur~: configuration de la PKI Vault (hiérarchie CA, rôles, TTL), définition des règles ACL Mosquitto, paramétrage des règles IDS Suricata et déploiement des règles de corrélation SIEM Wazuh.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.72\linewidth]{diag-uc-part2.png}
+\caption{Cas d'utilisation --- Partie~2~: Administrateur sécurité (PKI, ACL, IDS, SIEM)}
+\label{fig:uc-p2}
+\end{figure}
+\FloatBarrier
+
+\paragraph{Partie 3 — Opérateur SOC.}
+La figure~\ref{fig:uc-p3} représente les quatre cas d'utilisation de l'opérateur~: consultation du tableau de bord Wazuh, analyse des alertes IDS, lancement de la détection ML d'anomalies et évaluation des performances de la plateforme.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.72\linewidth]{diag-uc-part3.png}
+\caption{Cas d'utilisation --- Partie~3~: Opérateur TT/SOC (dashboard, alertes, ML, performances)}
+\label{fig:uc-p3}
+\end{figure}
+\FloatBarrier
 
 La démarche Scrum retenue au chapitre~\ref{chap:contexte-general} structure la réalisation en six sprints~; la section suivante en détaille la planification et les livrables.
 

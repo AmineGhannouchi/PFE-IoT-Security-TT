@@ -1,0 +1,33 @@
+@startuml diag-uc-part3
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam usecase {
+  BackgroundColor #E3F2FD
+  BorderColor #1565C0
+}
+skinparam actor {
+  BackgroundColor #FAFAFA
+  BorderColor #555555
+}
+
+title Cas d'utilisation --- Partie 3 : Opérateur TT (SOC)
+
+left to right direction
+
+actor "Opérateur\nTT (SOC)" as SOC
+
+rectangle "Interactions de l'opérateur SOC avec la plateforme" {
+  usecase "Consulter le\ndashboard Wazuh" as UC9
+  usecase "Analyser les\nalertes IDS" as UC10
+  usecase "Lancer la détection\nML d'anomalies" as UC11
+  usecase "Évaluer les\nperformances" as UC12
+}
+
+SOC --> UC9
+SOC --> UC10
+SOC --> UC11
+SOC --> UC12
+
+@enduml

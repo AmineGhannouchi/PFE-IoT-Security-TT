@@ -1,0 +1,33 @@
+@startuml diag-uc-part2
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam usecase {
+  BackgroundColor #E3F2FD
+  BorderColor #1565C0
+}
+skinparam actor {
+  BackgroundColor #FAFAFA
+  BorderColor #555555
+}
+
+title Cas d'utilisation --- Partie 2 : Administrateur Sécurité
+
+left to right direction
+
+actor "Administrateur\nSécurité" as ADMIN
+
+rectangle "Interactions de l'administrateur avec la plateforme" {
+  usecase "Configurer\nla PKI Vault" as UC5
+  usecase "Définir les\nrègles ACL" as UC6
+  usecase "Configurer\nles règles IDS" as UC7
+  usecase "Déployer les\nrègles SIEM" as UC8
+}
+
+ADMIN --> UC5
+ADMIN --> UC6
+ADMIN --> UC7
+ADMIN --> UC8
+
+@enduml
