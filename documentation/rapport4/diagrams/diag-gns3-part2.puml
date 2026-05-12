@@ -1,0 +1,58 @@
+@startuml diag-gns3-part2
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam ArrowColor #555555
+skinparam NoteBackgroundColor #FFFDE7
+skinparam NoteBorderColor #F9A825
+
+skinparam package {
+  FontSize 12
+  FontStyle bold
+}
+skinparam component {
+  FontSize 10
+}
+
+title GNS3 --- Partie 2\nConteneurs Docker par zone VLAN
+
+package "VLAN 10 — Zone IoT\n(10.0.10.0/24)" #FFF3E0 {
+  component "**fleet-simulator**\n(Python 3.11)\n— 50 threads IoT parallèles\n— 76 000 messages MQTT simulés\n— TLS 1.3 + certificat role-device\n— Replay du dataset CSV\nIP : 10.0.10.10" as SIM
+}
+
+package "VLAN 20 — Zone DMZ\n(10.0.20.0/24)" #E8F5E9 {
+  component "**mosquitto**\n(Mosquitto 2.0)\n— Port 8883 (TLS/mTLS obligatoire)\n— ACL deny-by-default\n— CRL Vault vérifiée\nIP : 10.0.20.10" as MOSQ
+
+  component "**suricata**\n(Suricata 7.0)\n— Mode passif (AF_PACKET)\n— Interface : eth1.mon (port miroir)\n— Règles SID 9000001–9000004\n— Sortie : eve.json\nIP : 10.0.20.20" as SURI
+}
+
+package "VLAN 30 — Zone PKI\n(10.0.30.0/24)" #E3F2FD {
+  component "**vault**\n(HashiCorp Vault 1.15)\n— Port 8200 (HTTP interne)\n— PKI Engine : pki_root + pki_int\n— AppRole pour le simulateur\nIP : 10.0.30.10" as VAULT
+}
+
+package "VLAN 40 — Zone SIEM\n(10.0.40.0/24)" #FCE4EC {
+  component "**wazuh-manager**\n(Wazuh 4.7)\n— Port 1514 (Syslog)\n— Décodeurs XML + règles ML\nIP : 10.0.40.10" as WAZUH
+
+  component "**opensearch**\n(OpenSearch 2.x)\n— Port 9200 (REST API)\n— Index wazuh-alerts-4.x\nIP : 10.0.40.11" as OS
+
+  component "**ml-engine**\n(Python / scikit-learn)\n— IsolationForest + RandomForest\n— Scores JSON → Wazuh API\nIP : 10.0.40.20" as ML
+}
+
+SIM -right-> MOSQ : MQTT/TLS 1.3\nport 8883\n(CONNECT + PUBLISH)
+SIM -down-> VAULT : Vault API\nport 8200\n(renouvellement cert)
+
+SURI -down-> WAZUH : Filebeat → Syslog\nport 1514\n(EVE JSON)
+MOSQ -down-> WAZUH : logs Mosquitto\n(Syslog)
+WAZUH -right-> OS : indexation\nport 9200
+ML -up-> WAZUH : scores anomalie\nport 55000 (API)
+
+note bottom of SURI
+  Suricata ne reçoit qu'une copie
+  du trafic (port miroir MikroTik) :
+  il n'est pas dans le chemin de données
+  → latence MQTT inchangée
+end note
+
+@enduml

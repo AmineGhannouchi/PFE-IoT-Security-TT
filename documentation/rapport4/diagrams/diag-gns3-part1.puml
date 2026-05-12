@@ -1,0 +1,64 @@
+@startuml diag-gns3-part1
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam shadowing false
+
+skinparam node {
+  BackgroundColor #E3F2FD
+  BorderColor #1565C0
+  FontSize 11
+}
+skinparam component {
+  BackgroundColor #E8F5E9
+  BorderColor #2E7D32
+  FontSize 10
+}
+skinparam cloud {
+  BackgroundColor #FFF9C4
+  BorderColor #F57F17
+}
+skinparam ArrowColor #555555
+skinparam NoteBackgroundColor #FFFDE7
+skinparam NoteBorderColor #F9A825
+
+title GNS3 --- Partie 1\nInfrastructure hôte et nœuds réseau
+
+cloud "Station physique\n(Windows 11, 32 Go RAM, 1 To SSD)" as HOST {
+
+  node "VMware Workstation 17\n(hyperviseur de type 2)" as VMW {
+
+    node "VM GNS3 Server\n(Ubuntu 22.04 LTS — 8 vCPU, 16 Go RAM)" as GNS3VM {
+
+      component "**pfSense 2.7**\n(pare-feu / NAT / VLAN)\n— Interfaces : WAN (NAT) + LAN trunk\n— 4 sous-interfaces VLAN\n— Règles inter-VLAN : deny-by-default\n— Port : virtio (GNS3 link)" as PFSENSE
+
+      component "**MikroTik CHR**\n(switch L3 / routage inter-VLAN)\n— VLAN 10, 20, 30, 40 configurés\n— Port miroir eth1.20 → eth1.mon\n  (copie trafic DMZ vers Suricata)\n— BGP/OSPF désactivés" as MIKROTIK
+
+      component "**Docker Engine**\n(intégré à la VM GNS3)\n— 8 conteneurs actifs\n— Bridge networks par VLAN\n— Volumes persistants montés" as DOCKER
+    }
+  }
+}
+
+PFSENSE -down-> MIKROTIK : lien Ethernet virtuel\n(GNS3 link — 1 Gbps émulé)
+MIKROTIK -down-> DOCKER : trunks VLAN 10/20/30/40\n(interfaces macvlan)
+
+note right of PFSENSE
+  Adresse WAN : DHCP (VMware NAT)
+  Adresse LAN : 10.0.0.1/8 (trunk)
+  Accès admin : https://10.0.0.1
+  Règles activées :
+  — IoT → DMZ:8883 (MQTT/TLS)
+  — IoT → PKI:8200 (Vault API)
+  — DMZ → SIEM:1514 (Wazuh)
+  — PKI → SIEM:1514 (Wazuh)
+end note
+
+note right of MIKROTIK
+  Port miroir (SPAN) :
+  Source : eth1.20 (VLAN DMZ)
+  Destination : eth1.mon (Suricata)
+  Mode : ingress + egress
+  Impact latence : nul (copie passive)
+end note
+
+@enduml

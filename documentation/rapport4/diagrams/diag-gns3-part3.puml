@@ -1,0 +1,63 @@
+@startuml diag-gns3-part3
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam ArrowColor #555555
+skinparam NoteBackgroundColor #E8F5E9
+skinparam NoteBorderColor #388E3C
+
+skinparam sequence {
+  ParticipantBackgroundColor #E3F2FD
+  ParticipantBorderColor #1565C0
+  LifeLineBorderColor #90A4AE
+  ArrowColor #37474F
+}
+
+title GNS3 --- Partie 3\nFlux de données inter-nœuds et port miroir
+
+participant "fleet-simulator\n(VLAN 10)" as SIM #FFF3E0
+participant "MikroTik CHR\n(L3 switch)" as MK #E0E0E0
+participant "mosquitto\n(VLAN 20)" as MOSQ #E8F5E9
+participant "suricata\n(VLAN 20 — passif)" as SURI #FFECB3
+participant "vault\n(VLAN 30)" as VAULT #E3F2FD
+participant "wazuh-manager\n(VLAN 40)" as WAZUH #FCE4EC
+
+== Initialisation (démarrage du simulateur) ==
+
+SIM -> VAULT : GET /v1/pki_int/issue/role-device\n(obtenir certificat client TLS)
+VAULT --> SIM : certificat X.509 (30 j) + clé privée
+
+SIM -> MOSQ : TCP SYN → TLS ClientHello (port 8883)
+MOSQ --> SIM : TLS ServerHello + certificat serveur
+SIM -> MOSQ : Certificate (client) + Finished\n(mTLS — mutual authentication)
+MOSQ --> SIM : CONNACK (code 0 — accepté)
+
+== Trafic MQTT normal (76 000 messages) ==
+
+SIM -> MK : PUBLISH (VLAN 10 → 20)
+MK -> MOSQ : forward PUBLISH
+MK -[#E65100]-> SURI : **copie SPAN** (port miroir)\nAF_PACKET — hors chemin données
+
+SURI -> SURI : analyse règles SID\n9000001 / 9000002 / 9000003 / 9000004
+
+== Génération d'alerte (ex. scénario S1 — DoS flood) ==
+
+SURI -> SURI : écriture eve.json\n(timestamp, src_ip, alert.signature, mqtt.topic)
+SURI -> WAZUH : Filebeat → Syslog port 1514\n(EVE JSON)
+WAZUH -> WAZUH : décodeur XML\n+ règle corrélation\n(> 5 alertes SID 9000001 / 60 s → niveau 12)
+
+== Révocation (scénario S6 — certificat compromis) ==
+
+SIM -> VAULT : vault write pki_int/revoke serial=XX:YY:ZZ
+VAULT -> VAULT : mise à jour CRL (toutes les 24 h)
+MOSQ -> VAULT : vérification CRL (OCSP)\n→ connexion refusée au prochain CONNECT
+
+note over MK, SURI
+  Le port miroir MikroTik est la clé
+  de l'architecture IDS passive :
+  Suricata voit tout le trafic VLAN 20
+  sans ralentir les échanges MQTT/TLS
+end note
+
+@enduml

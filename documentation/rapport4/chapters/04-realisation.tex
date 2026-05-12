@@ -417,14 +417,43 @@ La séparation des rôles est la mesure de sécurité centrale~: \texttt{role-se
 
 Le tableau de bord Wazuh synthétise les événements collectés lors du rejeu des six scénarios d'attaque. La vue \emph{Top rules} met en évidence les règles les plus déclenchées~; le filtre temporel permet d'isoler les alertes par sprint et de vérifier la corrélation entre les injections du simulateur et les détections effectives.
 
+La topologie GNS3 est présentée en trois parties pour plus de lisibilité~: l'infrastructure hôte et les nœuds réseau (figure~\ref{fig:gns3-p1}), les conteneurs Docker par zone VLAN (figure~\ref{fig:gns3-p2}), et les flux de données inter-nœuds incluant le port miroir (figure~\ref{fig:gns3-p3}).
+
+\paragraph{Partie 1 — Infrastructure hôte et nœuds réseau.}
+
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=\textwidth]{gns3-topology.png}
-\caption{GNS3~: topologie déployée du laboratoire (VMs et conteneurs Docker visibles)}
-\label{fig:cap-gns3}
+\includegraphics[width=0.80\linewidth]{diag-gns3-part1.png}
+\caption{GNS3 --- Partie~1~: infrastructure hôte (VMware, VM GNS3), pfSense, MikroTik CHR et Docker Engine}
+\label{fig:gns3-p1}
 \end{figure}
+\FloatBarrier
 
-La capture GNS3 montre la topologie telle qu'elle est réellement déployée~: pfSense, MikroTik CHR et les conteneurs Docker apparaissent comme des nœuds distints. Les liens entre nœuds représentent des connexions Ethernet virtuelles gachées dans des VLANs séparés. Cette vue confirme la reproductibilité de l'architecture~: l'ensemble du projet GNS3 est versionné et peut être importé sur une autre station disposant de GNS3~2.2.x et VMware Workstation.
+L'ensemble du laboratoire s'exécute dans une VM GNS3 (Ubuntu 22.04, 8~vCPU, 16~Go RAM) hébergée par VMware Workstation~17. pfSense~2.7 assure le pare-feu NAT et la segmentation VLAN (règles inter-VLAN en deny-by-default)~; MikroTik CHR opère comme switch L3 et active le port miroir SPAN sur le VLAN~20 (DMZ) vers l'interface de capture de Suricata.
+
+\paragraph{Partie 2 — Conteneurs Docker par zone VLAN.}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.88\linewidth]{diag-gns3-part2.png}
+\caption{GNS3 --- Partie~2~: conteneurs Docker répartis sur les quatre zones VLAN (IoT, DMZ, PKI, SIEM)}
+\label{fig:gns3-p2}
+\end{figure}
+\FloatBarrier
+
+Les huit conteneurs sont distribués sur quatre VLANs isolés~: \textbf{VLAN~10 (IoT, 10.0.10.0/24)}~: le simulateur de flotte (50~threads, 76~000~messages)~; \textbf{VLAN~20 (DMZ, 10.0.20.0/24)}~: Mosquitto (port~8883, mTLS) et Suricata (mode passif)~; \textbf{VLAN~30 (PKI, 10.0.30.0/24)}~: Vault~1.15 (port~8200)~; \textbf{VLAN~40 (SIEM, 10.0.40.0/24)}~: Wazuh~4.7, OpenSearch et le moteur ML.
+
+\paragraph{Partie 3 — Flux de données et port miroir MikroTik.}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.92\linewidth]{diag-gns3-part3.png}
+\caption{GNS3 --- Partie~3~: flux de données inter-nœuds (MQTT/TLS, Vault API, Filebeat, port miroir SPAN, révocation CRL)}
+\label{fig:gns3-p3}
+\end{figure}
+\FloatBarrier
+
+Le diagramme de séquence illustre les trois phases de fonctionnement~: (1)~\textbf{Initialisation}~: le simulateur obtient son certificat auprès de Vault puis établit la session mTLS avec Mosquitto~; (2)~\textbf{Trafic normal}~: chaque PUBLISH transite par MikroTik qui en envoie une copie passive à Suricata via le port miroir SPAN (aucun impact sur la latence MQTT)~; (3)~\textbf{Alerte et révocation}~: Suricata écrit dans \texttt{eve.json}, Filebeat transmet à Wazuh, et en cas de compromission (S6), Vault révoque le certificat et met à jour la CRL que Mosquitto consulte via OCSP. L'ensemble du projet GNS3 est versionné et peut être importé sur toute station disposant de GNS3~2.2.x et VMware Workstation.
 
 \section{Conclusion}
 \label{sec:re-conclusion}
