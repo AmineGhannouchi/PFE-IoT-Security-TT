@@ -149,16 +149,29 @@ La relation de \textbf{composition} entre \texttt{DeviceProfile} et \texttt{IoTD
 
 \subsection{Diagramme de séquence~: émission d'un certificat client}
 
-L'émission d'un certificat suit un échange en cinq étapes entre le dispositif (ou le script de provisionnement), Vault et la CA intermédiaire (figure~\ref{fig:seq-pki}).
+La séquence est découpée en deux parties~: l'initialisation de la PKI (opération réalisée une seule fois par l'administrateur) et l'émission effective d'un certificat pour chaque dispositif ou service.
+
+\paragraph{Partie 1 — Initialisation de la PKI.}
+La figure~\ref{fig:seq-pki-p1} couvre la mise en place de la hiérarchie à deux niveaux~: activation du moteur PKI racine dans Vault (RSA-4096, TTL~10~ans, auto-signé et conservé \emph{offline}), génération d'une CA intermédiaire dont le CSR est signé par la CA racine, puis import du certificat signé dans le \emph{secrets engine} \texttt{pki\_int}. Enfin, le rôle \texttt{iot-devices} est créé pour contraindre les émissions~: TTL maximal de 30~jours, usage \texttt{clientAuth}, CN limité au pattern \texttt{*.iot.lab}.
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.82\linewidth,height=0.66\textheight,keepaspectratio]{diag-pki-sequence.png}
-\caption{Séquence d'émission d'un certificat client}
-\label{fig:seq-pki}
+\includegraphics[width=\linewidth]{diag-pki-seq-part1.png}
+\caption{Séquence PKI --- Partie~1~: initialisation (CA racine, CA intermédiaire, rôle)}
+\label{fig:seq-pki-p1}
 \end{figure}
+\FloatBarrier
 
-Le diagramme se lit de gauche à droite en suivant les messages numérotés~: (1)~le script de provisionnement envoie une requête \texttt{POST /v1/pki\_int/issue/<rôle>} à l'API Vault avec les paramètres CN, SANs et TTL~; (2)~Vault contrôle que le token présenté possède la policy autorisant l'émission sur ce rôle~; (3)~Vault transmet la demande signée à la CA intermédiaire embarquée dans le \emph{secrets engine PKI}~; (4)~la CA signe le certificat et retourne le bundle (certificat + chaîne) à Vault~; (5)~Vault retourne le bundle au demandeur, qui écrit le certificat et la clé dans le système de fichiers du conteneur. Le TTL de la réponse déclenche automatiquement un minuteur de renouvellement côté dispositif.
+\paragraph{Partie 2 — Émission par dispositif.}
+La figure~\ref{fig:seq-pki-p2} décrit l'opération répétée pour chaque dispositif~: (1)~le script de provisionnement envoie \texttt{POST /v1/pki\_int/issue/iot-devices} avec le CN et le TTL souhaité~; (2)~Vault vérifie la policy AppRole du token présenté~; (3)~Vault génère la paire de clés RSA-2048 et signe le certificat via la CA intermédiaire~; (4)~le bundle (certificat + clé privée + chaîne CA) est retourné en JSON~; (5)~le dispositif écrit les trois fichiers dans son système de fichiers et démarre un minuteur de renouvellement basé sur le TTL reçu (~87~ms de bout en bout).
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.88\linewidth]{diag-pki-seq-part2.png}
+\caption{Séquence PKI --- Partie~2~: émission d'un certificat client (\textasciitilde 87~ms)}
+\label{fig:seq-pki-p2}
+\end{figure}
+\FloatBarrier
 
 \subsection{Diagramme d'activité~: cycle de publication mTLS}
 
