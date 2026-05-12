@@ -91,22 +91,24 @@
 \contentsline {subsection}{\numberline {4.7.1}Données et features}{63}{subsection.4.7.1}%
 \contentsline {subsection}{\numberline {4.7.2}Modèles}{64}{subsection.4.7.2}%
 \contentsline {section}{\numberline {4.8}Captures d'écran des interfaces}{64}{section.4.8}%
-\contentsline {section}{\numberline {4.9}Conclusion}{66}{section.4.9}%
-\contentsline {chapter}{\numberline {5}Tests, résultats et validation}{67}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Introduction}{67}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Plan de tests}{67}{section.5.2}%
-\contentsline {section}{\numberline {5.3}Résultats de sécurité}{67}{section.5.3}%
-\contentsline {subsection}{\numberline {5.3.1}Validation par l'exécution~: preuves visuelles}{68}{subsection.5.3.1}%
-\contentsline {section}{\numberline {5.4}Résultats du module ML}{75}{section.5.4}%
-\contentsline {subsection}{\numberline {5.4.1}Isolation Forest}{75}{subsection.5.4.1}%
-\contentsline {subsection}{\numberline {5.4.2}Random Forest}{77}{subsection.5.4.2}%
-\contentsline {section}{\numberline {5.5}Résultats de performance}{79}{section.5.5}%
-\contentsline {subsection}{\numberline {5.5.1}Handshake TLS et latence}{79}{subsection.5.5.1}%
-\contentsline {subsection}{\numberline {5.5.2}Débit et RTT}{80}{subsection.5.5.2}%
-\contentsline {section}{\numberline {5.6}Limites identifiées}{81}{section.5.6}%
-\contentsline {section}{\numberline {5.7}Perspectives}{81}{section.5.7}%
-\contentsline {section}{\numberline {5.8}Conclusion}{82}{section.5.8}%
-\contentsline {chapter}{Conclusion générale}{83}{section*.188}%
-\contentsline {chapter}{Références bibliographiques}{85}{chapter*.189}%
+\contentsline {paragraph}{Partie 1 — Secrets engines et statuts.}{64}{paragraph*.161}%
+\contentsline {paragraph}{Partie 2 — Rôles et chaîne d'émission de la CA intermédiaire.}{65}{paragraph*.163}%
+\contentsline {section}{\numberline {4.9}Conclusion}{68}{section.4.9}%
+\contentsline {chapter}{\numberline {5}Tests, résultats et validation}{69}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Introduction}{69}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Plan de tests}{69}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Résultats de sécurité}{69}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Validation par l'exécution~: preuves visuelles}{70}{subsection.5.3.1}%
+\contentsline {section}{\numberline {5.4}Résultats du module ML}{77}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}Isolation Forest}{77}{subsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.4.2}Random Forest}{79}{subsection.5.4.2}%
+\contentsline {section}{\numberline {5.5}Résultats de performance}{81}{section.5.5}%
+\contentsline {subsection}{\numberline {5.5.1}Handshake TLS et latence}{81}{subsection.5.5.1}%
+\contentsline {subsection}{\numberline {5.5.2}Débit et RTT}{82}{subsection.5.5.2}%
+\contentsline {section}{\numberline {5.6}Limites identifiées}{83}{section.5.6}%
+\contentsline {section}{\numberline {5.7}Perspectives}{83}{section.5.7}%
+\contentsline {section}{\numberline {5.8}Conclusion}{84}{section.5.8}%
+\contentsline {chapter}{Conclusion générale}{85}{section*.191}%
+\contentsline {chapter}{Références bibliographiques}{87}{chapter*.192}%
 \xpg@aux {}{arabic}
 \xpg@aux {}{french}

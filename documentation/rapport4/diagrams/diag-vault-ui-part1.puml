@@ -1,0 +1,63 @@
+@startuml diag-vault-ui-part1
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam componentStyle rectangle
+
+skinparam component {
+  BackgroundColor #E8F5E9
+  BorderColor #2E7D32
+  FontSize 11
+}
+skinparam package {
+  BackgroundColor #F3E5F5
+  BorderColor #6A1B9A
+  FontSize 12
+}
+skinparam node {
+  BackgroundColor #E3F2FD
+  BorderColor #1565C0
+}
+skinparam ArrowColor #555555
+skinparam NoteBackgroundColor #FFFDE7
+skinparam NoteBorderColor #F9A825
+
+title Vault UI --- Partie 1\nVue d'ensemble des Secrets Engines actifs
+
+node "HashiCorp Vault 1.15\n(http://vault.iot.lab:8200)" {
+
+  package "Secrets Engines" {
+
+    component "**pki_root/**\nType : PKI\nStatut : enabled\nCA racine RSA-4096\nTTL : 10 ans\n[clé privée hors ligne]" as PKI_ROOT #FFCDD2
+
+    component "**pki_int/**\nType : PKI\nStatut : **enabled (active)**\nCA intermédiaire RSA-2048\nTTL : 5 ans\n[signée par pki_root]" as PKI_INT #C8E6C9
+
+    component "**kv/**\nType : KV v2\nStatut : enabled\nStockage des secrets\napplicatifs" as KV #E3F2FD
+  }
+
+  package "Auth Methods" {
+    component "**token/**\nType : Token\n(méthode par défaut)" as AUTH_TOKEN
+
+    component "**approle/**\nType : AppRole\n(accès programmatique\npour le simulateur)" as AUTH_APPROLE
+  }
+}
+
+PKI_ROOT -down-> PKI_INT : signe le CSR\nde la CA intermédiaire\n(vault write pki_root/root/sign-intermediate)
+
+note right of PKI_ROOT
+  CA racine "offline" :
+  — Clé privée non chargée en RAM
+  — Statut UI : "expired" volontaire
+  — Aucune émission directe de certs
+end note
+
+note right of PKI_INT
+  CA intermédiaire "active" :
+  — Émet les certs via API REST
+  — CRL automatique toutes les 24 h
+  — OCSP activé (port 8200)
+  — 2 rôles : role-server / role-device
+end note
+
+@enduml

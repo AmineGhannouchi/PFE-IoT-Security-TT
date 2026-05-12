@@ -1,0 +1,74 @@
+@startuml diag-vault-ui-part2
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam shadowing false
+
+skinparam class {
+  BackgroundColor #E0F2F1
+  BorderColor #00695C
+  FontSize 11
+  HeaderBackgroundColor #B2DFDB
+}
+skinparam ArrowColor #00695C
+skinparam NoteBackgroundColor #FFF9C4
+skinparam NoteBorderColor #F57F17
+
+title Vault UI --- Partie 2\nDétail du secrets engine pki_int : rôles et chaîne d'émission
+
+class "**Issuer : pki_int**\n(CA intermédiaire active)" as ISSUER {
+  key_type       = RSA-2048
+  ttl            = 5 ans
+  issuer_name    = "PFE-IoT-IntCA"
+  crl_url        = http://vault:8200/v1/pki_int/crl
+  ocsp_url       = http://vault:8200/v1/pki_int/ocsp
+  auto_rebuild   = true (toutes les 24 h)
+}
+
+class "**role-server**\n(certificats serveurs)" as ROLE_SERVER {
+  allowed_domains    = iot.lab
+  max_ttl            = 90 jours
+  key_usage          = serverAuth
+  generate_lease     = true
+  enforce_hostnames  = true
+  ---
+  Utilisateurs :
+  — Mosquitto (broker TLS)
+  — Vault (API HTTPS)
+}
+
+class "**role-device**\n(certificats clients IoT)" as ROLE_DEVICE {
+  allowed_domains    = iot.lab
+  max_ttl            = 30 jours
+  key_usage          = clientAuth
+  cn_validations     = pattern : dev-XXX.iot.lab
+  generate_lease     = true
+  ---
+  Utilisateurs :
+  — 50 dispositifs simulés
+  — Rotation automatique (< 30 j)
+}
+
+class "**Certificat révoqué**\n(CRL Vault)" as CRL {
+  endpoint   = /v1/pki_int/crl
+  format     = DER / PEM
+  auto-sign  = toutes les 24 h
+  ---
+  Scénario S6 :
+  vault write pki_int/revoke\n  serial=XX:YY:ZZ
+}
+
+ISSUER "1" --> "N" ROLE_SERVER : émet via\n/v1/pki_int/issue/role-server
+ISSUER "1" --> "N" ROLE_DEVICE : émet via\n/v1/pki_int/issue/role-device
+ISSUER --> CRL : publie et\nrenouvelle la CRL
+
+note bottom of ROLE_DEVICE
+  Séparation des rôles :
+  Un certificat role-device NE PEUT PAS
+  être utilisé pour s'authentifier comme
+  serveur (et vice-versa) — le champ
+  key_usage est vérifié par Mosquitto
+  lors du mTLS handshake.
+end note
+
+@enduml

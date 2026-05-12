@@ -382,14 +382,31 @@ Deux modèles complémentaires sont entraînés via \emph{scikit-learn}~\cite{sc
 \section{Captures d'écran des interfaces}
 \label{sec:re-captures}
 
+\paragraph{Partie 1 — Secrets engines et statuts.}
+Le diagramme (figure~\ref{fig:vault-ui-p1}) détaille ce qu'affiche l'interface~: les secrets engines, les méthodes d'authentification et la relation de signature entre la CA racine et la CA intermédiaire.
+
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=\textwidth]{vault-pki-hierarchy.png}
-\caption{Vault UI~: vue de la hiérarchie PKI (CA racine et CA intermédiaire actives)}
-\label{fig:cap-vault}
+\includegraphics[width=0.84\linewidth]{diag-vault-ui-part1.png}
+\caption{Vault UI --- Partie~1~: secrets engines PKI (pki\_root offline, pki\_int active) et méthodes d'authentification}
+\label{fig:vault-ui-p1}
 \end{figure}
+\FloatBarrier
 
-L'interface Vault confirme la structure à deux niveaux~: la CA racine (\emph{offline}) apparaît avec un statut \emph{expired} volontaire (sa clé privée n'est pas chargée en mémoire), tandis que la CA intermédiaire est marquée \emph{active} et prend en charge l'émission des certificats opérationnels.
+La CA racine (\texttt{pki\_root/}) apparaît avec un statut \emph{expired} volontaire~: sa clé privée n'est jamais chargée en mémoire pendant le fonctionnement normal~; elle n'a servi qu'à signer le CSR de la CA intermédiaire. La CA intermédiaire (\texttt{pki\_int/}) est marquée \emph{active} et prend en charge l'émission automatique des certificats via API REST.
+
+\paragraph{Partie 2 — Rôles et chaîne d'émission de la CA intermédiaire.}
+Le diagramme (figure~\ref{fig:vault-ui-p2}) zoome sur la configuration de \texttt{pki\_int/}~: ses deux rôles, les contraintes d'usage des clés et le mécanisme de révocation.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.88\linewidth]{diag-vault-ui-part2.png}
+\caption{Vault UI --- Partie~2~: détail de pki\_int — rôles role-server / role-device, CRL et séparation des usages}
+\label{fig:vault-ui-p2}
+\end{figure}
+\FloatBarrier
+
+La séparation des rôles est la mesure de sécurité centrale~: \texttt{role-server} (TTL~90~j, \texttt{serverAuth}) cible Mosquitto et Vault~; \texttt{role-device} (TTL~30~j, \texttt{clientAuth}, CN contraint au pattern \texttt{dev-XXX.iot.lab}) cible les 50 dispositifs simulés. Mosquitto vérifie le champ \texttt{key\_usage} lors du mTLS handshake~: un certificat \texttt{role-device} ne peut pas s'authentifier comme serveur, et inversement. En cas de compromission (scénario~S6), la révocation s'opère par \texttt{vault write pki\_int/revoke serial=...} et la CRL est régénérée automatiquement toutes les 24~heures.
 
 \begin{figure}[!htbp]
 \centering
