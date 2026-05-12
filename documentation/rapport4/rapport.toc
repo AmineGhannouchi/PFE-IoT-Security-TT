@@ -77,35 +77,36 @@
 \contentsline {section}{\numberline {5.1}Introduction}{50}{section.5.1}%
 \contentsline {section}{\numberline {5.2}Plan de tests}{50}{section.5.2}%
 \contentsline {section}{\numberline {5.3}Résultats de sécurité}{50}{section.5.3}%
-\contentsline {section}{\numberline {5.4}Résultats du module ML}{51}{section.5.4}%
-\contentsline {subsection}{\numberline {5.4.1}Isolation Forest}{51}{subsection.5.4.1}%
-\contentsline {subsection}{\numberline {5.4.2}Random Forest}{52}{subsection.5.4.2}%
-\contentsline {section}{\numberline {5.5}Résultats de performance}{55}{section.5.5}%
-\contentsline {subsection}{\numberline {5.5.1}Handshake TLS et latence}{55}{subsection.5.5.1}%
-\contentsline {subsection}{\numberline {5.5.2}Débit et RTT}{55}{subsection.5.5.2}%
-\contentsline {section}{\numberline {5.6}Limites identifiées}{57}{section.5.6}%
-\contentsline {section}{\numberline {5.7}Perspectives}{57}{section.5.7}%
-\contentsline {section}{\numberline {5.8}Conclusion}{58}{section.5.8}%
-\contentsline {chapter}{Conclusion générale}{59}{section*.147}%
-\contentsline {chapter}{Références bibliographiques}{61}{chapter*.148}%
-\contentsline {chapter}{\numberline {A}Scripts et Code Source}{63}{appendix.A}%
-\contentsline {section}{\numberline {A.1}Bootstrap de la PKI --- Vault API}{63}{section.A.1}%
-\contentsline {section}{\numberline {A.2}Émission du certificat Mosquitto}{66}{section.A.2}%
-\contentsline {section}{\numberline {A.3}Génération des certificats devices}{66}{section.A.3}%
-\contentsline {section}{\numberline {A.4}Génération du fichier ACL Mosquitto}{68}{section.A.4}%
-\contentsline {section}{\numberline {A.5}Tests de connectivité réseau}{68}{section.A.5}%
-\contentsline {section}{\numberline {A.6}Tests de performance MQTT}{70}{section.A.6}%
-\contentsline {section}{\numberline {A.7}Simulateur de flotte IoT}{71}{section.A.7}%
-\contentsline {section}{\numberline {A.8}Analyse des événements Suricata}{72}{section.A.8}%
-\contentsline {chapter}{\numberline {B}Fichiers de Configuration}{74}{appendix.B}%
-\contentsline {section}{\numberline {B.1}Configuration MikroTik CHR}{74}{section.B.1}%
-\contentsline {section}{\numberline {B.2}Configuration Mosquitto (TLS/mTLS)}{76}{section.B.2}%
-\contentsline {section}{\numberline {B.3}Configuration Suricata (MQTT natif)}{77}{section.B.3}%
-\contentsline {section}{\numberline {B.4}Règles Suricata personnalisées}{78}{section.B.4}%
-\contentsline {section}{\numberline {B.5}Règles Wazuh personnalisées}{79}{section.B.5}%
-\contentsline {section}{\numberline {B.6}Dockerfile du simulateur de flotte}{81}{section.B.6}%
-\contentsline {section}{\numberline {B.7}Dockerfile Toolbox}{81}{section.B.7}%
-\contentsline {section}{\numberline {B.8}Commandes de création des réseaux Docker}{82}{section.B.8}%
-\contentsline {section}{\numberline {B.9}Variables d'environnement du projet}{83}{section.B.9}%
+\contentsline {subsection}{\numberline {5.3.1}Validation par l'exécution~: preuves visuelles}{51}{subsection.5.3.1}%
+\contentsline {section}{\numberline {5.4}Résultats du module ML}{58}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}Isolation Forest}{58}{subsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.4.2}Random Forest}{60}{subsection.5.4.2}%
+\contentsline {section}{\numberline {5.5}Résultats de performance}{62}{section.5.5}%
+\contentsline {subsection}{\numberline {5.5.1}Handshake TLS et latence}{62}{subsection.5.5.1}%
+\contentsline {subsection}{\numberline {5.5.2}Débit et RTT}{63}{subsection.5.5.2}%
+\contentsline {section}{\numberline {5.6}Limites identifiées}{64}{section.5.6}%
+\contentsline {section}{\numberline {5.7}Perspectives}{64}{section.5.7}%
+\contentsline {section}{\numberline {5.8}Conclusion}{65}{section.5.8}%
+\contentsline {chapter}{Conclusion générale}{66}{section*.155}%
+\contentsline {chapter}{Références bibliographiques}{68}{chapter*.156}%
+\contentsline {chapter}{\numberline {A}Scripts et Code Source}{70}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Bootstrap de la PKI --- Vault API}{70}{section.A.1}%
+\contentsline {section}{\numberline {A.2}Émission du certificat Mosquitto}{73}{section.A.2}%
+\contentsline {section}{\numberline {A.3}Génération des certificats devices}{73}{section.A.3}%
+\contentsline {section}{\numberline {A.4}Génération du fichier ACL Mosquitto}{75}{section.A.4}%
+\contentsline {section}{\numberline {A.5}Tests de connectivité réseau}{75}{section.A.5}%
+\contentsline {section}{\numberline {A.6}Tests de performance MQTT}{77}{section.A.6}%
+\contentsline {section}{\numberline {A.7}Simulateur de flotte IoT}{78}{section.A.7}%
+\contentsline {section}{\numberline {A.8}Analyse des événements Suricata}{79}{section.A.8}%
+\contentsline {chapter}{\numberline {B}Fichiers de Configuration}{81}{appendix.B}%
+\contentsline {section}{\numberline {B.1}Configuration MikroTik CHR}{81}{section.B.1}%
+\contentsline {section}{\numberline {B.2}Configuration Mosquitto (TLS/mTLS)}{83}{section.B.2}%
+\contentsline {section}{\numberline {B.3}Configuration Suricata (MQTT natif)}{84}{section.B.3}%
+\contentsline {section}{\numberline {B.4}Règles Suricata personnalisées}{85}{section.B.4}%
+\contentsline {section}{\numberline {B.5}Règles Wazuh personnalisées}{86}{section.B.5}%
+\contentsline {section}{\numberline {B.6}Dockerfile du simulateur de flotte}{88}{section.B.6}%
+\contentsline {section}{\numberline {B.7}Dockerfile Toolbox}{88}{section.B.7}%
+\contentsline {section}{\numberline {B.8}Commandes de création des réseaux Docker}{89}{section.B.8}%
+\contentsline {section}{\numberline {B.9}Variables d'environnement du projet}{90}{section.B.9}%
 \xpg@aux {}{arabic}
 \xpg@aux {}{french}

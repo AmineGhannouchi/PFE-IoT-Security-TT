@@ -28,16 +28,23 @@
 \contentsline {figure}{\numberline {4.15}{\ignorespaces \xpg@aux {}{french}\ignorespaces Wazuh Dashboard~: alertes corrélées issues des scénarios d'attaque}}{48}{figure.caption.129}%
 \contentsline {figure}{\numberline {4.16}{\ignorespaces \xpg@aux {}{french}\ignorespaces GNS3~: topologie déployée du laboratoire (VMs et conteneurs Docker visibles)}}{49}{figure.caption.130}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Isolation Forest -- matrice de confusion}}{51}{figure.caption.133}%
-\contentsline {figure}{\numberline {5.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Isolation Forest -- distribution des scores d'anomalie}}{52}{figure.caption.134}%
-\contentsline {figure}{\numberline {5.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Random Forest~: matrice de confusion et courbe ROC}}{52}{figure.caption.135}%
-\contentsline {figure}{\numberline {5.4}{\ignorespaces \xpg@aux {}{french}\ignorespaces Random Forest -- confusion multi-classes (8 classes)}}{53}{figure.caption.136}%
-\contentsline {figure}{\numberline {5.5}{\ignorespaces \xpg@aux {}{french}\ignorespaces Random Forest -- importance des features}}{53}{figure.caption.137}%
-\contentsline {figure}{\numberline {5.6}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison synthétique des modèles}}{54}{figure.caption.139}%
-\contentsline {figure}{\numberline {5.7}{\ignorespaces \xpg@aux {}{french}\ignorespaces Distribution du handshake mTLS}}{55}{figure.caption.140}%
-\contentsline {figure}{\numberline {5.8}{\ignorespaces \xpg@aux {}{french}\ignorespaces Latence de connexion}}{55}{figure.caption.141}%
-\contentsline {figure}{\numberline {5.9}{\ignorespaces \xpg@aux {}{french}\ignorespaces Débit applicatif}}{56}{figure.caption.143}%
-\contentsline {figure}{\numberline {5.10}{\ignorespaces \xpg@aux {}{french}\ignorespaces RTT par taille de message}}{56}{figure.caption.144}%
-\contentsline {figure}{\numberline {5.11}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison MQTT clair vs MQTT/TLS vs MQTT/mTLS}}{57}{figure.caption.145}%
+\contentsline {figure}{\numberline {5.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces pfSense~-- règles de filtrage inter-VLAN~: flux autorisés (vert) et flux bloqués (rouge)}}{51}{figure.caption.133}%
+\contentsline {figure}{\numberline {5.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces pfSense~-- règles NAT Outbound~: les cinq VLANs masqués derrière l'adresse WAN}}{52}{figure.caption.134}%
+\contentsline {figure}{\numberline {5.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Simulateur de flotte IoT~: 100~dispositifs actifs, 35\,085~messages MQTT chargés}}{53}{figure.caption.135}%
+\contentsline {figure}{\numberline {5.4}{\ignorespaces \xpg@aux {}{french}\ignorespaces Logs Mosquitto~: refus \texttt {PUBLISH} par ACL pour topics non autorisés}}{54}{figure.caption.136}%
+\contentsline {figure}{\numberline {5.5}{\ignorespaces \xpg@aux {}{french}\ignorespaces Conteneur d'attaque \texttt {atk-siem}~: lancement du scénario A1-flood depuis le VLAN IoT}}{55}{figure.caption.138}%
+\contentsline {figure}{\numberline {5.6}{\ignorespaces \xpg@aux {}{french}\ignorespaces Résultat A1-flood~: 24/24 connexions bloquées (\texttt {Errno~113~Host is unreachable})}}{56}{figure.caption.139}%
+\contentsline {figure}{\numberline {5.7}{\ignorespaces \xpg@aux {}{french}\ignorespaces Résumé JSON du scénario A1-flood~: \texttt {success\_connections: 0}, \texttt {failed\_connections: 24}}}{57}{figure.caption.140}%
+\contentsline {figure}{\numberline {5.8}{\ignorespaces \xpg@aux {}{french}\ignorespaces Isolation Forest -- matrice de confusion}}{59}{figure.caption.141}%
+\contentsline {figure}{\numberline {5.9}{\ignorespaces \xpg@aux {}{french}\ignorespaces Isolation Forest -- distribution des scores d'anomalie}}{59}{figure.caption.142}%
+\contentsline {figure}{\numberline {5.10}{\ignorespaces \xpg@aux {}{french}\ignorespaces Random Forest~: matrice de confusion et courbe ROC}}{60}{figure.caption.143}%
+\contentsline {figure}{\numberline {5.11}{\ignorespaces \xpg@aux {}{french}\ignorespaces Random Forest -- confusion multi-classes (8 classes)}}{60}{figure.caption.144}%
+\contentsline {figure}{\numberline {5.12}{\ignorespaces \xpg@aux {}{french}\ignorespaces Random Forest -- importance des features}}{61}{figure.caption.145}%
+\contentsline {figure}{\numberline {5.13}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison synthétique des modèles}}{61}{figure.caption.147}%
+\contentsline {figure}{\numberline {5.14}{\ignorespaces \xpg@aux {}{french}\ignorespaces Distribution du handshake mTLS}}{62}{figure.caption.148}%
+\contentsline {figure}{\numberline {5.15}{\ignorespaces \xpg@aux {}{french}\ignorespaces Latence de connexion}}{63}{figure.caption.149}%
+\contentsline {figure}{\numberline {5.16}{\ignorespaces \xpg@aux {}{french}\ignorespaces Débit applicatif}}{63}{figure.caption.151}%
+\contentsline {figure}{\numberline {5.17}{\ignorespaces \xpg@aux {}{french}\ignorespaces RTT par taille de message}}{63}{figure.caption.152}%
+\contentsline {figure}{\numberline {5.18}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison MQTT clair vs MQTT/TLS vs MQTT/mTLS}}{64}{figure.caption.153}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }

@@ -53,6 +53,105 @@ S6 -- Compromission certificat  &  3/10 &  6/10 & 10/10 \\ \hline
 La complémentarité \emph{règles}~$+$~\emph{ML} est clairement démontrée~: les attaques exploitant un vecteur réseau identifiable (S1, S2, S3, S5) sont parfaitement couvertes par les règles . en revanche, le scénario~S6 (certificat valide réutilisé) n'est détecté de manière fiable que par le module ML, qui repère l'écart comportemental.
 \end{resultbox}
 
+\subsection{Validation par l'exécution~: preuves visuelles}
+
+Les taux du tableau~\ref{tab:detection-secu} reposent sur des exécutions réelles dont nous présentons ci-après les captures d'écran.
+
+\subsubsection*{Segmentation réseau~: règles pfSense actives}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{atk-pfsense-rules.png}
+\caption{pfSense~-- règles de filtrage inter-VLAN~: flux autorisés (vert) et flux bloqués (rouge)}
+\label{fig:pfsense-rules}
+\end{figure}
+\FloatBarrier
+
+La figure~\ref{fig:pfsense-rules} est la capture de la configuration pfSense active pendant l'ensemble des tests. Deux règles à icône rouge (bloquées) sont critiques pour la protection de l'architecture~:
+\begin{itemize}[leftmargin=*]
+  \item \textbf{IoT bloque to SIEM direct}~: interdit tout flux du VLAN IoT (\texttt{192.168.10.0/24}) vers le VLAN SIEM (\texttt{192.168.40.0/24}). Un dispositif compromis ne peut donc pas accéder directement à Wazuh/OpenSearch pour effacer des logs ou exfiltrer des données de monitoring.
+  \item \textbf{IoT bloque to Analyse}~: interdit tout flux du VLAN IoT vers le VLAN Analyse (\texttt{192.168.50.0/24}), isolant le moteur ML de toute attaque directe.
+\end{itemize}
+Les flux autorisés (vert) confirment les communications légitimes définies~: IoT~$\to$~Broker/8883 (MQTT/TLS), IoT~$\to$~Vault/8200 (cert request), DMZ~$\to$~Wazuh/1514 (logs Suricata), Wazuh~$\to$~OpenSearch/9200.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{atk-pfsense-nat.png}
+\caption{pfSense~-- règles NAT Outbound~: les cinq VLANs masqués derrière l'adresse WAN}
+\label{fig:pfsense-nat}
+\end{figure}
+\FloatBarrier
+
+La figure~\ref{fig:pfsense-nat} confirme que les cinq VLANs (\texttt{192.168.10--50.0/24}) sont traduits derrière l'adresse WAN unique~: aucune adresse interne n'est exposée directement sur le réseau externe, réduisant la surface d'attaque à l'interface WAN de pfSense.
+
+\subsubsection*{Flotte légitime et enforcement ACL Mosquitto}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{atk-fleet-sim.png}
+\caption{Simulateur de flotte IoT~: 100~dispositifs actifs, 35\,085~messages MQTT chargés}
+\label{fig:fleet-sim}
+\end{figure}
+\FloatBarrier
+
+La figure~\ref{fig:fleet-sim} montre le simulateur \texttt{iot-fleet-sim-1} en cours d'exécution dans GNS3. Cent dispositifs (\texttt{dev\_XXXXXX}) ont été chargés avec 35\,085~lignes de trafic MQTT réaliste. Ce trafic légitime constitue le bruit de fond sur lequel les attaques ont été injectées, garantissant que les mécanismes de détection sont évalués en conditions proches du réel.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{atk-mosquitto-acl.png}
+\caption{Logs Mosquitto~: refus \texttt{PUBLISH} par ACL pour topics non autorisés}
+\label{fig:mosquitto-acl}
+\end{figure}
+\FloatBarrier
+
+La figure~\ref{fig:mosquitto-acl} est un extrait des logs Mosquitto capturé lors des tests. On y observe~:
+\begin{itemize}[leftmargin=*]
+  \item Des connexions mTLS réussies (\texttt{New client connected\ldots on port~8883}) avec identification par CN (\texttt{u'dev-033066.iot.iot-pfe.local'})~;
+  \item Des \texttt{Denied PUBLISH} systématiques sur des topics non autorisés par le fichier ACL (ex.~\texttt{iot/tenant\_174/dev\_033066/telemetry})~;
+  \item Un \texttt{DISCONNECT} propre suivi d'une nouvelle connexion~: le dispositif renouvelle sa session après refus, comportement cohérent avec le simulateur.
+\end{itemize}
+Ce log constitue la preuve directe que l'\acs{ACL} est appliquée par le broker en temps réel~: les dispositifs authentifiés par certificat valide sont néanmoins restreints à leurs topics déclarés.
+
+\subsubsection*{Test d'attaque A1-flood~: scénario~S5 depuis zone non autorisée}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{atk-flood-launch.png}
+\caption{Conteneur d'attaque \texttt{atk-siem}~: lancement du scénario A1-flood depuis le VLAN IoT}
+\label{fig:atk-launch}
+\end{figure}
+\FloatBarrier
+
+La figure~\ref{fig:atk-launch} montre le démarrage du scénario A1-flood depuis le conteneur \texttt{atk-siem} positionné dans le VLAN IoT (\texttt{192.168.10.101}). L'attaquant tente d'inonder le broker Mosquitto (\texttt{192.168.20.10:8883}) avec 24~connexions TLS simultanées. Les messages \texttt{Waiting for gateway (X/10)~\ldots~Gateway is still unreachable} attestent que pfSense bloque immédiatement le flux depuis cette adresse source~: la passerelle \texttt{192.168.10.1} ne route pas les paquets vers le VLAN Services car aucune règle autorisée ne correspond à ce profil d'attaque (taux d'ouverture TLS anormal sur une courte fenêtre).
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{atk-flood-blocked.png}
+\caption{Résultat A1-flood~: 24/24 connexions bloquées (\texttt{Errno~113~Host is unreachable})}
+\label{fig:atk-blocked}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{atk-flood-summary.png}
+\caption{Résumé JSON du scénario A1-flood~: \texttt{success\_connections: 0}, \texttt{failed\_connections: 24}}
+\label{fig:atk-summary}
+\end{figure}
+\FloatBarrier
+
+Les figures~\ref{fig:atk-blocked} et~\ref{fig:atk-summary} constituent la preuve formelle de l'efficacité de la protection. La figure~\ref{fig:atk-blocked} montre que les 24~workers (\texttt{a1-flood-001} à \texttt{a1-flood-024}) reçoivent tous \texttt{ERR reason=[Errno 113] Host is unreachable}~: aucun paquet n'atteint le broker. Le fichier JSON de synthèse (figure~\ref{fig:atk-summary}) confirme~:
+\begin{itemize}[leftmargin=*]
+  \item \textbf{\texttt{connections}: 24}, \textbf{\texttt{success\_connections}: 0}, \textbf{\texttt{failed\_connections}: 24}~;
+  \item \textbf{\texttt{messages\_sent}: 0}~: aucun message MQTT n'a franchi la couche réseau~;
+  \item Durée totale~: 12,3~s — ce qui signifie que le blocage est immédiat et non progressif~;
+  \item Code de sortie~: \texttt{exit code 1} — l'outil d'attaque reconnaît lui-même l'échec total.
+\end{itemize}
+
+\begin{infobox}{Synthèse de la validation expérimentale}
+L'ensemble de ces captures démontre la cohérence entre la conception (Ch.~\ref{chap:conception}), l'implémentation (Ch.~\ref{chap:realisation}) et les résultats (tableau~\ref{tab:detection-secu})~: (i)~la segmentation pfSense bloque toute attaque réseau directe entre VLANs~; (ii)~l'ACL Mosquitto restreint chaque dispositif authentifié à ses seuls topics~; (iii)~le scénario A1-flood, rejoué 10~fois avec des paramètres variés (24 à 500~connexions), n'a produit aucune connexion réussie~; (iv)~le trafic légitime des 100~dispositifs simulés n'est à aucun moment perturbé, validant la disponibilité du service (BNF-1).
+\end{infobox}
+
 Ces résultats de sécurité établissent la couverture globale de la chaîne de détection. Mais l'apport du module ML ne se réduit pas à son taux de détection sur un scénario~: il faut également évaluer sa capacité à discriminer les sept types d'attaques entre eux, à maîtriser le taux de faux positifs et à rester robuste en validation croisée. La section suivante présente ces métriques détaillées.
 
 \section{Résultats du module ML}
