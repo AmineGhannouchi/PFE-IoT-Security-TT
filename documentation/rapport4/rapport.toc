@@ -55,39 +55,42 @@
 \contentsline {subsection}{\numberline {3.5.1}Diagramme de classes du simulateur}{28}{subsection.3.5.1}%
 \contentsline {subsection}{\numberline {3.5.2}Diagramme de séquence~: émission d'un certificat client}{29}{subsection.3.5.2}%
 \contentsline {subsection}{\numberline {3.5.3}Diagramme d'activité~: cycle de publication mTLS}{30}{subsection.3.5.3}%
-\contentsline {section}{\numberline {3.6}Diagramme de Gantt}{32}{section.3.6}%
-\contentsline {section}{\numberline {3.7}Conclusion}{32}{section.3.7}%
-\contentsline {chapter}{\numberline {4}Réalisation}{33}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Introduction}{33}{section.4.1}%
-\contentsline {section}{\numberline {4.2}Environnement de développement}{33}{section.4.2}%
-\contentsline {section}{\numberline {4.3}Architecture globale et topologie réseau}{34}{section.4.3}%
-\contentsline {subsection}{\numberline {4.3.1}Architecture de déploiement}{34}{subsection.4.3.1}%
-\contentsline {subsection}{\numberline {4.3.2}Topologie réseau}{35}{subsection.4.3.2}%
-\contentsline {section}{\numberline {4.4}Infrastructure à clés publiques (Vault)}{38}{section.4.4}%
-\contentsline {subsection}{\numberline {4.4.1}Hiérarchie}{38}{subsection.4.4.1}%
-\contentsline {subsection}{\numberline {4.4.2}Rôles Vault et émission}{40}{subsection.4.4.2}%
-\contentsline {section}{\numberline {4.5}Broker MQTT en TLS 1.3 + mTLS}{40}{section.4.5}%
-\contentsline {section}{\numberline {4.6}Scénarios d'attaque et contre-mesures}{42}{section.4.6}%
-\contentsline {section}{\numberline {4.7}Pipeline d'apprentissage automatique}{45}{section.4.7}%
-\contentsline {subsection}{\numberline {4.7.1}Données et features}{45}{subsection.4.7.1}%
-\contentsline {subsection}{\numberline {4.7.2}Modèles}{47}{subsection.4.7.2}%
-\contentsline {section}{\numberline {4.8}Captures d'écran des interfaces}{48}{section.4.8}%
-\contentsline {section}{\numberline {4.9}Conclusion}{49}{section.4.9}%
-\contentsline {chapter}{\numberline {5}Tests, résultats et validation}{50}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Introduction}{50}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Plan de tests}{50}{section.5.2}%
-\contentsline {section}{\numberline {5.3}Résultats de sécurité}{50}{section.5.3}%
-\contentsline {subsection}{\numberline {5.3.1}Validation par l'exécution~: preuves visuelles}{51}{subsection.5.3.1}%
-\contentsline {section}{\numberline {5.4}Résultats du module ML}{58}{section.5.4}%
-\contentsline {subsection}{\numberline {5.4.1}Isolation Forest}{58}{subsection.5.4.1}%
-\contentsline {subsection}{\numberline {5.4.2}Random Forest}{60}{subsection.5.4.2}%
-\contentsline {section}{\numberline {5.5}Résultats de performance}{62}{section.5.5}%
-\contentsline {subsection}{\numberline {5.5.1}Handshake TLS et latence}{62}{subsection.5.5.1}%
-\contentsline {subsection}{\numberline {5.5.2}Débit et RTT}{63}{subsection.5.5.2}%
-\contentsline {section}{\numberline {5.6}Limites identifiées}{64}{section.5.6}%
-\contentsline {section}{\numberline {5.7}Perspectives}{64}{section.5.7}%
-\contentsline {section}{\numberline {5.8}Conclusion}{65}{section.5.8}%
-\contentsline {chapter}{Conclusion générale}{66}{section*.155}%
-\contentsline {chapter}{Références bibliographiques}{68}{chapter*.156}%
+\contentsline {paragraph}{Phase 1 — Initialisation de la flotte.}{30}{paragraph*.111}%
+\contentsline {paragraph}{Phase 2 — Provisionnement et connexion mTLS.}{30}{paragraph*.113}%
+\contentsline {paragraph}{Phase 3 — Boucle de publication.}{32}{paragraph*.115}%
+\contentsline {section}{\numberline {3.6}Diagramme de Gantt}{34}{section.3.6}%
+\contentsline {section}{\numberline {3.7}Conclusion}{34}{section.3.7}%
+\contentsline {chapter}{\numberline {4}Réalisation}{35}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Introduction}{35}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Environnement de développement}{35}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Architecture globale et topologie réseau}{36}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Architecture de déploiement}{36}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Topologie réseau}{37}{subsection.4.3.2}%
+\contentsline {section}{\numberline {4.4}Infrastructure à clés publiques (Vault)}{40}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Hiérarchie}{40}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}Rôles Vault et émission}{42}{subsection.4.4.2}%
+\contentsline {section}{\numberline {4.5}Broker MQTT en TLS 1.3 + mTLS}{42}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Scénarios d'attaque et contre-mesures}{44}{section.4.6}%
+\contentsline {section}{\numberline {4.7}Pipeline d'apprentissage automatique}{47}{section.4.7}%
+\contentsline {subsection}{\numberline {4.7.1}Données et features}{47}{subsection.4.7.1}%
+\contentsline {subsection}{\numberline {4.7.2}Modèles}{49}{subsection.4.7.2}%
+\contentsline {section}{\numberline {4.8}Captures d'écran des interfaces}{50}{section.4.8}%
+\contentsline {section}{\numberline {4.9}Conclusion}{51}{section.4.9}%
+\contentsline {chapter}{\numberline {5}Tests, résultats et validation}{52}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Introduction}{52}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Plan de tests}{52}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Résultats de sécurité}{52}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Validation par l'exécution~: preuves visuelles}{53}{subsection.5.3.1}%
+\contentsline {section}{\numberline {5.4}Résultats du module ML}{60}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}Isolation Forest}{60}{subsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.4.2}Random Forest}{62}{subsection.5.4.2}%
+\contentsline {section}{\numberline {5.5}Résultats de performance}{64}{section.5.5}%
+\contentsline {subsection}{\numberline {5.5.1}Handshake TLS et latence}{64}{subsection.5.5.1}%
+\contentsline {subsection}{\numberline {5.5.2}Débit et RTT}{65}{subsection.5.5.2}%
+\contentsline {section}{\numberline {5.6}Limites identifiées}{66}{section.5.6}%
+\contentsline {section}{\numberline {5.7}Perspectives}{66}{section.5.7}%
+\contentsline {section}{\numberline {5.8}Conclusion}{67}{section.5.8}%
+\contentsline {chapter}{Conclusion générale}{68}{section*.160}%
+\contentsline {chapter}{Références bibliographiques}{70}{chapter*.161}%
 \xpg@aux {}{arabic}
 \xpg@aux {}{french}

@@ -1,0 +1,38 @@
+@startuml diag-activity-part2
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam ActivityBackgroundColor #E3F2FD
+skinparam ActivityBorderColor #1565C0
+
+title Activité --- Partie 2 : Provisionnement et connexion mTLS
+
+start
+
+:Charger le certificat X.509\ndu dispositif (émis par Vault);
+
+:Charger la clé privée\net le certificat CA;
+
+if (Fichiers valides ?) then (oui)
+
+  :Configurer le client MQTT\navec TLS 1.3 / mTLS;
+
+  :Établir connexion vers\nMosquitto (port 8883)\nHandshake TLS mutuel;
+
+  if (Connexion réussie ?) then (oui)
+    :Connexion mTLS établie\n→ Passer à la Partie 3;
+    stop
+  else (non)
+    :Logger l'erreur;
+    :Attente back-off\nexponentiel;
+    :Réessayer (max 3 fois);
+    stop
+  endif
+
+else (non)
+  :Arrêt immédiat\n(certificat ou clé invalide);
+  stop
+endif
+
+@enduml

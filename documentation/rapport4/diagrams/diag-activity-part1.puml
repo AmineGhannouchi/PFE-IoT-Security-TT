@@ -1,0 +1,33 @@
+@startuml diag-activity-part1
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam ActivityBackgroundColor #E3F2FD
+skinparam ActivityBorderColor #1565C0
+
+title Activité --- Partie 1 : Initialisation de la flotte
+
+start
+
+:Charger le dataset CSV\n(76 000 événements, 7 classes);
+
+:Charger la configuration\ndu broker (IP, port 8883);
+
+:Initialiser 50 threads\n(un par dispositif simulé);
+
+fork
+  :Thread Device-001;
+fork again
+  :Thread Device-002;
+fork again
+  :...;
+fork again
+  :Thread Device-050;
+end fork
+
+:Chaque thread démarre\nson cycle de provisionnement;
+
+stop
+
+@enduml

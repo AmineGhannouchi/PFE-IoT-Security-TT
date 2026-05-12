@@ -1,0 +1,49 @@
+@startuml diag-activity-part3
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam ActivityBackgroundColor #E3F2FD
+skinparam ActivityBorderColor #1565C0
+
+title Activité --- Partie 3 : Boucle de publication MQTT
+
+start
+
+:Récupérer le sous-ensemble\nd'événements CSV assigné\n(stratified sampling);
+
+repeat
+
+  :Lire l'événement suivant\ndu dataset;
+
+  :Formater le payload JSON\n(type, valeur, timestamp);
+
+  if (Événement de type attaque ?) then (oui)
+    :Adapter le comportement\n(DoS: accélérer fréquence\nReplay: dupliquer\nMiTM: modifier payload);
+  else (non)
+    :Publication normale;
+  endif
+
+  :Publier sur le topic MQTT\niot/sensors/device-XXX/{type};
+
+  :Attendre l'intervalle\ninter-messages;
+
+repeat while (Événements restants ?) is (oui)
+-> non;
+
+:Déconnecter le client MQTT;
+
+:Agréger les statistiques\n(messages envoyés, erreurs, durée);
+
+stop
+
+note right
+  Résultats obtenus :
+  — 76 000 messages publiés
+  — 0 % de perte (QoS 1)
+  — 50 connexions TLS simultanées
+  — Durée : ~30 minutes
+  — Capture : 127 MB (pcap)
+end note
+
+@enduml
