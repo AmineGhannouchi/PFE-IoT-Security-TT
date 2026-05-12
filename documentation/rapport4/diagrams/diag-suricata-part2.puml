@@ -1,0 +1,59 @@
+@startuml diag-suricata-part2
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam ActivityBackgroundColor #FFF3E0
+skinparam ActivityBorderColor #E65100
+skinparam ArrowColor #555555
+skinparam NoteBackgroundColor #FFFDE7
+skinparam NoteBorderColor #F9A825
+
+title Chaîne de détection --- Partie 2\nApplication des règles SID et génération d'alertes
+
+start
+
+:Métadonnées MQTT disponibles\n(issues de la Partie 1);
+
+partition "Règles de détection MQTT (SID custom)" {
+
+  if (**SID 9000001** — Flood connexions\n> 50 CONNECT en 10 s\ndepuis la même IP source ?) then (déclenché)
+    :Générer alerte\n**"IoT DoS — MQTT connection flood"**\nCatégorie : Denial of Service\nSévérité : 2 (High);
+  else (non)
+  endif
+
+  if (**SID 9000002** — Topic suspect\ntopic commence par "cmd/" ?) then (déclenché)
+    :Générer alerte\n**"IoT Suspicious command topic"**\nCatégorie : Policy Violation\nSévérité : 3 (Medium);
+  else (non)
+  endif
+
+  if (**SID 9000003** — Payload surdimensionné\ntaille payload MQTT > 4 096 octets ?) then (déclenché)
+    :Générer alerte\n**"IoT Oversized MQTT payload"**\nCatégorie : Attempted Intrusion\nSévérité : 2 (High);
+  else (non)
+  endif
+
+  if (**SID 9000004** — Scan broker\n> 20 CONNECT en 5 s\nsans SUBSCRIBE ?) then (déclenché)
+    :Générer alerte\n**"IoT MQTT broker scanning"**\nCatégorie : Network Scan\nSévérité : 3 (Medium);
+  else (non)
+  endif
+
+}
+
+if (Au moins une alerte générée ?) then (oui)
+  :→ **Passer en Partie 3**\n(écriture EVE JSON + ingestion Wazuh);
+else (non)
+  :Trafic normal — aucune alerte;
+  stop
+endif
+
+note right
+  Résultats sur 76 000 messages :
+  — SID 9000001 : 23 alertes (DoS)
+  — SID 9000002 :  4 alertes (cmd)
+  — SID 9000003 : 15 alertes (injection)
+  — SID 9000004 :  9 alertes (scan)
+  — Total : 51 alertes
+  — Faux positifs : 0
+end note
+
+@enduml

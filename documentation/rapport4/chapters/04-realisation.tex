@@ -273,13 +273,33 @@ Six scénarios ont été conçus pour couvrir les principales catégories d'atta
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.75\linewidth,height=0.66\textheight,keepaspectratio]{diag-suricata-detection.png}
-\caption{Chaîne de détection Suricata~\textrightarrow~Wazuh (IDS+SIEM)}
-\label{fig:detection}
+\includegraphics[width=0.90\linewidth]{diag-suricata-part1.png}
+\caption{Chaîne de détection Suricata~\textrightarrow~Wazuh --- Partie~1~: capture AF\_PACKET et décodage MQTT}
+\label{fig:detection-p1}
 \end{figure}
 \FloatBarrier
 
-Le diagramme décrit le flux d'une alerte depuis sa génération jusqu'à sa restitution à l'analyste. Suricata analyse le trafic en mode passif (port miroir MikroTik) et produit des événements au format \texttt{EVE JSON} dans \texttt{/var/log/suricata/eve.json}. L'agent Filebeat (déployé sur le conteneur Suricata) lit ce fichier et le transmet au serveur Wazuh via le protocole Syslog/1514. Wazuh applique ses décodeurs XML (parsing du champ \texttt{alert.signature}) et ses règles de corrélation (par exemple~: si plus de 5~alertes \texttt{ET MQTT brute-force} en moins de 60~s depuis la même IP source, escalader en alarme critique). OpenSearch indexe les événements et le tableau de bord Wazuh les restitue à l'analyste avec des visualisations filtrable par type d'attaque, VLAN source et période.
+La première étape (figure~\ref{fig:detection-p1}) couvre l'inspection passive du trafic~: Suricata reçoit une copie du trafic VLAN~20 via le port miroir MikroTik (AF\_PACKET, zéro copie, aucun impact sur la latence MQTT). Il décode la pile Ethernet→IP→TCP→TLS~1.3, puis active le parseur applicatif MQTT sur le port~8883 pour extraire les métadonnées~: type de paquet, topic, QoS, taille de payload et \texttt{client\_id}.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.73\linewidth]{diag-suricata-part2.png}
+\caption{Chaîne de détection Suricata~\textrightarrow~Wazuh --- Partie~2~: application des règles SID et génération d'alertes}
+\label{fig:detection-p2}
+\end{figure}
+\FloatBarrier
+
+La deuxième étape (figure~\ref{fig:detection-p2}) applique les quatre règles SID personnalisées~: \textbf{SID~9000001} (flood~: >~50 CONNECT en 10~s depuis la même IP, 23~déclenchements)~; \textbf{SID~9000002} (topic suspect \texttt{cmd/}, 4~déclenchements)~; \textbf{SID~9000003} (payload~>~4~096~octets, 15~déclenchements)~; \textbf{SID~9000004} (scan broker~: >~20 CONNECT en 5~s sans SUBSCRIBE, 9~déclenchements). Total~: 51~alertes sur 76~000~messages, 0~faux positif sur le trafic TLS normal.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.73\linewidth]{diag-suricata-part3.png}
+\caption{Chaîne de détection Suricata~\textrightarrow~Wazuh --- Partie~3~: EVE JSON → Filebeat → Wazuh → OpenSearch → Dashboard}
+\label{fig:detection-p3}
+\end{figure}
+\FloatBarrier
+
+La troisième étape (figure~\ref{fig:detection-p3}) décrit le pipeline d'ingestion~: Suricata écrit chaque alerte dans \texttt{eve.json} (champs~: \texttt{timestamp}, \texttt{src\_ip}, \texttt{alert.signature}, \texttt{mqtt.topic}), Filebeat le transmet à Wazuh via Syslog/1514. Wazuh applique ses décodeurs XML puis ses règles de corrélation (ex.~: >~5~alertes SID~9000001 en~<~60~s → escalade niveau~12 «~MQTT DoS flood confirmé~»). OpenSearch indexe les événements et le tableau de bord les restitue à l'analyste SOC avec filtrage par type d'attaque, VLAN source et période. La latence bout-en-bout est inférieure à 2~secondes.
 
 \section{Pipeline d'apprentissage automatique}
 \label{sec:re-ml}

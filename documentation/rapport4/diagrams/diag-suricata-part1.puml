@@ -1,0 +1,49 @@
+@startuml diag-suricata-part1
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam ActivityBackgroundColor #FFF3E0
+skinparam ActivityBorderColor #E65100
+skinparam ArrowColor #555555
+skinparam NoteBackgroundColor #FFFDE7
+skinparam NoteBorderColor #F9A825
+
+title Chaîne de détection --- Partie 1\nCapture réseau et décodage MQTT
+
+start
+
+:Recevoir le trafic réseau\n(port miroir MikroTik sur eth1.20 — VLAN DMZ);
+
+:Capture via **AF_PACKET**\n(mode haute performance, zéro copie);
+
+:Décoder les couches réseau\n(Ethernet → IP → TCP → TLS);
+
+if (Port destination = 8883 ?) then (oui)
+  :Inspecter l'enveloppe TLS 1.3\n(ClientHello / ServerHello);
+
+  if (Certificat client valide ?) then (oui)
+    :Activer le **parseur applicatif MQTT**\n(app-layer-protocol: mqtt);
+
+    :Extraire les métadonnées MQTT\n— type de paquet (CONNECT, PUBLISH, SUBSCRIBE)\n— topic\n— QoS (0/1/2)\n— taille du payload\n— client_id;
+
+    :→ **Passer en Partie 2**\n(application des règles de détection);
+  else (non — cert invalide)
+    :Générer alerte TLS\n"invalid client certificate"\nSID 9000005;
+    stop
+  endif
+
+else (non — autre port)
+  :Appliquer les règles standard\n(ET Open Ruleset, Suricata built-in);
+  stop
+endif
+
+note right
+  Interface de capture :
+  eth0 (port miroir MikroTik)
+  Mode : AF_PACKET
+  Suricata v7.0 — passif (hors chemin)
+  Pas d'impact sur la latence MQTT
+end note
+
+@enduml

@@ -1,0 +1,53 @@
+@startuml diag-suricata-part3
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam ActivityBackgroundColor #E3F2FD
+skinparam ActivityBorderColor #1565C0
+skinparam ArrowColor #555555
+skinparam NoteBackgroundColor #E8F5E9
+skinparam NoteBorderColor #388E3C
+
+title Chaîne de détection --- Partie 3\nEVE JSON → Filebeat → Wazuh → OpenSearch → Dashboard
+
+start
+
+:Alerte générée par Suricata\n(issue de la Partie 2);
+
+:Écrire l'événement dans\n**/var/log/suricata/eve.json**\n(format EVE JSON)\n— timestamp, src_ip, dst_ip, proto\n— alert.signature, alert.category\n— alert.severity, alert.sid\n— mqtt.topic, mqtt.qos, mqtt.payload_len;
+
+:Filebeat surveille le fichier eve.json\n(module Suricata, poll 1 s);
+
+:Filebeat transmet à Wazuh Manager\nvia **Syslog/TCP port 1514**;
+
+partition "Traitement Wazuh" {
+
+  :Décodeur XML parse\nalert.signature et alert.category;
+
+  if (> 5 alertes SID 9000001\nen < 60 s — même IP source ?) then (oui)
+    :Escalader en **alarme critique**\n(niveau Wazuh 12)\n"MQTT DoS flood confirmé";
+  else (non)
+    :Créer alerte standard\n(niveau Wazuh selon sévérité Suricata);
+  endif
+
+  :Appliquer règles de corrélation\n(IP source ↔ identité certificat\nvia logs Mosquitto);
+
+}
+
+:OpenSearch indexe l'événement\n(index : wazuh-alerts-4.x-YYYY.MM.DD);
+
+:Tableau de bord Wazuh\nrestitue les alertes à l'analyste SOC\n— filtrage par type, VLAN, période\n— heatmap source IP\n— timeline des incidents;
+
+stop
+
+note right
+  Pipeline de données :
+  eve.json → Filebeat → port 1514
+  → Wazuh Manager (décodeurs XML)
+  → OpenSearch port 9200
+  → Dashboard port 5601
+  Latence typique : < 2 s
+end note
+
+@enduml
