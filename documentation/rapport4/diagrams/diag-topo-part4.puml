@@ -1,0 +1,64 @@
+@startuml diag-topo-part4
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam shadowing false
+skinparam node {
+  BackgroundColor #FAFAFA
+  BorderColor #555555
+}
+
+title Topologie réseau --- Partie 4 : Politique de filtrage inter-VLAN\nRègles pfSense (deny-by-default)
+
+node "pfSense CE\nFirewall inter-VLAN\nDeny-by-default" as PFSENSE #EDE7F6
+
+node "VLAN 10\nZone IoT\n192.168.10.0/24" as V10 #E8F5E9
+node "VLAN 20\nZone DMZ\n192.168.20.0/24" as V20 #FFF9C4
+node "VLAN 30\nZone PKI\n192.168.30.0/24" as V30 #FCE4EC
+node "VLAN 40\nZone SIEM\n192.168.40.0/24" as V40 #E3F2FD
+
+V10 -right-> V20 : ACCEPT\nMQTT 8883/tcp
+V10 -down->  V30 : ACCEPT\nVault API 8200/tcp
+V20 -right-> V40 : ACCEPT\nSyslog 1514/tcp\nEVE JSON (Filebeat)
+V30 -down->  V40 : ACCEPT\nWazuh agent 1514/tcp
+
+V10 -[#CC0000,dashed]-> V40 : DROP (IoT → SIEM)
+V20 -[#CC0000,dashed]-> V30 : DROP (DMZ → PKI direct)
+
+note bottom of PFSENSE
+  Règle implicite finale :
+  any → any : DROP (deny-by-default)
+  ——————————————————————————————
+  Seuls les flux ci-dessus sont ACCEPT.
+  Tout flux non listé est bloqué
+  sans notification à la source.
+end note
+
+note top of V10
+  Sources :
+  fleet-simulator (.100)
+  device-001..050 (.11–.60)
+end note
+
+note top of V20
+  Hôtes :
+  Mosquitto (.10) port 8883
+  Suricata (.20) mode passif
+end note
+
+note bottom of V30
+  Hôtes :
+  Vault (.10) port 8200
+  CA intermédiaire active
+end note
+
+note bottom of V40
+  Hôtes :
+  Wazuh Manager (.10)
+  ML Engine (.20)
+  OpenSearch (.10:9200)
+  Dashboard (.10:5601)
+end note
+
+@enduml

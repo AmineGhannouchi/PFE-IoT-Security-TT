@@ -1,0 +1,49 @@
+@startuml diag-topo-part1
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam linetype ortho
+skinparam shadowing false
+skinparam node {
+  BackgroundColor #F5F5F5
+  BorderColor #555555
+}
+
+title Topologie réseau --- Partie 1 : Infrastructure réseau\npfSense, MikroTik et segmentation VLAN (vue globale)
+
+cloud "Internet\n(WAN)" as INET #E0E0E0
+
+node "pfSense CE\nFirewall / NAT / VPN\nWAN : DHCP (FAI)\nLAN : 192.168.1.1/24" as PFSENSE #EDE7F6
+
+node "MikroTik CHR v7\nRouteur L3 / Switch Inter-VLAN\n192.168.1.2/24 (uplink)\nTrunk 802.1Q (4 VLANs)" as MIKROTIK #D1C4E9
+
+rectangle "Sous-interfaces VLAN sur MikroTik" #FAFAFA {
+  node "eth1.10\nVLAN 10 — IoT\nGW : 192.168.10.1" as V10 #E8F5E9
+  node "eth1.20\nVLAN 20 — DMZ\nGW : 192.168.20.1" as V20 #FFF9C4
+  node "eth1.30\nVLAN 30 — PKI\nGW : 192.168.30.1" as V30 #FCE4EC
+  node "eth1.40\nVLAN 40 — SIEM\nGW : 192.168.40.1" as V40 #E3F2FD
+}
+
+INET -down-> PFSENSE : Accès WAN
+PFSENSE -down-> MIKROTIK : LAN 802.1Q\n(Trunk)
+MIKROTIK -down-> V10
+MIKROTIK -down-> V20
+MIKROTIK -down-> V30
+MIKROTIK -down-> V40
+
+note right of PFSENSE
+  Politique globale :
+  NAT masquerade sur WAN
+  Deny-by-default inter-VLAN
+  Règles explicites ACCEPT
+  (voir Partie 4)
+end note
+
+note right of MIKROTIK
+  Port miroir activé :
+  eth1.20 (DMZ) → eth0.20
+  Copie passive vers Suricata
+end note
+
+@enduml

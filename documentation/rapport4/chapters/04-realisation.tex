@@ -78,15 +78,51 @@ La figure~\ref{fig:archi-p2} détaille les stacks de traitement backend~: \textb
 
 \subsection{Topologie réseau}
 
+La topologie réseau déployée dans GNS3 est présentée en quatre parties pour plus de clarté~: la vue globale de l'infrastructure (P1), les zones productrices de données MQTT (P2), les zones de traitement PKI et SIEM (P3), et la politique de filtrage inter-VLAN (P4).
+
+\paragraph{Partie 1 — Infrastructure réseau et segmentation VLAN.}
+La figure~\ref{fig:topo-p1} montre la chaîne physique/logique complète~: Internet → pfSense CE (firewall/NAT, politique deny-by-default) → MikroTik CHR~v7 (routeur L3, trunk 802.1Q). Le MikroTik expose quatre sous-interfaces VLAN~: eth1.10 (IoT, \texttt{192.168.10.0/24}), eth1.20 (DMZ, \texttt{192.168.20.0/24}), eth1.30 (PKI, \texttt{192.168.30.0/24}), eth1.40 (SIEM, \texttt{192.168.40.0/24}). Le port miroir sur eth1.20 copie passivement le trafic DMZ vers Suricata.
+
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=\textwidth]{diag-topologie-reseau.png}
-\caption{Topologie réseau détaillée~: VLANs, plan d'adressage IP et politique de filtrage}
-\label{fig:topo}
+\includegraphics[width=0.90\linewidth]{diag-topo-part1.png}
+\caption{Topologie réseau --- Partie~1~: infrastructure réseau, pfSense, MikroTik et segmentation en 4 VLANs}
+\label{fig:topo-p1}
 \end{figure}
 \FloatBarrier
 
-La figure~\ref{fig:topo} détaille la topologie réseau effective déployée dans GNS3. Quatre VLANs sont isolés~: le VLAN \textbf{IoT} (\texttt{192.168.10.0/24}) concentre les 50 dispositifs simulés~; le VLAN \textbf{Services/DMZ} (\texttt{192.168.20.0/24}) héberge le broker Mosquitto et les passerelles~; le VLAN \textbf{PKI} (\texttt{192.168.30.0/24}) isole Vault dont l'API REST est accessible uniquement depuis les zones autorisées~; le VLAN \textbf{SIEM/Monitoring} (\texttt{192.168.40.0/24}) regroupe Suricata, Wazuh et OpenSearch. pfSense applique une politique \emph{deny-by-default} à tous les flux inter-VLAN et n'autorise que les flux explicitement définis dans les règles (MQTT/8883, Vault API/8200, Syslog/1514). Le port miroir MikroTik sur le segment DMZ permet à Suricata d'analyser passivement la totalité du trafic MQTT sans être dans le chemin de données.
+\paragraph{Partie 2 — VLAN 10 (Zone IoT) et VLAN 20 (Zone DMZ).}
+La figure~\ref{fig:topo-p2} détaille les deux zones productrices de trafic. Le VLAN~10 (\texttt{192.168.10.0/24}) concentre le simulateur de flotte (\texttt{192.168.10.100}) et les 50~dispositifs virtuels (\texttt{.11}–\texttt{.60}), chacun porteur d'un certificat X.509 individuel. Le VLAN~20 DMZ (\texttt{192.168.20.0/24}) héberge Mosquitto~v2.0 (\texttt{192.168.20.10}, port~8883, TLS~1.3 + mTLS + ACL deny-by-default) et Suricata~v7.0 en mode AF\_PACKET passif.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.95\linewidth]{diag-topo-part2.png}
+\caption{Topologie réseau --- Partie~2~: VLAN~10 Zone IoT (fleet-sim, 50 devices) et VLAN~20 Zone DMZ (Mosquitto, Suricata)}
+\label{fig:topo-p2}
+\end{figure}
+\FloatBarrier
+
+\paragraph{Partie 3 — VLAN 30 (Zone PKI) et VLAN 40 (Zone SIEM).}
+La figure~\ref{fig:topo-p3} présente les zones de traitement backend. Le VLAN~30 (\texttt{192.168.30.0/24}) isole Vault~1.15 (\texttt{192.168.30.10}, port~8200) avec sa hiérarchie CA à deux niveaux (CA racine RSA-4096 offline, CA intermédiaire active). Le VLAN~40 (\texttt{192.168.40.0/24}) regroupe Wazuh~4.7 (\texttt{192.168.40.10}, ports 1514/9200/5601) et le moteur ML (\texttt{192.168.40.20}). Les flux entrants sont~: EVE~JSON de Suricata via Filebeat, logs Mosquitto via Syslog/1514, et requêtes API REST vers Vault depuis les VLANs 10 et 20.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.95\linewidth]{diag-topo-part3.png}
+\caption{Topologie réseau --- Partie~3~: VLAN~30 Zone PKI (Vault) et VLAN~40 Zone SIEM (Wazuh, ML Engine) + flux de données}
+\label{fig:topo-p3}
+\end{figure}
+\FloatBarrier
+
+\paragraph{Partie 4 — Politique de filtrage inter-VLAN (deny-by-default).}
+La figure~\ref{fig:topo-p4} synthétise les règles pfSense~: seuls quatre flux sont explicitement autorisés (IoT→DMZ/8883, IoT→PKI/8200, DMZ→SIEM/1514, PKI→SIEM/1514). Tous les autres flux inter-VLAN sont bloqués sans notification~; en particulier IoT→SIEM direct (contournement de l'IDS) et DMZ→PKI direct (accès non contrôlé à Vault).
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.85\linewidth]{diag-topo-part4.png}
+\caption{Topologie réseau --- Partie~4~: politique de filtrage inter-VLAN (ACCEPT/DROP) sur pfSense}
+\label{fig:topo-p4}
+\end{figure}
+\FloatBarrier
 
 Le flux complet est décomposé en cinq phases présentées séparément (figures~\ref{fig:flux-p1}--\ref{fig:flux-p5}) afin d'en améliorer la lisibilité.
 

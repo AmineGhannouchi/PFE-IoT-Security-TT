@@ -1,0 +1,70 @@
+@startuml diag-topo-part3
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam linetype ortho
+skinparam shadowing false
+
+title Topologie réseau --- Partie 3 : VLAN 30 (Zone PKI) et VLAN 40 (Zone SIEM)\nFlux API REST, EVE JSON et Syslog
+
+node "MikroTik CHR v7\n192.168.1.2" as MIKROTIK #D1C4E9
+
+package "VLAN 20 — Zone DMZ (sources)\n192.168.20.0/24" #FFF9C4 {
+  node "Mosquitto v2.0\n192.168.20.10\nPort 8883" as MOSQ
+  node "Suricata v7.0\n192.168.20.20" as SUR
+}
+
+package "VLAN 10 — Zone IoT (source)\n192.168.10.0/24" #E8F5E9 {
+  node "fleet-simulator\n192.168.10.100" as FLEET
+}
+
+package "VLAN 30 — Zone PKI\n192.168.30.0/24 — GW : 192.168.30.1" #FCE4EC {
+  node "HashiCorp Vault v1.15\n192.168.30.10\nPort 8200 (API REST / HTTPS)\nPKI Engine (CA racine + intermédiaire)\nRôles : role-device (30j) / role-server (1an)" as VAULT
+}
+
+package "VLAN 40 — Zone SIEM / Management\n192.168.40.0/24 — GW : 192.168.40.1" #E3F2FD {
+  node "Wazuh Manager v4.7\n192.168.40.10\nPort 1514/1515 (agents)\nOpenSearch 9200 (indexer)\nDashboard 5601" as WAZUH
+  node "Python ML Engine\n192.168.40.20\nscikit-learn 1.4\nIsolationForest + RandomForest" as MLE
+}
+
+interface "API REST HTTPS\nPort 8200" as IAPI
+interface "EVE JSON\n(Filebeat → Wazuh)" as IEVE
+interface "Syslog\nPort 1514" as ISYS
+interface "Données\nreseau + logs" as IML
+
+MIKROTIK --> VAULT : VLAN 30
+MIKROTIK --> WAZUH : VLAN 40
+MIKROTIK --> MLE   : VLAN 40
+
+FLEET --> IAPI : Demande cert X.509
+MOSQ  --> IAPI : Vérifie chaîne CA
+IAPI  --> VAULT
+
+SUR   --> IEVE
+IEVE  --> WAZUH
+
+MOSQ  --> ISYS
+ISYS  --> WAZUH
+
+SUR   --> IML
+WAZUH --> IML
+IML   --> MLE
+
+note right of VAULT
+  Hiérarchie CA :
+  CA racine RSA-4096 (offline)
+  └─ CA intermédiaire (Vault active)
+     ├─ role-device (mTLS, TTL 30j)
+     └─ role-server (TLS, TTL 1an)
+end note
+
+note right of WAZUH
+  Décoders + règles custom :
+  mqtt_brute_force (seuil 5/min)
+  mqtt_flood (seuil 100 msg/s)
+  tls_cert_expired
+  Alerte → OpenSearch → Dashboard
+end note
+
+@enduml

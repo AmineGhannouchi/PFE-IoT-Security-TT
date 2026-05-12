@@ -1,0 +1,53 @@
+@startuml diag-topo-part2
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam linetype ortho
+skinparam shadowing false
+
+title Topologie réseau --- Partie 2 : VLAN 10 (Zone IoT) et VLAN 20 (Zone DMZ)\nFlux MQTT/TLS et inspection IDS passive
+
+node "MikroTik CHR v7\n192.168.1.2" as MIKROTIK #D1C4E9
+
+package "VLAN 10 — Zone IoT Devices\n192.168.10.0/24 — GW : 192.168.10.1" #E8F5E9 {
+  node "fleet-simulator\n192.168.10.100\nPython 3.11 / paho-mqtt\n50 threads concurrents" as FLEET
+  node "device-001 … device-050\n192.168.10.11 … .60\nCertificats X.509 individuels\nPublie toutes les 5 s (QoS 1)" as DEVS
+}
+
+package "VLAN 20 — Zone DMZ Services\n192.168.20.0/24 — GW : 192.168.20.1" #FFF9C4 {
+  node "Mosquitto v2.0\n192.168.20.10\nPort 8883 (MQTT/TLS 1.3 + mTLS)\nACL deny-by-default" as MOSQ
+  node "Suricata v7.0\n192.168.20.20\nMode AF_PACKET (passif)\nParseur MQTT natif" as SUR
+}
+
+interface "MQTT over TLS 1.3\nPort 8883" as IMQTT
+interface "Port miroir\n(copie trafic VLAN 20)" as ISPAN
+
+MIKROTIK -down-> FLEET 
+MIKROTIK -down-> DEVS  : VLAN 10
+MIKROTIK -down-> MOSQ  : VLAN 20
+MIKROTIK -down-> ISPAN : Port miroir eth1.20
+
+FLEET --> IMQTT
+DEVS  --> IMQTT
+IMQTT --> MOSQ
+
+ISPAN --> SUR : Inspection\npassive (AF_PACKET)
+
+note bottom of MOSQ
+  ACL Mosquitto :
+  iot/+/telemetry → pub (devices)
+  iot/+/telemetry → sub (admin)
+  iot/+/cmd       → sub (devices)
+  Tout autre topic : DENY
+end note
+
+note bottom of SUR
+  Règles Suricata actives :
+  alert mqtt brute-force
+  alert mqtt flood > 100/s
+  alert tls cert expired
+  Sortie : EVE JSON → Wazuh
+end note
+
+@enduml
