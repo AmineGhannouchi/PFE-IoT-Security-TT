@@ -40,30 +40,41 @@ Ces composants ne fonctionnent pas de manière indépendante~: ils s'articulent 
 
 \subsection{Architecture de déploiement}
 
-La figure~\ref{fig:archi} présente l'architecture \textbf{de déploiement} effective, c'est-à-dire la traduction concrète sur la machine hôte des briques conceptuelles décrites au chapitre~\ref{chap:contexte-general} (figure~\ref{fig:archi-vue-intro}).
+L'architecture de déploiement est la traduction concrète, sur la machine hôte, des briques conceptuelles décrites au chapitre~\ref{chap:contexte-general} (figure~\ref{fig:archi-vue-intro}). Elle est présentée en deux parties pour en faciliter la lecture~: la couche réseau et les stacks producteurs de données (Partie~1), puis les stacks consommateurs et d'analyse (Partie~2).
+
+\begin{infobox}{Différence entre la figure~\ref{fig:archi-vue-intro} (Ch.~1) et les figures~\ref{fig:archi-p1}--\ref{fig:archi-p2} (Ch.~4)}
+La figure~\ref{fig:archi-vue-intro} est une vue \textbf{conceptuelle}~: elle présente les zones réseau logiques (IoT, DMZ, PKI, SIEM, Analyse), les flux de données et les technologies retenues. Elle répond à la question \emph{«~quoi~?~»}.
+
+Les figures~\ref{fig:archi-p1} et~\ref{fig:archi-p2} constituent une vue \textbf{d'implémentation}~: elles matérialisent la réalisation concrète sur la machine hôte (Intel i3-1215U / 16~Go RAM, Windows~11) en détaillant~:
+\begin{itemize}[leftmargin=*]
+  \item les stacks Docker dans la VM GNS3 (\emph{IoT Simulée}, \emph{Broker/Gateway}, \emph{PKI}, \emph{SIEM}, \emph{ML/Analyse})~;
+  \item les ports d'écoute réels (8883 MQTT/TLS, 8200 Vault, 9200 OpenSearch, 5601 Dashboard, 1514/1515 Wazuh)~;
+  \item les relations inter-services~: port miroir MikroTik→Suricata, EVE JSON→Wazuh, API REST→Vault.
+\end{itemize}
+Elles répondent à la question \emph{«~comment~?~»} et constituent la référence de reproduction de l'environnement.
+\end{infobox}
+
+\paragraph{Partie 1 — Infrastructure réseau, couche IoT et couche Broker/IDS.}
+La figure~\ref{fig:archi-p1} montre les deux niveaux d'exécution du laboratoire~: (i)~la \textbf{VM GNS3} (VMware Workstation, 4~Go RAM) héberge pfSense (firewall/NAT, quatre VLANs) et MikroTik CHR (switch L3, port miroir vers Suricata)~; (ii)~le \textbf{Docker Engine} exécute le simulateur de flotte (50 threads, 76~000~événements CSV, VLAN~10) et Mosquitto (TLS~1.3 + mTLS + ACL deny-by-default, port~8883, VLAN~20 DMZ).
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=\textwidth]{diag-composants.png}
-\caption{Architecture de déploiement~: stacks Docker, ports et dépendances effectives}
-\label{fig:archi}
+\includegraphics[width=\textwidth]{diag-composants-part1.png}
+\caption{Architecture de déploiement --- Partie~1~: infrastructure réseau (pfSense, MikroTik), stack IoT simulée et stack Broker/IDS (Mosquitto, Suricata)}
+\label{fig:archi-p1}
 \end{figure}
 \FloatBarrier
 
-\begin{infobox}{Différence entre la figure~\ref{fig:archi-vue-intro} (Ch.~1) et la figure~\ref{fig:archi} (Ch.~4)}
-La figure~\ref{fig:archi-vue-intro} est une vue \textbf{conceptuelle}~: elle présente les zones réseau logiques (IoT, DMZ, PKI, SIEM, Analyse), les flux de données et les technologies retenues. Elle répond à la question \emph{«~quoi~?~»}.
+\paragraph{Partie 2 — Stack PKI, SIEM et ML/Analyse + flux de données.}
+La figure~\ref{fig:archi-p2} détaille les stacks de traitement backend~: \textbf{Vault~1.15} (PKI Engine, CA racine RSA-4096 offline + CA intermédiaire active, port~8200)~; \textbf{Wazuh~4.7} (Manager + Indexer OpenSearch + Dashboard, ports 1514/9200/5601) qui reçoit les alertes EVE~JSON de Suricata via Filebeat et les logs Mosquitto via Syslog~; le \textbf{moteur ML} (IsolationForest + RandomForest, 12~features réseau) alimenté par les sorties Suricata et Wazuh.
 
-La figure~\ref{fig:archi} est une vue \textbf{d'implémentation}~: elle matérialise la réalisation concrète sur la machine hôte (Intel i3-1215U / 16~Go de RAM, Windows~11) en détaillant~:
-\begin{itemize}[leftmargin=*]
-  \item les stacks Docker déployés dans la VM GNS3 (\emph{Stack IoT Simulée}, \emph{Stack Broker / Gateway}, \emph{Stack PKI}, \emph{Stack SIEM}, \emph{Stack ML / Analyse})~;
-  \item les noms de conteneurs et services effectifs (\texttt{mosquitto}, \texttt{vault}, \texttt{suricata}, \texttt{wazuh-manager}, \texttt{opensearch}, \texttt{ml-engine})~;
-  \item les ports d'écoute réels (8883 pour MQTT/TLS, 8200 pour Vault, 9200 pour OpenSearch, 5601 pour les Dashboards, 1514/1515 pour Wazuh)~;
-  \item les relations inter-services~: port miroir MikroTik vers Suricata, routage inter-VLAN, flux \texttt{EVE JSON} de Suricata vers Wazuh.
-\end{itemize}
-Elle répond à la question \emph{«~comment~?~»} et constitue la référence de reproduction de l'environnement.
-\end{infobox}
-
-Le diagramme de composants montre en outre les deux niveaux d'exécution du laboratoire~: (i)~la \textbf{VM GNS3} (VMware Workstation, 4~Go de RAM alloués) héberge les équipements réseau virtualisés (pfSense, MikroTik) qui assurent la segmentation des VLANs et le port miroir pour l'IDS~; (ii)~le \textbf{Docker Engine} intégré à cette VM exécute les cinq stacks applicatifs. Cette séparation garantit que le cloisonnement réseau est appliqué au niveau hyperviseur, en amont de toute couche logicielle applicative.
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{diag-composants-part2.png}
+\caption{Architecture de déploiement --- Partie~2~: stack PKI (Vault), stack SIEM (Wazuh) et stack ML/Analyse + interfaces de données}
+\label{fig:archi-p2}
+\end{figure}
+\FloatBarrier
 
 \subsection{Topologie réseau}
 

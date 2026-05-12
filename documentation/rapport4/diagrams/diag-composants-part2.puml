@@ -1,0 +1,64 @@
+@startuml diag-composants-part2
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam componentStyle rectangle
+skinparam shadowing false
+
+title Architecture de déploiement --- Partie 2\nStack PKI, SIEM et ML/Analyse + flux de données
+
+package "Docker Engine (GNS3 VM)" #E3F2FD {
+
+  package "Stack PKI\n(VLAN 30 — 192.168.30.0/24)" #FCE4EC {
+    component [HashiCorp Vault v1.15\nPKI Engine\nCA racine RSA-4096 (offline)\nCA intermédiaire (active)\nPort 8200] as VAULT
+  }
+
+  package "Stack SIEM\n(VLAN 30 — 192.168.30.128)" #E3F2FD {
+    component [Wazuh Manager v4.7\n+ Indexer (OpenSearch)\n+ Dashboard\nPort 1514/1515 (agent)\nPort 9200 (indexer)\nPort 5601 (dashboard)] as WAZUH
+  }
+
+  package "Stack ML / Analyse\n(VLAN 40 — 192.168.40.0/24)" #FFF8E1 {
+    component [Python ML Engine\nscikit-learn 1.4\nIsolationForest (non supervisé)\nRandomForest (supervisé)\n12 features réseau] as MLE
+  }
+
+}
+
+' Composants sources (résumés)
+component [Mosquitto v2.0\n(Broker — VLAN 20)] as MOSQ #FFF9C4
+component [Suricata v7.0\n(IDS — VLAN 20)] as SUR #FFF9C4
+component [fleet-simulator\n(IoT — VLAN 10)] as FLEET #E8F5E9
+
+' Interfaces de données
+interface "API REST\nPort 8200" as IAPI
+interface "EVE JSON\n(fichier log)" as IEVE
+interface "Syslog\nPort 1514" as ISYS
+interface "Données réseau\n+ Logs corrélés" as IML
+
+FLEET ..> IAPI : Demande cert X.509
+MOSQ ..> IAPI : Vérifie chaîne CA
+IAPI --> VAULT
+
+SUR --> IEVE : EVE JSON (alertes)
+IEVE --> WAZUH : Filebeat → Decoder XML
+
+MOSQ --> ISYS : Logs connexion/refus
+ISYS --> WAZUH : Corrélation rules
+
+SUR ..> IML
+WAZUH ..> IML
+IML --> MLE : Détection anomalies
+
+note right of VAULT
+  Rôles émis :
+  role-device (TTL 30j, clientAuth)
+  role-server (TTL 1an, serverAuth)
+end note
+
+note right of WAZUH
+  Règles custom :
+  MQTT brute-force (seuil 5/min)
+  Flood DoS (seuil 100 msg/s)
+  Certificat expiré (erreur TLS)
+end note
+
+@enduml

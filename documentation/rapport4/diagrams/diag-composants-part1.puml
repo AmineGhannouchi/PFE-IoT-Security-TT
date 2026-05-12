@@ -1,0 +1,48 @@
+@startuml diag-composants-part1
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam componentStyle rectangle
+skinparam shadowing false
+
+title Architecture de déploiement --- Partie 1\nInfrastructure réseau, couche IoT et couche Broker/IDS
+
+package "Machine Hôte — Windows 11 / i3-1215U / 16 Go RAM" {
+
+  package "GNS3 VM (VMware Workstation — 4 Go RAM)" #F3E5F5 {
+    component [pfSense CE\nFirewall / NAT\nFreeBSD\nVLAN 10/20/30/40] as PFSENSE
+    component [MikroTik CHR\nRouterOS v7\nSwitch L3\nPort miroir IDS] as MIKROTIK
+  }
+
+  package "Docker Engine (GNS3 VM)" #E3F2FD {
+
+    package "Stack IoT Simulée\n(VLAN 10 — 192.168.10.0/24)" #E8F5E9 {
+      component [fleet-simulator\nPython 3.11 / paho-mqtt\n50 threads concurrents\n76 000 événements CSV] as FLEET
+    }
+
+    package "Stack Broker / Gateway\n(VLAN 20 — DMZ — 192.168.20.0/24)" #FFF9C4 {
+      component [Mosquitto v2.0\nBroker MQTT\nTLS 1.3 + mTLS\nACL par topic\nPort 8883] as MOSQ
+      component [Suricata v7.0\nIDS passif\nParseur MQTT natif\nAF_PACKET] as SUR
+    }
+  }
+}
+
+' Interfaces réseau
+interface "MQTT/TLS\nPort 8883" as IMQTT
+interface "Port miroir\nAF_PACKET" as ISPAN
+
+FLEET --> IMQTT
+IMQTT --> MOSQ
+
+PFSENSE --> MIKROTIK : Routage inter-VLAN
+MIKROTIK --> MOSQ : Filtrage VLAN 10→20
+MIKROTIK --> ISPAN : Copie trafic
+ISPAN --> SUR : Inspection passive
+
+note bottom of MOSQ
+  Deny-by-default ACL :
+  topic iot/+/telemetry (pub/sub)
+  topic iot/+/cmd (sub seul)
+end note
+
+@enduml
