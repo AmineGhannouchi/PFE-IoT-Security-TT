@@ -304,16 +304,46 @@ La troisième étape (figure~\ref{fig:detection-p3}) décrit le pipeline d'inges
 \section{Pipeline d'apprentissage automatique}
 \label{sec:re-ml}
 
-Les scénarios d'attaque ont mis en évidence une limite inhérente aux approches par règles~: le scénario~S6 (certificat valide réutilisé depuis un contexte inhabituel) n'est détecté que partiellement par Suricata et Wazuh. Le pipeline ML intervient précisément pour combler cette lacune~: il complète la détection par signature en repérant les comportements anormaux que les règles statiques ne peuvent pas anticiper. Il est constitué de cinq étapes (figure~\ref{fig:ml-pipeline})~: collecte du trafic, extraction de features, entraînement, évaluation, intégration dans le SIEM.
+Les scénarios d'attaque ont mis en évidence une limite inhérente aux approches par règles~: le scénario~S6 (certificat valide réutilisé depuis un contexte inhabituel) n'est détecté que partiellement par Suricata et Wazuh. Le pipeline ML intervient précisément pour combler cette lacune~: il complète la détection par signature en repérant les comportements anormaux que les règles statiques ne peuvent pas anticiper. Il est constitué de trois phases~: préparation des données (figures~\ref{fig:ml-p1}), entraînement parallèle de trois modèles (figure~\ref{fig:ml-p2}), puis comparaison, export et intégration dans le SIEM (figure~\ref{fig:ml-p3}).
+
+\paragraph{Partie 1 — Chargement, exploration et feature engineering.}
+La première phase prépare le jeu de données avant tout entraînement.
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.78\linewidth,height=0.58\textheight,keepaspectratio]{diag-ml-pipeline.png}
-\caption{Pipeline d'apprentissage automatique (collecte, features, entraînement, évaluation, SIEM)}
-\label{fig:ml-pipeline}
+\includegraphics[width=0.74\linewidth]{diag-ml-part1.png}
+\caption{Pipeline ML --- Partie~1~: chargement, EDA et feature engineering}
+\label{fig:ml-p1}
 \end{figure}
+\FloatBarrier
 
-Le pipeline se lit de gauche à droite~: (1)~\textbf{Collecte}~: les captures de trafic (PCAP ou logs Mosquitto) générées lors des six sprints alimentent le jeu de données~; (2)~\textbf{Feature engineering}~: 12~attributs sont extraits par message (inter-arrival time, payload length, topic depth, QoS level, type de commande MQTT, fréquence de reconnexion, etc.)~; (3)~\textbf{Entraînement}~: IsolationForest est entraîné sur le trafic normal uniquement (non supervisé), Random Forest est entraîné sur le jeu étiqueté complet (supervisé)~; (4)~\textbf{Évaluation}~: les métriques F1, précision et rappel sont calculées sur le jeu de test (20~\% du dataset)~; (5)~\textbf{Intégration}~: les scores d'anomalie sont transmis à Wazuh comme événements JSON, permettant leur corrélation avec les alertes Suricata pour une détection multicouche.
+Le dataset CSV (76~000~entrées, 24~features brutes) est chargé puis soumis à une analyse exploratoire~: distribution des classes, matrice de corrélation et boxplots par type d'attaque. Les variables catégorielles (\texttt{protocol}, \texttt{tls\_version}, \texttt{cert\_status}, etc.) sont encodées via \texttt{LabelEncoder} pour obtenir 29~features exploitables. Deux variables cibles sont construites~: \texttt{label\_secure} (binaire~: 0~=~attaque, 1~=~normal) et \texttt{attack\_type} (multi-classe~: 7~types d'attaques).
+
+\paragraph{Partie 2 — Entraînement des trois modèles.}
+Les trois modèles sont entraînés en parallèle sur les mêmes 29~features.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.80\linewidth]{diag-ml-part2.png}
+\caption{Pipeline ML --- Partie~2~: entraînement parallèle de trois modèles (IsolationForest, RF binaire, RF multi-classes)}
+\label{fig:ml-p2}
+\end{figure}
+\FloatBarrier
+
+\textbf{Modèle~A — IsolationForest} (non supervisé)~: entraîné exclusivement sur le trafic normal (\texttt{label\_secure~=~1}), il calcule un score d'anomalie pour chaque message (seuil~$-0{,}05$). Résultats~: F1~=~0,930, ROC-AUC~=~0,959. \textbf{Modèle~B — RandomForest binaire} (supervisé)~: split stratifié 80/20, \texttt{class\_weight=balanced}, \texttt{n\_estimators=200}. Résultats~: F1~=~0,994, ROC-AUC~=~0,999. \textbf{Modèle~C — RandomForest multi-classes}~: classification directe des 7~types d'attaques~; matrice de confusion sans confusion Normal$\leftrightarrow$DoS. Résultats~: F1~macro~=~0,988, ROC-AUC~=~0,998.
+
+\paragraph{Partie 3 — Comparaison, export et intégration SIEM.}
+La troisième phase consolide les résultats et déploie les modèles.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.65\linewidth]{diag-ml-part3.png}
+\caption{Pipeline ML --- Partie~3~: comparaison des modèles, export et intégration Wazuh}
+\label{fig:ml-p3}
+\end{figure}
+\FloatBarrier
+
+Les trois modèles sont comparés sur F1, ROC-AUC, précision et rappel. La stratégie retenue est bicouche~: IsolationForest pour la détection sans étiquettes (données de production non labellisées) et RandomForest binaire en temps réel sur le trafic labelé. Les modèles sont sauvegardés au format \texttt{.pkl} (joblib) dans \texttt{ml/models/}. Les scores d'anomalie sont transmis à Wazuh via l'API REST (port~55000) et corrélés avec les alertes Suricata pour une détection multicouche~: un message simultanément signalé par l'IDS et classé anormal par le modèle ML déclenche une alarme de niveau critique.
 
 \subsection{Données et features}
 

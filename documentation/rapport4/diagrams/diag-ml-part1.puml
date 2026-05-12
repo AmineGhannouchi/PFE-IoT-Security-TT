@@ -1,0 +1,46 @@
+@startuml diag-ml-part1
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam ActivityBackgroundColor #E0F2F1
+skinparam ActivityBorderColor #00695C
+skinparam ArrowColor #555555
+skinparam NoteBackgroundColor #FFFDE7
+skinparam NoteBorderColor #F9A825
+
+title Pipeline ML --- Partie 1\nChargement, Exploration et Feature Engineering
+
+start
+
+partition "1. Chargement et Exploration (EDA)" {
+  :Charger le **dataset CSV**\n(76 000 entrées, 24 features brutes);
+
+  :Analyse exploratoire (EDA)\n— Distribution des classes (déséquilibre 1 normale + 7 attaques)\n— Corrélation des features (heatmap)\n— Boxplots par type d'attaque;
+
+  :Identifier les valeurs manquantes\net les types de données\n(numériques, catégorielles, binaires);
+}
+
+partition "2. Feature Engineering" {
+  :Encoder les variables catégorielles\n(**LabelEncoder** — scikit-learn)\n— protocol, tls_version, auth_method\n— cert_status, src_zone, dst_zone\n— message_type, device_type;
+
+  :Sélectionner les **29 features finales**\n(numériques + encodées);
+
+  :Créer les variables cibles\n— **label_secure** : binaire (0 = attaque / 1 = normal)\n— **attack_type** : multi-classe (7 types d'attaques);
+}
+
+:→ **Passer en Partie 2**\n(entraînement des 3 modèles);
+
+stop
+
+note right
+  Sources de données :
+  — Captures trafic MQTT (PCAP)
+  — Logs Mosquitto (76 000 messages)
+  — Dataset Kaggle IoT Security
+    (Hasan et al., 2020)
+  Ratio train/test : 80 % / 20 %
+  (split stratifié par classe)
+end note
+
+@enduml

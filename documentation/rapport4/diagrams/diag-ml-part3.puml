@@ -1,0 +1,58 @@
+@startuml diag-ml-part3
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam ActivityBackgroundColor #E0F2F1
+skinparam ActivityBorderColor #00695C
+skinparam ArrowColor #555555
+skinparam NoteBackgroundColor #E8F5E9
+skinparam NoteBorderColor #388E3C
+
+title Pipeline ML --- Partie 3\nComparaison, Export et Intégration SIEM
+
+start
+
+:Résultats des 3 modèles disponibles\n(issus de la Partie 2);
+
+partition "4. Comparaison et Décision" {
+  :Comparer les 3 modèles\nsur les métriques F1, ROC-AUC,\nprécision et rappel;
+
+  if (Étiquettes disponibles en production ?) then (oui)
+    :Déployer **RandomForest Binaire**\n(F1 = 0.994) pour la\ndétection temps réel;
+  else (non — données non étiquetées)
+    :Déployer **IsolationForest**\n(F1 = 0.930) en mode\ndétection d'anomalies;
+  endif
+
+  :Stratégie **bicouche** :\nIsolationForest (non supervisé)\n+ RandomForest (supervisé)\nen complément;
+}
+
+partition "5. Sauvegarde et Visualisations" {
+  :Sauvegarder les modèles entraînés\n(**joblib** — fichiers .pkl)\ndans ml/models/;
+
+  :Générer les visualisations\n— Courbes ROC / AUC\n— Matrices de confusion\n— Feature importance (Top 20)\n— Distribution des scores d'anomalie;
+}
+
+partition "6. Intégration dans le SIEM" {
+  :Soumettre les scores d'anomalie\nà **Wazuh** via événements JSON\n(port 55000 — API REST);
+
+  :Wazuh corrèle avec\nles alertes Suricata\n(détection multicouche);
+
+  :Tableau de bord unifié\n— Alerte ML + alerte IDS = incident confirmé\n— Seuil d'escalade configurable;
+}
+
+stop
+
+note right
+  Bilan final :
+  — IF : viable sans étiquettes
+    (F1 = 0.930, ROC-AUC = 0.959)
+  — RF binaire : quasi-parfait
+    (F1 = 0.994, ROC-AUC = 0.999)
+  — RF multi-classes : 0 erreur
+    Normal ↔ DoS (F1 = 0.988)
+  Complémentarité supervisé /
+  non supervisé validée
+end note
+
+@enduml

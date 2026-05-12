@@ -1,0 +1,58 @@
+@startuml diag-ml-part2
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam shadowing false
+skinparam ActivityBackgroundColor #E0F2F1
+skinparam ActivityBorderColor #00695C
+skinparam ArrowColor #555555
+
+title Pipeline ML --- Partie 2\nEntraînement des 3 modèles
+
+start
+
+:29 features prêtes\n(issues de la Partie 1);
+
+fork
+
+  partition "Modèle A\nIsolationForest (non supervisé)" #FFECB3 {
+    :Entraîner **uniquement** sur\nle trafic normal (label_secure = 1);
+
+    :Hyperparamètres :\n— n_estimators = 200\n— contamination = 0.43\n— max_features = 0.8\n— random_state = 42;
+
+    :Calculer un **score d'anomalie**\npour chaque message\n(threshold = −0.05);
+
+    :Résultats (jeu de test) :\n— **F1 = 0.930**\n— ROC-AUC = 0.959\n— Précision = 0.91 / Rappel = 0.95;
+  }
+
+fork again
+
+  partition "Modèle B\nRandomForest Binaire (supervisé)" #E3F2FD {
+    :Split stratifié train/test\n(80 % / 20 %);
+
+    :Entraîner **RandomForestClassifier**\n— n_estimators = 200\n— max_depth = 20\n— class_weight = balanced\n— random_state = 42;
+
+    :Prédire label_secure\nsur l'ensemble de test;
+
+    :Résultats :\n— **F1 = 0.994**\n— ROC-AUC = 0.999\n— Précision = 0.993 / Rappel = 0.994;
+
+    :Analyser l'importance\ndes features (Top 20\npar Gini impurity);
+  }
+
+fork again
+
+  partition "Modèle C\nRandomForest Multi-classes (7 attaques)" #FCE4EC {
+    :Entraîner sur les 7 classes\n— Normal, DoS, MiTM, Replay\n— FalsifiedData, Scanning, Malware;
+
+    :Générer la **matrice de confusion**\n(7 × 7);
+
+    :Résultats :\n— **F1 macro = 0.988**\n— ROC-AUC = 0.998\n— 0 confusion Normal ↔ DoS;
+  }
+
+end fork
+
+:→ **Passer en Partie 3**\n(comparaison, export, intégration);
+
+stop
+
+@enduml

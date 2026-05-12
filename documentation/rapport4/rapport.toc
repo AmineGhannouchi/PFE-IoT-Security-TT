@@ -85,25 +85,28 @@
 \contentsline {section}{\numberline {4.5}Broker MQTT en TLS 1.3 + mTLS}{51}{section.4.5}%
 \contentsline {section}{\numberline {4.6}Scénarios d'attaque et contre-mesures}{53}{section.4.6}%
 \contentsline {section}{\numberline {4.7}Pipeline d'apprentissage automatique}{58}{section.4.7}%
-\contentsline {subsection}{\numberline {4.7.1}Données et features}{58}{subsection.4.7.1}%
-\contentsline {subsection}{\numberline {4.7.2}Modèles}{60}{subsection.4.7.2}%
-\contentsline {section}{\numberline {4.8}Captures d'écran des interfaces}{61}{section.4.8}%
-\contentsline {section}{\numberline {4.9}Conclusion}{62}{section.4.9}%
-\contentsline {chapter}{\numberline {5}Tests, résultats et validation}{63}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Introduction}{63}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Plan de tests}{63}{section.5.2}%
-\contentsline {section}{\numberline {5.3}Résultats de sécurité}{63}{section.5.3}%
-\contentsline {subsection}{\numberline {5.3.1}Validation par l'exécution~: preuves visuelles}{64}{subsection.5.3.1}%
-\contentsline {section}{\numberline {5.4}Résultats du module ML}{71}{section.5.4}%
-\contentsline {subsection}{\numberline {5.4.1}Isolation Forest}{71}{subsection.5.4.1}%
-\contentsline {subsection}{\numberline {5.4.2}Random Forest}{73}{subsection.5.4.2}%
-\contentsline {section}{\numberline {5.5}Résultats de performance}{75}{section.5.5}%
-\contentsline {subsection}{\numberline {5.5.1}Handshake TLS et latence}{75}{subsection.5.5.1}%
-\contentsline {subsection}{\numberline {5.5.2}Débit et RTT}{76}{subsection.5.5.2}%
-\contentsline {section}{\numberline {5.6}Limites identifiées}{77}{section.5.6}%
-\contentsline {section}{\numberline {5.7}Perspectives}{77}{section.5.7}%
-\contentsline {section}{\numberline {5.8}Conclusion}{78}{section.5.8}%
-\contentsline {chapter}{Conclusion générale}{79}{section*.183}%
-\contentsline {chapter}{Références bibliographiques}{81}{chapter*.184}%
+\contentsline {paragraph}{Partie 1 — Chargement, exploration et feature engineering.}{58}{paragraph*.153}%
+\contentsline {paragraph}{Partie 2 — Entraînement des trois modèles.}{60}{paragraph*.155}%
+\contentsline {paragraph}{Partie 3 — Comparaison, export et intégration SIEM.}{61}{paragraph*.157}%
+\contentsline {subsection}{\numberline {4.7.1}Données et features}{63}{subsection.4.7.1}%
+\contentsline {subsection}{\numberline {4.7.2}Modèles}{64}{subsection.4.7.2}%
+\contentsline {section}{\numberline {4.8}Captures d'écran des interfaces}{64}{section.4.8}%
+\contentsline {section}{\numberline {4.9}Conclusion}{66}{section.4.9}%
+\contentsline {chapter}{\numberline {5}Tests, résultats et validation}{67}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Introduction}{67}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Plan de tests}{67}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Résultats de sécurité}{67}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Validation par l'exécution~: preuves visuelles}{68}{subsection.5.3.1}%
+\contentsline {section}{\numberline {5.4}Résultats du module ML}{75}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}Isolation Forest}{75}{subsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.4.2}Random Forest}{77}{subsection.5.4.2}%
+\contentsline {section}{\numberline {5.5}Résultats de performance}{79}{section.5.5}%
+\contentsline {subsection}{\numberline {5.5.1}Handshake TLS et latence}{79}{subsection.5.5.1}%
+\contentsline {subsection}{\numberline {5.5.2}Débit et RTT}{80}{subsection.5.5.2}%
+\contentsline {section}{\numberline {5.6}Limites identifiées}{81}{section.5.6}%
+\contentsline {section}{\numberline {5.7}Perspectives}{81}{section.5.7}%
+\contentsline {section}{\numberline {5.8}Conclusion}{82}{section.5.8}%
+\contentsline {chapter}{Conclusion générale}{83}{section*.188}%
+\contentsline {chapter}{Références bibliographiques}{85}{chapter*.189}%
 \xpg@aux {}{arabic}
 \xpg@aux {}{french}
