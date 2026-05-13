@@ -4,7 +4,7 @@
 \section{Introduction}
 \label{sec:tc-intro}
 
-Ce chapitre est consacré à la validation expérimentale de la solution proposée. Il présente le plan de tests retenu, expose les résultats obtenus en matière de sécurité, de performance et de détection par apprentissage automatique, puis discute les limites observées ainsi que les perspectives d'évolution. Il constitue ainsi la dernière étape d'analyse avant la conclusion générale du rapport.
+Ce chapitre clôt la démarche en confrontant la solution réalisée aux besoins formulés au chapitre~\ref{chap:conception}. Il présente le plan de tests retenu, expose les résultats obtenus en matière de sécurité, de performance et de détection par apprentissage automatique, puis discute les limites observées ainsi que les perspectives d'évolution. Il intègre également une campagne complémentaire de montée en charge, menée au-delà du périmètre nominal, afin d'apprécier la marge de scalabilité du laboratoire avant la conclusion générale du rapport.
 
 \section{Plan de tests}
 \label{sec:tc-plan}
@@ -275,7 +275,7 @@ Les mesures de performance confirment la compatibilité de l'architecture avec l
   \item Environnement entièrement \emph{simulé}~: les mesures de performance ne reflètent pas les conditions radio réelles d'un réseau cellulaire.
   \item Le périmètre nominal de la flotte reste limité à 50~dispositifs~; une campagne complémentaire a bien été menée avec 100~dispositifs sur un sous-ensemble de trafic, mais une montée en charge plus large demeure contrainte par les ressources de la station hôte.
   \item Le pipeline ML est entraîné \emph{hors ligne}~: l'intégration en streaming (Kafka + scoring temps réel) reste à explorer.
-  \item La rotation automatique des certificats est déclenchée manuellement~. une intégration complète au cycle ACME serait souhaitable.
+  \item La rotation automatique des certificats est déclenchée manuellement~; une intégration complète au cycle ACME serait souhaitable.
 \end{itemize}
 
 \section{Perspectives}
@@ -288,4 +288,4 @@ Les mesures de performance confirment la compatibilité de l'architecture avec l
 \section{Conclusion}
 \label{sec:tc-synthese}
 
-Les résultats présentés dans ce chapitre confirment la validité fonctionnelle et expérimentale de l'architecture proposée. Les sept objectifs spécifiques (O1--O7), définis au chapitre~\ref{chap:introduction}, sont globalement atteints~: la segmentation réseau est opérationnelle, la PKI automatise l'émission et la révocation des certificats, le broker impose l'authentification mutuelle, la flotte simulée génère un trafic représentatif, la chaîne Suricata--Wazuh détecte et corrèle les attaques, et le module ML apporte une capacité complémentaire de détection avec un F1 de 0{,}993 en classification multi-classes. Les limites identifiées~--- environnement simulé, taille réduite de la flotte et traitement ML hors ligne~--- définissent toutefois le périmètre de validité de ces résultats et ouvrent des perspectives d'amélioration qui seront reprises dans la conclusion générale.
+Les résultats présentés dans ce chapitre confirment la validité fonctionnelle et expérimentale de l'architecture proposée. Les sept objectifs spécifiques (O1--O7), définis au chapitre~\ref{chap:introduction}, sont globalement atteints~: la segmentation réseau est opérationnelle, la PKI automatise l'émission et la révocation des certificats, le broker impose l'authentification mutuelle, la flotte simulée génère un trafic représentatif, la chaîne Suricata--Wazuh détecte et corrèle les attaques, et le module ML apporte une capacité complémentaire de détection avec un F1 de 0{,}993 en classification multi-classes. Dans le périmètre nominal du projet, ces résultats valident la solution proposée~; une campagne complémentaire menée avec 100~dispositifs met en évidence une première marge de montée en charge, sans remettre en cause les limites matérielles du laboratoire. Les limites identifiées~--- environnement simulé, taille réduite de la flotte et traitement ML hors ligne~--- définissent toutefois le périmètre de validité de ces résultats et ouvrent des perspectives d'amélioration qui seront reprises dans la conclusion générale.
