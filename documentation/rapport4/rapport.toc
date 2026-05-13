@@ -84,33 +84,33 @@
 \contentsline {subsection}{\numberline {4.4.2}Rôles Vault et émission}{47}{subsection.4.4.2}%
 \contentsline {section}{\numberline {4.5}Broker MQTT en TLS 1.3 + mTLS}{49}{section.4.5}%
 \contentsline {section}{\numberline {4.6}Scénarios d'attaque et contre-mesures}{51}{section.4.6}%
-\contentsline {section}{\numberline {4.7}Pipeline d'apprentissage automatique}{56}{section.4.7}%
-\contentsline {paragraph}{Partie 1 — Chargement, exploration et feature engineering.}{56}{paragraph*.153}%
-\contentsline {paragraph}{Partie 2 — Entraînement des trois modèles.}{58}{paragraph*.155}%
-\contentsline {paragraph}{Partie 3 — Comparaison, export et intégration SIEM.}{59}{paragraph*.157}%
-\contentsline {subsection}{\numberline {4.7.1}Données et features}{61}{subsection.4.7.1}%
-\contentsline {section}{\numberline {4.8}Captures d'écran des interfaces}{62}{section.4.8}%
-\contentsline {paragraph}{Partie 1 — Secrets engines et statuts.}{62}{paragraph*.161}%
-\contentsline {paragraph}{Partie 2 — Rôles et chaîne d'émission de la CA intermédiaire.}{63}{paragraph*.163}%
-\contentsline {paragraph}{Partie 1 — Infrastructure hôte et nœuds réseau.}{65}{paragraph*.166}%
-\contentsline {paragraph}{Partie 2 — Conteneurs Docker par zone VLAN.}{67}{paragraph*.168}%
-\contentsline {paragraph}{Partie 3 — Flux de données et port miroir MikroTik.}{67}{paragraph*.170}%
-\contentsline {section}{\numberline {4.9}Conclusion}{69}{section.4.9}%
-\contentsline {chapter}{\numberline {5}Tests, résultats et validation}{70}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Introduction}{70}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Plan de tests}{70}{section.5.2}%
-\contentsline {section}{\numberline {5.3}Résultats de sécurité}{70}{section.5.3}%
-\contentsline {subsection}{\numberline {5.3.1}Validation par l'exécution~: preuves visuelles}{71}{subsection.5.3.1}%
-\contentsline {section}{\numberline {5.4}Résultats du module ML}{78}{section.5.4}%
-\contentsline {subsection}{\numberline {5.4.1}Isolation Forest}{78}{subsection.5.4.1}%
-\contentsline {subsection}{\numberline {5.4.2}Random Forest}{80}{subsection.5.4.2}%
-\contentsline {section}{\numberline {5.5}Résultats de performance}{82}{section.5.5}%
-\contentsline {subsection}{\numberline {5.5.1}Handshake TLS et latence}{82}{subsection.5.5.1}%
-\contentsline {subsection}{\numberline {5.5.2}Débit et RTT}{83}{subsection.5.5.2}%
-\contentsline {section}{\numberline {5.6}Limites identifiées}{84}{section.5.6}%
-\contentsline {section}{\numberline {5.7}Perspectives}{84}{section.5.7}%
-\contentsline {section}{\numberline {5.8}Conclusion}{85}{section.5.8}%
-\contentsline {chapter}{Conclusion générale}{86}{section*.196}%
-\contentsline {chapter}{Références bibliographiques}{88}{chapter*.197}%
+\contentsline {section}{\numberline {4.7}Pipeline d'apprentissage automatique}{55}{section.4.7}%
+\contentsline {paragraph}{Partie 1 — Chargement, exploration et feature engineering.}{55}{paragraph*.153}%
+\contentsline {paragraph}{Partie 2 — Entraînement des trois modèles.}{57}{paragraph*.155}%
+\contentsline {paragraph}{Partie 3 — Comparaison, export et intégration SIEM.}{58}{paragraph*.157}%
+\contentsline {subsection}{\numberline {4.7.1}Données et features}{60}{subsection.4.7.1}%
+\contentsline {section}{\numberline {4.8}Captures d'écran des interfaces}{61}{section.4.8}%
+\contentsline {paragraph}{Partie 1 — Secrets engines et statuts.}{61}{paragraph*.161}%
+\contentsline {paragraph}{Partie 2 — Rôles et chaîne d'émission de la CA intermédiaire.}{62}{paragraph*.163}%
+\contentsline {paragraph}{Partie 1 — Infrastructure hôte et nœuds réseau.}{64}{paragraph*.166}%
+\contentsline {paragraph}{Partie 2 — Conteneurs Docker par zone VLAN.}{66}{paragraph*.168}%
+\contentsline {paragraph}{Partie 3 — Flux de données et port miroir MikroTik.}{66}{paragraph*.170}%
+\contentsline {section}{\numberline {4.9}Conclusion}{68}{section.4.9}%
+\contentsline {chapter}{\numberline {5}Tests, résultats et validation}{69}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Introduction}{69}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Plan de tests}{69}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Résultats de sécurité}{69}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Validation par l'exécution~: preuves visuelles}{70}{subsection.5.3.1}%
+\contentsline {section}{\numberline {5.4}Résultats du module ML}{77}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}Isolation Forest}{77}{subsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.4.2}Random Forest}{79}{subsection.5.4.2}%
+\contentsline {section}{\numberline {5.5}Résultats de performance}{81}{section.5.5}%
+\contentsline {subsection}{\numberline {5.5.1}Handshake TLS et latence}{81}{subsection.5.5.1}%
+\contentsline {subsection}{\numberline {5.5.2}Débit et RTT}{82}{subsection.5.5.2}%
+\contentsline {section}{\numberline {5.6}Limites identifiées}{83}{section.5.6}%
+\contentsline {section}{\numberline {5.7}Perspectives}{83}{section.5.7}%
+\contentsline {section}{\numberline {5.8}Conclusion}{84}{section.5.8}%
+\contentsline {chapter}{Conclusion générale}{85}{section*.196}%
+\contentsline {chapter}{Références bibliographiques}{87}{chapter*.197}%
 \xpg@aux {}{arabic}
 \xpg@aux {}{french}

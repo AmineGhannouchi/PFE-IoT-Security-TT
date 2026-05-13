@@ -81,7 +81,7 @@ La figure~\ref{fig:archi-p2} détaille les stacks de traitement backend~: \textb
 La topologie réseau déployée dans GNS3 est présentée en quatre parties pour plus de clarté~: la vue globale de l'infrastructure (P1), les zones productrices de données MQTT (P2), les zones de traitement PKI et SIEM (P3), et la politique de filtrage inter-VLAN (P4).
 
 \paragraph{Partie 1 — Infrastructure réseau et segmentation VLAN.}
-La figure~\ref{fig:topo-p1} montre la chaîne physique/logique complète~: Internet → pfSense CE (firewall/NAT, politique deny-by-default) → MikroTik CHR~v7 (routeur L3, trunk 802.1Q). Le MikroTik expose quatre sous-interfaces VLAN~: eth1.10 (IoT, \texttt{192.168.10.0/24}), eth1.20 (DMZ, \texttt{192.168.20.0/24}), eth1.30 (PKI, \texttt{192.168.30.0/24}), eth1.40 (SIEM, \texttt{192.168.40.0/24}). Le port miroir sur eth1.20 copie passivement le trafic DMZ vers Suricata.
+La figure~\ref{fig:topo-p1} montre la chaîne physique et logique complète~: Internet, pfSense CE pour le filtrage et la traduction d'adresses, puis MikroTik CHR~v7 comme routeur L3 sur trunk 802.1Q. Le MikroTik dessert quatre VLANs. Le sous-réseau IoT est 192.168.10.0/24. Ceux de la DMZ, de la PKI et du SIEM sont respectivement 192.168.20.0/24, 192.168.30.0/24 et 192.168.40.0/24. Le port miroir sur l'interface DMZ copie passivement le trafic vers Suricata.
 
 \begin{figure}[!htbp]
 \centering
@@ -103,7 +103,7 @@ La figure~\ref{fig:topo-p2} détaille les deux zones productrices de trafic. Le 
 \FloatBarrier
 
 \paragraph{Partie 3 — VLAN 30 (Zone PKI) et VLAN 40 (Zone SIEM).}
-La figure~\ref{fig:topo-p3} présente les zones de traitement backend. Le VLAN~30 (\texttt{192.168.30.0/24}) isole Vault~1.15 (\texttt{192.168.30.10}, port~8200) avec sa hiérarchie CA à deux niveaux (CA racine RSA-4096 offline, CA intermédiaire active). Le VLAN~40 (\texttt{192.168.40.0/24}) regroupe Wazuh~4.7 (\texttt{192.168.40.10}, ports 1514/9200/5601) et le moteur ML (\texttt{192.168.40.20}). Les flux entrants sont~: EVE~JSON de Suricata via Filebeat, logs Mosquitto via Syslog/1514, et requêtes API REST vers Vault depuis les VLANs 10 et 20.
+La figure~\ref{fig:topo-p3} présente les zones de traitement backend. Le VLAN~30 isole Vault~1.15, accessible sur 192.168.30.10:8200, et héberge la hiérarchie de certification à deux niveaux. Le sous-réseau associé est 192.168.30.0/24. Le VLAN~40 regroupe Wazuh~4.7 sur 192.168.40.10, ses services 1514, 9200 et 5601, ainsi que le moteur ML sur 192.168.40.20. Son sous-réseau est 192.168.40.0/24. Les flux entrants proviennent d'EVE JSON via Filebeat, des logs Mosquitto transmis par Syslog/1514 et des requêtes API REST adressées à Vault depuis les VLANs 10 et 20.
 
 \begin{figure}[!htbp]
 \centering
@@ -114,7 +114,7 @@ La figure~\ref{fig:topo-p3} présente les zones de traitement backend. Le VLAN~3
 \FloatBarrier
 
 \paragraph{Partie 4 — Politique de filtrage inter-VLAN (deny-by-default).}
-La figure~\ref{fig:topo-p4} synthétise les règles pfSense~: seuls quatre flux sont explicitement autorisés (IoT→DMZ/8883, IoT→PKI/8200, DMZ→SIEM/1514, PKI→SIEM/1514). Tous les autres flux inter-VLAN sont bloqués sans notification~; en particulier IoT→SIEM direct (contournement de l'IDS) et DMZ→PKI direct (accès non contrôlé à Vault).
+La figure~\ref{fig:topo-p4} synthétise les règles pfSense~: seuls quatre flux sont explicitement autorisés, à savoir IoT vers DMZ sur le port 8883, IoT vers PKI sur 8200, DMZ vers SIEM sur 1514 et PKI vers SIEM sur 1514. Tous les autres flux inter-VLAN sont bloqués sans notification, en particulier l'accès direct de l'IoT vers le SIEM et celui de la DMZ vers la PKI.
 
 \begin{figure}[!htbp]
 \centering
@@ -210,7 +210,7 @@ La PKI étant opérationnelle, chaque composant~-- dispositif comme service~-- d
 \section{Broker MQTT en TLS 1.3 + mTLS}
 \label{sec:re-mqtt}
 
-Mosquitto est configuré avec~\cite{mosquitto_tls}~: \texttt{require\_certificate true}, \texttt{use\_identity\_as\_username true}, et un fichier d'\acs{ACL} liant chaque \emph{Common Name} à ses topics autorisés. La figure~\ref{fig:tls-handshake} retrace le \emph{handshake} TLS~1.3 mutuel observé entre un dispositif et le broker.
+Mosquitto est configuré~\cite{mosquitto_tls} pour exiger un certificat client, associer l'identité certifiée au nom d'utilisateur et appliquer un fichier d'\acs{ACL} liant chaque \emph{Common Name} à ses topics autorisés. La figure~\ref{fig:tls-handshake} retrace le \emph{handshake} TLS~1.3 mutuel observé entre un dispositif et le broker.
 
 \begin{figure}[!htbp]
 \centering
@@ -244,7 +244,7 @@ Six scénarios ont été conçus pour couvrir les principales catégories d'atta
 \begin{attackbox}[Scénario 2 -- Sniffing MQTT en clair]
 \textbf{Vecteur~:} interception passive du trafic MQTT non chiffré sur le segment IoT.\\
 \textbf{Détection~:} alerte Suricata si un \texttt{PUBLISH} apparaît hors de la session TLS.\\
-\textbf{Contre-mesure~:} TLS~1.3 obligatoire . suites cryptographiques restreintes (RFC~9325~\cite{rfc9325}).
+\textbf{Contre-mesure~:} TLS~1.3 obligatoire. Les suites cryptographiques sont restreintes conformément à la RFC~9325~\cite{rfc9325}.
 \end{attackbox}
 
 \begin{attackbox}[Scénario 3 -- Brute-force d'authentification]
@@ -283,7 +283,7 @@ La première étape (figure~\ref{fig:detection-p1}) couvre l'inspection passive 
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.73\linewidth]{diag-suricata-part2.png}
+\includegraphics[width=0.73\linewidth,height=0.72\textheight,keepaspectratio]{diag-suricata-part2.png}
 \caption{Chaîne de détection Suricata~\textrightarrow~Wazuh --- Partie~2~: application des règles SID et génération d'alertes}
 \label{fig:detection-p2}
 \end{figure}
@@ -293,7 +293,7 @@ La deuxième étape (figure~\ref{fig:detection-p2}) applique les quatre règles 
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.73\linewidth]{diag-suricata-part3.png}
+\includegraphics[width=0.73\linewidth,height=0.72\textheight,keepaspectratio]{diag-suricata-part3.png}
 \caption{Chaîne de détection Suricata~\textrightarrow~Wazuh --- Partie~3~: EVE JSON → Filebeat → Wazuh → OpenSearch → Dashboard}
 \label{fig:detection-p3}
 \end{figure}
@@ -330,7 +330,11 @@ Les trois modèles sont entraînés en parallèle sur les mêmes 29~features.
 \end{figure}
 \FloatBarrier
 
-\textbf{Modèle~A — IsolationForest} (non supervisé)~: entraîné exclusivement sur le trafic normal (\texttt{label\_secure~=~1}), il calcule un score d'anomalie pour chaque message (seuil~$-0{,}05$). Résultats~: F1~=~0,932, ROC-AUC~=~0,959. \textbf{Modèle~B — RandomForest binaire} (supervisé)~: split stratifié 80/20, \texttt{class\_weight=balanced}, \texttt{n\_estimators=200}. Résultats~: F1~=~0,994, ROC-AUC~=~0,999. \textbf{Modèle~C — RandomForest multi-classes}~: classification directe des 7~types d'attaques~; matrice de confusion sans confusion Normal$\leftrightarrow$DoS. Résultats~: F1~macro~=~0,993, ROC-AUC~=~0,998.
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Modèle~A — IsolationForest} (non supervisé)~: entraîné exclusivement sur le trafic normal (\texttt{label\_secure~=~1}), il calcule un score d'anomalie pour chaque message, avec un seuil fixé à $-0{,}05$. Résultats~: F1~=~0,932 et ROC-AUC~=~0,959.
+  \item \textbf{Modèle~B — RandomForest binaire} (supervisé)~: entraîné avec un split stratifié 80/20, \texttt{class\_weight=balanced} et \texttt{n\_estimators=200}. Résultats~: F1~=~0,994 et ROC-AUC~=~0,999.
+  \item \textbf{Modèle~C — RandomForest multi-classes}~: il réalise une classification directe des 7~types d'attaques et produit une matrice de confusion sans confusion Normal$\leftrightarrow$DoS. Résultats~: F1~macro~=~0,993 et ROC-AUC~=~0,998.
+\end{itemize}
 
 \paragraph{Partie 3 — Comparaison, export et intégration SIEM.}
 La troisième phase consolide les résultats et déploie les modèles.
@@ -432,7 +436,7 @@ L'ensemble du laboratoire s'exécute dans une VM GNS3 (Ubuntu 22.04, 8~vCPU, 16~
 \end{figure}
 \FloatBarrier
 
-Les huit conteneurs sont distribués sur quatre VLANs isolés~: \textbf{VLAN~10 (IoT, 192.168.10.0/24)}~: le simulateur de flotte (50~threads, 76~000~messages)~; \textbf{VLAN~20 (DMZ, 192.168.20.0/24)}~: Mosquitto (port~8883, mTLS) et Suricata (mode passif)~; \textbf{VLAN~30 (PKI, 192.168.30.0/24)}~: Vault~1.15 (port~8200)~; \textbf{VLAN~40 (SIEM, 192.168.40.0/24)}~: Wazuh~4.7, OpenSearch et le moteur ML.
+Les huit conteneurs sont distribués sur quatre VLANs isolés. Le VLAN~10 (IoT, 192.168.10.0/24) héberge le simulateur de flotte. Le VLAN~20 (DMZ, 192.168.20.0/24) regroupe Mosquitto sur le port~8883 et Suricata en mode passif. Le VLAN~30 (PKI, 192.168.30.0/24) héberge Vault~1.15 sur le port~8200. Le VLAN~40 (SIEM, 192.168.40.0/24) regroupe Wazuh~4.7, OpenSearch et le moteur ML.
 
 \paragraph{Partie 3 — Flux de données et port miroir MikroTik.}
 
