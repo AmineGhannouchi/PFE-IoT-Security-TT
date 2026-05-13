@@ -1,22 +1,22 @@
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {1.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison des approches de sécurisation IoT pour les opérateurs}}{5}{table.caption.8}%
-\contentsline {table}{\numberline {1.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Diagnostic des lacunes et briques de réponse correspondantes}}{9}{table.caption.11}%
-\contentsline {table}{\numberline {1.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Objectifs spécifiques du projet}}{10}{table.caption.14}%
-\contentsline {table}{\numberline {1.4}{\ignorespaces \xpg@aux {}{french}\ignorespaces Périmètre du projet -- inclus et exclus}}{11}{table.caption.51}%
-\contentsline {table}{\numberline {1.5}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison Scrum, Kanban et XP}}{12}{table.caption.52}%
-\contentsline {table}{\numberline {1.6}{\ignorespaces \xpg@aux {}{french}\ignorespaces Correspondance lacunes -- briques de sécurité -- objectifs spécifiques}}{14}{table.caption.56}%
+\contentsline {table}{\numberline {1.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison des approches de sécurisation IoT pour les opérateurs}}{4}{table.caption.8}%
+\contentsline {table}{\numberline {1.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Diagnostic des lacunes et briques de réponse correspondantes}}{8}{table.caption.11}%
+\contentsline {table}{\numberline {1.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Objectifs spécifiques du projet}}{9}{table.caption.14}%
+\contentsline {table}{\numberline {1.4}{\ignorespaces \xpg@aux {}{french}\ignorespaces Périmètre du projet -- inclus et exclus}}{10}{table.caption.51}%
+\contentsline {table}{\numberline {1.5}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison Scrum, Kanban et XP}}{11}{table.caption.52}%
+\contentsline {table}{\numberline {1.6}{\ignorespaces \xpg@aux {}{french}\ignorespaces Correspondance lacunes -- briques de sécurité -- objectifs spécifiques}}{13}{table.caption.56}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {2.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison des principaux protocoles applicatifs IoT}}{17}{table.caption.59}%
-\contentsline {table}{\numberline {2.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison des solutions IDS open source}}{20}{table.caption.65}%
-\contentsline {table}{\numberline {2.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison des solutions SIEM}}{21}{table.caption.66}%
+\contentsline {table}{\numberline {2.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison des principaux protocoles applicatifs IoT}}{16}{table.caption.59}%
+\contentsline {table}{\numberline {2.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison des solutions IDS open source}}{19}{table.caption.65}%
+\contentsline {table}{\numberline {2.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison des solutions SIEM}}{20}{table.caption.66}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {3.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Besoins fonctionnels}}{23}{table.caption.67}%
-\contentsline {table}{\numberline {3.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Besoins non fonctionnels}}{24}{table.caption.86}%
-\contentsline {table}{\numberline {3.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Planification des sprints}}{27}{table.caption.111}%
-\contentsline {table}{\numberline {3.4}{\ignorespaces \xpg@aux {}{french}\ignorespaces Product Backlog (extrait priorisé)}}{28}{table.caption.113}%
+\contentsline {table}{\numberline {3.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Besoins fonctionnels}}{22}{table.caption.67}%
+\contentsline {table}{\numberline {3.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Besoins non fonctionnels}}{23}{table.caption.86}%
+\contentsline {table}{\numberline {3.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Planification des sprints}}{26}{table.caption.111}%
+\contentsline {table}{\numberline {3.4}{\ignorespaces \xpg@aux {}{french}\ignorespaces Product Backlog (extrait priorisé)}}{27}{table.caption.113}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {4.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Composants de l'environnement de développement}}{39}{table.caption.129}%
+\contentsline {table}{\numberline {4.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Composants de l'environnement de développement}}{38}{table.caption.129}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {5.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Plan de tests}}{72}{table.caption.172}%
-\contentsline {table}{\numberline {5.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Taux de détection des scénarios d'attaque (10 rejeux par scénario)}}{73}{table.caption.173}%
-\contentsline {table}{\numberline {5.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Performances ML (validation 5-fold)}}{83}{table.caption.187}%
+\contentsline {table}{\numberline {5.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Plan de tests}}{71}{table.caption.172}%
+\contentsline {table}{\numberline {5.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Taux de détection des scénarios d'attaque (10 rejeux par scénario)}}{72}{table.caption.173}%
+\contentsline {table}{\numberline {5.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Performances ML (validation 5-fold)}}{82}{table.caption.187}%
