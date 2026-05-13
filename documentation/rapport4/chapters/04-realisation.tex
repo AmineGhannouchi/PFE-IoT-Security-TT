@@ -40,22 +40,7 @@ Ces composants ne fonctionnent pas de manière indépendante~: ils s'articulent 
 
 \subsection{Architecture de déploiement}
 
-L'architecture de déploiement est la traduction concrète, sur la machine hôte, des briques conceptuelles décrites au chapitre~\ref{chap:contexte-general} (figure~\ref{fig:archi-vue-intro}). Elle est présentée en deux parties pour en faciliter la lecture~: la couche réseau et les stacks producteurs de données (Partie~1), puis les stacks consommateurs et d'analyse (Partie~2).
-
-\begin{infobox}{Différence entre la figure~\ref{fig:archi-vue-intro} (Ch.~1) et les figures~\ref{fig:archi-p1}--\ref{fig:archi-p2} (Ch.~4)}
-La figure~\ref{fig:archi-vue-intro} est une vue \textbf{conceptuelle}~: elle présente les zones réseau logiques (IoT, DMZ, PKI, SIEM, Analyse), les flux de données et les technologies retenues. Elle répond à la question \emph{«~quoi~?~»}.
-
-Les figures~\ref{fig:archi-p1} et~\ref{fig:archi-p2} constituent une vue \textbf{d'implémentation}~: elles matérialisent la réalisation concrète sur la machine hôte (Intel i3-1215U / 16~Go RAM, Windows~11) en détaillant~:
-\begin{itemize}[leftmargin=*]
-  \item les stacks Docker dans la VM GNS3 (\emph{IoT Simulée}, \emph{Broker/Gateway}, \emph{PKI}, \emph{SIEM}, \emph{ML/Analyse})~;
-  \item les ports d'écoute réels (8883 MQTT/TLS, 8200 Vault, 9200 OpenSearch, 5601 Dashboard, 1514/1515 Wazuh)~;
-  \item les relations inter-services~: port miroir MikroTik→Suricata, EVE JSON→Wazuh, API REST→Vault.
-\end{itemize}
-Elles répondent à la question \emph{«~comment~?~»} et constituent la référence de reproduction de l'environnement.
-\end{infobox}
-
-\paragraph{Partie 1 — Infrastructure réseau, couche IoT et couche Broker/IDS.}
-La figure~\ref{fig:archi-p1} montre les deux niveaux d'exécution du laboratoire~: (i)~la \textbf{VM GNS3} (VMware Workstation, 4~Go RAM) héberge pfSense (firewall/NAT, quatre VLANs) et MikroTik CHR (switch L3, port miroir vers Suricata)~; (ii)~le \textbf{Docker Engine} exécute le simulateur de flotte (50 threads, 76~000~événements CSV, VLAN~10) et Mosquitto (TLS~1.3 + mTLS + ACL deny-by-default, port~8883, VLAN~20 DMZ).
+L'architecture de déploiement traduit sur la machine hôte les briques conceptuelles décrites au chapitre précédent. La figure~\ref{fig:archi-p1} regroupe la couche réseau et la production des flux IoT, tandis que la figure~\ref{fig:archi-p2} présente les services backend de confiance, de supervision et d'analyse. Ensemble, elles constituent la vue d'implémentation de référence du laboratoire.
 
 \begin{figure}[!htbp]
 \centering
@@ -64,9 +49,6 @@ La figure~\ref{fig:archi-p1} montre les deux niveaux d'exécution du laboratoire
 \label{fig:archi-p1}
 \end{figure}
 \FloatBarrier
-
-\paragraph{Partie 2 — Stack PKI, SIEM et ML/Analyse + flux de données.}
-La figure~\ref{fig:archi-p2} détaille les stacks de traitement backend~: \textbf{Vault~1.15} (PKI Engine, CA racine RSA-4096 offline + CA intermédiaire active, port~8200)~; \textbf{Wazuh~4.7} (Manager + Indexer OpenSearch + Dashboard, ports 1514/9200/5601) qui reçoit les alertes EVE~JSON de Suricata via Filebeat et les logs Mosquitto via Syslog~; le \textbf{moteur ML} (IsolationForest + RandomForest, 12~features réseau) alimenté par les sorties Suricata et Wazuh.
 
 \begin{figure}[!htbp]
 \centering
@@ -78,10 +60,10 @@ La figure~\ref{fig:archi-p2} détaille les stacks de traitement backend~: \textb
 
 \subsection{Topologie réseau}
 
-La topologie réseau déployée dans GNS3 est présentée en quatre parties pour plus de clarté~: la vue globale de l'infrastructure (P1), les zones productrices de données MQTT (P2), les zones de traitement PKI et SIEM (P3), et la politique de filtrage inter-VLAN (P4).
+La topologie réseau est résumée en quatre vues complémentaires~: infrastructure générale, zone IoT/DMZ, zone PKI/SIEM et politique de filtrage inter-VLAN.
 
 \paragraph{Partie 1 — Infrastructure réseau et segmentation VLAN.}
-La figure~\ref{fig:topo-p1} montre la chaîne physique et logique complète~: Internet, pfSense CE pour le filtrage et la traduction d'adresses, puis MikroTik CHR~v7 comme routeur L3 sur trunk 802.1Q. Le MikroTik dessert quatre VLANs. Le sous-réseau IoT est 192.168.10.0/24. Ceux de la DMZ, de la PKI et du SIEM sont respectivement 192.168.20.0/24, 192.168.30.0/24 et 192.168.40.0/24. Le port miroir sur l'interface DMZ copie passivement le trafic vers Suricata.
+La figure~\ref{fig:topo-p1} présente la chaîne Internet → pfSense → MikroTik et la segmentation en quatre VLANs, avec un miroir passif du trafic DMZ vers Suricata.
 
 \begin{figure}[!htbp]
 \centering
@@ -92,7 +74,7 @@ La figure~\ref{fig:topo-p1} montre la chaîne physique et logique complète~: In
 \FloatBarrier
 
 \paragraph{Partie 2 — VLAN 10 (Zone IoT) et VLAN 20 (Zone DMZ).}
-La figure~\ref{fig:topo-p2} détaille les deux zones productrices de trafic. Le VLAN~10 (\texttt{192.168.10.0/24}) concentre le simulateur de flotte (\texttt{192.168.10.100}) et les 50~dispositifs virtuels (\texttt{.11}–\texttt{.60}), chacun porteur d'un certificat X.509 individuel. Le VLAN~20 DMZ (\texttt{192.168.20.0/24}) héberge Mosquitto~v2.0 (\texttt{192.168.20.10}, port~8883, TLS~1.3 + mTLS + ACL deny-by-default) et Suricata~v7.0 en mode AF\_PACKET passif.
+La figure~\ref{fig:topo-p2} situe le simulateur de flotte et les 50~dispositifs dans le VLAN~10, ainsi que Mosquitto et Suricata dans la DMZ (VLAN~20).
 
 \begin{figure}[!htbp]
 \centering
@@ -103,7 +85,7 @@ La figure~\ref{fig:topo-p2} détaille les deux zones productrices de trafic. Le 
 \FloatBarrier
 
 \paragraph{Partie 3 — VLAN 30 (Zone PKI) et VLAN 40 (Zone SIEM).}
-La figure~\ref{fig:topo-p3} présente les zones de traitement backend. Le VLAN~30 isole Vault~1.15, accessible sur 192.168.30.10:8200, et héberge la hiérarchie de certification à deux niveaux. Le sous-réseau associé est 192.168.30.0/24. Le VLAN~40 regroupe Wazuh~4.7 sur 192.168.40.10, ses services 1514, 9200 et 5601, ainsi que le moteur ML sur 192.168.40.20. Son sous-réseau est 192.168.40.0/24. Les flux entrants proviennent d'EVE JSON via Filebeat, des logs Mosquitto transmis par Syslog/1514 et des requêtes API REST adressées à Vault depuis les VLANs 10 et 20.
+La figure~\ref{fig:topo-p3} isole Vault dans le VLAN~30 et regroupe Wazuh ainsi que le moteur ML dans le VLAN~40, où convergent les journaux et les flux d'analyse.
 
 \begin{figure}[!htbp]
 \centering
@@ -114,7 +96,7 @@ La figure~\ref{fig:topo-p3} présente les zones de traitement backend. Le VLAN~3
 \FloatBarrier
 
 \paragraph{Partie 4 — Politique de filtrage inter-VLAN (deny-by-default).}
-La figure~\ref{fig:topo-p4} synthétise les règles pfSense~: seuls quatre flux sont explicitement autorisés, à savoir IoT vers DMZ sur le port 8883, IoT vers PKI sur 8200, DMZ vers SIEM sur 1514 et PKI vers SIEM sur 1514. Tous les autres flux inter-VLAN sont bloqués sans notification, en particulier l'accès direct de l'IoT vers le SIEM et celui de la DMZ vers la PKI.
+La figure~\ref{fig:topo-p4} synthétise la politique \emph{deny-by-default}~: seuls les flux IoT→DMZ/8883, IoT→PKI/8200, DMZ→SIEM/1514 et PKI→SIEM/1514 sont autorisés.
 
 \begin{figure}[!htbp]
 \centering
@@ -124,7 +106,7 @@ La figure~\ref{fig:topo-p4} synthétise les règles pfSense~: seuls quatre flux 
 \end{figure}
 \FloatBarrier
 
-Le flux complet est décomposé en cinq phases présentées séparément (figures~\ref{fig:flux-p1}--\ref{fig:flux-p5}) afin d'en améliorer la lisibilité.
+Les figures~\ref{fig:flux-p1}--\ref{fig:flux-p5} résument le cycle complet~: provisionnement de l'identité, établissement du mTLS, publication MQTT, supervision Suricata/Wazuh et rotation automatique des certificats.
 
 \begin{figure}[!htbp]
 \centering
@@ -134,8 +116,6 @@ Le flux complet est décomposé en cinq phases présentées séparément (figure
 \end{figure}
 \FloatBarrier
 
-Cette phase initiale décrit la demande d'un certificat client par le dispositif auprès de Vault, depuis l'authentification AppRole jusqu'à la signature par la CA intermédiaire et la livraison sécurisée du couple clé/certificat.
-
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.95\linewidth,height=0.40\textheight,keepaspectratio]{diag-flux-phase2.png}
@@ -143,8 +123,6 @@ Cette phase initiale décrit la demande d'un certificat client par le dispositif
 \label{fig:flux-p2}
 \end{figure}
 \FloatBarrier
-
-Le schéma détaille les échanges du \emph{handshake} TLS~1.3 mutuel entre le dispositif et le broker, en mettant en évidence la vérification croisée des certificats et la dérivation des clés de session.
 
 \begin{figure}[!htbp]
 \centering
@@ -154,8 +132,6 @@ Le schéma détaille les échanges du \emph{handshake} TLS~1.3 mutuel entre le d
 \end{figure}
 \FloatBarrier
 
-Une fois la session sécurisée établie, le dispositif publie ses messages MQTT sur ses topics autorisés~; le broker applique alors les ACL liées au \emph{Common Name} avant toute redistribution aux abonnés.
-
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.92\linewidth,height=0.38\textheight,keepaspectratio]{diag-flux-phase4.png}
@@ -163,8 +139,6 @@ Une fois la session sécurisée établie, le dispositif publie ses messages MQTT
 \label{fig:flux-p4}
 \end{figure}
 \FloatBarrier
-
-Cette phase illustre la chaîne d'observation~: les flux sont analysés par Suricata, les événements transmis à Wazuh pour corrélation, et les alertes restituées à l'analyste via le tableau de bord.
 
 \begin{figure}[!htbp]
 \centering
@@ -174,7 +148,6 @@ Cette phase illustre la chaîne d'observation~: les flux sont analysés par Suri
 \end{figure}
 \FloatBarrier
 
-La dernière phase montre comment Vault déclenche, à l'approche de l'expiration ou suite à une révocation, la régénération d'un certificat et son redéploiement transparent sur le dispositif sans interruption de service. La rotation est automatisée par un agent de renouvellement côté dispositif (minuteur basé sur le TTL reçu lors de l'émission), qui relance la séquence de la phase~1 avant expiration, garantissant une continuité de service sans intervention manuelle.
 \FloatBarrier
 
 \section{Infrastructure à clés publiques (Vault)}
