@@ -2411,3 +2411,34 @@
     <bcf:citekey order="34" intorder="1">liu2008isolation</bcf:citekey>
     <bcf:citekey order="35" intorder="1">breiman2001random</bcf:citekey>
     <bcf:citekey order="36" intorder="1">scikit_learn</bcf:citekey>
+    <bcf:citekey order="37" intorder="1">nist_sp800213</bcf:citekey>
+    <bcf:citekey order="38" intorder="1">vault_pki</bcf:citekey>
+    <bcf:citekey order="39" intorder="1">nist_sp800213</bcf:citekey>
+    <bcf:citekey order="40" intorder="1">mosquitto_tls</bcf:citekey>
+    <bcf:citekey order="41" intorder="1">rfc9325</bcf:citekey>
+    <bcf:citekey order="42" intorder="1">hasan2020securing</bcf:citekey>
+    <bcf:citekey order="43" intorder="1">scikit_learn</bcf:citekey>
+    <bcf:citekey order="44" intorder="1">liu2008isolation</bcf:citekey>
+    <bcf:citekey order="45" intorder="1">breiman2001random</bcf:citekey>
+  </bcf:section>
+  <!-- SORTING TEMPLATES -->
+  <bcf:sortingtemplate name="none">
+    <bcf:sort order="1">
+      <bcf:sortitem order="1">citeorder</bcf:sortitem>
+    </bcf:sort>
+    <bcf:sort order="2">
+      <bcf:sortitem order="1">intciteorder</bcf:sortitem>
+    </bcf:sort>
+  </bcf:sortingtemplate>
+  <!-- DATALISTS -->
+  <bcf:datalist section="0"
+                name="none/global//global/global/global"
+                type="entry"
+                sortingtemplatename="none"
+                sortingnamekeytemplatename="global"
+                labelprefix=""
+                uniquenametemplatename="global"
+                labelalphanametemplatename="global"
+                namehashtemplatename="global">
+  </bcf:datalist>
+</bcf:controlfile>
