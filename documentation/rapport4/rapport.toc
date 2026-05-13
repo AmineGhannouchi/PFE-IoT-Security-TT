@@ -52,8 +52,8 @@
 \contentsline {paragraph}{Partie 2 — Administrateur sécurité.}{21}{paragraph*.102}%
 \contentsline {paragraph}{Partie 3 — Opérateur SOC.}{22}{paragraph*.104}%
 \contentsline {section}{\numberline {3.4}Vue d'ensemble de la solution proposée}{23}{section.3.4}%
-\contentsline {section}{\numberline {3.5}Planification des sprints}{24}{section.3.5}%
-\contentsline {section}{\numberline {3.6}Backlog produit}{25}{section.3.6}%
+\contentsline {section}{\numberline {3.5}Planification des sprints}{25}{section.3.5}%
+\contentsline {section}{\numberline {3.6}Backlog produit}{26}{section.3.6}%
 \contentsline {section}{\numberline {3.7}Modélisation UML}{27}{section.3.7}%
 \contentsline {subsection}{\numberline {3.7.1}Diagramme de classes du simulateur}{27}{subsection.3.7.1}%
 \contentsline {paragraph}{Partie 1 — Orchestration de la simulation.}{27}{paragraph*.114}%

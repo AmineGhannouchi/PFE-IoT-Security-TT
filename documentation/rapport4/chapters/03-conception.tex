@@ -31,16 +31,16 @@ Le tableau~\ref{tab:diagnostic} synthétise ce diagnostic en mettant en regard c
 \caption{Diagnostic des lacunes et briques de réponse correspondantes}
 \label{tab:diagnostic}
 \small
-\begin{tabularx}{\linewidth}{|X|X|}
+\begin{tabularx}{\linewidth}{|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
 \hline
 \textbf{Lacune identifiée} & \textbf{Brique de réponse retenue} \\
 \hline
-Flux MQTT en clair, sans chiffrement de bout en bout & TLS~1.3 obligatoire sur Mosquitto (port~8883 uniquement) \\ \hline
-Authentification client absente ou basée sur mot de passe faible & mTLS~: certificat X.509 client obligatoire, vérifié par le broker \\ \hline
-Gestion manuelle et non automatisée des certificats & PKI HashiCorp Vault à deux niveaux avec API d'émission et révocation \\ \hline
-Accès applicatifs non restreints par dispositif & ACL Mosquitto liée au \emph{Common Name} du certificat client \\ \hline
-Supervision réseau et applicative déconnectées & IDS Suricata (réseau + MQTT) intégré au SIEM Wazuh (corrélation) \\ \hline
-Absence de détection comportementale & Module ML IsolationForest (non supervisé) + Random Forest (classifié) \\ \hline
+Flux MQTT en clair, sans chiffrement de bout en bout & Activation obligatoire de TLS~1.3 sur Mosquitto (port~8883) \\ \hline
+Authentification client absente ou basée sur mot de passe faible & Certificat X.509 client obligatoire, vérifié par le broker en mTLS \\ \hline
+Gestion manuelle et non automatisée des certificats & PKI HashiCorp Vault à deux niveaux avec émission et révocation via API \\ \hline
+Accès applicatifs non restreints par dispositif & ACL Mosquitto fondées sur le \emph{Common Name} du certificat client \\ \hline
+Supervision réseau et applicative déconnectées & Intégration de Suricata au SIEM Wazuh pour la corrélation \\ \hline
+Absence de détection comportementale & Module ML fondé sur IsolationForest et Random Forest \\ \hline
 \end{tabularx}
 \end{table}
 
@@ -55,7 +55,7 @@ Ce diagnostic structuré constitue la justification directe des choix techniques
 \centering
 \caption{Besoins fonctionnels}
 \label{tab:bf}
-\begin{tabularx}{\linewidth}{|c|X|}
+\begin{tabularx}{\linewidth}{|c|>{\raggedright\arraybackslash}X|}
 \hline
 \textbf{ID} & \textbf{Description} \\
 \hline
@@ -74,7 +74,7 @@ Ce diagnostic structuré constitue la justification directe des choix techniques
 \centering
 \caption{Besoins non fonctionnels}
 \label{tab:bnf}
-\begin{tabularx}{\linewidth}{|c|X|}
+\begin{tabularx}{\linewidth}{|c|>{\raggedright\arraybackslash}X|}
 \hline
 \textbf{ID} & \textbf{Description} \\
 \hline
@@ -91,10 +91,10 @@ Ces besoins définissent le \emph{quoi} de la solution~: les fonctionnalités at
 
 \subsection{Diagramme de cas d'utilisation}
 
-Trois acteurs principaux interagissent avec la plateforme~: le \textbf{dispositif IoT}, l'\textbf{administrateur sécurité} et l'\textbf{opérateur SOC}. Les flèches \texttt{<<include>>} indiquent des sous-cas obligatoires (la connexion MQTT \emph{inclut} toujours l'authentification mTLS et le chiffrement TLS~1.3). Les flèches \texttt{<<extend>>} représentent des comportements optionnels (l'IDS peut \emph{étendre} la réponse par un blocage actif~; le module ML peut \emph{étendre} la détection au-delà des règles statiques).
+Trois acteurs principaux interagissent avec la plateforme~: le \textbf{dispositif IoT}, l'\textbf{administrateur sécurité} et l'\textbf{opérateur SOC}. Les relations d'inclusion correspondent à des sous-cas obligatoires, tandis que les relations d'extension représentent des comportements optionnels. Dans ce cadre, la connexion MQTT impose systématiquement l'authentification mTLS et le chiffrement TLS~1.3, alors que l'IDS et le module ML complètent la détection par des mécanismes additionnels de blocage ou d'analyse.
 
 \paragraph{Partie 1 — Dispositif IoT.}
-La figure~\ref{fig:uc-p1} détaille les quatre cas d'utilisation du capteur~: demande de certificat X.509 (\texttt{<<include>>} vérification de la chaîne CA), connexion au broker MQTT (\texttt{<<include>>} authentification mTLS et chiffrement TLS~1.3), publication de télémétrie et renouvellement automatique du certificat.
+La figure~\ref{fig:uc-p1} détaille les quatre cas d'utilisation du capteur~: demande de certificat X.509 avec vérification de la chaîne CA, connexion au broker MQTT avec authentification mTLS et chiffrement TLS~1.3, publication de télémétrie et renouvellement automatique du certificat.
 
 \begin{figure}[!htbp]
 \centering
@@ -147,7 +147,7 @@ Le tableau~\ref{tab:mapping-sol} établit la correspondance entre les lacunes di
 \caption{Correspondance lacunes -- briques de sécurité -- objectifs spécifiques}
 \label{tab:mapping-sol}
 \small
-\begin{tabularx}{\linewidth}{|X|l|c|}
+\begin{tabularx}{\linewidth}{|>{\raggedright\arraybackslash}X|l|c|}
 \hline
 \textbf{Brique de sécurité} & \textbf{Section de réalisation} & \textbf{Obj.} \\
 \hline
@@ -182,7 +182,7 @@ Six sprints de deux semaines structurent la phase de réalisation. Le tableau~\r
 \caption{Planification des sprints}
 \label{tab:sprints}
 \small
-\begin{tabularx}{\linewidth}{|l|l|X|}
+\begin{tabularx}{\linewidth}{|l|l|>{\raggedright\arraybackslash}X|}
 \hline
 \textbf{Sprint} & \textbf{Durée} & \textbf{Objectif principal} \\
 \hline
@@ -191,7 +191,7 @@ S2 -- PKI Vault & 2~semaines & Vault déployé, CA racine + intermédiaire, rôl
 S3 -- Broker mTLS & 2~semaines & Mosquitto en TLS~1.3+mTLS, ACL par certificat, tests d'authentification. \\ \hline
 S4 -- Flotte simulée & 2~semaines & 50 clients Python, génération de trafic, rejeu de 76\,000 messages. \\ \hline
 S5 -- Détection IDS+SIEM & 2~semaines & Règles Suricata MQTT, intégration Wazuh, dashboards. \\ \hline
-S6 -- ML \& bilan & 2~semaines & Modèles IsolationForest+RandomForest, évaluation, rédaction finale. \\ \hline
+S6 -- ML \& bilan & 2~semaines & Modèles IsolationForest et RandomForest, évaluation et rédaction finale. \\ \hline
 \end{tabularx}
 \end{table}
 
@@ -207,14 +207,14 @@ La figure~\ref{fig:sprints} illustre l'enchaînement des six sprints, leurs dép
 \section{Backlog produit}
 \label{sec:co-backlog}
 
-Le \emph{backlog produit} (\emph{Product Backlog}) regroupe les \emph{User Stories} priorisées selon la méthode \textbf{MoSCoW} (\emph{Must, Should, Could, Won't}) et estimées en \emph{story points} (échelle de Fibonacci modifiée). Chaque US est rattachée à un sprint cible.
+Le \emph{backlog produit} regroupe les \emph{User Stories} priorisées selon la méthode \textbf{MoSCoW}. Chaque US est ensuite estimée en \emph{story points}, sur la base d'une échelle de Fibonacci modifiée, puis rattachée à un sprint cible.
 
 \begin{table}[!htbp]
 \centering
 \caption{Backlog produit (extrait priorisé)}
 \label{tab:backlog}
 \small
-\begin{tabularx}{\linewidth}{|l|l|X|c|c|c|}
+\begin{tabularx}{\linewidth}{|l|l|>{\raggedright\arraybackslash}X|c|c|c|}
 \hline
 \textbf{ID} & \textbf{Acteur} & \textbf{User Story} & \textbf{Prio.} & \textbf{SP} & \textbf{Sprint} \\
 \hline
@@ -246,7 +246,7 @@ Le backlog ainsi constitué traduit les objectifs en livrables concrets, chacun 
 
 \subsection{Diagramme de classes du simulateur}
 
-Le simulateur de flotte (\texttt{fleet\_sim.py}) est structuré en cinq classes réparties en deux groupes logiques~: le cœur d'orchestration (\texttt{FleetOrchestrator}, \texttt{DeviceSimulator}, \texttt{DeviceStats}) et les composants de configuration et de gestion PKI (\texttt{BrokerConfig}, \texttt{CertificateManager}, \texttt{CertBundle}). Le diagramme est présenté en deux parties pour faciliter la lecture.
+Le simulateur de flotte (\texttt{fleet\_sim.py}) est structuré en cinq classes réparties en deux groupes logiques. Le premier regroupe le cœur d'orchestration de la simulation~: \texttt{FleetOrchestrator}, \texttt{DeviceSimulator} et \texttt{DeviceStats}. Le second rassemble les composants de configuration et de gestion PKI~: \texttt{BrokerConfig}, \texttt{CertificateManager} et \texttt{CertBundle}. Le diagramme est présenté en deux parties afin d'en faciliter la lecture.
 
 \paragraph{Partie 1 — Orchestration de la simulation.}
 La figure~\ref{fig:classe-p1} montre la hiérarchie de contrôle~: \texttt{FleetOrchestrator} crée jusqu'à 50 instances \texttt{DeviceSimulator} (composition), chacune maintenant un agrégat \texttt{DeviceStats} pour la collecte des métriques (messages envoyés/échoués, débit, types d'attaques injectées). La méthode \texttt{\_inject\_dos\_pattern()} de \texttt{DeviceSimulator} module dynamiquement le taux d'émission pour simuler les attaques par inondation du jeu de données.
@@ -286,7 +286,7 @@ La figure~\ref{fig:seq-pki-p1} couvre la mise en place de la hiérarchie à deux
 \FloatBarrier
 
 \paragraph{Partie 2 — Émission par dispositif.}
-La figure~\ref{fig:seq-pki-p2} décrit l'opération répétée pour chaque dispositif~: (1)~le script de provisionnement envoie \texttt{POST /v1/pki\_int/issue/iot-devices} avec le CN et le TTL souhaité~; (2)~Vault vérifie la policy AppRole du token présenté~; (3)~Vault génère la paire de clés RSA-2048 et signe le certificat via la CA intermédiaire~; (4)~le bundle (certificat + clé privée + chaîne CA) est retourné en JSON~; (5)~le dispositif écrit les trois fichiers dans son système de fichiers et démarre un minuteur de renouvellement basé sur le TTL reçu (~87~ms de bout en bout).
+La figure~\ref{fig:seq-pki-p2} décrit l'opération répétée pour chaque dispositif~: (1)~le script de provisionnement envoie une requête \texttt{POST} à l'API d'émission du rôle \texttt{iot-devices}, avec le CN et le TTL souhaité~; (2)~Vault vérifie la policy AppRole du token présenté~; (3)~Vault génère la paire de clés RSA-2048 et signe le certificat via la CA intermédiaire~; (4)~le bundle (certificat + clé privée + chaîne CA) est retourné en JSON~; (5)~le dispositif écrit les trois fichiers dans son système de fichiers et démarre un minuteur de renouvellement basé sur le TTL reçu (~87~ms de bout en bout).
 
 \begin{figure}[!htbp]
 \centering
