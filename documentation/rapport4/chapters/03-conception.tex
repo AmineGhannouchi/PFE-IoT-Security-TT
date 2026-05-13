@@ -4,9 +4,9 @@
 \section{Introduction}
 \label{sec:co-intro}
 
-Ce chapitre traduit les besoins exprimés au chapitre précédent en une conception structurée. Nous présentons d'abord l'analyse de l'existant, afin de mettre en évidence les principales lacunes auxquelles la solution doit répondre. Nous formalisons ensuite les besoins fonctionnels et non fonctionnels, illustrés par le diagramme de cas d'utilisation qui synthetise les interactions entre acteurs et système. Une vue d'ensemble de la solution retenue précède la planification en six sprints Scrum~--- dont la justification méthodologique figure au chapitre~\ref{chap:contexte-general}~--- puis la présentation du \emph{Product Backlog}. Enfin, les diagrammes UML de conception et le diagramme de Gantt constituent la référence formelle pour la phase de réalisation.
+Ce chapitre a pour objectif de traduire les éléments de cadrage présentés au chapitre précédent en une conception structurée, argumentée et directement exploitable pour la phase de réalisation. Il s'ouvre par un diagnostic de l'existant, destiné à mettre en évidence les insuffisances observées dans les déploiements IoT de type opérateur et à justifier les choix de conception retenus. Le chapitre présente ensuite la spécification des besoins fonctionnels et non fonctionnels, puis une vue d'ensemble de la solution proposée. Il expose enfin les principaux artefacts de pilotage et de modélisation du projet~: la planification des sprints, le backlog produit, les diagrammes UML et la planification temporelle, qui constituent la référence de travail pour la mise en \oe{}uvre.
 
-\section{Analyse de l'existant}
+\section{Diagnostic de l'existant}
 \label{sec:analyse-existant}
 
 \subsection{État des lieux de la sécurité IoT dans les déploiements opérateur}
@@ -22,7 +22,7 @@ L'analyse conduite en amont de ce projet, combinant l'étude des pratiques obser
 	\item \textbf{Absence de détection comportementale}~: les mécanismes de détection d'intrusion existants se limitent aux signatures connues. Ils ne permettent pas de détecter des anomalies comportementales subtiles telles que l'utilisation d'un certificat valide depuis un contexte inhabituel, une dérive de fréquence de publication ou une exfiltration lente via des topics légitimes.
 \end{itemize}
 
-\subsection{Diagnostic synthétique}
+\subsection{Synthèse du diagnostic}
 
 Le tableau~\ref{tab:diagnostic} synthétise ce diagnostic en mettant en regard chaque lacune identifiée avec la brique de sécurité retenue dans la solution, établissant ainsi le lien direct entre le contexte opérationnel observé et les choix de conception du projet.
 
@@ -126,7 +126,7 @@ La figure~\ref{fig:uc-p3} représente les quatre cas d'utilisation de l'opérate
 \end{figure}
 \FloatBarrier
 
-\section{Solution proposée (vue d'ensemble)}
+\section{Vue d'ensemble de la solution proposée}
 \label{sec:solution-proposee}
 
 Pour répondre à la problématique et atteindre les objectifs ci-dessus, nous proposons une \textbf{architecture de défense en profondeur} composée de six briques complémentaires, intégralement déployée dans un laboratoire simulé sous \acs{GNS3}~\cite{gns3_docs} et Docker~\cite{docker_docs}~:
@@ -175,7 +175,7 @@ La démarche Scrum retenue au chapitre~\ref{chap:contexte-general} structure la 
 \section{Planification des sprints}
 \label{sec:co-sprints}
 
-Six sprints de deux semaines structurent la phase de réalisation. Le tableau~\ref{tab:sprints} en présente les objectifs et les livrables. Cette planification précède intentionnellement le \emph{Product Backlog}~: elle fournit la grille de lecture qui permet ensuite d'affecter les \emph{User Stories} aux sprints concernés.
+Six sprints de deux semaines structurent la phase de réalisation. Le tableau~\ref{tab:sprints} en présente les objectifs et les livrables. Cette planification précède intentionnellement le \emph{backlog produit}~: elle fournit la grille de lecture qui permet ensuite d'affecter les \emph{User Stories} aux sprints concernés.
 
 \begin{table}[!htbp]
 \centering
@@ -204,14 +204,14 @@ La figure~\ref{fig:sprints} illustre l'enchaînement des six sprints, leurs dép
 \label{fig:sprints}
 \end{figure}
 
-\section{Product Backlog}
+\section{Backlog produit}
 \label{sec:co-backlog}
 
-Le \emph{Product Backlog} regroupe les \emph{User Stories} priorisées selon la méthode \textbf{MoSCoW} (\emph{Must, Should, Could, Won't}) et estimées en \emph{story points} (échelle de Fibonacci modifiée). Chaque US est rattachée à un sprint cible.
+Le \emph{backlog produit} (\emph{Product Backlog}) regroupe les \emph{User Stories} priorisées selon la méthode \textbf{MoSCoW} (\emph{Must, Should, Could, Won't}) et estimées en \emph{story points} (échelle de Fibonacci modifiée). Chaque US est rattachée à un sprint cible.
 
 \begin{table}[!htbp]
 \centering
-\caption{Product Backlog (extrait priorisé)}
+\caption{Backlog produit (extrait priorisé)}
 \label{tab:backlog}
 \small
 \begin{tabularx}{\linewidth}{|l|l|X|c|c|c|}
@@ -241,7 +241,7 @@ Soit un total estimé à \(96\) story points sur 6~sprints (\(\sim 16\) SP/sprin
 
 Le backlog ainsi constitué traduit les objectifs en livrables concrets, chacun affecté à un sprint précis. Pour compléter cette conception, il est nécessaire de modéliser les interactions entre les composants~: les diagrammes UML présentés dans la section suivante formalisent le simulateur de flotte, le cycle d'émission des certificats et le comportement d'un dispositif, fournissant une référence de conception pour la phase de réalisation.
 
-\section{Conception UML}
+\section{Modélisation UML}
 \label{sec:co-uml}
 
 \subsection{Diagramme de classes du simulateur}
@@ -333,7 +333,7 @@ La figure~\ref{fig:activity-p3} représente la boucle principale~: pour chaque �
 \end{figure}
 \FloatBarrier
 
-\section{Diagramme de Gantt}
+\section{Planification temporelle}
 \label{sec:co-gantt}
 
 Le diagramme de Gantt (figure~\ref{fig:gantt}) consolide l'ensemble des sprints sur la durée totale du projet. L'axe horizontal représente le temps en semaines~; les barres horizontales correspondent aux périodes de réalisation de chaque sprint. On observe que les trois premiers sprints occupent la moitié de la durée totale et constituent le socle technique~: sans une PKI fonctionnelle (S2) et un broker sécurisé (S3), aucune donnée de trafic chiffré ne peut être générée ni analysée. Les flèches de dépendance illustrent les contraintes de précédence~: S4 ne démarre qu'après la validation du broker (fin S3), et S6 ne peut débuter sans les captures de trafic produites par S4--S5.
@@ -348,4 +348,4 @@ Le diagramme de Gantt (figure~\ref{fig:gantt}) consolide l'ensemble des sprints 
 \section{Conclusion}
 \label{sec:co-conclusion}
 
-Ce chapitre a posé les fondations formelles du projet~: les besoins fonctionnels et non fonctionnels délimitent le périmètre de la solution, le choix argumenté de Scrum garantit une gestion adaptée aux contraintes académiques et techniques, et la planification en six sprints assure que les livrables critiques sont produits en priorité. Les diagrammes UML et le Gantt constituent la référence de conception sur laquelle s'appuie la réalisation. Le chapitre suivant décrit précisément \textbf{comment} chaque élément a été mis en \oe{}uvre~: de l'environnement GNS3 à la PKI Vault, du broker mTLS au pipeline ML, en passant par les scénarios d'attaque.
+Ce chapitre a formalisé la conception du projet en articulant successivement le diagnostic de l'existant, la spécification des besoins, la vue d'ensemble de la solution retenue, les artefacts de pilotage et la modélisation du système. Cet ensemble fournit une base cohérente pour la phase de réalisation, en assurant la traçabilité entre les lacunes identifiées, les objectifs visés et les choix de conception adoptés. Le chapitre suivant décrit précisément \textbf{comment} chaque élément a été mis en \oe{}uvre~: de l'environnement GNS3 à la PKI Vault, du broker mTLS au pipeline ML, en passant par les scénarios d'attaque.

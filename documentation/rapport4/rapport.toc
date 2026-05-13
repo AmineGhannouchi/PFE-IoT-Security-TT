@@ -41,9 +41,9 @@
 \contentsline {section}{\numberline {2.10}Conclusion}{17}{section.2.10}%
 \contentsline {chapter}{\numberline {3}Conception}{18}{chapter.3}%
 \contentsline {section}{\numberline {3.1}Introduction}{18}{section.3.1}%
-\contentsline {section}{\numberline {3.2}Analyse de l'existant}{18}{section.3.2}%
+\contentsline {section}{\numberline {3.2}Diagnostic de l'existant}{18}{section.3.2}%
 \contentsline {subsection}{\numberline {3.2.1}État des lieux de la sécurité IoT dans les déploiements opérateur}{18}{subsection.3.2.1}%
-\contentsline {subsection}{\numberline {3.2.2}Diagnostic synthétique}{19}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.2.2}Synthèse du diagnostic}{19}{subsection.3.2.2}%
 \contentsline {section}{\numberline {3.3}Spécification des besoins}{20}{section.3.3}%
 \contentsline {subsection}{\numberline {3.3.1}Besoins fonctionnels (BF)}{20}{subsection.3.3.1}%
 \contentsline {subsection}{\numberline {3.3.2}Besoins non fonctionnels (BNF)}{20}{subsection.3.3.2}%
@@ -51,10 +51,10 @@
 \contentsline {paragraph}{Partie 1 — Dispositif IoT.}{21}{paragraph*.100}%
 \contentsline {paragraph}{Partie 2 — Administrateur sécurité.}{21}{paragraph*.102}%
 \contentsline {paragraph}{Partie 3 — Opérateur SOC.}{22}{paragraph*.104}%
-\contentsline {section}{\numberline {3.4}Solution proposée (vue d'ensemble)}{23}{section.3.4}%
+\contentsline {section}{\numberline {3.4}Vue d'ensemble de la solution proposée}{23}{section.3.4}%
 \contentsline {section}{\numberline {3.5}Planification des sprints}{24}{section.3.5}%
-\contentsline {section}{\numberline {3.6}Product Backlog}{25}{section.3.6}%
-\contentsline {section}{\numberline {3.7}Conception UML}{27}{section.3.7}%
+\contentsline {section}{\numberline {3.6}Backlog produit}{25}{section.3.6}%
+\contentsline {section}{\numberline {3.7}Modélisation UML}{27}{section.3.7}%
 \contentsline {subsection}{\numberline {3.7.1}Diagramme de classes du simulateur}{27}{subsection.3.7.1}%
 \contentsline {paragraph}{Partie 1 — Orchestration de la simulation.}{27}{paragraph*.114}%
 \contentsline {paragraph}{Partie 2 — Configuration, PKI et dépendances externes.}{29}{paragraph*.116}%
@@ -65,7 +65,7 @@
 \contentsline {paragraph}{Phase 1 — Initialisation de la flotte.}{31}{paragraph*.122}%
 \contentsline {paragraph}{Phase 2 — Provisionnement et connexion mTLS.}{32}{paragraph*.124}%
 \contentsline {paragraph}{Phase 3 — Boucle de publication.}{34}{paragraph*.126}%
-\contentsline {section}{\numberline {3.8}Diagramme de Gantt}{36}{section.3.8}%
+\contentsline {section}{\numberline {3.8}Planification temporelle}{36}{section.3.8}%
 \contentsline {section}{\numberline {3.9}Conclusion}{36}{section.3.9}%
 \contentsline {chapter}{\numberline {4}Réalisation}{37}{chapter.4}%
 \contentsline {section}{\numberline {4.1}Introduction}{37}{section.4.1}%
