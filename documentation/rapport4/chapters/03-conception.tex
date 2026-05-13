@@ -4,7 +4,47 @@
 \section{Introduction}
 \label{sec:co-intro}
 
-Ce chapitre traduit les besoins exprimés au chapitre précédent en une conception structurée. Nous formalisons d'abord les besoins fonctionnels et non fonctionnels, illustrés par le diagramme de cas d'utilisation qui synthetise les interactions entre acteurs et système. La planification en six sprints Scrum~--- dont la justification méthodologique figure au chapitre~\ref{chap:contexte-general}~--- précède la présentation du \emph{Product Backlog}. Enfin, les diagrammes UML de conception et le diagramme de Gantt constituent la référence formelle pour la phase de réalisation.
+Ce chapitre traduit les besoins exprimés au chapitre précédent en une conception structurée. Nous présentons d'abord l'analyse de l'existant, afin de mettre en évidence les principales lacunes auxquelles la solution doit répondre. Nous formalisons ensuite les besoins fonctionnels et non fonctionnels, illustrés par le diagramme de cas d'utilisation qui synthetise les interactions entre acteurs et système. Une vue d'ensemble de la solution retenue précède la planification en six sprints Scrum~--- dont la justification méthodologique figure au chapitre~\ref{chap:contexte-general}~--- puis la présentation du \emph{Product Backlog}. Enfin, les diagrammes UML de conception et le diagramme de Gantt constituent la référence formelle pour la phase de réalisation.
+
+\section{Analyse de l'existant}
+\label{sec:analyse-existant}
+
+\subsection{État des lieux de la sécurité IoT dans les déploiements opérateur}
+
+L'analyse conduite en amont de ce projet, combinant l'étude des pratiques observées dans des déploiements IoT typiques et les enseignements publiés par l'ENISA~\cite{enisa_iot} et le NIST~\cite{nist_sp800213}, met en évidence plusieurs lacunes de sécurité récurrentes dans ce type d'environnement~:
+
+\begin{itemize}[leftmargin=*]
+	\item \textbf{Transport non systématiquement chiffré}~: le protocole MQTT est fréquemment déployé sur le port 1883 (texte clair), sans TLS, par souci de simplicité ou de performance perçue. Un attaquant positionné sur le segment réseau peut alors capturer l'intégralité des messages publiés, y compris les données métier sensibles~;
+	\item \textbf{Authentification unidirectionnelle ou absente}~: le broker ne vérifie généralement pas le certificat du client. Les dispositifs s'authentifient souvent par un simple couple identifiant/mot de passe, voire sans aucun mécanisme d'authentification, rendant toute usurpation d'identité triviale~;
+	\item \textbf{Absence de PKI dédiée}~: lorsque des certificats existent, ils sont fréquemment auto-signés, non révocables automatiquement et gérés de façon ad hoc, sans cycle de vie défini ni procédure de révocation d'urgence en cas de compromission~;
+	\item \textbf{Contrôle d'accès applicatif insuffisant}~: les listes de contrôle d'accès aux topics MQTT sont rarement mises en œuvre, permettant à tout dispositif connecté d'accéder à l'ensemble des canaux de publication et de souscription, indépendamment de son rôle légitime~;
+	\item \textbf{Supervision fragmentée}~: les outils de monitoring réseau et applicatif ne communiquent pas entre eux, rendant difficile la corrélation d'événements de sécurité. La détection d'une attaque nécessite une analyse manuelle croisée de plusieurs sources de journaux hétérogènes~;
+	\item \textbf{Absence de détection comportementale}~: les mécanismes de détection d'intrusion existants se limitent aux signatures connues. Ils ne permettent pas de détecter des anomalies comportementales subtiles telles que l'utilisation d'un certificat valide depuis un contexte inhabituel, une dérive de fréquence de publication ou une exfiltration lente via des topics légitimes.
+\end{itemize}
+
+\subsection{Diagnostic synthétique}
+
+Le tableau~\ref{tab:diagnostic} synthétise ce diagnostic en mettant en regard chaque lacune identifiée avec la brique de sécurité retenue dans la solution, établissant ainsi le lien direct entre le contexte opérationnel observé et les choix de conception du projet.
+
+\begin{table}[!htbp]
+\centering
+\caption{Diagnostic des lacunes et briques de réponse correspondantes}
+\label{tab:diagnostic}
+\small
+\begin{tabularx}{\linewidth}{|X|X|}
+\hline
+\textbf{Lacune identifiée} & \textbf{Brique de réponse retenue} \\
+\hline
+Flux MQTT en clair, sans chiffrement de bout en bout & TLS~1.3 obligatoire sur Mosquitto (port~8883 uniquement) \\ \hline
+Authentification client absente ou basée sur mot de passe faible & mTLS~: certificat X.509 client obligatoire, vérifié par le broker \\ \hline
+Gestion manuelle et non automatisée des certificats & PKI HashiCorp Vault à deux niveaux avec API d'émission et révocation \\ \hline
+Accès applicatifs non restreints par dispositif & ACL Mosquitto liée au \emph{Common Name} du certificat client \\ \hline
+Supervision réseau et applicative déconnectées & IDS Suricata (réseau + MQTT) intégré au SIEM Wazuh (corrélation) \\ \hline
+Absence de détection comportementale & Module ML IsolationForest (non supervisé) + Random Forest (classifié) \\ \hline
+\end{tabularx}
+\end{table}
+
+Ce diagnostic structuré constitue la justification directe des choix techniques opérés dans ce projet~: chaque composant de la solution répond à une lacune précisément identifiée. Cette correspondance garantit la pertinence de l'architecture proposée au-delà d'une simple accumulation d'outils technologiques.
 
 \section{Spécification des besoins}
 \label{sec:co-besoins}
@@ -85,6 +125,50 @@ La figure~\ref{fig:uc-p3} représente les quatre cas d'utilisation de l'opérate
 \label{fig:uc-p3}
 \end{figure}
 \FloatBarrier
+
+\section{Solution proposée (vue d'ensemble)}
+\label{sec:solution-proposee}
+
+Pour répondre à la problématique et atteindre les objectifs ci-dessus, nous proposons une \textbf{architecture de défense en profondeur} composée de six briques complémentaires, intégralement déployée dans un laboratoire simulé sous \acs{GNS3}~\cite{gns3_docs} et Docker~\cite{docker_docs}~:
+
+\begin{enumerate}[leftmargin=*]
+	\item Une \textbf{infrastructure réseau segmentée} (VLANs IoT, services, monitoring, management) construite autour d'un pare-feu pfSense et d'un routeur MikroTik~.
+	\item Une \textbf{PKI automatisée} HashiCorp Vault à deux niveaux (CA racine hors ligne + CA intermédiaire en ligne), capable d'émettre à la demande des certificats X.509 pour les services et les objets~\cite{vault_pki}~.
+	\item Un \textbf{broker MQTT Mosquitto} configuré en \acs{TLS}~1.3 avec authentification mutuelle obligatoire et listes de contrôle d'accès par topic~\cite{mosquitto_tls}~.
+	\item Un \textbf{simulateur de flotte} de 50 dispositifs Python rejouant 76\,000 messages issus d'un jeu de données réel, dont sept catégories d'attaques~.
+	\item Une \textbf{chaîne de détection} comprenant un IDS Suricata avec règles MQTT personnalisées~\cite{suricata_mqtt} et un SIEM Wazuh~\cite{wazuh_docs} pour la corrélation et la visualisation~.
+	\item Un \textbf{pipeline de \acs{ML}} (IsolationForest~\cite{liu2008isolation} et Random Forest~\cite{breiman2001random}) entraîné sur les caractéristiques extraites du trafic, capable de détecter les anomalies non couvertes par les règles statiques.
+\end{enumerate}
+
+Le tableau~\ref{tab:mapping-sol} établit la correspondance entre les lacunes diagnostiquées à la section~\ref{sec:analyse-existant}, les briques de la solution et les objectifs spécifiques auxquels elles répondent, assurant ainsi la traçabilité complète entre le diagnostic initial et l'architecture proposée.
+
+\begin{table}[!htbp]
+\centering
+\caption{Correspondance lacunes -- briques de sécurité -- objectifs spécifiques}
+\label{tab:mapping-sol}
+\small
+\begin{tabularx}{\linewidth}{|X|l|c|}
+\hline
+\textbf{Brique de sécurité} & \textbf{Section de réalisation} & \textbf{Obj.} \\
+\hline
+Topologie réseau segmentée (GNS3, pfSense, MikroTik) & §\ref{sec:re-archi} & O1 \\ \hline
+PKI Vault à deux niveaux (CA racine + CA intermédiaire) & §\ref{sec:re-pki} & O2 \\ \hline
+Broker Mosquitto TLS~1.3 + mTLS + ACL par topic & §\ref{sec:re-mqtt} & O3 \\ \hline
+Simulateur de flotte de 50 dispositifs hétérogènes & §\ref{sec:re-attaques} & O4 \\ \hline
+IDS Suricata avec règles MQTT dédiées & §\ref{sec:re-attaques} & O5 \\ \hline
+SIEM Wazuh (corrélation d'alertes et tableau de bord) & §\ref{sec:re-attaques} & O6 \\ \hline
+Module ML (IsolationForest + Random Forest) & §\ref{sec:re-ml} & O7 \\ \hline
+\end{tabularx}
+\end{table}
+
+La figure~\ref{fig:archi-vue-intro} schématise cette vision globale, qui sera détaillée et justifiée dans les chapitres suivants.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{diag-architecture-generale.png}
+\caption{Vue d'ensemble de l'architecture de sécurisation proposée. \textit{Abréviations : GW = passerelle applicative, FW = pare-feu.}}
+\label{fig:archi-vue-intro}
+\end{figure}
 
 La démarche Scrum retenue au chapitre~\ref{chap:contexte-general} structure la réalisation en six sprints~; la section suivante en détaille la planification et les livrables.
 
