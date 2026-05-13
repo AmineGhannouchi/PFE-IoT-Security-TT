@@ -89,12 +89,12 @@ La figure~\ref{fig:pfsense-nat} confirme que les VLANs internes (\texttt{192.168
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\textwidth]{atk-fleet-sim.png}
-\caption{Simulateur de flotte IoT~: 100~dispositifs actifs, 35\,085~messages MQTT chargés}
+\caption{Campagne complémentaire de validation~: 100~dispositifs actifs, 35\,085~messages MQTT chargés}
 \label{fig:fleet-sim}
 \end{figure}
 \FloatBarrier
 
-La figure~\ref{fig:fleet-sim} montre le simulateur \texttt{iot-fleet-sim-1} en cours d'exécution dans GNS3. Cent dispositifs (\texttt{dev\_XXXXXX}) ont été chargés avec 35\,085~lignes de trafic MQTT réaliste~: cette exécution de validation a étendu la flotte à 100~dispositifs (au-delà des 50~dispositifs prévus dans le périmètre initial), démontrant la scalabilité de l'architecture simulée. Ce trafic légitime constitue le bruit de fond sur lequel les attaques ont été injectées, garantissant que les mécanismes de détection sont évalués en conditions proches du réel.
+La figure~\ref{fig:fleet-sim} montre le simulateur \texttt{iot-fleet-sim-1} en cours d'exécution dans GNS3. Cette campagne complémentaire de validation a temporairement porté la flotte à 100~dispositifs (\texttt{dev\_XXXXXX}), au-delà du périmètre nominal fixé à 50~dispositifs, afin d'éprouver la capacité de l'architecture à absorber une montée en charge ponctuelle. Pour contenir la consommation de ressources durant cet essai, l'exécution s'appuie sur un sous-ensemble de 35\,085~messages MQTT extrait du jeu de données complet de 76\,000~enregistrements. Ce trafic légitime constitue le bruit de fond sur lequel les attaques ont été injectées, garantissant que les mécanismes de détection sont évalués dans des conditions proches du réel.
 
 \begin{figure}[!htbp]
 \centering
@@ -149,7 +149,7 @@ Les figures~\ref{fig:atk-blocked} et~\ref{fig:atk-summary} constituent la preuve
 \end{itemize}
 
 \begin{infobox}{Synthèse de la validation expérimentale}
-L'ensemble de ces captures démontre la cohérence entre la conception (Ch.~\ref{chap:conception}), l'implémentation (Ch.~\ref{chap:realisation}) et les résultats (tableau~\ref{tab:detection-secu})~: (i)~la segmentation pfSense bloque toute attaque réseau directe entre VLANs~; (ii)~l'ACL Mosquitto restreint chaque dispositif authentifié à ses seuls topics~; (iii)~le scénario A1-flood, rejoué 10~fois avec des paramètres variés (24 à 500~connexions), n'a produit aucune connexion réussie~; (iv)~le trafic légitime des 100~dispositifs simulés n'est à aucun moment perturbé, validant la disponibilité du service (BNF-1).
+L'ensemble de ces captures démontre la cohérence entre la conception (Ch.~\ref{chap:conception}), l'implémentation (Ch.~\ref{chap:realisation}) et les résultats (tableau~\ref{tab:detection-secu})~: (i)~la segmentation pfSense bloque toute attaque réseau directe entre VLANs~; (ii)~l'ACL Mosquitto restreint chaque dispositif authentifié à ses seuls topics~; (iii)~le scénario A1-flood, rejoué 10~fois avec des paramètres variés (24 à 500~connexions), n'a produit aucune connexion réussie~; (iv)~le trafic légitime reste stable, y compris lors de la campagne complémentaire menée avec 100~dispositifs, validant la disponibilité du service (BNF-1).
 \end{infobox}
 
 Ces résultats de sécurité établissent la couverture globale de la chaîne de détection. Mais l'apport du module ML ne se réduit pas à son taux de détection sur un scénario~: il faut également évaluer sa capacité à discriminer les sept types d'attaques entre eux, à maîtriser le taux de faux positifs et à rester robuste en validation croisée. La section suivante présente ces métriques détaillées.
@@ -273,7 +273,7 @@ Les mesures de performance confirment la compatibilité de l'architecture avec l
 
 \begin{itemize}[leftmargin=*]
   \item Environnement entièrement \emph{simulé}~: les mesures de performance ne reflètent pas les conditions radio réelles d'un réseau cellulaire.
-  \item Volume de la flotte limité à 50 dispositifs~. au-delà, les ressources de la station hôte deviennent contraignantes.
+  \item Le périmètre nominal de la flotte reste limité à 50~dispositifs~; une campagne complémentaire a bien été menée avec 100~dispositifs sur un sous-ensemble de trafic, mais une montée en charge plus large demeure contrainte par les ressources de la station hôte.
   \item Le pipeline ML est entraîné \emph{hors ligne}~: l'intégration en streaming (Kafka + scoring temps réel) reste à explorer.
   \item La rotation automatique des certificats est déclenchée manuellement~. une intégration complète au cycle ACME serait souhaitable.
 \end{itemize}
