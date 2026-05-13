@@ -70,19 +70,19 @@ Les taux du tableau~\ref{tab:detection-secu} reposent sur des exécutions réell
 La figure~\ref{fig:pfsense-rules} est la capture de la configuration pfSense active pendant l'ensemble des tests. Deux règles à icône rouge (bloquées) sont critiques pour la protection de l'architecture~:
 \begin{itemize}[leftmargin=*]
   \item \textbf{IoT bloque to SIEM direct}~: interdit tout flux du VLAN IoT (\texttt{192.168.10.0/24}) vers le VLAN SIEM (\texttt{192.168.40.0/24}). Un dispositif compromis ne peut donc pas accéder directement à Wazuh/OpenSearch pour effacer des logs ou exfiltrer des données de monitoring.
-  \item \textbf{IoT bloque to Analyse}~: interdit tout flux du VLAN IoT vers le VLAN Analyse (\texttt{192.168.50.0/24}), isolant le moteur ML de toute attaque directe.
+  \item \textbf{IoT bloque to PKI direct}~: interdit tout flux non sollicité du VLAN IoT vers le VLAN PKI (\texttt{192.168.30.0/24}) en dehors du port~8200 de Vault, isolant le moteur d'émission des certificats de toute exploitation directe.
 \end{itemize}
 Les flux autorisés (vert) confirment les communications légitimes définies~: IoT~$\to$~Broker/8883 (MQTT/TLS), IoT~$\to$~Vault/8200 (cert request), DMZ~$\to$~Wazuh/1514 (logs Suricata), Wazuh~$\to$~OpenSearch/9200.
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\textwidth]{atk-pfsense-nat.png}
-\caption{pfSense~-- règles NAT Outbound~: les cinq VLANs masqués derrière l'adresse WAN}
+\caption{pfSense~-- règles NAT Outbound~: les VLANs internes masqués derrière l'adresse WAN}
 \label{fig:pfsense-nat}
 \end{figure}
 \FloatBarrier
 
-La figure~\ref{fig:pfsense-nat} confirme que les cinq VLANs (\texttt{192.168.10--50.0/24}) sont traduits derrière l'adresse WAN unique~: aucune adresse interne n'est exposée directement sur le réseau externe, réduisant la surface d'attaque à l'interface WAN de pfSense.
+La figure~\ref{fig:pfsense-nat} confirme que les VLANs internes (\texttt{192.168.10--40.0/24}) sont traduits derrière l'adresse WAN unique~: aucune adresse interne n'est exposée directement sur le réseau externe, réduisant la surface d'attaque à l'interface WAN de pfSense.
 
 \subsubsection*{Flotte légitime et enforcement ACL Mosquitto}
 

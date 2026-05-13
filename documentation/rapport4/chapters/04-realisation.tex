@@ -330,7 +330,7 @@ Les trois modèles sont entraînés en parallèle sur les mêmes 29~features.
 \end{figure}
 \FloatBarrier
 
-\textbf{Modèle~A — IsolationForest} (non supervisé)~: entraîné exclusivement sur le trafic normal (\texttt{label\_secure~=~1}), il calcule un score d'anomalie pour chaque message (seuil~$-0{,}05$). Résultats~: F1~=~0,930, ROC-AUC~=~0,959. \textbf{Modèle~B — RandomForest binaire} (supervisé)~: split stratifié 80/20, \texttt{class\_weight=balanced}, \texttt{n\_estimators=200}. Résultats~: F1~=~0,994, ROC-AUC~=~0,999. \textbf{Modèle~C — RandomForest multi-classes}~: classification directe des 7~types d'attaques~; matrice de confusion sans confusion Normal$\leftrightarrow$DoS. Résultats~: F1~macro~=~0,988, ROC-AUC~=~0,998.
+\textbf{Modèle~A — IsolationForest} (non supervisé)~: entraîné exclusivement sur le trafic normal (\texttt{label\_secure~=~1}), il calcule un score d'anomalie pour chaque message (seuil~$-0{,}05$). Résultats~: F1~=~0,932, ROC-AUC~=~0,959. \textbf{Modèle~B — RandomForest binaire} (supervisé)~: split stratifié 80/20, \texttt{class\_weight=balanced}, \texttt{n\_estimators=200}. Résultats~: F1~=~0,994, ROC-AUC~=~0,999. \textbf{Modèle~C — RandomForest multi-classes}~: classification directe des 7~types d'attaques~; matrice de confusion sans confusion Normal$\leftrightarrow$DoS. Résultats~: F1~macro~=~0,993, ROC-AUC~=~0,998.
 
 \paragraph{Partie 3 — Comparaison, export et intégration SIEM.}
 La troisième phase consolide les résultats et déploie les modèles.
@@ -369,15 +369,6 @@ Ce graphique met en évidence le fort déséquilibre du jeu de données entre la
 
 La matrice de corrélation révèle les variables fortement liées entre elles, ce qui permet d'écarter les features redondantes et de retenir un sous-ensemble informatif pour l'entraînement des modèles.
 \FloatBarrier
-
-\subsection{Modèles}
-
-Deux modèles complémentaires sont entraînés via \emph{scikit-learn}~\cite{scikit_learn}~:
-
-\begin{itemize}[leftmargin=*]
-  \item \textbf{Isolation Forest}~\cite{liu2008isolation}~: détection non supervisée d'anomalies sur trafic légitime majoritaire .
-  \item \textbf{Random Forest}~\cite{breiman2001random}~: classification supervisée multi-classes des sept attaques.
-\end{itemize}
 
 \section{Captures d'écran des interfaces}
 \label{sec:re-captures}

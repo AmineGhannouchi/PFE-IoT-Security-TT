@@ -2417,9 +2417,6 @@
     <bcf:citekey order="40" intorder="1">mosquitto_tls</bcf:citekey>
     <bcf:citekey order="41" intorder="1">rfc9325</bcf:citekey>
     <bcf:citekey order="42" intorder="1">hasan2020securing</bcf:citekey>
-    <bcf:citekey order="43" intorder="1">scikit_learn</bcf:citekey>
-    <bcf:citekey order="44" intorder="1">liu2008isolation</bcf:citekey>
-    <bcf:citekey order="45" intorder="1">breiman2001random</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">
