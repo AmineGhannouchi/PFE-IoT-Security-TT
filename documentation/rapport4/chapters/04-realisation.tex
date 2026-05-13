@@ -24,7 +24,7 @@ GNS3 & 2.2.x & Émulation de la topologie réseau \\ \hline
 Docker Engine & 24.x & Conteneurs services et clients IoT \\ \hline
 HashiCorp Vault & 1.15 & PKI à deux niveaux et secrets engine \\ \hline
 Eclipse Mosquitto & 2.0 & Broker MQTT avec TLS~1.3 + mTLS \\ \hline
-Suricata & 6.0 & IDS réseau, parser MQTT \\ \hline
+Suricata & 7.0 & IDS réseau, parser MQTT \\ \hline
 Wazuh & 4.7 & SIEM, agrégation et corrélation \\ \hline
 pfSense & 2.7 & Pare-feu inter-VLAN \\ \hline
 MikroTik RouterOS & 7.x & Routage / NAT \\ \hline
@@ -441,7 +441,7 @@ L'ensemble du laboratoire s'exécute dans une VM GNS3 (Ubuntu 22.04, 8~vCPU, 16~
 \end{figure}
 \FloatBarrier
 
-Les huit conteneurs sont distribués sur quatre VLANs isolés~: \textbf{VLAN~10 (IoT, 10.0.10.0/24)}~: le simulateur de flotte (50~threads, 76~000~messages)~; \textbf{VLAN~20 (DMZ, 10.0.20.0/24)}~: Mosquitto (port~8883, mTLS) et Suricata (mode passif)~; \textbf{VLAN~30 (PKI, 10.0.30.0/24)}~: Vault~1.15 (port~8200)~; \textbf{VLAN~40 (SIEM, 10.0.40.0/24)}~: Wazuh~4.7, OpenSearch et le moteur ML.
+Les huit conteneurs sont distribués sur quatre VLANs isolés~: \textbf{VLAN~10 (IoT, 192.168.10.0/24)}~: le simulateur de flotte (50~threads, 76~000~messages)~; \textbf{VLAN~20 (DMZ, 192.168.20.0/24)}~: Mosquitto (port~8883, mTLS) et Suricata (mode passif)~; \textbf{VLAN~30 (PKI, 192.168.30.0/24)}~: Vault~1.15 (port~8200)~; \textbf{VLAN~40 (SIEM, 192.168.40.0/24)}~: Wazuh~4.7, OpenSearch et le moteur ML.
 
 \paragraph{Partie 3 — Flux de données et port miroir MikroTik.}
 
