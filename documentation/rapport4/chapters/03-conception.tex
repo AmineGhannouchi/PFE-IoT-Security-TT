@@ -91,10 +91,10 @@ Ces besoins définissent le \emph{quoi} de la solution~: les fonctionnalités at
 
 \subsection{Diagramme de cas d'utilisation}
 
-Trois acteurs principaux interagissent avec la plateforme~: le \textbf{dispositif IoT}, l'\textbf{administrateur sécurité} et l'\textbf{opérateur SOC}. Les relations d'inclusion correspondent à des sous-cas obligatoires, tandis que les relations d'extension représentent des comportements optionnels. Dans ce cadre, la connexion MQTT impose systématiquement l'authentification mTLS et le chiffrement TLS~1.3, alors que l'IDS et le module ML complètent la détection par des mécanismes additionnels de blocage ou d'analyse.
+Trois acteurs principaux interagissent avec la plateforme~: le dispositif IoT, l'administrateur de sécurité et l'opérateur SOC. Les relations d'inclusion signalent les sous-cas obligatoires, tandis que les relations d'extension représentent les comportements optionnels. La connexion MQTT impose mTLS et TLS~1.3. L'IDS et le module ML complètent ensuite la détection.
 
 \paragraph{Partie 1 — Dispositif IoT.}
-La figure~\ref{fig:uc-p1} détaille les quatre cas d'utilisation du dispositif IoT~: demande de certificat X.509 avec vérification de la chaîne CA, connexion au broker MQTT avec authentification mTLS et chiffrement TLS~1.3, publication de télémétrie et renouvellement automatique du certificat.
+La figure~\ref{fig:uc-p1} résume quatre actions du dispositif IoT~: demande de certificat X.509, connexion mTLS au broker, publication de télémétrie et renouvellement automatique du certificat.
 
 \begin{figure}[!htbp]
 \centering
@@ -175,7 +175,7 @@ La démarche Scrum retenue au chapitre~\ref{chap:contexte-general} structure la 
 \section{Planification des sprints}
 \label{sec:co-sprints}
 
-Six sprints de deux semaines structurent la phase de réalisation. Le tableau~\ref{tab:sprints} en présente les objectifs et les livrables. Cette planification précède intentionnellement le \emph{backlog produit}~: elle fournit la grille de lecture qui permet ensuite d'affecter les \emph{User Stories} aux sprints concernés.
+Six sprints de deux semaines structurent la phase de réalisation. Le tableau~\ref{tab:sprints} en présente les objectifs principaux, du cadrage réseau initial jusqu'à l'évaluation du module ML.
 
 \begin{table}[!htbp]
 \centering
@@ -186,166 +186,64 @@ Six sprints de deux semaines structurent la phase de réalisation. Le tableau~\r
 \hline
 \textbf{Sprint} & \textbf{Durée} & \textbf{Objectif principal} \\
 \hline
-S1 -- Cadrage \& réseau & 2~semaines & Topologie GNS3 segmentée, conteneurs de base, plan d'adressage. \\ \hline
-S2 -- PKI Vault & 2~semaines & Vault déployé, CA racine + intermédiaire, rôles PKI, scripts d'émission. \\ \hline
-S3 -- Broker mTLS & 2~semaines & Mosquitto en TLS~1.3+mTLS, ACL par certificat, tests d'authentification. \\ \hline
-S4 -- Flotte simulée & 2~semaines & 50 clients Python, génération de trafic, rejeu de 76\,000 messages. \\ \hline
-S5 -- Détection IDS+SIEM & 2~semaines & Règles Suricata MQTT, intégration Wazuh, dashboards. \\ \hline
-S6 -- ML \& bilan & 2~semaines & Modèles IsolationForest et RandomForest, évaluation et rédaction finale. \\ \hline
+S1 & 2~semaines & Cadrage réseau, topologie segmentée, conteneurs de base et plan d'adressage. \\ \hline
+S2 & 2~semaines & Déploiement de Vault, CA racine et intermédiaire, rôles PKI, scripts d'émission. \\ \hline
+S3 & 2~semaines & Configuration de Mosquitto en TLS~1.3+mTLS, ACL par certificat et tests d'authentification. \\ \hline
+S4 & 2~semaines & Simulation de 50 clients Python, génération de trafic et rejeu de 76\,000 messages. \\ \hline
+S5 & 2~semaines & Règles Suricata MQTT, intégration Wazuh et tableaux de bord. \\ \hline
+S6 & 2~semaines & Modèles IsolationForest et RandomForest, évaluation finale et rédaction. \\ \hline
 \end{tabularx}
 \end{table}
 
-La figure~\ref{fig:sprints} illustre l'enchaînement des six sprints, leurs dépendances et les jalons de validation associés. On observe que les sprints S1 à S3 forment un bloc séquentiel strict~: la topologie réseau (S1) est un prérequis à l'installation de Vault (S2), elle-même prérequis à la configuration du broker mTLS (S3). À partir de S4, les flux peuvent se paralléliser partiellement~: la flotte simulée et la chaîne de détection IDS+SIEM (S5) peuvent être développées simultanément dès lors que le broker est opérationnel, et le pipeline ML (S6) consomme les données capturées lors de S4--S5.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.86\linewidth,height=0.16\textheight,keepaspectratio]{diag-scrum-sprints.png}
-\caption{Enchaînement des six sprints et leurs dépendances}
-\label{fig:sprints}
-\end{figure}
+Cette planification met en évidence une progression cohérente~: l'infrastructure et la PKI précèdent logiquement le broker sécurisé, puis la simulation, la détection et enfin l'évaluation ML.
 
 \section{Backlog produit}
 \label{sec:co-backlog}
 
-Le \emph{backlog produit} regroupe les \emph{User Stories} priorisées selon la méthode \textbf{MoSCoW}. Chaque US est ensuite estimée en \emph{story points}, sur la base d'une échelle de Fibonacci modifiée, puis rattachée à un sprint cible.
-
-\begin{table}[!htbp]
-\centering
-\caption{Backlog produit (extrait priorisé)}
-\label{tab:backlog}
-\small
-\begin{tabularx}{\linewidth}{|l|l|>{\raggedright\arraybackslash}X|c|c|c|}
-\hline
-\textbf{ID} & \textbf{Acteur} & \textbf{User Story} & \textbf{Prio.} & \textbf{SP} & \textbf{Sprint} \\
-\hline
-US-01 & Admin & Déployer une topologie réseau segmentée sous GNS3 & M & 8 & S1 \\ \hline
-US-02 & Admin & Définir un plan d'adressage par VLAN & M & 3 & S1 \\ \hline
-US-03 & Admin & Démarrer Vault et initialiser une CA racine & M & 5 & S2 \\ \hline
-US-04 & Admin & Provisionner une CA intermédiaire et des rôles PKI & M & 8 & S2 \\ \hline
-US-05 & Admin & Émettre des certificats serveur/client à la demande & M & 5 & S2 \\ \hline
-US-06 & Admin & Configurer Mosquitto en TLS~1.3 + mTLS & M & 8 & S3 \\ \hline
-US-07 & Admin & Définir des ACL par identifiant client & M & 5 & S3 \\ \hline
-US-08 & Dispositif & Établir une session mTLS et publier sur son topic & M & 5 & S3 \\ \hline
-US-09 & Admin & Simuler 50 dispositifs hétérogènes & M & 8 & S4 \\ \hline
-US-10 & Admin & Rejouer un dataset de 76\,000 messages & S & 5 & S4 \\ \hline
-US-11 & Analyste & Détecter une connexion non autorisée & M & 5 & S5 \\ \hline
-US-12 & Analyste & Détecter un brute-force d'authentification & M & 5 & S5 \\ \hline
-US-13 & Analyste & Visualiser les alertes corrélées dans Wazuh & M & 5 & S5 \\ \hline
-US-14 & Analyste & Détecter une anomalie via IsolationForest & S & 8 & S6 \\ \hline
-US-15 & Analyste & Classifier les attaques via Random Forest & S & 8 & S6 \\ \hline
-US-16 & Analyste & Comparer ML vs règles IDS & C & 5 & S6 \\ \hline
-\end{tabularx}
-\end{table}
-
-Soit un total estimé à \(96\) story points sur 6~sprints (\(\sim 16\) SP/sprint), conforme à la capacité d'une équipe solo avec encadrement.
-
-Le backlog ainsi constitué traduit les objectifs en livrables concrets, chacun affecté à un sprint précis. Pour compléter cette conception, il est nécessaire de modéliser les interactions entre les composants~: les diagrammes UML présentés dans la section suivante formalisent le simulateur de flotte, le cycle d'émission des certificats et le comportement d'un dispositif, fournissant une référence de conception pour la phase de réalisation.
+Le \emph{backlog produit} a été priorisé selon la méthode \textbf{MoSCoW} puis réparti sur les six sprints. Les éléments jugés critiques portent sur la topologie réseau, la PKI Vault, le broker mTLS, la simulation de flotte, l'intégration Suricata/Wazuh et l'évaluation du module ML. Le détail exhaustif des \emph{User Stories} n'est pas reproduit ici afin de conserver le focus du chapitre sur les choix de conception.
 
 \section{Modélisation UML}
 \label{sec:co-uml}
 
+La modélisation UML a été recentrée sur trois vues suffisantes pour comprendre la solution~: la structure du simulateur, l'émission d'un certificat client et le cycle de publication mTLS.
+
 \subsection{Diagramme de classes du simulateur}
 
-Le simulateur de flotte (\texttt{fleet\_sim.py}) est structuré en cinq classes réparties en deux groupes logiques. Le premier regroupe le cœur d'orchestration de la simulation~: \texttt{FleetOrchestrator}, \texttt{DeviceSimulator} et \texttt{DeviceStats}. Le second rassemble les composants de configuration et de gestion PKI~: \texttt{BrokerConfig}, \texttt{CertificateManager} et \texttt{CertBundle}. Le diagramme est présenté en deux parties afin d'en faciliter la lecture.
-
-\paragraph{Partie 1 — Orchestration de la simulation.}
-La figure~\ref{fig:classe-p1} montre la hiérarchie de contrôle~: \texttt{FleetOrchestrator} crée jusqu'à 50 instances \texttt{DeviceSimulator} (composition), chacune maintenant un agrégat \texttt{DeviceStats} pour la collecte des métriques (messages envoyés/échoués, débit, types d'attaques injectées). La méthode \texttt{\_inject\_dos\_pattern()} de \texttt{DeviceSimulator} module dynamiquement le taux d'émission pour simuler les attaques par inondation du jeu de données.
+La figure~\ref{fig:classe-p1} résume le noyau d'orchestration du simulateur~: \texttt{FleetOrchestrator} pilote les instances \texttt{DeviceSimulator}, tandis que \texttt{DeviceStats} centralise les métriques utiles à l'évaluation.
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.75\linewidth]{diag-classe-part1.png}
-\caption{Diagramme de classes --- Partie~1~: orchestration (\texttt{FleetOrchestrator}, \texttt{DeviceSimulator}, \texttt{DeviceStats})}
+\caption{Diagramme de classes du simulateur (orchestration et collecte des métriques)}
 \label{fig:classe-p1}
-\end{figure}
-\FloatBarrier
-
-\paragraph{Partie 2 — Configuration, PKI et dépendances externes.}
-La figure~\ref{fig:classe-p2} détaille les composants de support~: \texttt{BrokerConfig} encapsule les paramètres TLS du broker (hôte, port 8883, chemin du CA, QoS)~; \texttt{CertificateManager} interroge l'API Vault pour émettre, vérifier et renouveler les certificats X.509~; \texttt{CertBundle} (dataclass) transporte le triplet certificat/clé privée/chaîne CA. Les dépendances externes (\texttt{paho.mqtt.Client}, \texttt{pandas.DataFrame}) sont représentées en gris pour les distinguer du code du projet.
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.95\linewidth]{diag-classe-part2.png}
-\caption{Diagramme de classes --- Partie~2~: configuration, PKI et dépendances externes (\texttt{BrokerConfig}, \texttt{CertificateManager}, \texttt{CertBundle})}
-\label{fig:classe-p2}
 \end{figure}
 \FloatBarrier
 
 \subsection{Diagramme de séquence~: émission d'un certificat client}
 
-La séquence est découpée en deux parties~: l'initialisation de la PKI (opération réalisée une seule fois par l'administrateur) et l'émission effective d'un certificat pour chaque dispositif ou service.
-
-\paragraph{Partie 1 — Initialisation de la PKI.}
-La figure~\ref{fig:seq-pki-p1} couvre la mise en place de la hiérarchie à deux niveaux~: activation du moteur PKI racine dans Vault (RSA-4096, TTL~10~ans, auto-signé et conservé \emph{offline}), génération d'une CA intermédiaire dont le CSR est signé par la CA racine, puis import du certificat signé dans le \emph{secrets engine} \texttt{pki\_int}. Enfin, le rôle \texttt{iot-devices} est créé pour contraindre les émissions~: TTL maximal de 30~jours, usage \texttt{clientAuth}, CN limité au pattern \texttt{*.iot.lab}.
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=\linewidth]{diag-pki-seq-part1.png}
-\caption{Séquence PKI --- Partie~1~: initialisation (CA racine, CA intermédiaire, rôle)}
-\label{fig:seq-pki-p1}
-\end{figure}
-\FloatBarrier
-
-\paragraph{Partie 2 — Émission par dispositif.}
-La figure~\ref{fig:seq-pki-p2} décrit l'opération répétée pour chaque dispositif~: (1)~le script de provisionnement envoie une requête \texttt{POST} à l'API d'émission du rôle \texttt{iot-devices}, avec le CN et le TTL souhaité~; (2)~Vault vérifie la policy AppRole du token présenté~; (3)~Vault génère la paire de clés RSA-2048 et signe le certificat via la CA intermédiaire~; (4)~le bundle (certificat + clé privée + chaîne CA) est retourné en JSON~; (5)~le dispositif écrit les trois fichiers dans son système de fichiers et démarre un minuteur de renouvellement basé sur le TTL reçu (~87~ms de bout en bout).
+La figure~\ref{fig:seq-pki-p2} résume l'émission d'un certificat client via Vault~: requête API authentifiée, contrôle du rôle PKI, signature par la CA intermédiaire puis retour du bundle au dispositif, qui peut ensuite programmer son renouvellement.
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.88\linewidth]{diag-pki-seq-part2.png}
-\caption{Séquence PKI --- Partie~2~: émission d'un certificat client (\textasciitilde 87~ms)}
+\caption{Séquence d'émission d'un certificat client via Vault (\textasciitilde 87~ms)}
 \label{fig:seq-pki-p2}
 \end{figure}
 \FloatBarrier
 
 \subsection{Diagramme d'activité~: cycle de publication mTLS}
 
-Le cycle complet d'un dispositif simulé est décomposé en trois phases successives (figures~\ref{fig:activity-p1}, \ref{fig:activity-p2} et~\ref{fig:activity-p3}).
-
-\paragraph{Phase 1 — Initialisation de la flotte.}
-La figure~\ref{fig:activity-p1} montre le démarrage du simulateur~: le dataset CSV (76\,000 événements) et la configuration du broker sont chargés, puis 50 threads sont instanciés en parallèle via un \emph{fork}, un par dispositif simulé.
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.72\linewidth]{diag-activity-part1.png}
-\caption{Activité --- Phase~1~: initialisation des 50 threads de la flotte}
-\label{fig:activity-p1}
-\end{figure}
-\FloatBarrier
-
-\paragraph{Phase 2 — Provisionnement et connexion mTLS.}
-La figure~\ref{fig:activity-p2} détaille les étapes de provisionnement de chaque thread~: chargement du certificat X.509 émis par Vault, validation des fichiers (une clé ou un certificat invalide provoque un arrêt immédiat), configuration du client MQTT en TLS~1.3, puis établissement de la connexion avec \emph{handshake} mutuel. Un échec de connexion déclenche une attente en back-off exponentiel avant nouvelle tentative (maximum 3 essais), évitant une boucle de reconnexion aveugle.
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.72\linewidth]{diag-activity-part2.png}
-\caption{Activité --- Phase~2~: provisionnement du certificat et handshake mTLS}
-\label{fig:activity-p2}
-\end{figure}
-\FloatBarrier
-
-\paragraph{Phase 3 — Boucle de publication.}
-La figure~\ref{fig:activity-p3} représente la boucle principale~: pour chaque événement du sous-ensemble CSV assigné, le payload JSON est formaté puis publié sur le topic \texttt{iot/sensors/device-XXX/\{type\}}. Les événements étiquetés comme attaques adaptent leur comportement (accélération de fréquence pour DoS, duplication pour Replay, modification de payload pour MiTM). Le nœud de bouclage se poursuit jusqu'à épuisement des événements, après quoi le client se déconnecte proprement et les statistiques sont agrégées.
+La figure~\ref{fig:activity-p3} synthétise le comportement d'un dispositif simulé~: chargement de son sous-ensemble de données, publication MQTT sur les topics autorisés, adaptation du rythme d'émission en cas d'attaque, puis agrégation des statistiques en fin d'exécution.
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.72\linewidth]{diag-activity-part3.png}
-\caption{Activité --- Phase~3~: boucle de publication MQTT et agrégation des résultats}
+\caption{Diagramme d'activité du cycle de publication mTLS}
 \label{fig:activity-p3}
 \end{figure}
 \FloatBarrier
 
-\section{Planification temporelle}
-\label{sec:co-gantt}
-
-Le diagramme de Gantt (figure~\ref{fig:gantt}) consolide l'ensemble des sprints sur la durée totale du projet. L'axe horizontal représente le temps en semaines~; les barres horizontales correspondent aux périodes de réalisation de chaque sprint. On observe que les trois premiers sprints occupent la moitié de la durée totale et constituent le socle technique~: sans une PKI fonctionnelle (S2) et un broker sécurisé (S3), aucune donnée de trafic chiffré ne peut être générée ni analysée. Les flèches de dépendance illustrent les contraintes de précédence~: S4 ne démarre qu'après la validation du broker (fin S3), et S6 ne peut débuter sans les captures de trafic produites par S4--S5.
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=\linewidth,height=0.66\textheight,keepaspectratio]{diag-gantt.png}
-\caption{Diagramme de Gantt du projet}
-\label{fig:gantt}
-\end{figure}
-
 \section{Conclusion}
 \label{sec:co-conclusion}
 
-Ce chapitre a formalisé la conception du projet en articulant successivement le diagnostic de l'existant, la spécification des besoins, la vue d'ensemble de la solution retenue, les artefacts de pilotage et la modélisation du système. Cet ensemble fournit une base cohérente pour la phase de réalisation, en assurant la traçabilité entre les lacunes identifiées, les objectifs visés et les choix de conception adoptés. Le chapitre suivant décrit précisément \textbf{comment} chaque élément a été mis en \oe{}uvre~: de l'environnement GNS3 à la PKI Vault, du broker mTLS au pipeline ML, en passant par les scénarios d'attaque.
+Ce chapitre a formalisé la conception du projet en articulant successivement le diagnostic de l'existant, la spécification des besoins, la vue d'ensemble de la solution retenue, la planification générale et les principales vues UML. Cet ensemble fournit une base cohérente pour la phase de réalisation, en assurant la traçabilité entre les lacunes identifiées, les objectifs visés et les choix de conception adoptés. Le chapitre suivant décrit précisément \textbf{comment} chaque élément a été mis en \oe{}uvre~: de l'environnement GNS3 à la PKI Vault, du broker mTLS au pipeline ML, en passant par les scénarios d'attaque.
