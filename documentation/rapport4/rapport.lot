@@ -16,6 +16,6 @@
 \addvspace {10\p@ }
 \contentsline {table}{\numberline {4.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Composants de l'environnement de développement}}{30}{table.caption.115}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {5.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Plan de tests}}{61}{table.caption.156}%
-\contentsline {table}{\numberline {5.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Taux de détection des scénarios d'attaque (10 rejeux par scénario)}}{62}{table.caption.157}%
-\contentsline {table}{\numberline {5.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Performances ML (validation 5-fold)}}{69}{table.caption.168}%
+\contentsline {table}{\numberline {5.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Plan de tests}}{55}{table.caption.146}%
+\contentsline {table}{\numberline {5.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Taux de détection des scénarios d'attaque (10 rejeux par scénario)}}{56}{table.caption.147}%
+\contentsline {table}{\numberline {5.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Performances ML (validation 5-fold)}}{63}{table.caption.158}%
