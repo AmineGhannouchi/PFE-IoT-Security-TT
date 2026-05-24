@@ -1,4 +1,4 @@
-# ACL Mosquitto — Fleet top50
+# ACL Mosquitto Fleet top50
 
 user dev_048797.iot.iot-pfe.local
 topic write iot/+/dev_048797/#
