@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"F:/Projets/PFE-IoT-Security-TT/ml/docker/pfe-ml-engine/models\" && cp F:/Projets/PFE-IoT-Security-TT/ml/models/*.pkl F:/Projets/PFE-IoT-Security-TT/ml/docker/pfe-ml-engine/models/)"
+    ]
+  }
+}

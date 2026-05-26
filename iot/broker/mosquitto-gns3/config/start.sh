@@ -9,6 +9,13 @@ echo "[start.sh] ============================================"
 echo "[start.sh] Démarrage pfe-mosquitto (DMZ: 192.168.20.10)"
 echo "[start.sh] ============================================"
 
+# Configuration IP — Zone DMZ
+ip addr flush dev eth0 2>/dev/null || true
+ip addr add 192.168.20.10/24 dev eth0 2>/dev/null || true
+ip link set eth0 up 2>/dev/null || true
+ip route add default via 192.168.20.1 2>/dev/null || true
+echo "[start.sh] IP configurée : 192.168.20.10/24 — GW 192.168.20.1"
+
 # Créer les répertoires nécessaires
 mkdir -p /mosquitto/log /mosquitto/data /var/spool/rsyslog
 
