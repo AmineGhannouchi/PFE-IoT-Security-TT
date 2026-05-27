@@ -4,13 +4,85 @@
 
 \section{Introduction}
 
-Ce chapitre expose le cadre général dans lequel s'inscrit le projet de fin d'études. Il situe d'abord le travail dans le contexte du marché IoT et dans celui, plus spécifique, des opérateurs télécom, avant de présenter l'organisme d'accueil et son positionnement face aux enjeux de sécurité. Le chapitre formalise ensuite la problématique, précise les objectifs spécifiques, délimite le périmètre de l'étude et explicite la démarche méthodologique retenue.
+Ce chapitre expose le cadre général dans lequel s'inscrit le projet de fin d'études. Il présente d'abord l'organisme d'accueil et son positionnement stratégique face aux enjeux de la sécurité IoT, puis situe le travail dans le contexte du marché IoT et dans celui, plus spécifique, des opérateurs télécom. Le chapitre dresse ensuite un état des lieux des pratiques existantes en matière de sécurité IoT afin d'identifier les lacunes à combler. Sur cette base, il formalise la problématique, définit l'objectif général et les objectifs spécifiques, expose les besoins fonctionnels, délimite le périmètre de l'étude et explicite la démarche méthodologique retenue.
 
+%% ====================================================================
+%%  SECTION : Organisme d'accueil (placée juste après l'introduction)
+%% ====================================================================
+\section{Présentation de l'organisme d'accueil}
+\label{sec:organisme}
+
+\TT{} est l'opérateur historique de télécommunications en Tunisie. Fondée en 1995, l'entreprise joue un rôle clé dans le développement des infrastructures de communication du pays et dans la fourniture de services de téléphonie, d'Internet et de transmission de données~\cite{tunisie_telecom}. La figure~\ref{fig:logo-tt} présente le logo de Tunisie Telecom.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.34\linewidth,height=0.16\textheight,keepaspectratio]{chap1/tt.png}
+\caption{Logo de Tunisie Telecom}
+\label{fig:logo-tt}
+\end{figure}
+
+L'opérateur propose une large gamme de services destinés aussi bien aux particuliers qu'aux entreprises, incluant~:
+
+\begin{itemize}[leftmargin=*]
+  \item la téléphonie fixe et mobile~;
+  \item l'accès à Internet haut débit et très haut débit~;
+  \item les services de données et de connectivité~;
+  \item les solutions cloud et les services numériques.
+\end{itemize}
+
+Grâce à un vaste réseau d'infrastructures couvrant l'ensemble du territoire national, Tunisie Telecom contribue activement à la transformation numérique du pays. L'entreprise investit également dans des technologies émergentes telles que la 5G, l'Internet des objets et les solutions de cybersécurité afin de répondre aux besoins croissants en connectivité et en sécurité.
+
+\subsection{Service d'accueil}
+\label{subsec:tt-service}
+
+La structure organisationnelle de Tunisie Telecom est constituée d'une direction générale, de neuf directions centrales et de 24 directions régionales. Chacune des parties prenantes de l'organisation joue un rôle essentiel dans le fonctionnement de l'ensemble. Cette organisation est illustrée dans la figure~\ref{fig:organigramme-tt}.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.9\linewidth,height=0.42\textheight,keepaspectratio]{chap1/organigramme-tt.png}
+\caption{Organigramme de Tunisie Telecom}
+\label{fig:organigramme-tt}
+\end{figure}
+
+Le projet a été réalisé au sein du service technique chargé des infrastructures réseau et de la sécurité des systèmes de communication. Ce service joue un rôle central dans la gestion, la supervision et la protection des infrastructures utilisées pour les services télécom et les plateformes numériques. Ses principales activités incluent~:
+
+\begin{itemize}[leftmargin=*]
+  \item la gestion et l'administration des infrastructures réseau~;
+  \item la supervision du trafic et des performances des systèmes~;
+  \item la mise en \oe{}uvre de solutions de cybersécurité~;
+  \item l'analyse des incidents et des menaces de sécurité~;
+  \item l'évaluation et l'intégration de nouvelles technologies.
+\end{itemize}
+
+Dans ce cadre, le service s'intéresse particulièrement aux problématiques de sécurité liées aux architectures modernes telles que les environnements cloud, les réseaux virtualisés et les écosystèmes IoT. Le stage réalisé dans ce service offre ainsi l'opportunité de travailler sur des problématiques concrètes liées à la sécurisation des communications dans les systèmes IoT.
+
+\subsection{Positionnement de Tunisie Telecom face aux enjeux IoT}
+\label{subsec:tt-iot}
+
+Dans le cadre de sa stratégie de transformation numérique, \TT{} développe progressivement des offres dans le domaine de l'IoT et des services connectés. L'opérateur est confronté aux mêmes impératifs de sécurisation que ses homologues internationaux, dans un contexte supplémentaire de contraintes réglementaires nationales et de ressources techniques à mobiliser de manière optimale.
+
+Le service d'accueil est particulièrement sensibilisé aux risques liés à l'interconnexion de dispositifs IoT sur les infrastructures de l'opérateur~: hétérogénéité des équipements connectés, absence de standards unifiés d'authentification à l'échelle du parc, difficultés de supervision des flux applicatifs de type MQTT et manque d'outils permettant la détection de comportements anormaux au niveau applicatif. Ces constats constituent le point de départ direct du projet et justifient la construction d'un démonstrateur expérimental permettant de valider une approche intégrée avant tout passage à l'échelle opérationnel.
+
+Ce positionnement stratégique de Tunisie Telecom fournit le contexte institutionnel du projet. Il convient maintenant de situer ce travail dans le cadre plus large du marché IoT et des enjeux propres aux opérateurs télécom.
+
+%% ====================================================================
+%%  SECTION : Cadre général du projet
+%% ====================================================================
 \section{Cadre général du projet}
 \label{sec:contexte-general}
 
-Dans le cadre de ce travail, l'objectif est de construire un prototype expérimental capable de sécuriser les flux de communication d'un écosystème IoT simulé. Le projet s'appuie sur une architecture représentative d'un environnement opérateur : segmentation réseau, services de confiance, broker MQTT, supervision de sécurité et analyse comportementale. Cette approche permet de valider les mécanismes proposés avant toute projection vers un déploiement réel à plus grande échelle.
+Dans le cadre de ce travail, l'objectif est de construire un prototype expérimental capable de sécuriser les flux de communication d'un écosystème IoT émulé. Le projet s'appuie sur une architecture représentative d'un environnement opérateur~: segmentation réseau, services de confiance, broker MQTT, supervision de sécurité et analyse comportementale. Cette approche permet de valider les mécanismes proposés avant toute projection vers un déploiement réel à plus grande échelle. La figure~\ref{fig:archi-reelle-ch1} donne un aperçu de l'architecture générale du système, qui sera détaillée dans les chapitres suivants.
 
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{PFE-IoT-Architecture-Generale.png}
+\caption{Architecture générale du système de sécurisation IoT proposé}
+\label{fig:archi-reelle-ch1}
+\end{figure}
+
+%% ====================================================================
+%%  SECTION : L'IoT dans les réseaux de télécommunications
+%% ====================================================================
 \section{L'IoT dans les réseaux de télécommunications}
 \label{sec:iot-telecom}
 
@@ -31,7 +103,18 @@ Les opérateurs télécom occupent une position centrale et particulière dans l
   \item \textbf{Responsabilité contractuelle et réglementaire}~: une fuite ou une compromission de flux IoT clients expose l'opérateur à des risques réglementaires (protection des données personnelles, responsabilité de service) et à des impacts réputationnels majeurs, le contraignant à démontrer un niveau de sécurité maîtrisé et auditable.
 \end{itemize}
 
-Ces contraintes font de la sécurisation des flux IoT un enjeu opérationnel de premier ordre pour les opérateurs télécom, bien au-delà d'une simple exigence technique ponctuelle. Elles motivent directement la conception d'une architecture dédiée, reproductible et validée expérimentalement dans le cadre de ce projet.
+Ces contraintes font de la sécurisation des flux IoT un enjeu opérationnel de premier ordre pour les opérateurs télécom, bien au-delà d'une simple exigence technique ponctuelle.
+
+\subsection{Protocoles de sécurisation du transport~: TLS et DTLS}
+\label{sec:tls-dtls-intro}
+
+La sécurisation des flux IoT au niveau transport repose principalement sur deux protocoles complémentaires~: \acs{TLS} et \acs{DTLS}. Leur compréhension est essentielle pour saisir les choix architecturaux effectués dans ce projet.
+
+Le protocole \textbf{TLS} (\emph{Transport Layer Security}) assure la confidentialité, l'intégrité et l'authentification des communications établies sur des connexions TCP. Il fonctionne en établissant un canal chiffré entre deux parties via un processus de négociation (\emph{handshake}) au cours duquel les interlocuteurs s'accordent sur les algorithmes cryptographiques, échangent des certificats numériques et dérivent des clés de session. La version~1.3 du protocole, standardisée dans la RFC~8446~\cite{rfc8446}, apporte des améliorations significatives par rapport à la version~1.2~: suppression des suites cryptographiques obsolètes, négociation en un seul aller-retour (1-RTT), \emph{forward secrecy} obligatoire garantissant que la compromission ultérieure d'une clé privée ne met pas en péril les sessions passées, et simplification générale du \emph{handshake}. Dans le contexte IoT, TLS est utilisé pour sécuriser les protocoles applicatifs fondés sur TCP, notamment \acs{MQTT}.
+
+Le protocole \textbf{DTLS} (\emph{Datagram Transport Layer Security}) constitue l'adaptation de TLS aux protocoles de transport non fiables, principalement UDP. Conçu pour tolérer la perte et la réorganisation des paquets inhérentes à UDP, DTLS intègre des mécanismes de retransmission et de numérotation de séquence absents de TLS. Il est principalement utilisé pour sécuriser le protocole \acs{CoAP}, qui repose sur UDP et est privilégié pour les dispositifs à très faibles ressources.
+
+Dans le cadre de ce projet, l'architecture repose sur \acs{MQTT} comme protocole applicatif principal, sécurisé par \textbf{TLS~1.3 avec authentification mutuelle} (\acs{mTLS}). Le choix de TLS plutôt que DTLS est dicté par le modèle de transport de MQTT (TCP). L'authentification mutuelle ajoute une vérification bidirectionnelle~: non seulement le serveur (broker) prouve son identité au client (dispositif), mais le client doit également présenter un certificat X.509 valide signé par l'autorité de certification du réseau. Une analyse approfondie de TLS~1.3 et de ses implications architecturales est présentée au chapitre~\ref{chap:etat-art}.
 
 \subsection{Approches de sécurisation disponibles pour les opérateurs}
 
@@ -48,95 +131,102 @@ Face à ces enjeux, plusieurs approches de sécurisation sont envisageables. Le 
 \hline
 Plateformes cloud commerciales (AWS IoT, Azure IoT Hub) & Déploiement rapide, fonctionnalités riches, mises à jour gérées & Dépendance fournisseur, souveraineté des données, coûts récurrents variables \\ \hline
 Distributions open source intégrées (ThingsBoard, Eclipse Kura) & Open source, personnalisable, large communauté & TLS souvent optionnel, PKI non intégrée, supervision et corrélation limitées \\ \hline
-Architecture sur mesure (composants open source) & Contrôle total, souveraineté, adaptabilité au contexte opérateur & Complexité initiale de mise en œuvre, nécessite expertise interne \\ \hline
+Architecture sur mesure (composants open source) & Contrôle total, souveraineté, adaptabilité au contexte opérateur & Complexité initiale de mise en \oe{}uvre, nécessite expertise interne \\ \hline
 \end{tabularx}
 \end{table}
 
 Pour un opérateur télécom souhaitant conserver la maîtrise de son infrastructure, répondre aux exigences réglementaires locales et éviter tout verrouillage fournisseur, une architecture sur mesure fondée sur des composants open source éprouvés constitue l'approche la plus cohérente. C'est ce positionnement qui oriente l'ensemble des choix techniques opérés dans ce projet.
 
-\section{Présentation de l'organisme d'accueil}
-\label{sec:organisme}
+Les enjeux sectoriels étant posés, il est indispensable de dresser un état des lieux concret des pratiques de sécurité IoT actuellement observées dans les environnements opérateur, afin de quantifier les lacunes à combler.
 
-\TT{} est l'opérateur historique de télécommunications en Tunisie. Fondée en 1995, l'entreprise joue un rôle clé dans le développement des infrastructures de communication du pays et dans la fourniture de services de téléphonie, d'Internet et de transmission de données~\cite{tunisie_telecom}. La figure~\ref{fig:logo-tt} présente le logo de Tunisie Telecom.
+%% ====================================================================
+%%  SECTION : Étude de l'existant (déplacée depuis le chapitre 3)
+%% ====================================================================
+\section{Étude de l'existant}
+\label{sec:analyse-existant}
 
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.34\linewidth,height=0.16\textheight,keepaspectratio]{chap1/tt.png}
-\caption{Logo de Tunisie Telecom}
-\label{fig:logo-tt}
-\end{figure}
+Avant de formuler la problématique et les objectifs du projet, il est indispensable de dresser un état des lieux objectif des pratiques de sécurité IoT dans les environnements opérateur. Ce diagnostic s'appuie sur l'analyse des déploiements typiques, les recommandations publiées par l'ENISA~\cite{enisa_iot} et le NIST~\cite{nist_sp800213}, ainsi que sur les observations réalisées dans le cadre du stage chez \TT{}.
 
-L'opérateur propose une large gamme de services destinés aussi bien aux particuliers qu'aux entreprises, incluant~:
+\subsection{État des lieux de la sécurité IoT dans les déploiements opérateur}
 
-\begin{itemize}[leftmargin=*]
-  \item la téléphonie fixe et mobile .
-  \item l'accès à Internet haut débit et très haut débit .
-  \item les services de données et de connectivité .
-  \item les solutions cloud et les services numériques.
-\end{itemize}
-
-Grâce à un vaste réseau d'infrastructures couvrant l'ensemble du territoire national, Tunisie Telecom contribue activement à la transformation numérique du pays. L'entreprise investit également dans des technologies émergentes telles que la 5G, l'Internet des objets et les solutions de cybersécurité afin de répondre aux besoins croissants en connectivité et en sécurité.
-
-Dans ce contexte, l'opérateur développe des initiatives visant à renforcer la sécurité des infrastructures réseau et des services numériques, notamment face à l'augmentation des cybermenaces.
-
-\subsection{Service d'accueil}
-\label{subsec:tt-service}
-
-La structure organisationnelle de Tunisie Telecom est constituée d'une direction générale, de neuf directions centrales et de 24 directions régionales. Chacune des parties prenantes de l'organisation joue un rôle indéniablement important. Cette organisation est illustrée dans la figure~\ref{fig:organigramme-tt}.
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.9\linewidth,height=0.42\textheight,keepaspectratio]{chap1/organigramme-tt.png}
-\caption{Organigramme de Tunisie Telecom}
-\label{fig:organigramme-tt}
-\end{figure}
-
-Le projet a été réalisé au sein du service technique chargé des infrastructures réseau et de la sécurité des systèmes de communication. Ce service joue un rôle essentiel dans la gestion, la supervision et la protection des infrastructures utilisées pour les services télécom et les plateformes numériques.
-
-Les principales activités du service incluent~:
+L'analyse conduite en amont de ce projet, combinant l'étude des pratiques observées dans des déploiements IoT typiques et les enseignements publiés par les organismes de référence, met en évidence plusieurs lacunes de sécurité récurrentes~:
 
 \begin{itemize}[leftmargin=*]
-  \item la gestion et l'administration des infrastructures réseau .
-  \item la supervision du trafic et des performances des systèmes .
-  \item la mise en œuvre de solutions de cybersécurité .
-  \item l'analyse des incidents et des menaces de sécurité .
-  \item l'évaluation et l'intégration de nouvelles technologies.
+	\item \textbf{Transport non systématiquement chiffré}~: le protocole MQTT est fréquemment déployé sur le port 1883 (texte clair), sans TLS, par souci de simplicité ou de performance perçue. Un attaquant positionné sur le segment réseau peut alors capturer l'intégralité des messages publiés, y compris les données métier sensibles~;
+	\item \textbf{Authentification unidirectionnelle ou absente}~: le broker ne vérifie généralement pas le certificat du client. Les dispositifs s'authentifient souvent par un simple couple identifiant/mot de passe, voire sans aucun mécanisme d'authentification, rendant toute usurpation d'identité triviale~;
+	\item \textbf{Absence de PKI dédiée}~: lorsque des certificats existent, ils sont fréquemment auto-signés, non révocables automatiquement et gérés de façon ad hoc, sans cycle de vie défini ni procédure de révocation d'urgence en cas de compromission~;
+	\item \textbf{Contrôle d'accès applicatif insuffisant}~: les listes de contrôle d'accès aux topics MQTT sont rarement mises en \oe{}uvre, permettant à tout dispositif connecté d'accéder à l'ensemble des canaux de publication et de souscription, indépendamment de son rôle légitime~;
+	\item \textbf{Supervision fragmentée}~: les outils de monitoring réseau et applicatif ne communiquent pas entre eux, rendant difficile la corrélation d'événements de sécurité. La détection d'une attaque nécessite une analyse manuelle croisée de plusieurs sources de journaux hétérogènes~;
+	\item \textbf{Absence de détection comportementale}~: les mécanismes de détection d'intrusion existants se limitent aux signatures connues. Ils ne permettent pas de détecter des anomalies comportementales subtiles telles que l'utilisation d'un certificat valide depuis un contexte inhabituel, une dérive de fréquence de publication ou une exfiltration lente via des topics légitimes.
 \end{itemize}
 
-Dans ce cadre, le service s'intéresse particulièrement aux problématiques de sécurité liées aux architectures modernes telles que les environnements cloud, les réseaux virtualisés et les écosystèmes IoT.
+\subsection{Synthèse du diagnostic}
 
-Le stage réalisé dans ce service offre ainsi l'opportunité de travailler sur des problématiques concrètes liées à la sécurisation des communications dans les systèmes IoT.
+Le tableau~\ref{tab:diagnostic} synthétise ce diagnostic en mettant en regard chaque lacune identifiée avec la brique de sécurité retenue dans la solution, établissant ainsi le lien direct entre le contexte opérationnel observé et les choix de conception du projet.
 
-\subsection{Positionnement de Tunisie Telecom face aux enjeux IoT}
-\label{subsec:tt-iot}
+\begin{table}[!htbp]
+\centering
+\caption{Diagnostic des lacunes et briques de réponse correspondantes}
+\label{tab:diagnostic}
+\small
+\begin{tabularx}{\linewidth}{|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
+\hline
+\textbf{Lacune identifiée} & \textbf{Brique de réponse retenue} \\
+\hline
+Flux MQTT en clair, sans chiffrement de bout en bout & Activation obligatoire de TLS~1.3 sur Mosquitto (port~8883) \\ \hline
+Authentification client absente ou basée sur mot de passe faible & Certificat X.509 client obligatoire, vérifié par le broker en mTLS \\ \hline
+Gestion manuelle et non automatisée des certificats & PKI HashiCorp Vault à deux niveaux avec émission et révocation via API \\ \hline
+Accès applicatifs non restreints par dispositif & ACL Mosquitto fondées sur le \emph{Common Name} du certificat client \\ \hline
+Supervision réseau et applicative déconnectées & Intégration de Suricata au SIEM Wazuh pour la corrélation \\ \hline
+Absence de détection comportementale & Module ML fondé sur IsolationForest et Random Forest \\ \hline
+\end{tabularx}
+\end{table}
 
-Dans le cadre de sa stratégie de transformation numérique, \TT{} développe progressivement des offres dans le domaine de l'IoT et des services connectés. L'opérateur est confronté aux mêmes impératifs de sécurisation que ses homologues internationaux, dans un contexte supplémentaire de contraintes réglementaires nationales et de ressources techniques à mobiliser de manière optimale.
+Ce diagnostic structuré met en évidence des lacunes qui ne peuvent être traitées par des correctifs ponctuels~: elles exigent une réponse architecturale intégrée. Chaque composant de la solution répond à une lacune précisément identifiée, garantissant la pertinence de l'architecture proposée au-delà d'une simple accumulation d'outils technologiques. La formulation d'une problématique globale s'impose donc.
 
-Le service d'accueil est particulièrement sensibilisé aux risques liés à l'interconnexion de dispositifs IoT sur les infrastructures de l'opérateur~: hétérogénéité des équipements connectés, absence de standards unifiés d'authentification à l'échelle du parc, difficultés de supervision des flux applicatifs de type MQTT et manque d'outils permettant la détection de comportements anormaux au niveau applicatif. Ces constats constituent le point de départ direct du projet et justifient la construction d'un démonstrateur expérimental permettant de valider une approche intégrée avant tout passage à l'échelle opérationnel.
-
+%% ====================================================================
+%%  SECTION : Problématique (reformulée en paragraphes structurés)
+%% ====================================================================
 \section{Problématique}
 \label{sec:problematique}
 
-L'écosystème d'un opérateur télécom présente plusieurs spécificités qui rendent la sécurisation des flux IoT particulièrement délicate~:
+L'étude de l'existant a mis en lumière un ensemble de lacunes structurelles dans la sécurisation des flux IoT au sein des environnements opérateur. Ces lacunes ne sont pas isolées~: elles interagissent et se renforcent mutuellement, formant une surface d'attaque étendue qui compromet la fiabilité et la confidentialité des échanges.
 
-\begin{itemize}[leftmargin=*]
-  \item \textbf{Hétérogénéité} des dispositifs (microcontrôleurs ESP32, passerelles industrielles, modems cellulaires) et des protocoles applicatifs (MQTT, CoAP, AMQP, LwM2M)~.
-  \item \textbf{Volumétrie} massive et asynchrone des messages (publications périodiques, événements rares mais critiques)~.
-  \item \textbf{Contraintes embarquées} : ressources CPU/mémoire limitées, batteries, latence radio variable~.
-  \item \textbf{Multi-tenance} et segmentation réseau : un même opérateur héberge plusieurs clients verticaux qui ne doivent jamais accéder aux flux des autres~.
-  \item \textbf{Gestion à grande échelle} d'identités cryptographiques (certificats X.509) pour des dizaines de milliers d'objets, avec des cycles de vie variables~.
-\end{itemize}
+Le premier défi réside dans l'\textbf{hétérogénéité} intrinsèque des écosystèmes IoT. Un opérateur télécom doit gérer simultanément des dispositifs aux capacités très disparates~--- microcontrôleurs ESP32 disposant de quelques kilooctets de RAM, passerelles industrielles sous Linux embarqué, modems cellulaires NB-IoT~--- communiquant via des protocoles applicatifs différents (MQTT, CoAP, AMQP, LwM2M). Cette diversité rend difficile l'application d'une politique de sécurité uniforme sans recourir à une couche d'abstraction commune.
 
-La problématique centrale de ce projet de fin d'études peut être formulée ainsi~:
+À cette hétérogénéité s'ajoute une \textbf{volumétrie} massive et asynchrone des messages~: les dispositifs IoT génèrent des publications périodiques à haute fréquence, ponctuées d'événements rares mais critiques. Les mécanismes de sécurité~--- chiffrement, authentification, contrôle d'accès~--- doivent traiter ce volume sans dégrader la qualité de service ni introduire une latence incompatible avec les exigences temps réel de certaines applications.
+
+Les \textbf{contraintes embarquées} des dispositifs constituent un troisième obstacle~: ressources processeur et mémoire limitées, alimentation par batterie et connectivité radio variable rendent l'intégration de mécanismes cryptographiques complets particulièrement délicate. Ces limitations obligent à rechercher un équilibre entre le niveau de protection souhaité et le coût computationnel des opérations de sécurité.
+
+La \textbf{multi-tenance}, inhérente au modèle économique des opérateurs télécom, impose en outre une segmentation rigoureuse des flux~: un même réseau héberge les données de plusieurs clients verticaux (énergie, transport, santé, industrie) qui ne doivent en aucun cas accéder aux flux des autres. Toute faille dans cette isolation expose l'opérateur à des risques réglementaires et contractuels majeurs.
+
+Enfin, la \textbf{gestion à grande échelle des identités cryptographiques} représente un défi opérationnel de premier ordre. L'attribution, le renouvellement et la révocation de certificats X.509 pour des dizaines de milliers de dispositifs, avec des cycles de vie variables, ne peuvent être assurés manuellement sans compromettre la sécurité ou la disponibilité du service.
+
+Face à ces constats convergents, la problématique centrale de ce projet de fin d'études se formule ainsi~:
 
 \begin{infobox}[Problématique]
-Comment concevoir, déployer et valider, dans un environnement simulé représentatif d'un opérateur télécom, une architecture de sécurisation \textbf{de bout en bout} des flux de communication d'un écosystème IoT, qui combine~: (i) un chiffrement et une authentification mutuelle systématiques entre objets et infrastructures~. (ii) une gestion automatisée du cycle de vie des certificats~. (iii) une supervision active des menaces par corrélation d'alertes réseau et apprentissage automatique~. (iv) tout en restant compatible avec les contraintes de performance et de scalabilité du domaine~?
+Comment concevoir, déployer et valider, dans un environnement émulé représentatif d'un opérateur télécom, une architecture de sécurisation \textbf{de bout en bout} des flux de communication d'un écosystème IoT, qui combine~: (i)~un chiffrement et une authentification mutuelle systématiques entre objets et infrastructures~; (ii)~une gestion automatisée du cycle de vie des certificats~; (iii)~une supervision active des menaces par corrélation d'alertes réseau et apprentissage automatique~; (iv)~tout en restant compatible avec les contraintes de performance et de scalabilité du domaine~?
 \end{infobox}
 
+Pour répondre à cette problématique, un objectif général et des objectifs spécifiques doivent être clairement définis, afin de structurer l'ensemble des travaux à mener.
+
+%% ====================================================================
+%%  SECTION : Objectif général (nouvelle section)
+%% ====================================================================
+\section{Objectif général}
+\label{sec:objectif-general}
+
+L'objectif général de ce projet est de concevoir, implémenter et valider une \textbf{architecture de sécurisation de bout en bout} des flux de communication d'un écosystème IoT, fondée sur le principe de \textbf{défense en profondeur}. Cette architecture vise à intégrer, dans un environnement émulé représentatif d'un opérateur télécom, l'ensemble des couches de protection nécessaires~: chiffrement du transport par TLS~1.3, authentification forte par certificats X.509 avec mTLS, contrôle d'accès granulaire par \acs{ACL}, détection d'intrusion par règles Suricata, corrélation d'alertes dans un SIEM Wazuh et détection comportementale par apprentissage automatique. L'approche retenue privilégie exclusivement des composants open source, souverains et reproductibles, afin de répondre aux contraintes opérationnelles, réglementaires et économiques propres au contexte d'un opérateur télécom national.
+
+Cet objectif général se décline en sept objectifs spécifiques, détaillés dans la section suivante.
+
+%% ====================================================================
+%%  SECTION : Objectifs spécifiques
+%% ====================================================================
 \section{Objectifs spécifiques}
 \label{sec:objectifs}
 
-À partir de cette problématique, sept objectifs spécifiques (\acs{O1}--\acs{O7}) structurent l'ensemble des travaux, qui sont présentés dans le tableau~\ref{tab:objectifs}~:
+Les sept objectifs spécifiques (\acs{O1}--\acs{O7}) structurent l'ensemble des travaux et sont présentés dans le tableau~\ref{tab:objectifs}~:
 
 \begin{table}[!htbp]
 \centering
@@ -146,18 +236,40 @@ Comment concevoir, déployer et valider, dans un environnement simulé représen
 \hline
 \textbf{ID} & \textbf{Objectif} \\
 \hline
-\acs{O1} & Concevoir une architecture IoT segmentée et reproductible, déployable dans un environnement simulé. \\ \hline
+\acs{O1} & Concevoir une architecture IoT segmentée et reproductible, déployable dans un environnement émulé. \\ \hline
 \acs{O2} & Déployer une infrastructure à clés publiques (\acs{PKI}) automatisée fondée sur HashiCorp Vault. \\ \hline
 \acs{O3} & Imposer un chiffrement \acs{TLS}~1.3 avec authentification mutuelle (\acs{mTLS}) sur le broker MQTT. \\ \hline
-\acs{O4} & Simuler une flotte hétérogène de 50 dispositifs IoT et générer un trafic réaliste mêlant comportements légitimes et attaques. \\ \hline
+\acs{O4} & Émuler une flotte hétérogène de 50 dispositifs IoT et générer un trafic réaliste mêlant comportements légitimes et attaques. \\ \hline
 \acs{O5} & Mettre en place une analyse réseau native MQTT au moyen d'un \acs{IDS} Suricata. \\ \hline
-\acs{O6} & Centraliser et corréler les événements de sécurité dans un \acs{SIEM} Wazuh. \\ \hline
+\acs{O6} & Centraliser et corréler les événements de sécurité dans un \acs{SIEM} Wazuh, avec visualisation via Grafana. \\ \hline
 \acs{O7} & Développer un module de détection d'anomalies par apprentissage automatique (IsolationForest et Random Forest) et évaluer son apport. \\ \hline
 \end{tabularx}
 \end{table}
 
-Ces objectifs traduisent opérationnellement la problématique et structurent les différentes phases du projet.
+Ces objectifs traduisent opérationnellement la problématique et structurent les différentes phases du projet. Avant de délimiter le périmètre du travail, il convient de préciser les besoins fonctionnels auxquels la solution doit répondre.
 
+%% ====================================================================
+%%  SECTION : Besoins fonctionnels (nouvelle section)
+%% ====================================================================
+\section{Besoins fonctionnels}
+\label{sec:besoins-fonctionnels-ch1}
+
+L'étude de l'existant et la formulation de la problématique permettent de dégager les principaux besoins fonctionnels auxquels la solution doit répondre. À ce stade, ces besoins sont exprimés de manière synthétique~; leur spécification formelle, accompagnée des besoins non fonctionnels et de la modélisation UML, sera présentée au chapitre~\ref{chap:conception}.
+
+Six domaines fonctionnels complémentaires sont identifiés~:
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Gestion des identités cryptographiques}~: le système doit être capable d'émettre, de renouveler et de révoquer automatiquement des certificats X.509 pour l'ensemble des services et des dispositifs IoT, au moyen d'une \acs{PKI} automatisée~;
+  \item \textbf{Sécurisation du transport}~: toutes les communications entre les dispositifs et le broker MQTT doivent être chiffrées via \acs{TLS}~1.3 avec authentification mutuelle (\acs{mTLS}), rendant impossible toute interception ou usurpation d'identité~;
+  \item \textbf{Contrôle d'accès applicatif}~: l'accès aux topics MQTT doit être restreint par dispositif au moyen de listes de contrôle d'accès fondées sur l'identité cryptographique (le \emph{Common Name} du certificat) de chaque objet~;
+  \item \textbf{Simulation réaliste du trafic}~: une flotte hétérogène de dispositifs IoT doit être émulée pour générer un trafic représentatif, incluant des comportements légitimes et des scénarios d'attaque couvrant les principaux vecteurs identifiés~;
+  \item \textbf{Détection d'intrusion et corrélation}~: les attaques réseau et applicatives doivent être détectées par un \acs{IDS} et corrélées dans un \acs{SIEM} pour une supervision centralisée, avec des tableaux de bord accessibles aux analystes~;
+  \item \textbf{Détection comportementale}~: les anomalies non couvertes par les règles statiques doivent être identifiées par un module d'apprentissage automatique, capable de repérer les dérives de comportement subtiles telles que l'utilisation d'un certificat valide depuis un contexte inhabituel.
+\end{itemize}
+
+%% ====================================================================
+%%  SECTION : Périmètre et contraintes
+%% ====================================================================
 \section{Périmètre et contraintes du projet}
 \label{sec:perimetre}
 
@@ -177,7 +289,7 @@ Ce projet se concentre sur la sécurisation des communications IoT au niveau du 
 Segmentation réseau par VLANs sous GNS3 & Déploiement en environnement de production réel \\ \hline
 PKI à deux niveaux avec HashiCorp Vault & Gestion des mises à jour firmware des objets (OTA) \\ \hline
 Broker MQTT en TLS~1.3 + mTLS avec ACL par topic & Sécurité de la couche matérielle des dispositifs \\ \hline
-Simulation d'une flotte de 50 dispositifs hétérogènes & Flotte supérieure à 50 dispositifs (contrainte ressources hôte) \\ \hline
+Émulation d'une flotte de 50 dispositifs hétérogènes & Flotte supérieure à 50 dispositifs (contrainte ressources hôte) \\ \hline
 Détection IDS Suricata + corrélation SIEM Wazuh & Intégration aux outils SOC existants de Tunisie Telecom \\ \hline
 Pipeline ML hors ligne (IsolationForest, Random Forest) & Scoring ML en temps réel sur flux de données en streaming \\ \hline
 Évaluation des performances (latence, débit mTLS) & Tests de charge en environnement radio réel (4G/5G/NB-IoT) \\ \hline
@@ -189,7 +301,7 @@ Pipeline ML hors ligne (IsolationForest, Random Forest) & Scoring ML en temps r�
 La réalisation de ce projet s'est inscrite dans un ensemble de contraintes techniques, temporelles et opérationnelles qui ont directement influencé les choix architecturaux~:
 
 \begin{itemize}[leftmargin=*]
-  \item \textbf{Contrainte matérielle}~: l'ensemble de l'infrastructure est simulé sur une station Windows~10/11 dotée de 16~Go de RAM minimum, sans accès à un environnement cloud dédié ni à des équipements physiques IoT réels. Cette contrainte délimite la taille de la flotte simulable et le niveau de réalisme des mesures de performance~;
+  \item \textbf{Contrainte matérielle}~: l'ensemble de l'infrastructure est émulé sur une station Windows~10/11 dotée de 16~Go de RAM minimum, sans accès à un environnement cloud dédié ni à des équipements physiques IoT réels. Cette contrainte délimite la taille de la flotte et le niveau de réalisme des mesures de performance~;
   \item \textbf{Contrainte temporelle}~: le stage d'une durée de quatre mois impose une priorisation stricte des livrables. La méthodologie Scrum, adoptée pour ce projet et décrite dans la section suivante, garantit que les fonctionnalités critiques (PKI, mTLS, détection) sont livrées et testées en priorité~;
   \item \textbf{Contrainte de reproductibilité}~: l'ensemble de l'environnement doit être reconstituable depuis zéro à partir des scripts et configurations versionnés, sans intervention manuelle non documentée~;
   \item \textbf{Contrainte de souveraineté technologique}~: tous les composants retenus sont open source, afin de garantir la transparence, la maîtrise du code et l'absence de dépendance envers un fournisseur commercial.
@@ -201,10 +313,13 @@ Trois hypothèses structurent l'expérimentation conduite dans ce projet~:
 
 \begin{enumerate}[leftmargin=*]
   \item Le jeu de données utilisé pour l'entraînement des modèles de ML (76\,000 messages répartis en huit classes~: une classe normale et sept catégories d'attaques) est représentatif des profils de trafic rencontrés dans un écosystème IoT réel~\cite{hasan2020securing}~;
-  \item Les performances mesurées dans l'environnement simulé (latence du handshake mTLS, débit du broker) constituent des ordres de grandeur valides pour une évaluation comparative, sans prétention à reproduire exactement un réseau radio réel avec ses contraintes de propagation et de mobilité~;
+  \item Les performances mesurées dans l'environnement émulé (latence du handshake mTLS, débit du broker) constituent des ordres de grandeur valides pour une évaluation comparative, sans prétention à reproduire exactement un réseau radio réel avec ses contraintes de propagation et de mobilité~;
   \item La détection par règles statiques (Suricata + Wazuh) et la détection par apprentissage automatique sont traitées comme des couches complémentaires et non substituables, chacune couvrant un sous-ensemble différent du spectre des menaces.
 \end{enumerate}
 
+%% ====================================================================
+%%  SECTION : Démarche méthodologique
+%% ====================================================================
 \section{Démarche méthodologique}
 \label{sec:methodo}
 
@@ -233,14 +348,17 @@ Courbe d'apprentissage & Modérée & Faible & Élevée \\ \hline
 \textbf{Scrum} a été retenu pour trois raisons décisives~:
 
 \begin{itemize}[leftmargin=*]
-  \item \textbf{Alignement avec les jalons académiques~:} les revues de sprint coïncident naturellement avec les points d'avancement imposés (rapport intermédiaire, soutenance), offrant une visibilité régulière sur l'état du projet~;
-  \item \textbf{Flexibilité face aux imprévus techniques~:} le réajustement du backlog entre deux sprints permet de réagir à un blocage (configuration réseau, problème de certificats) sans remettre en cause l'ensemble du planning~;
-  \item \textbf{Maîtrise du périmètre~:} la priorisation du backlog garantit que les fonctionnalités essentielles sont livrées en premier, limitant le risque de ne pas finaliser les parties critiques avant la soutenance.
+  \item \textbf{Alignement avec les jalons académiques}~: les revues de sprint coïncident naturellement avec les points d'avancement imposés (rapport intermédiaire, soutenance), offrant une visibilité régulière sur l'état du projet~;
+  \item \textbf{Flexibilité face aux imprévus techniques}~: le réajustement du backlog entre deux sprints permet de réagir à un blocage (configuration réseau, problème de certificats) sans remettre en cause l'ensemble du planning~;
+  \item \textbf{Maîtrise du périmètre}~: la priorisation du backlog garantit que les fonctionnalités essentielles sont livrées en premier, limitant le risque de ne pas finaliser les parties critiques avant la soutenance.
 \end{itemize}
 
-Kanban, dont l'absence de cadence fixe est inadaptée à un projet soumis à des jalons académiques, et XP, dont les pratiques d'ingénierie (TDD, \emph{pair-programming}) sont disproportionnées pour un développement solo, ont été écartés. Six sprints de deux semaines structurent la phase de réalisation ; leur planification détaillée figure au chapitre~\ref{chap:conception}.
+Kanban, dont l'absence de cadence fixe est inadaptée à un projet soumis à des jalons académiques, et XP, dont les pratiques d'ingénierie (TDD, \emph{pair-programming}) sont disproportionnées pour un développement solo, ont été écartés. Six sprints de deux semaines structurent la phase de réalisation~; leur planification détaillée figure au chapitre~\ref{chap:conception}.
 
+%% ====================================================================
+%%  SECTION : Conclusion
+%% ====================================================================
 \section{Conclusion}
 \label{sec:contexte-conclusion}
 
-Ce chapitre a permis d'établir le cadre de référence du projet en articulant successivement le contexte sectoriel, l'ancrage institutionnel, la problématique, les objectifs, le périmètre d'étude et la démarche méthodologique. Cet ensemble fournit la base nécessaire à la compréhension des choix effectués dans la suite du mémoire. Avant de définir une solution, il convient désormais d'examiner les références théoriques, les menaces, les protocoles et les mécanismes de protection mobilisables dans un contexte IoT. Le chapitre suivant prolonge donc ce cadrage par un état de l'art qui établit le socle scientifique des choix architecturaux retenus.
+Ce chapitre a permis d'établir le cadre de référence du projet en articulant successivement l'ancrage institutionnel, le contexte sectoriel, les protocoles de sécurisation du transport, l'état des lieux des pratiques existantes, la problématique, les objectifs, les besoins fonctionnels, le périmètre d'étude et la démarche méthodologique. Cet ensemble fournit la base nécessaire à la compréhension des choix effectués dans la suite du mémoire. Avant de définir une solution, il convient désormais d'examiner en profondeur les références théoriques, les menaces, les protocoles et les mécanismes de protection mobilisables dans un contexte IoT. Le chapitre suivant prolonge donc ce cadrage par un état de l'art qui établit le socle scientifique des choix architecturaux retenus.

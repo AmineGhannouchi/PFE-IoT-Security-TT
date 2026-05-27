@@ -4,47 +4,9 @@
 \section{Introduction}
 \label{sec:co-intro}
 
-Ce chapitre a pour objectif de traduire, dans le contexte du projet, les enseignements de l'état de l'art en une conception structurée, argumentée et directement exploitable pour la phase de réalisation. Le diagnostic qui l'ouvre ne reprend donc pas l'analyse théorique précédente~: il en propose une lecture opérationnelle afin d'identifier les lacunes à traiter dans l'architecture cible. Le chapitre présente ensuite la spécification des besoins fonctionnels et non fonctionnels, puis une vue d'ensemble de la solution proposée. Il expose enfin les principaux artefacts de pilotage et de modélisation du projet~: la planification des sprints, le backlog produit, les diagrammes UML et la planification temporelle, qui constituent la référence de travail pour la mise en \oe{}uvre.
+Ce chapitre a pour objectif de traduire, dans le contexte du projet, les enseignements de l'état de l'art et le diagnostic de l'existant (établi au chapitre~\ref{chap:introduction}) en une conception structurée, argumentée et directement exploitable pour la phase de réalisation. Le chapitre présente la spécification formelle des besoins fonctionnels et non fonctionnels, la modélisation des cas d'utilisation incluant les acteurs système (PKI, Mosquitto, Suricata), puis une vue d'ensemble de la solution proposée fondée sur le principe de sécurité en profondeur. Il expose enfin les principaux artefacts de pilotage et de modélisation du projet~: la planification des sprints, le backlog produit, les diagrammes UML et les diagrammes d'activité illustrant les scénarios d'attaque, qui constituent la référence de travail pour la mise en \oe{}uvre.
 
-\section{Diagnostic de l'existant}
-\label{sec:analyse-existant}
-
-\subsection{État des lieux de la sécurité IoT dans les déploiements opérateur}
-
-L'analyse conduite en amont de ce projet, combinant l'étude des pratiques observées dans des déploiements IoT typiques et les enseignements publiés par l'ENISA~\cite{enisa_iot} et le NIST~\cite{nist_sp800213}, met en évidence plusieurs lacunes de sécurité récurrentes dans ce type d'environnement~:
-
-\begin{itemize}[leftmargin=*]
-	\item \textbf{Transport non systématiquement chiffré}~: le protocole MQTT est fréquemment déployé sur le port 1883 (texte clair), sans TLS, par souci de simplicité ou de performance perçue. Un attaquant positionné sur le segment réseau peut alors capturer l'intégralité des messages publiés, y compris les données métier sensibles~;
-	\item \textbf{Authentification unidirectionnelle ou absente}~: le broker ne vérifie généralement pas le certificat du client. Les dispositifs s'authentifient souvent par un simple couple identifiant/mot de passe, voire sans aucun mécanisme d'authentification, rendant toute usurpation d'identité triviale~;
-	\item \textbf{Absence de PKI dédiée}~: lorsque des certificats existent, ils sont fréquemment auto-signés, non révocables automatiquement et gérés de façon ad hoc, sans cycle de vie défini ni procédure de révocation d'urgence en cas de compromission~;
-	\item \textbf{Contrôle d'accès applicatif insuffisant}~: les listes de contrôle d'accès aux topics MQTT sont rarement mises en œuvre, permettant à tout dispositif connecté d'accéder à l'ensemble des canaux de publication et de souscription, indépendamment de son rôle légitime~;
-	\item \textbf{Supervision fragmentée}~: les outils de monitoring réseau et applicatif ne communiquent pas entre eux, rendant difficile la corrélation d'événements de sécurité. La détection d'une attaque nécessite une analyse manuelle croisée de plusieurs sources de journaux hétérogènes~;
-	\item \textbf{Absence de détection comportementale}~: les mécanismes de détection d'intrusion existants se limitent aux signatures connues. Ils ne permettent pas de détecter des anomalies comportementales subtiles telles que l'utilisation d'un certificat valide depuis un contexte inhabituel, une dérive de fréquence de publication ou une exfiltration lente via des topics légitimes.
-\end{itemize}
-
-\subsection{Synthèse du diagnostic}
-
-Le tableau~\ref{tab:diagnostic} synthétise ce diagnostic en mettant en regard chaque lacune identifiée avec la brique de sécurité retenue dans la solution, établissant ainsi le lien direct entre le contexte opérationnel observé et les choix de conception du projet.
-
-\begin{table}[!htbp]
-\centering
-\caption{Diagnostic des lacunes et briques de réponse correspondantes}
-\label{tab:diagnostic}
-\small
-\begin{tabularx}{\linewidth}{|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
-\hline
-\textbf{Lacune identifiée} & \textbf{Brique de réponse retenue} \\
-\hline
-Flux MQTT en clair, sans chiffrement de bout en bout & Activation obligatoire de TLS~1.3 sur Mosquitto (port~8883) \\ \hline
-Authentification client absente ou basée sur mot de passe faible & Certificat X.509 client obligatoire, vérifié par le broker en mTLS \\ \hline
-Gestion manuelle et non automatisée des certificats & PKI HashiCorp Vault à deux niveaux avec émission et révocation via API \\ \hline
-Accès applicatifs non restreints par dispositif & ACL Mosquitto fondées sur le \emph{Common Name} du certificat client \\ \hline
-Supervision réseau et applicative déconnectées & Intégration de Suricata au SIEM Wazuh pour la corrélation \\ \hline
-Absence de détection comportementale & Module ML fondé sur IsolationForest et Random Forest \\ \hline
-\end{tabularx}
-\end{table}
-
-Ce diagnostic structuré constitue la justification directe des choix techniques opérés dans ce projet~: chaque composant de la solution répond à une lacune précisément identifiée. Cette correspondance garantit la pertinence de l'architecture proposée au-delà d'une simple accumulation d'outils technologiques.
+Le diagnostic de l'existant, présenté au chapitre~\ref{chap:introduction} (section~\ref{sec:analyse-existant}), a mis en évidence six lacunes structurelles dans la sécurisation des flux IoT~: transport non chiffré, authentification insuffisante, absence de PKI dédiée, contrôle d'accès lacunaire, supervision fragmentée et absence de détection comportementale. Ces constats constituent la justification directe des choix de conception présentés ci-après~: chaque composant de la solution répond à une lacune précisément identifiée (cf.\ tableau~\ref{tab:diagnostic}). La présente section formalise les besoins fonctionnels et non fonctionnels qui en découlent.
 
 \section{Spécification des besoins}
 \label{sec:co-besoins}
@@ -78,20 +40,35 @@ Ce diagnostic structuré constitue la justification directe des choix techniques
 \hline
 \textbf{ID} & \textbf{Description} \\
 \hline
-\acs{BNF-1} & \textbf{Sécurité}~: aucun flux IoT en clair . rotation des secrets . séparation CA racine / intermédiaire. \\ \hline
-\acs{BNF-2} & \textbf{Performance}~: latence handshake mTLS \(<50\) ms . débit broker \(>500\) msg/s par client. \\ \hline
+\acs{BNF-1} & \textbf{Monitoring et visualisation}~: tableaux de bord Grafana pour le suivi des métriques en temps réel (latence, débit, alertes) et tableaux de bord Wazuh pour l'analyse de sécurité, accessibles en moins de 3~clics. \\ \hline
+\acs{BNF-2} & \textbf{Performance}~: latence handshake mTLS \(<50\)~ms~; débit broker \(>500\)~msg/s par client. \\ \hline
 \acs{BNF-3} & \textbf{Reproductibilité}~: l'environnement complet doit être réinstallable à partir des scripts fournis. \\ \hline
 \acs{BNF-4} & \textbf{Scalabilité}~: l'architecture doit accepter sans refonte au moins 200 dispositifs. \\ \hline
 \acs{BNF-5} & \textbf{Maintenabilité}~: configurations versionnées, modules indépendants, journalisation centralisée. \\ \hline
-\acs{BNF-6} & \textbf{Observabilité}~: tableau de bord Wazuh accessible aux analystes en moins de 3 clics. \\ \hline
+\acs{BNF-6} & \textbf{Traçabilité}~: chaque flux MQTT doit être identifiable par l'identité cryptographique de son émetteur~; aucun flux en clair ne doit être possible. \\ \hline
 \end{tabularx}
 \end{table}
 
-Ces besoins définissent le \emph{quoi} de la solution~: les fonctionnalités attendues et les contraintes opérationnelles à respecter. Le diagramme de cas d'utilisation est présenté en trois parties, une par acteur de la plateforme.
+Ces besoins définissent le \emph{quoi} de la solution~: les fonctionnalités attendues et les contraintes opérationnelles à respecter. La modélisation UML des cas d'utilisation, présentée ci-après, permet de formaliser les interactions entre les différents acteurs et la plateforme.
 
-\subsection{Diagramme de cas d'utilisation}
+\subsection{Acteurs du système}
 
-Trois acteurs principaux interagissent avec la plateforme~: le dispositif IoT, l'administrateur de sécurité et l'opérateur SOC. Les relations d'inclusion signalent les sous-cas obligatoires, tandis que les relations d'extension représentent les comportements optionnels. La connexion MQTT impose mTLS et TLS~1.3. L'IDS et le module ML complètent ensuite la détection.
+La plateforme met en jeu deux catégories d'acteurs~: les \textbf{acteurs humains}, qui interagissent directement avec le système, et les \textbf{acteurs système}, qui participent au traitement de manière automatisée. Chaque acteur système joue un rôle spécifique dans la chaîne de sécurité~:
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{PKI HashiCorp Vault}~: autorité de certification automatisée, responsable de l'émission, du renouvellement et de la révocation des certificats X.509. Vault garantit que chaque dispositif et chaque service dispose d'une identité cryptographique vérifiable. En cas de compromission, il permet la révocation immédiate du certificat concerné et la mise à jour de la CRL~;
+  \item \textbf{Broker Mosquitto}~: point central de la messagerie MQTT, il assure le routage des messages entre les dispositifs et les souscripteurs. Configuré en TLS~1.3 avec mTLS obligatoire, il vérifie le certificat de chaque client lors de la connexion et applique les ACL par \emph{Common Name} pour restreindre l'accès aux topics autorisés~;
+  \item \textbf{IDS Suricata}~: système de détection d'intrusion réseau positionné en miroir sur le segment DMZ. Il inspecte passivement le trafic MQTT grâce à son parseur natif et génère des alertes sur les comportements suspects (flood, scan, payloads anormaux) au format \texttt{eve.json}~;
+  \item \textbf{SIEM Wazuh}~: plateforme de corrélation et de visualisation des événements de sécurité. Il agrège les alertes Suricata, les journaux Mosquitto et les scores du module ML pour fournir une vue consolidée à l'opérateur SOC~;
+  \item \textbf{Module ML}~: pipeline d'apprentissage automatique (IsolationForest + Random Forest) qui analyse les caractéristiques du trafic pour détecter les anomalies comportementales non couvertes par les règles statiques~;
+  \item \textbf{Grafana}~: outil de visualisation des métriques de performance et de supervision, connecté aux sources de données du système pour le suivi en temps réel des indicateurs opérationnels.
+\end{itemize}
+
+Les \textbf{acteurs humains} sont~: le \textbf{dispositif IoT} (représentant l'ensemble des capteurs et objets connectés de la flotte), l'\textbf{administrateur de sécurité} (responsable de la configuration de la PKI, des ACL et des règles de détection) et l'\textbf{opérateur SOC} (analyste chargé de la surveillance et de la réponse aux incidents).
+
+\subsection{Diagrammes de cas d'utilisation}
+
+Les diagrammes de cas d'utilisation sont présentés en trois parties complémentaires formant un ensemble cohérent. Les relations d'inclusion signalent les sous-cas obligatoires, tandis que les relations d'extension représentent les comportements optionnels.
 
 \paragraph{Partie 1 — Dispositif IoT.}
 La figure~\ref{fig:uc-p1} résume quatre actions du dispositif IoT~: demande de certificat X.509, connexion mTLS au broker, publication de télémétrie et renouvellement automatique du certificat.
@@ -126,10 +103,22 @@ La figure~\ref{fig:uc-p3} représente les quatre cas d'utilisation de l'opérate
 \end{figure}
 \FloatBarrier
 
+\paragraph{Cas complémentaire~: capteur erroné ou compromis.}
+Un cas d'utilisation transversal concerne la gestion d'un \textbf{capteur émettant des données erronées ou compromis}. Ce scénario peut se manifester de deux manières~: (i)~un capteur défaillant envoie des valeurs incohérentes (dérive de mesure, valeurs hors plage) sans intention malveillante~; (ii)~un dispositif compromis utilise un certificat valide pour publier des données falsifiées ou pour exfiltrer des informations via des topics légitimes. Dans les deux cas, la détection repose sur la \textbf{complémentarité des mécanismes}~:
+
+\begin{itemize}[leftmargin=*]
+  \item Le \textbf{broker Mosquitto} applique les ACL et bloque toute tentative de publication sur un topic non autorisé~;
+  \item L'\textbf{IDS Suricata} détecte les anomalies volumétriques (rafale de publications, payloads anormalement volumineux)~;
+  \item Le \textbf{module ML} identifie les dérives comportementales subtiles (changement de fréquence de publication, contexte IP inhabituel pour un certificat donné)~;
+  \item Le \textbf{SIEM Wazuh} corrèle ces signaux et déclenche une alerte de niveau critique lorsque plusieurs indicateurs convergent.
+\end{itemize}
+
+Ce cas d'utilisation illustre l'intérêt de l'architecture multicouche~: aucune brique isolée ne suffit à couvrir l'ensemble du spectre, mais leur combinaison assure une couverture complète.
+
 \section{Vue d'ensemble de la solution proposée}
 \label{sec:solution-proposee}
 
-Pour répondre à la problématique et atteindre les objectifs ci-dessus, nous proposons une \textbf{architecture de défense en profondeur} composée de six briques complémentaires, intégralement déployée dans un laboratoire simulé sous \acs{GNS3}~\cite{gns3_docs} et Docker~\cite{docker_docs}~:
+Pour répondre à la problématique et atteindre les objectifs ci-dessus, nous proposons une \textbf{architecture de défense en profondeur} composée de six briques complémentaires, intégralement déployée dans un laboratoire émulé sous \acs{GNS3}~\cite{gns3_docs} et Docker~\cite{docker_docs}~:
 
 \begin{enumerate}[leftmargin=*]
 	\item Une \textbf{infrastructure réseau segmentée} (VLANs IoT, services, monitoring, management) construite autour d'un pare-feu pfSense et d'un routeur MikroTik~.
@@ -243,7 +232,89 @@ La figure~\ref{fig:activity-p3} synthétise le comportement d'un dispositif simu
 \end{figure}
 \FloatBarrier
 
+\subsection{Diagrammes d'activité des scénarios d'attaque}
+
+Pour compléter la modélisation, deux diagrammes d'activité illustrent les scénarios d'attaque les plus représentatifs de l'architecture de détection multicouche. Le premier (figure~\ref{fig:act-flood}) décrit un scénario de déni de service par flood CONNECT, détecté au niveau réseau. Le second (figure~\ref{fig:act-certcompromis}) décrit un scénario de compromission de certificat, détecté par le module ML.
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[
+  node distance=0.8cm,
+  startstop/.style={circle, fill=black, minimum size=8pt, inner sep=0pt},
+  process/.style={rectangle, rounded corners=4pt, draw, minimum width=4.8cm, minimum height=0.7cm, align=center, font=\small},
+  decision/.style={diamond, draw, aspect=2.2, minimum width=2cm, align=center, font=\small},
+  arrow/.style={-{Stealth[length=6pt]}, thick},
+]
+\node[startstop] (start) {};
+\node[process, below=of start] (flood) {Attaquant lance flood\\CONNECT sur port 8883};
+\node[process, below=of flood] (suricata) {Suricata détecte seuil\\(>50 CONNECT/10s, SID 9000001)};
+\node[decision, below=1cm of suricata] (seuil) {Seuil\\atteint~?};
+\node[process, below left=1cm and -0.5cm of seuil] (alerte) {Alerte \texttt{eve.json}\\transmise à Wazuh};
+\node[process, right=2.5cm of seuil] (pass) {Trafic normal\\autorisé};
+\node[process, below=of alerte] (corr) {Wazuh corrèle >5 alertes\\en <60s $\rightarrow$ niveau 12};
+\node[process, below=of corr] (pfsense) {pfSense blacklist IP\\source dynamiquement};
+\node[process, below=of pfsense] (notif) {Notification analyste SOC\\via tableau de bord};
+\node[startstop, below=0.6cm of notif] (end) {};
+%
+\draw[arrow] (start) -- (flood);
+\draw[arrow] (flood) -- (suricata);
+\draw[arrow] (suricata) -- (seuil);
+\draw[arrow] (seuil) -- node[left, font=\small] {Oui} (alerte);
+\draw[arrow] (seuil) -- node[above, font=\small] {Non} (pass);
+\draw[arrow] (alerte) -- (corr);
+\draw[arrow] (corr) -- (pfsense);
+\draw[arrow] (pfsense) -- (notif);
+\draw[arrow] (notif) -- (end);
+\end{tikzpicture}
+\caption{Diagramme d'activité --- Scénario S5~: déni de service par flood CONNECT}
+\label{fig:act-flood}
+\end{figure}
+\FloatBarrier
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[
+  node distance=0.8cm,
+  startstop/.style={circle, fill=black, minimum size=8pt, inner sep=0pt},
+  process/.style={rectangle, rounded corners=4pt, draw, minimum width=4.8cm, minimum height=0.7cm, align=center, font=\small},
+  decision/.style={diamond, draw, aspect=2.2, minimum width=2cm, align=center, font=\small},
+  arrow/.style={-{Stealth[length=6pt]}, thick},
+]
+\node[startstop] (start) {};
+\node[process, below=of start] (vol) {Certificat \texttt{dev-017} volé\\et réutilisé depuis IP inconnue};
+\node[process, below=of vol] (mtls) {Connexion mTLS réussie\\(certificat techniquement valide)};
+\node[process, below=of mtls] (pub) {Publication MQTT sur\\topics autorisés du CN};
+\node[decision, below=1cm of pub] (ids) {Suricata~:\\anomalie~?};
+\node[process, right=2.5cm of ids] (miss) {Aucune alerte\\(certificat valide)};
+\node[process, below=1.2cm of ids] (ml) {Module ML analyse\\le contexte comportemental};
+\node[decision, below=1cm of ml] (score) {Score\\anomalie~?};
+\node[process, below left=1cm and -0.5cm of score] (detect) {Détection~: IP/fréquence\\incompatibles avec historique};
+\node[process, right=2.5cm of score] (normal) {Comportement\\classé normal};
+\node[process, below=of detect] (wazuh) {Wazuh corrèle score ML\\+ alerte $\rightarrow$ niveau critique};
+\node[process, below=of wazuh] (revoke) {Révocation certificat\\via Vault + rotation CRL};
+\node[startstop, below=0.6cm of revoke] (end) {};
+%
+\draw[arrow] (start) -- (vol);
+\draw[arrow] (vol) -- (mtls);
+\draw[arrow] (mtls) -- (pub);
+\draw[arrow] (pub) -- (ids);
+\draw[arrow] (ids) -- node[above, font=\small] {Non} (miss);
+\draw[arrow] (ids) -- node[left, font=\small] {Partiel} (ml);
+\draw[arrow] (ml) -- (score);
+\draw[arrow] (score) -- node[left, font=\small] {Élevé} (detect);
+\draw[arrow] (score) -- node[above, font=\small] {Faible} (normal);
+\draw[arrow] (detect) -- (wazuh);
+\draw[arrow] (wazuh) -- (revoke);
+\draw[arrow] (revoke) -- (end);
+\end{tikzpicture}
+\caption{Diagramme d'activité --- Scénario S6~: compromission de certificat client}
+\label{fig:act-certcompromis}
+\end{figure}
+\FloatBarrier
+
+Le scénario~S5 illustre la détection au \textbf{niveau réseau}~: Suricata identifie le flood, Wazuh corrèle les alertes et pfSense bloque dynamiquement la source. Le scénario~S6 illustre la détection au \textbf{niveau comportemental}~: le certificat étant techniquement valide, seul le module ML est capable de détecter l'écart par rapport au profil historique du dispositif. Ces deux diagrammes démontrent la complémentarité des couches de défense, justifiant l'architecture en profondeur retenue.
+
 \section{Conclusion}
 \label{sec:co-conclusion}
 
-Ce chapitre a formalisé la conception du projet en articulant successivement le diagnostic de l'existant, la spécification des besoins, la vue d'ensemble de la solution retenue, la planification générale et les principales vues UML. Cet ensemble fournit une base cohérente pour la phase de réalisation, en assurant la traçabilité entre les lacunes identifiées, les objectifs visés et les choix de conception adoptés. Le chapitre suivant décrit précisément \textbf{comment} chaque élément a été mis en \oe{}uvre~: de l'environnement GNS3 à la PKI Vault, du broker mTLS au pipeline ML, en passant par les scénarios d'attaque.
+Ce chapitre a formalisé la conception du projet en articulant successivement la spécification des besoins, la description des acteurs système et de leurs rôles, les cas d'utilisation incluant la gestion des capteurs compromis, la vue d'ensemble de la solution fondée sur la défense en profondeur, la planification générale et les principales vues UML complétées par les diagrammes d'activité des scénarios d'attaque. Cet ensemble fournit une base cohérente pour la phase de réalisation, en assurant la traçabilité entre les lacunes identifiées au chapitre~\ref{chap:introduction}, les objectifs visés et les choix de conception adoptés. Le chapitre suivant décrit précisément \textbf{comment} chaque élément a été mis en \oe{}uvre~: de l'environnement GNS3 à la PKI Vault, du broker mTLS au pipeline ML, en passant par les scénarios d'attaque.

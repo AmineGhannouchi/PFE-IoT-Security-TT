@@ -11,7 +11,17 @@ Avant de concevoir une architecture de sécurisation des flux IoT, il est indisp
 
 \subsection{Surface d'attaque étendue}
 
-Les écosystèmes IoT présentent une surface d'attaque significativement plus large que les systèmes informatiques classiques. Meneghello \emph{et al.}~\cite{meneghello2019iot} en distinguent quatre couches~: (i)~la couche \emph{matérielle} (composants embarqués, JTAG/UART exposés, attaques par canal auxiliaire) . (ii)~la couche \emph{firmware} (mises à jour non signées, exécution de code arbitraire) . (iii)~la couche \emph{réseau} (transports en clair, protocoles propriétaires faibles) . (iv)~la couche \emph{services et écosystème} (\acs{API} non authentifiées, applications mobiles vulnérables, multi-tenance mal cloisonnée).
+Les écosystèmes IoT présentent une surface d'attaque significativement plus large que les systèmes informatiques classiques. Meneghello \emph{et al.}~\cite{meneghello2019iot} en distinguent quatre couches~: (i)~la couche \emph{matérielle} (composants embarqués, interfaces de débogage exposées, attaques par canal auxiliaire)~; (ii)~la couche \emph{firmware} (mises à jour non signées, exécution de code arbitraire)~; (iii)~la couche \emph{réseau} (transports en clair, protocoles propriétaires faibles)~; (iv)~la couche \emph{services et écosystème} (\acs{API} non authentifiées, applications mobiles vulnérables, multi-tenance mal cloisonnée).
+
+Parmi les vecteurs matériels, deux interfaces de débogage méritent une attention particulière dans le contexte IoT~:
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{JTAG} (\emph{Joint Test Action Group})~: interface standard de test et de débogage matériel, initialement conçue pour la vérification des circuits imprimés. Lorsqu'elle reste accessible sur un dispositif déployé, elle permet à un attaquant disposant d'un accès physique de lire ou modifier le firmware, d'extraire des clés cryptographiques stockées en mémoire et de contourner les mécanismes d'authentification logicielle~;
+  \item \textbf{UART} (\emph{Universal Asynchronous Receiver-Transmitter})~: interface de communication série largement utilisée pour les consoles de débogage des systèmes embarqués. Sur de nombreux dispositifs IoT, un port UART non désactivé expose un accès shell avec des privilèges élevés, offrant à un attaquant la possibilité d'interagir directement avec le système d'exploitation du dispositif~;
+  \item \textbf{API exposées}~: les interfaces de programmation applicatives (\acs{API}) REST ou MQTT utilisées pour la gestion des dispositifs constituent également un vecteur d'attaque lorsqu'elles sont déployées sans authentification, sans chiffrement ou avec des mécanismes d'autorisation insuffisants. Dans le contexte opérateur, ces API peuvent donner accès à la configuration de flottes entières de dispositifs.
+\end{itemize}
+
+Ces vecteurs matériels et logiciels illustrent la nécessité d'une approche de sécurisation multicouche, couvrant aussi bien les interfaces physiques que les protocoles applicatifs.
 
 \subsection{OWASP IoT Top 10 et menaces réseau}
 
@@ -26,7 +36,7 @@ Cette cartographie des menaces permet d'identifier les vecteurs prioritaires à 
 \section{Protocoles applicatifs IoT}
 \label{sec:ea-protocoles}
 
-Le tableau~\ref{tab:protocoles} compare quatre protocoles applicatifs représentatifs.
+Le choix du protocole applicatif détermine directement la surface d'attaque réseau de l'écosystème IoT et conditionne les mécanismes de sécurité disponibles. Il est donc essentiel de comparer les candidats sur des critères objectifs avant d'arrêter un choix. Quatre protocoles représentatifs ont été retenus pour cette analyse~: \textbf{MQTT}, qui domine les déploiements IoT industriels grâce à son modèle \emph{publish/subscribe} et sa faible empreinte~; \textbf{CoAP}, conçu pour les dispositifs les plus contraints et reposant sur UDP~; \textbf{AMQP}, privilégié dans les architectures de messagerie d'entreprise~; et \textbf{HTTP/REST}, protocole universel mais dont le modèle requête/réponse et l'empreinte réseau sont moins adaptés à l'IoT contraint. Le tableau~\ref{tab:protocoles} en présente la comparaison structurée.
 
 \begin{table}[!htbp]
 \centering
@@ -46,7 +56,7 @@ Maturité IoT & Très large & Large & Industrielle & Universelle \\ \hline
 \end{tabularx}
 \end{table}
 
-Le choix de \textbf{MQTT~5}~\cite{mqtt5} pour ce projet repose sur trois critères~: empreinte mémoire et réseau adaptée aux microcontrôleurs . large adoption dans les écosystèmes industriels et les opérateurs IoT . existence de mécanismes natifs d'authentification (\acs{TLS}+\acs{ACL}) facilement combinables avec mTLS.
+Le choix de \textbf{MQTT~5}~\cite{mqtt5} pour ce projet repose sur trois critères convergents~: (i)~son empreinte mémoire et réseau, particulièrement faible, est adaptée aux microcontrôleurs disposant de ressources limitées~; (ii)~sa large adoption dans les écosystèmes industriels et chez les opérateurs IoT garantit un support communautaire étendu et une maturité éprouvée~; (iii)~ses mécanismes natifs d'authentification (\acs{TLS}+\acs{ACL}) sont aisément combinables avec le mTLS, ce qui en fait le candidat naturel pour une architecture de sécurité de bout en bout. Dans l'architecture proposée, MQTT joue le rôle de \textbf{protocole de transport applicatif unique} entre les dispositifs IoT et le broker central~: chaque mesure de capteur, chaque événement et chaque commande transite par ce canal, ce qui justifie l'exigence absolue de le sécuriser.
 
 Le protocole applicatif étant fixé, la question du \textbf{chiffrement du canal} devient prépondérante~: MQTT, en lui-même, ne garantit ni la confidentialité ni l'authenticité des messages échangés. TLS~1.3 avec authentification mutuelle répond précisément à ces deux exigences, comme le détaille la section suivante.
 
@@ -70,7 +80,7 @@ Le choix de TLS~1.3 en remplacement de TLS~1.2 répond à trois arguments techni
 \section{Gestion des identités : PKI et automatisation}
 \label{sec:ea-pki}
 
-Une PKI à deux niveaux (CA racine \emph{offline} + CA intermédiaire \emph{online}) constitue la pratique recommandée~\cite{nist_sp800213}~: la CA racine ne signe que des CA intermédiaires, et reste hors ligne . les CA intermédiaires signent les certificats opérationnels (services, dispositifs). En cas de compromission d'une CA intermédiaire, seul le sous-arbre concerné doit être révoqué.
+Une PKI à deux niveaux (CA racine \emph{offline} + CA intermédiaire \emph{online}) constitue la pratique recommandée~\cite{nist_sp800213}~: la CA racine ne signe que des CA intermédiaires et reste hors ligne~; les CA intermédiaires signent les certificats opérationnels (services, dispositifs). En cas de compromission d'une CA intermédiaire, seul le sous-arbre concerné doit être révoqué.
 
 L'automatisation de l'émission est indispensable lorsque le parc dépasse quelques dizaines d'objets. \textbf{HashiCorp Vault}~\cite{vault_pki} fournit un \emph{secrets engine} \texttt{pki} qui expose une API HTTP de demande de certificats avec contrôle fin (rôles, ACL, TTL). C'est la solution retenue dans ce projet.
 
@@ -146,7 +156,7 @@ Les règles IDS, aussi précises soient-elles, ne peuvent couvrir que les attaqu
 Les approches par règles statiques sont efficaces pour les attaques connues mais peinent à détecter les comportements nouveaux. Hasan \emph{et al.}~\cite{hasan2020securing} ont montré qu'un classifieur supervisé entraîné sur des features réseau et applicatives obtient des taux de détection supérieurs à 99~\% sur sept catégories d'attaques IoT. Les algorithmes les plus utilisés sont~:
 
 \begin{itemize}[leftmargin=*]
-  \item \textbf{Isolation Forest}~\cite{liu2008isolation}~: méthode non supervisée d'isolement, particulièrement efficace en haute dimension et adaptée aux scénarios où les anomalies sont rares .
+  \item \textbf{Isolation Forest}~\cite{liu2008isolation}~: méthode non supervisée d'isolement, particulièrement efficace en haute dimension et adaptée aux scénarios où les anomalies sont rares~;
   \item \textbf{Random Forest}~\cite{breiman2001random}~: ensemble d'arbres de décision, robuste, interprétable (\emph{feature importance}) et performant en classification multi-classes.
 \end{itemize}
 
@@ -158,18 +168,16 @@ La mobilisation conjointe de ces deux algorithmes n'est pas arbitraire~: elle r�
 Plusieurs approches ont été proposées pour sécuriser les flux IoT~: gateways IoT propriétaires (AWS IoT Core, Azure IoT Hub), distributions intégrées (ThingsBoard, Eclipse Kura), ou architectures sur mesure. Notre analyse fait ressortir quatre limitations récurrentes~:
 
 \begin{enumerate}[leftmargin=*]
-  \item \textbf{Verrouillage fournisseur} pour les solutions cloud commerciales, peu compatible avec une stratégie souveraine d'opérateur télécom .
-  \item \textbf{Couverture partielle} de la sécurité chez les distributions intégrées (souvent TLS oui, mais pas mTLS systématique ni PKI automatisée) .
-  \item \textbf{Faible intégration} entre la couche réseau (IDS) et la couche applicative (broker, ML) .
-  \item \textbf{Reproductibilité limitée} des architectures publiées dans la littérature, rarement accompagnées d'un environnement de simulation complet.
+  \item \textbf{Verrouillage fournisseur} pour les solutions cloud commerciales, peu compatible avec une stratégie souveraine d'opérateur télécom~;
+  \item \textbf{Couverture partielle} de la sécurité chez les distributions intégrées (souvent TLS oui, mais pas mTLS systématique ni PKI automatisée)~;
+  \item \textbf{Faible intégration} entre la couche réseau (IDS) et la couche applicative (broker, ML)~;
+  \item \textbf{Reproductibilité limitée} des architectures publiées dans la littérature, rarement accompagnées d'un environnement d'émulation complet.
 \end{enumerate}
-
-\section{Synthèse du chapitre}
-\label{sec:ea-positionnement}
-
-Au terme de cet état de l'art, le présent projet se positionne non comme une juxtaposition d'outils, mais comme une \textbf{architecture de référence open source} pour la sécurisation des flux IoT dans un contexte opérateur. Quatre apports structurants s'en dégagent~: (1)~un déploiement de bout en bout reproductible sous GNS3 et Docker~; (2)~une PKI Vault automatisée associée à un usage systématique du mTLS~; (3)~une chaîne de détection unifiée Suricata~+~Wazuh enrichie de règles MQTT spécifiques~; (4)~un module ML complémentaire, combinant IsolationForest et RandomForest, pour traiter les anomalies peu ou pas couvertes par les signatures.
 
 \section{Conclusion}
 \label{sec:ea-conclusion}
+\label{sec:ea-positionnement}
 
-Ce chapitre a établi le socle conceptuel du projet en suivant un fil directeur continu~: des menaces spécifiques à l'IoT découlent les exigences de protocole~; du choix de MQTT découle le besoin de TLS~1.3~; de TLS avec mTLS découle la nécessité d'une PKI automatisée~; de la PKI découle le besoin de supervision IDS/SIEM~; enfin, des limites des règles statiques découle l'apport de l'apprentissage automatique. Son rôle était de dégager les exigences techniques et les principes de protection, non de diagnostiquer encore la plateforme cible. Le chapitre suivant traduit ces constats théoriques en besoins opérationnels, puis en choix de conception adaptés au contexte étudié.
+Ce chapitre a établi le socle conceptuel du projet en suivant un fil directeur continu~: des menaces spécifiques à l'IoT découlent les exigences de protocole~; du choix de MQTT découle le besoin de TLS~1.3~; de TLS avec mTLS découle la nécessité d'une PKI automatisée~; de la PKI découle le besoin de supervision IDS/SIEM~; enfin, des limites des règles statiques découle l'apport de l'apprentissage automatique.
+
+Au terme de cet état de l'art, le présent projet se positionne non comme une juxtaposition d'outils, mais comme une \textbf{architecture de référence open source} pour la sécurisation des flux IoT dans un contexte opérateur. Quatre apports structurants le distinguent des solutions existantes~: (1)~un déploiement de bout en bout reproductible sous GNS3 et Docker~; (2)~une PKI Vault automatisée associée à un usage systématique du mTLS~; (3)~une chaîne de détection unifiée Suricata~+~Wazuh enrichie de règles MQTT spécifiques~; (4)~un module ML complémentaire, combinant IsolationForest et RandomForest, pour traiter les anomalies peu ou pas couvertes par les signatures. Le rôle de ce chapitre était de dégager les exigences techniques et les principes de protection~; le chapitre suivant traduit ces constats théoriques en choix de conception adaptés au contexte étudié.

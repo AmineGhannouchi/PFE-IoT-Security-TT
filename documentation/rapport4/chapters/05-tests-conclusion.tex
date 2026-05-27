@@ -50,61 +50,93 @@ S6 -- Compromission certificat  &  3/10 &  6/10 & 10/10 \\ \hline
 \end{table}
 
 \begin{resultbox}[Lecture]
-La complémentarité \emph{règles}~$+$~\emph{ML} est clairement démontrée~: les attaques exploitant un vecteur réseau identifiable (S1, S2, S3, S5) sont parfaitement couvertes par les règles . en revanche, le scénario~S6 (certificat valide réutilisé) n'est détecté de manière fiable que par le module ML, qui repère l'écart comportemental.
+La complémentarité \emph{règles}~$+$~\emph{ML} est clairement démontrée~: les attaques exploitant un vecteur réseau identifiable (S1, S2, S3, S5) sont parfaitement couvertes par les règles~; en revanche, le scénario~S6 (certificat valide réutilisé) n'est détecté de manière fiable que par le module ML, qui repère l'écart comportemental.
 \end{resultbox}
 
 \subsection{Validation par l'exécution~: preuves visuelles}
 
-Les taux du tableau~\ref{tab:detection-secu} reposent sur un ensemble restreint de captures représentatives, conservées ici comme preuves de fonctionnement.
+Les taux du tableau~\ref{tab:detection-secu} sont étayés par un ensemble de captures représentatives, conservées ici comme preuves de fonctionnement. Chaque capture est accompagnée d'une description de son contenu et de son lien avec les résultats mesurés.
 
 \subsubsection*{Segmentation réseau~: règles pfSense actives}
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\textwidth]{atk-pfsense-rules.png}
-\caption{pfSense~-- règles de filtrage inter-VLAN actives}
+\caption{pfSense~-- règles de filtrage inter-VLAN actives appliquées pendant les campagnes de test}
 \label{fig:pfsense-rules}
 \end{figure}
 \FloatBarrier
 
-La figure~\ref{fig:pfsense-rules} confirme la politique \emph{deny-by-default} appliquée pendant les tests~: l'IoT ne peut pas joindre directement le SIEM ni la PKI hors API Vault, tandis que les seuls flux autorisés restent IoT→Broker/8883, IoT→Vault/8200 et DMZ→Wazuh/1514.
+La figure~\ref{fig:pfsense-rules} confirme la politique \emph{deny-by-default} appliquée pendant les tests~: l'IoT ne peut pas joindre directement le SIEM ni la PKI hors API Vault, tandis que les seuls flux autorisés restent IoT\textrightarrow{}Broker/8883, IoT\textrightarrow{}Vault/8200 et DMZ\textrightarrow{}Wazuh/1514. Cette capture valide directement le besoin de segmentation réseau formulé dans l'objectif~O1.
 
 \subsubsection*{Flotte légitime et enforcement ACL Mosquitto}
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\textwidth]{atk-fleet-sim.png}
-\caption{Campagne complémentaire de validation~: 100~dispositifs actifs, 35\,085~messages MQTT chargés}
+\caption{Campagne complémentaire de validation~: 100~dispositifs actifs, 35\,085~messages MQTT chargés depuis le jeu de données}
 \label{fig:fleet-sim}
 \end{figure}
 \FloatBarrier
 
-La figure~\ref{fig:fleet-sim} illustre la campagne complémentaire menée avec 100~dispositifs, au-delà du périmètre nominal fixé à 50, sur un sous-ensemble de 35\,085~messages extrait du jeu de données complet. Elle sert à vérifier que le trafic légitime reste stable lors d'une montée en charge ponctuelle.
+La figure~\ref{fig:fleet-sim} illustre la campagne complémentaire menée avec 100~dispositifs, au-delà du périmètre nominal fixé à 50, sur un sous-ensemble de 35\,085~messages extrait du jeu de données complet. Le résumé d'exécution affiche le nombre de dispositifs actifs, les messages chargés et le statut de chaque connexion mTLS. Cette capture valide la stabilité du trafic légitime lors d'une montée en charge ponctuelle (objectif~O4).
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\textwidth]{atk-mosquitto-acl.png}
-\caption{Logs Mosquitto~: refus \texttt{PUBLISH} par ACL pour topics non autorisés}
+\caption{Logs Mosquitto~: connexions mTLS identifiées par Common Name et refus \texttt{PUBLISH} par ACL pour topics non autorisés}
 \label{fig:mosquitto-acl}
 \end{figure}
 \FloatBarrier
 
-La figure~\ref{fig:mosquitto-acl} montre des connexions mTLS réussies identifiées par \emph{Common Name}, suivies de refus \texttt{PUBLISH} sur des topics non autorisés. Elle confirme donc que l'\acs{ACL} est appliquée en temps réel par le broker, même pour des dispositifs correctement authentifiés.
+La figure~\ref{fig:mosquitto-acl} montre des connexions mTLS réussies identifiées par \emph{Common Name} (par exemple \texttt{dev-042.iot.lab}), suivies de refus \texttt{PUBLISH} sur des topics non autorisés pour ce dispositif. Elle confirme que l'\acs{ACL} est appliquée en temps réel par le broker, même pour des dispositifs correctement authentifiés~--- validant ainsi directement les objectifs~O3 (mTLS obligatoire) et le besoin fonctionnel BF-3 (contrôle d'accès par topic).
 
-\subsubsection*{Test d'attaque A1-flood~: scénario~S5 depuis zone non autorisée}
+\subsubsection*{Scénario d'attaque S5~: flood CONNECT}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{atk-flood-launch.png}
+\caption{Lancement du scénario A1-flood~: tentatives massives de connexion depuis une zone non autorisée}
+\label{fig:atk-flood-launch}
+\end{figure}
+\FloatBarrier
+
+La figure~\ref{fig:atk-flood-launch} montre le lancement effectif du scénario de flood CONNECT (S5) depuis un client positionné dans une zone réseau non autorisée. Les tentatives de connexion TCP vers le port~8883 sont visibles dans la sortie de l'outil d'attaque.
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\textwidth]{atk-flood-summary.png}
-\caption{Résumé du scénario A1-flood}
+\caption{Résumé du scénario A1-flood~: 24~tentatives, 0~connexion réussie, exit code~1}
 \label{fig:atk-summary}
 \end{figure}
 \FloatBarrier
 
-La figure~\ref{fig:atk-summary} suffit à établir le blocage complet du scénario A1-flood~: 24~tentatives, aucune connexion réussie, aucun message MQTT transmis et un \texttt{exit code 1}. Le filtrage intervient donc avant toute interaction applicative avec le broker.
+La figure~\ref{fig:atk-summary} établit le blocage complet du scénario A1-flood~: 24~tentatives, aucune connexion réussie, aucun message MQTT transmis et un \texttt{exit code 1}. Le filtrage intervient avant toute interaction applicative avec le broker, confirmant l'efficacité de la segmentation réseau (pfSense) combinée à la politique \texttt{require\_certificate} de Mosquitto.
+
+\subsubsection*{Détection et supervision~: alertes Suricata et tableau de bord Wazuh}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{suricata-alerts.png}
+\caption{Alertes Suricata générées lors des campagnes de test~: détection des scénarios S1 à S5 par les règles SID personnalisées}
+\label{fig:suricata-alerts-test}
+\end{figure}
+\FloatBarrier
+
+La figure~\ref{fig:suricata-alerts-test} présente les alertes générées par Suricata lors des campagnes de test. Les règles SID personnalisées (9000001 à 9000004) ont correctement identifié les différents vecteurs d'attaque~: flood CONNECT, topics suspects, payloads anormaux et scans de broker. Ces alertes sont transmises au format \texttt{eve.json} vers Wazuh pour corrélation, validant la chaîne de détection décrite à l'objectif~O5.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{wazuh-dashboard.png}
+\caption{Tableau de bord Wazuh~: vue consolidée des événements de sécurité, alertes corrélées et classification par niveau de criticité}
+\label{fig:wazuh-dashboard-test}
+\end{figure}
+\FloatBarrier
+
+La figure~\ref{fig:wazuh-dashboard-test} illustre le tableau de bord Wazuh tel qu'il se présente à l'analyste SOC après une campagne de test. La vue consolidée regroupe les alertes par niveau de criticité, par type d'attaque et par source, permettant un triage rapide des incidents. Cette capture valide le besoin non fonctionnel BNF-1 (monitoring et visualisation accessibles en moins de 3~clics) et l'objectif~O6 (corrélation SIEM).
 
 \begin{infobox}{Synthèse de la validation expérimentale}
-Les captures conservées suffisent à montrer la cohérence d'ensemble~: segmentation réseau effective, ACL Mosquitto appliquées, blocage complet du flood et stabilité du trafic légitime, y compris lors de la campagne complémentaire à 100~dispositifs.
+L'ensemble des captures présentées démontre la cohérence de bout en bout de l'architecture~: segmentation réseau effective (pfSense), authentification mutuelle et contrôle d'accès applicatif opérationnels (Mosquitto mTLS + ACL), blocage complet des attaques réseau (flood), détection par règles IDS (Suricata) et corrélation centralisée (Wazuh), y compris lors de la campagne complémentaire à 100~dispositifs. Chaque capture est directement liée à un objectif spécifique ou à un besoin fonctionnel du projet.
 \end{infobox}
 
 Ces résultats de sécurité établissent la couverture globale de la chaîne de détection. Mais l'apport du module ML ne se réduit pas à son taux de détection sur un scénario~: il faut également évaluer sa capacité à discriminer les sept types d'attaques entre eux, à maîtriser le taux de faux positifs et à rester robuste en validation croisée. La section suivante présente ces métriques détaillées.
@@ -124,10 +156,12 @@ Ces résultats de sécurité établissent la couverture globale de la chaîne de
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.88\linewidth,height=0.55\textheight,keepaspectratio]{iso_forest_scores_distribution.png}
-\caption{Isolation Forest -- distribution des scores d'anomalie}
+\caption{Isolation Forest -- distribution des scores d'anomalie~: les messages normaux se concentrent autour de scores positifs, tandis que les anomalies présentent des scores négatifs}
 \label{fig:iso-scores}
 \end{figure}
 \FloatBarrier
+
+La figure~\ref{fig:iso-eval} montre la matrice de confusion binaire d'Isolation Forest~: le modèle distingue correctement le trafic normal des anomalies avec un rappel de 0{,}947, bien que quelques faux positifs subsistent. La figure~\ref{fig:iso-scores} confirme la séparabilité des distributions~: les scores d'anomalie des messages normaux et malveillants forment deux populations distinctes, validant le choix du seuil à $-0{,}05$.
 
 \subsection{Random Forest}
 
@@ -141,15 +175,19 @@ Ces résultats de sécurité établissent la couverture globale de la chaîne de
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.88\linewidth,height=0.55\textheight,keepaspectratio]{rf_multiclass_confusion.png}
-\caption{Random Forest -- confusion multi-classes}
+\caption{Random Forest -- matrice de confusion multi-classes~: classification des sept types d'attaques avec absence de confusion entre les classes Normal et DoS}
+\label{fig:rf-multiclass}
 \end{figure}
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.90\linewidth,height=0.55\textheight,keepaspectratio]{rf_feature_importance.png}
-\caption{Random Forest -- importance des features}
+\caption{Random Forest -- importance des features~: les attributs \emph{inter-arrival time} et \emph{payload length} sont les plus discriminants pour la classification des attaques}
+\label{fig:rf-features}
 \end{figure}
 \FloatBarrier
+
+La figure~\ref{fig:rf-eval} présente la matrice de confusion binaire et la courbe ROC du Random Forest, confirmant une quasi-perfection en classification binaire (AUC~=~0{,}999). La figure~\ref{fig:rf-multiclass} détaille la classification multi-classes~: les sept types d'attaques sont correctement identifiés sans confusion significative entre classes. Enfin, la figure~\ref{fig:rf-features} révèle que les features les plus discriminantes sont liées au rythme d'émission et à la taille des payloads, ce qui confirme que les attaques de type flooding et exfiltration laissent des signatures volumétriques exploitables par le modèle.
 
 \begin{table}[!htbp]
 \centering
