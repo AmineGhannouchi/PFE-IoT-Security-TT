@@ -38,116 +38,45 @@ Ces composants ne fonctionnent pas de manière indépendante~: ils s'articulent 
 \section{Architecture globale et topologie réseau}
 \label{sec:re-archi}
 
-\subsection{Architecture de déploiement}
-
-L'architecture de déploiement traduit sur la machine hôte les briques conceptuelles décrites au chapitre précédent. La figure~\ref{fig:archi-p1} regroupe la couche réseau et la production des flux IoT, tandis que la figure~\ref{fig:archi-p2} présente les services backend de confiance, de supervision et d'analyse. Ensemble, elles constituent la vue d'implémentation de référence du laboratoire.
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=\textwidth]{diag-composants-part1.png}
-\caption{Architecture de déploiement --- Partie~1~: infrastructure réseau (pfSense, MikroTik), stack IoT simulée et stack Broker/IDS (Mosquitto, Suricata)}
-\label{fig:archi-p1}
-\end{figure}
-\FloatBarrier
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=\textwidth]{diag-composants-part2.png}
-\caption{Architecture de déploiement --- Partie~2~: stack PKI (Vault), stack SIEM (Wazuh) et stack ML/Analyse + interfaces de données}
-\label{fig:archi-p2}
-\end{figure}
-\FloatBarrier
-
 \subsection{Topologie réseau}
 
-La topologie réseau est résumée en quatre vues complémentaires~: infrastructure générale, zone IoT/DMZ, zone PKI/SIEM et politique de filtrage inter-VLAN.
-
-\paragraph{Partie 1 — Infrastructure réseau et segmentation VLAN.}
-La figure~\ref{fig:topo-p1} présente la chaîne Internet → pfSense → MikroTik et la segmentation en quatre VLANs, avec un miroir passif du trafic DMZ vers Suricata.
+La figure~\ref{fig:topo-p1} présente la topologie réseau du laboratoire~: la chaîne Internet~\textrightarrow{} pfSense~\textrightarrow{} MikroTik et la segmentation en quatre VLANs, avec un miroir passif du trafic DMZ vers Suricata. L'architecture générale du système a déjà été introduite au chapitre~\ref{chap:introduction} (figure~\ref{fig:archi-reelle-ch1})~; la présente section en détaille la topologie réseau effective.
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.90\linewidth]{diag-topo-part1.png}
-\caption{Topologie réseau --- Partie~1~: infrastructure réseau, pfSense, MikroTik et segmentation en 4 VLANs}
+\caption{Topologie réseau~: infrastructure pfSense/MikroTik et segmentation en 4~VLANs (IoT, DMZ, PKI, SIEM)}
 \label{fig:topo-p1}
 \end{figure}
 \FloatBarrier
 
-\paragraph{Partie 2 — VLAN 10 (Zone IoT) et VLAN 20 (Zone DMZ).}
-La figure~\ref{fig:topo-p2} situe le simulateur de flotte et les 50~dispositifs dans le VLAN~10, ainsi que Mosquitto et Suricata dans la DMZ (VLAN~20).
+La segmentation repose sur quatre zones isolées~:
 
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.95\linewidth]{diag-topo-part2.png}
-\caption{Topologie réseau --- Partie~2~: VLAN~10 Zone IoT (fleet-sim, 50 devices) et VLAN~20 Zone DMZ (Mosquitto, Suricata)}
-\label{fig:topo-p2}
-\end{figure}
-\FloatBarrier
+\begin{itemize}[leftmargin=*]
+  \item \textbf{VLAN~10 (Zone IoT)}~: héberge le simulateur de flotte et les 50~dispositifs émulés. Les seuls flux sortants autorisés sont IoT\textrightarrow{}Broker/8883 (MQTT/TLS) et IoT\textrightarrow{}Vault/8200 (émission de certificats)~;
+  \item \textbf{VLAN~20 (Zone DMZ)}~: contient Mosquitto (broker MQTT) et Suricata (IDS). Un port miroir MikroTik copie passivement le trafic de cette zone vers Suricata~;
+  \item \textbf{VLAN~30 (Zone PKI)}~: isole HashiCorp Vault et la CA intermédiaire. Seul le flux PKI\textrightarrow{}SIEM/1514 est autorisé en sortie~;
+  \item \textbf{VLAN~40 (Zone SIEM)}~: regroupe Wazuh, OpenSearch et le moteur ML. Les journaux de toutes les zones convergent ici via Syslog/1514.
+\end{itemize}
 
-\paragraph{Partie 3 — VLAN 30 (Zone PKI) et VLAN 40 (Zone SIEM).}
-La figure~\ref{fig:topo-p3} isole Vault dans le VLAN~30 et regroupe Wazuh ainsi que le moteur ML dans le VLAN~40, où convergent les journaux et les flux d'analyse.
+La politique de filtrage inter-VLAN suit le principe \emph{deny-by-default}~: seuls les flux explicitement listés ci-dessus sont autorisés par pfSense, tout autre trafic inter-zones est bloqué.
 
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.95\linewidth]{diag-topo-part3.png}
-\caption{Topologie réseau --- Partie~3~: VLAN~30 Zone PKI (Vault) et VLAN~40 Zone SIEM (Wazuh, ML Engine) + flux de données}
-\label{fig:topo-p3}
-\end{figure}
-\FloatBarrier
-
-\paragraph{Partie 4 — Politique de filtrage inter-VLAN (deny-by-default).}
-La figure~\ref{fig:topo-p4} synthétise la politique \emph{deny-by-default}~: seuls les flux IoT→DMZ/8883, IoT→PKI/8200, DMZ→SIEM/1514 et PKI→SIEM/1514 sont autorisés.
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.85\linewidth]{diag-topo-part4.png}
-\caption{Topologie réseau --- Partie~4~: politique de filtrage inter-VLAN (ACCEPT/DROP) sur pfSense}
-\label{fig:topo-p4}
-\end{figure}
-\FloatBarrier
-
-Les figures~\ref{fig:flux-p1}--\ref{fig:flux-p5} résument le cycle complet~: provisionnement de l'identité, établissement du mTLS, publication MQTT, supervision Suricata/Wazuh et rotation automatique des certificats.
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.85\linewidth,height=0.32\textheight,keepaspectratio]{diag-flux-phase1.png}
-\caption{Flux E2E --- Phase 1 : provisionnement de l'identité}
-\label{fig:flux-p1}
-\end{figure}
-\FloatBarrier
+Le cycle de fonctionnement de bout en bout suit cinq phases successives~: (1)~provisionnement de l'identité cryptographique via Vault~; (2)~établissement de la connexion TLS~1.3 mTLS avec le broker~; (3)~publication des données IoT sur les topics autorisés~; (4)~détection et supervision par Suricata et Wazuh~; (5)~rotation automatique des certificats à l'approche de leur expiration. Les deux phases les plus critiques~--- l'établissement du mTLS et la détection~--- sont détaillées dans les figures suivantes.
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.95\linewidth,height=0.40\textheight,keepaspectratio]{diag-flux-phase2.png}
-\caption{Flux E2E --- Phase 2 : établissement de la connexion TLS~1.3 mTLS}
+\caption{Flux E2E --- Phase~2~: établissement de la connexion TLS~1.3 mTLS entre un dispositif et le broker}
 \label{fig:flux-p2}
 \end{figure}
 \FloatBarrier
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.85\linewidth,height=0.30\textheight,keepaspectratio]{diag-flux-phase3.png}
-\caption{Flux E2E --- Phase 3 : publication des données IoT}
-\label{fig:flux-p3}
-\end{figure}
-\FloatBarrier
-
-\begin{figure}[!htbp]
-\centering
 \includegraphics[width=0.92\linewidth,height=0.38\textheight,keepaspectratio]{diag-flux-phase4.png}
-\caption{Flux E2E --- Phase 4 : détection et supervision}
+\caption{Flux E2E --- Phase~4~: détection et supervision (Suricata IDS~\textrightarrow{} Wazuh SIEM~\textrightarrow{} tableau de bord)}
 \label{fig:flux-p4}
 \end{figure}
-\FloatBarrier
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.80\linewidth,height=0.30\textheight,keepaspectratio]{diag-flux-phase5.png}
-\caption{Flux E2E~--- Phase~5~: rotation automatique des certificats}
-\label{fig:flux-p5}
-\end{figure}
-\FloatBarrier
-
 \FloatBarrier
 
 \section{Infrastructure à clés publiques (Vault)}
@@ -244,83 +173,55 @@ Six scénarios ont été conçus pour couvrir les principales catégories d'atta
 \textbf{Contre-mesure~:} révocation Vault (\texttt{vault write pki\_int/revoke serial=...}) et \emph{rotation} immédiate de la CRL.
 \end{attackbox}
 
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.90\linewidth]{diag-suricata-part1.png}
-\caption{Chaîne de détection Suricata~\textrightarrow~Wazuh --- Partie~1~: capture AF\_PACKET et décodage MQTT}
-\label{fig:detection-p1}
-\end{figure}
-\FloatBarrier
-
-La première étape (figure~\ref{fig:detection-p1}) couvre l'inspection passive du trafic~: Suricata reçoit une copie du trafic VLAN~20 via le port miroir MikroTik (AF\_PACKET, zéro copie, aucun impact sur la latence MQTT). Il décode la pile Ethernet→IP→TCP→TLS~1.3, puis active le parseur applicatif MQTT sur le port~8883 pour extraire les métadonnées~: type de paquet, topic, QoS, taille de payload et \texttt{client\_id}.
+La chaîne de détection fonctionne en trois étapes. Suricata reçoit d'abord une copie passive du trafic VLAN~20 via le port miroir MikroTik (AF\_PACKET, zéro copie, aucun impact sur la latence MQTT), décode la pile réseau et active son parseur MQTT sur le port~8883 pour extraire les métadonnées applicatives (type de paquet, topic, QoS, taille de payload, \texttt{client\_id}). Les règles SID personnalisées sont ensuite appliquées, comme détaillé ci-dessous.
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.73\linewidth,height=0.72\textheight,keepaspectratio]{diag-suricata-part2.png}
-\caption{Chaîne de détection Suricata~\textrightarrow~Wazuh --- Partie~2~: application des règles SID et génération d'alertes}
+\caption{Chaîne de détection Suricata~\textrightarrow{}Wazuh~: application des règles SID personnalisées et génération d'alertes}
 \label{fig:detection-p2}
 \end{figure}
 \FloatBarrier
 
-La deuxième étape (figure~\ref{fig:detection-p2}) applique les quatre règles SID personnalisées~: \textbf{SID~9000001} (flood~: >~50 CONNECT en 10~s depuis la même IP, 23~déclenchements)~; \textbf{SID~9000002} (topic suspect \texttt{cmd/}, 4~déclenchements)~; \textbf{SID~9000003} (payload~>~4~096~octets, 15~déclenchements)~; \textbf{SID~9000004} (scan broker~: >~20 CONNECT en 5~s sans SUBSCRIBE, 9~déclenchements). Total~: 51~alertes sur 76~000~messages, 0~faux positif sur le trafic TLS normal.
+La figure~\ref{fig:detection-p2} détaille les quatre règles SID personnalisées~: \textbf{SID~9000001} (flood~: >~50 CONNECT en 10~s depuis la même IP, 23~déclenchements)~; \textbf{SID~9000002} (topic suspect \texttt{cmd/}, 4~déclenchements)~; \textbf{SID~9000003} (payload~>~4~096~octets, 15~déclenchements)~; \textbf{SID~9000004} (scan broker~: >~20 CONNECT en 5~s sans SUBSCRIBE, 9~déclenchements). Total~: 51~alertes sur 76~000~messages, 0~faux positif sur le trafic TLS normal.
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.73\linewidth,height=0.72\textheight,keepaspectratio]{diag-suricata-part3.png}
-\caption{Chaîne de détection Suricata~\textrightarrow~Wazuh --- Partie~3~: EVE JSON → Filebeat → Wazuh → OpenSearch → Dashboard}
+\caption{Pipeline d'ingestion des alertes~: EVE JSON~\textrightarrow{} Filebeat~\textrightarrow{} Wazuh~\textrightarrow{} OpenSearch~\textrightarrow{} Dashboard}
 \label{fig:detection-p3}
 \end{figure}
 \FloatBarrier
 
-La troisième étape (figure~\ref{fig:detection-p3}) décrit le pipeline d'ingestion~: Suricata écrit chaque alerte dans \texttt{eve.json} (champs~: \texttt{timestamp}, \texttt{src\_ip}, \texttt{alert.signature}, \texttt{mqtt.topic}), Filebeat le transmet à Wazuh via Syslog/1514. Wazuh applique ses décodeurs XML puis ses règles de corrélation (ex.~: >~5~alertes SID~9000001 en~<~60~s → escalade niveau~12 «~MQTT DoS flood confirmé~»). OpenSearch indexe les événements et le tableau de bord les restitue à l'analyste SOC avec filtrage par type d'attaque, VLAN source et période. La latence bout-en-bout est inférieure à 2~secondes.
+La figure~\ref{fig:detection-p3} décrit le pipeline d'ingestion~: Suricata écrit chaque alerte dans \texttt{eve.json} (champs~: \texttt{timestamp}, \texttt{src\_ip}, \texttt{alert.signature}, \texttt{mqtt.topic}), Filebeat le transmet à Wazuh via Syslog/1514. Wazuh applique ses décodeurs XML puis ses règles de corrélation (ex.~: >~5~alertes SID~9000001 en~<~60~s → escalade niveau~12 «~MQTT DoS flood confirmé~»). OpenSearch indexe les événements et le tableau de bord les restitue à l'analyste SOC avec filtrage par type d'attaque, VLAN source et période. La latence bout-en-bout est inférieure à 2~secondes.
 
 \section{Pipeline d'apprentissage automatique}
 \label{sec:re-ml}
 
-Les scénarios d'attaque ont mis en évidence une limite inhérente aux approches par règles~: le scénario~S6 (certificat valide réutilisé depuis un contexte inhabituel) n'est détecté que partiellement par Suricata et Wazuh. Le pipeline ML intervient précisément pour combler cette lacune~: il complète la détection par signature en repérant les comportements anormaux que les règles statiques ne peuvent pas anticiper. Il est constitué de trois phases~: préparation des données (figures~\ref{fig:ml-p1}), entraînement parallèle de trois modèles (figure~\ref{fig:ml-p2}), puis comparaison, export et intégration dans le SIEM (figure~\ref{fig:ml-p3}).
+Les scénarios d'attaque ont mis en évidence une limite inhérente aux approches par règles~: le scénario~S6 (certificat valide réutilisé depuis un contexte inhabituel) n'est détecté que partiellement par Suricata et Wazuh. Le pipeline ML intervient précisément pour combler cette lacune~: il complète la détection par signature en repérant les comportements anormaux que les règles statiques ne peuvent pas anticiper. Il est constitué de trois phases~: préparation des données, entraînement des modèles et intégration dans le SIEM.
 
-\paragraph{Partie 1 — Chargement, exploration et feature engineering.}
-La première phase prépare le jeu de données avant tout entraînement.
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.74\linewidth]{diag-ml-part1.png}
-\caption{Pipeline ML --- Partie~1~: chargement, EDA et feature engineering}
-\label{fig:ml-p1}
-\end{figure}
-\FloatBarrier
-
+\paragraph{Phase~1 — Chargement, exploration et feature engineering.}
 Le dataset CSV (76~000~entrées, 24~features brutes) est chargé puis soumis à une analyse exploratoire~: distribution des classes, matrice de corrélation et boxplots par type d'attaque. Les variables catégorielles (\texttt{protocol}, \texttt{tls\_version}, \texttt{cert\_status}, etc.) sont encodées via \texttt{LabelEncoder} pour obtenir 29~features exploitables. Deux variables cibles sont construites~: \texttt{label\_secure} (binaire~: 0~=~attaque, 1~=~normal) et \texttt{attack\_type} (multi-classe~: 7~types d'attaques).
 
-\paragraph{Partie 2 — Entraînement des trois modèles.}
-Les trois modèles sont entraînés en parallèle sur les mêmes 29~features.
+\paragraph{Phase~2 — Entraînement des trois modèles.}
+Les trois modèles sont entraînés en parallèle sur les mêmes 29~features (figure~\ref{fig:ml-p2}).
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.80\linewidth]{diag-ml-part2.png}
-\caption{Pipeline ML --- Partie~2~: entraînement parallèle de trois modèles (IsolationForest, RF binaire, RF multi-classes)}
+\caption{Pipeline ML~: entraînement parallèle des trois modèles (IsolationForest, RF binaire, RF multi-classes)}
 \label{fig:ml-p2}
 \end{figure}
 \FloatBarrier
 
 \begin{itemize}[leftmargin=*]
-  \item \textbf{Modèle~A — IsolationForest} (non supervisé)~: entraîné exclusivement sur le trafic normal (\texttt{label\_secure~=~1}), il calcule un score d'anomalie pour chaque message, avec un seuil fixé à $-0{,}05$. Résultats~: F1~=~0,932 et ROC-AUC~=~0,959.
-  \item \textbf{Modèle~B — RandomForest binaire} (supervisé)~: entraîné avec un split stratifié 80/20, \texttt{class\_weight=balanced} et \texttt{n\_estimators=200}. Résultats~: F1~=~0,994 et ROC-AUC~=~0,999.
-  \item \textbf{Modèle~C — RandomForest multi-classes}~: il réalise une classification directe des 7~types d'attaques et produit une matrice de confusion sans confusion Normal$\leftrightarrow$DoS. Résultats~: F1~macro~=~0,993 et ROC-AUC~=~0,998.
+  \item \textbf{Modèle~A — IsolationForest} (non supervisé)~: entraîné exclusivement sur le trafic normal (\texttt{label\_secure~=~1}), il calcule un score d'anomalie pour chaque message, avec un seuil fixé à $-0{,}05$. Résultats~: F1~=~0,932 et ROC-AUC~=~0,959~;
+  \item \textbf{Modèle~B — RandomForest binaire} (supervisé)~: entraîné avec un split stratifié 80/20, \texttt{class\_weight=balanced} et \texttt{n\_estimators=200}. Résultats~: F1~=~0,994 et ROC-AUC~=~0,999~;
+  \item \textbf{Modèle~C — RandomForest multi-classes}~: classification directe des 7~types d'attaques, matrice de confusion sans confusion Normal$\leftrightarrow$DoS. Résultats~: F1~macro~=~0,993 et ROC-AUC~=~0,998.
 \end{itemize}
 
-\paragraph{Partie 3 — Comparaison, export et intégration SIEM.}
-La troisième phase consolide les résultats et déploie les modèles.
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.65\linewidth]{diag-ml-part3.png}
-\caption{Pipeline ML --- Partie~3~: comparaison des modèles, export et intégration Wazuh}
-\label{fig:ml-p3}
-\end{figure}
-\FloatBarrier
-
-Les trois modèles sont comparés sur F1, ROC-AUC, précision et rappel. La stratégie retenue est bicouche~: IsolationForest pour la détection sans étiquettes (données de production non labellisées) et RandomForest binaire en temps réel sur le trafic labelé. Les modèles sont sauvegardés au format \texttt{.pkl} (joblib) dans \texttt{ml/models/}. Les scores d'anomalie sont transmis à Wazuh via l'API REST (port~55000) et corrélés avec les alertes Suricata pour une détection multicouche~: un message simultanément signalé par l'IDS et classé anormal par le modèle ML déclenche une alarme de niveau critique.
+\paragraph{Phase~3 — Comparaison, export et intégration SIEM.}
+Les trois modèles sont comparés sur F1, ROC-AUC, précision et rappel. La stratégie retenue est bicouche~: IsolationForest pour la détection sans étiquettes (données de production non labellisées) et RandomForest binaire pour la classification en temps réel du trafic labelé. Les modèles sont sauvegardés au format \texttt{.pkl} (joblib) dans \texttt{ml/models/}. Les scores d'anomalie sont transmis à Wazuh via l'API REST (port~55000) et corrélés avec les alertes Suricata pour une détection multicouche~: un message simultanément signalé par l'IDS et classé anormal par le modèle ML déclenche une alarme de niveau critique.
 
 \subsection{Données et features}
 
