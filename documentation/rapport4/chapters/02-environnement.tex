@@ -40,6 +40,16 @@ attackbox       & python:3.11-alpine      & IoT (10)    & dynamique     & --   &
 \end{tabularx}
 \end{table}
 
+La figure~\ref{fig:topo-env} présente la topologie complète du laboratoire avec les cinq zones réseau et les interactions principales entre les composants.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{diag-topo-env.png}
+\caption{Topologie du laboratoire GNS3~: cinq zones réseau, composants et flux principaux}
+\label{fig:topo-env}
+\end{figure}
+\FloatBarrier
+
 Les sections suivantes décrivent chaque composant en détail, en commençant par l'infrastructure réseau, puis les services applicatifs zone par zone.
 
 %% ====================================================================
@@ -51,11 +61,12 @@ Les sections suivantes décrivent chaque composant en détail, en commençant pa
 \subsection{pfSense --- pare-feu et passerelle WAN}
 \label{subsec:env-pfsense}
 
-\textbf{pfSense Community Edition~2.7.2} est un pare-feu open source basé sur FreeBSD, déployé en tant que machine virtuelle QEMU dans GNS3. Il constitue le point d'entrée du laboratoire vers Internet et assure trois fonctions~:
+\textbf{pfSense Community Edition~2.7.2} est un pare-feu open source basé sur FreeBSD, déployé en tant que machine virtuelle QEMU dans GNS3. Il constitue le point d'entrée du laboratoire vers Internet et assure quatre fonctions~:
 
 \begin{itemize}[leftmargin=*]
-  \item \textbf{NAT et routage WAN}~: l'interface \texttt{em0} obtient une adresse IP par DHCP depuis le réseau hôte et fournit l'accès Internet à l'ensemble du laboratoire via NAT~;
+  \item \textbf{NAT et routage WAN}~: l'interface \texttt{em0} obtient une adresse IP par DHCP depuis le réseau hôte et fournit l'accès Internet à l'ensemble du laboratoire via NAT sortant pour chacun des cinq sous-réseaux~;
   \item \textbf{Filtrage périmétrique}~: pfSense applique les règles de filtrage entre le réseau externe et le réseau interne (192.168.1.0/24), bloquant tout trafic entrant non sollicité~;
+  \item \textbf{Filtrage secondaire LAN}~: sur son interface LAN, pfSense applique des règles complémentaires par couple source/destination (par exemple IoT\textrightarrow{}Broker/8883, DMZ\textrightarrow{}Wazuh/1514, blocage IoT\textrightarrow{}SIEM et IoT\textrightarrow{}Analyse), formant un \textbf{second niveau de filtrage} qui double la politique inter-VLAN du MikroTik~;
   \item \textbf{Liaison vers le routeur interne}~: l'interface \texttt{em1} (192.168.1.1/24) est connectée au MikroTik, qui prend en charge la segmentation interne en VLANs.
 \end{itemize}
 
@@ -197,6 +208,28 @@ La zone SIEM héberge trois composants complémentaires~:
   \item \textbf{Sortie}~: indexation vers OpenSearch~; tableaux de bord via Dashboards.
 \end{itemize}
 
+\subsection{OpenSearch (zone SIEM)}
+\label{subsec:env-opensearch}
+
+\textbf{OpenSearch~2.x} est le moteur d'indexation et de recherche déployé dans la zone SIEM (192.168.40.11, port~9200). Il reçoit les événements enrichis par Wazuh Manager et les stocke dans des index structurés, permettant des requêtes rapides sur de grands volumes d'alertes. OpenSearch constitue le backend de stockage de toute la chaîne de supervision~: chaque alerte Suricata, chaque événement MQTT et chaque score ML y est indexé et consultable.
+
+\paragraph{Interfaces.}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Entrée}~: événements indexés depuis Wazuh Manager (TCP/9200)~;
+  \item \textbf{Sortie}~: données consultables par OpenSearch Dashboards et par l'API REST.
+\end{itemize}
+
+\subsection{OpenSearch Dashboards (zone SIEM)}
+\label{subsec:env-dashboards}
+
+\textbf{OpenSearch Dashboards} (192.168.40.12, port~5601) est l'interface de visualisation web de la pile SIEM. Accessible depuis toutes les zones du laboratoire (conformément à la règle ACL~\ref{tab:acl-inter-zones}), il permet à l'opérateur SOC de consulter les alertes, de construire des tableaux de bord personnalisés et de corréler visuellement les événements par type d'attaque, par zone source ou par période.
+
+\paragraph{Interfaces.}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Entrée}~: requêtes vers OpenSearch (TCP/9200)~;
+  \item \textbf{Sortie}~: interface web (TCP/5601) accessible depuis toutes les zones.
+\end{itemize}
+
 \subsection{Suricata IDS (zone Analyse)}
 \label{subsec:env-suricata}
 
@@ -220,7 +253,7 @@ Le MikroTik copie passivement le trafic de la zone DMZ (\texttt{bridge-dmz}) ver
 Le \textbf{ML Engine} est un service de détection d'anomalies développé en Python (image \texttt{python:3.11-slim}). Il constitue la couche de détection comportementale du laboratoire.
 
 \paragraph{Rôle.}
-Le moteur ML se connecte au broker Mosquitto en tant que client mTLS (avec le CN \texttt{ml.iot-pfe.local}) et souscrit à l'ensemble des topics IoT (\texttt{\#}). Pour chaque message reçu, il construit un vecteur de 28~features (taille du payload, entropie de Shannon, fréquence de publication, RTT, jitter, etc.) et le soumet à trois modèles pré-entraînés~:
+Le moteur ML se connecte au broker Mosquitto en tant que client mTLS (avec le CN \texttt{ml.iot-pfe.local}) et souscrit à l'ensemble des topics IoT (\texttt{\#}). Pour chaque message reçu, il construit un vecteur de 29~features --- 21~numériques (taille du payload, entropie de Shannon, fréquence de publication, RTT, jitter, etc.) et 8~catégorielles encodées (protocole, version TLS, zone source/destination, etc.) --- et le soumet à trois modèles pré-entraînés~:
 
 \begin{itemize}[leftmargin=*]
   \item \textbf{Random Forest binaire}~: classification normal/attaque avec probabilité~;

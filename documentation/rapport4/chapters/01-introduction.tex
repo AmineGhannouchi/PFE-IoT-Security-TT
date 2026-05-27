@@ -116,15 +116,7 @@ Ces contraintes font de la sécurisation des flux IoT un enjeu opérationnel de 
 
 Les écosystèmes IoT présentent une surface d'attaque significativement plus large que les systèmes informatiques classiques. Meneghello \emph{et al.}~\cite{meneghello2019iot} en distinguent quatre couches~: (i)~la couche \emph{matérielle} (composants embarqués, interfaces de débogage exposées, attaques par canal auxiliaire)~; (ii)~la couche \emph{firmware} (mises à jour non signées, exécution de code arbitraire)~; (iii)~la couche \emph{réseau} (transports en clair, protocoles propriétaires faibles)~; (iv)~la couche \emph{services et écosystème} (\acs{API} non authentifiées, applications mobiles vulnérables, multi-tenance mal cloisonnée).
 
-Parmi les vecteurs matériels, deux interfaces de débogage méritent une attention particulière dans le contexte IoT~:
-
-\begin{itemize}[leftmargin=*]
-  \item \textbf{JTAG} (\emph{Joint Test Action Group})~: interface standard de test et de débogage matériel, initialement conçue pour la vérification des circuits imprimés. Lorsqu'elle reste accessible sur un dispositif déployé, elle permet à un attaquant disposant d'un accès physique de lire ou modifier le firmware, d'extraire des clés cryptographiques stockées en mémoire et de contourner les mécanismes d'authentification logicielle~;
-  \item \textbf{UART} (\emph{Universal Asynchronous Receiver-Transmitter})~: interface de communication série largement utilisée pour les consoles de débogage des systèmes embarqués. Sur de nombreux dispositifs IoT, un port UART non désactivé expose un accès shell avec des privilèges élevés, offrant à un attaquant la possibilité d'interagir directement avec le système d'exploitation du dispositif~;
-  \item \textbf{API exposées}~: les interfaces de programmation applicatives (\acs{API}) REST ou MQTT utilisées pour la gestion des dispositifs constituent également un vecteur d'attaque lorsqu'elles sont déployées sans authentification, sans chiffrement ou avec des mécanismes d'autorisation insuffisants. Dans le contexte opérateur, ces API peuvent donner accès à la configuration de flottes entières de dispositifs.
-\end{itemize}
-
-Ces vecteurs matériels et logiciels illustrent la nécessité d'une approche de sécurisation multicouche, couvrant aussi bien les interfaces physiques que les protocoles applicatifs.
+Au niveau matériel, les interfaces de débogage non désactivées (JTAG, UART) exposent un accès physique permettant l'extraction de clés cryptographiques ou la modification du firmware. Au niveau logiciel, les \acs{API} REST ou MQTT de gestion des dispositifs constituent un vecteur complémentaire lorsqu'elles sont déployées sans authentification ou avec des mécanismes d'autorisation insuffisants. Ces vecteurs illustrent la nécessité d'une approche de sécurisation multicouche.
 
 \subsection{OWASP IoT Top 10 et menaces réseau}
 
@@ -407,7 +399,7 @@ Les sept objectifs spécifiques (\acs{O1}--\acs{O7}) structurent l'ensemble des 
 \acs{O3} & Imposer un chiffrement \acs{TLS}~1.3 avec authentification mutuelle (\acs{mTLS}) sur le broker MQTT. \\ \hline
 \acs{O4} & Émuler une flotte hétérogène de 50 dispositifs IoT et générer un trafic réaliste mêlant comportements légitimes et attaques. \\ \hline
 \acs{O5} & Mettre en place une analyse réseau native MQTT au moyen d'un \acs{IDS} Suricata. \\ \hline
-\acs{O6} & Centraliser et corréler les événements de sécurité dans un \acs{SIEM} Wazuh, avec visualisation via Grafana. \\ \hline
+\acs{O6} & Centraliser et corréler les événements de sécurité dans un \acs{SIEM} Wazuh, avec visualisation via OpenSearch Dashboards. \\ \hline
 \acs{O7} & Développer un module de détection d'anomalies par apprentissage automatique (IsolationForest et Random Forest) et évaluer son apport. \\ \hline
 \end{tabularx}
 \end{table}
@@ -420,18 +412,7 @@ Ces objectifs traduisent opérationnellement la problématique et structurent le
 \section{Besoins fonctionnels}
 \label{sec:besoins-fonctionnels-ch1}
 
-L'étude de l'existant et la formulation de la problématique permettent de dégager les principaux besoins fonctionnels auxquels la solution doit répondre. À ce stade, ces besoins sont exprimés de manière synthétique~; leur spécification formelle, accompagnée des besoins non fonctionnels et de la modélisation UML, sera présentée au chapitre~\ref{chap:conception}.
-
-Six domaines fonctionnels complémentaires sont identifiés~:
-
-\begin{itemize}[leftmargin=*]
-  \item \textbf{Gestion des identités cryptographiques}~: le système doit être capable d'émettre, de renouveler et de révoquer automatiquement des certificats X.509 pour l'ensemble des services et des dispositifs IoT, au moyen d'une \acs{PKI} automatisée~;
-  \item \textbf{Sécurisation du transport}~: toutes les communications entre les dispositifs et le broker MQTT doivent être chiffrées via \acs{TLS}~1.3 avec authentification mutuelle (\acs{mTLS}), rendant impossible toute interception ou usurpation d'identité~;
-  \item \textbf{Contrôle d'accès applicatif}~: l'accès aux topics MQTT doit être restreint par dispositif au moyen de listes de contrôle d'accès fondées sur l'identité cryptographique (le \emph{Common Name} du certificat) de chaque objet~;
-  \item \textbf{Simulation réaliste du trafic}~: une flotte hétérogène de dispositifs IoT doit être émulée pour générer un trafic représentatif, incluant des comportements légitimes et des scénarios d'attaque couvrant les principaux vecteurs identifiés~;
-  \item \textbf{Détection d'intrusion et corrélation}~: les attaques réseau et applicatives doivent être détectées par un \acs{IDS} et corrélées dans un \acs{SIEM} pour une supervision centralisée, avec des tableaux de bord accessibles aux analystes~;
-  \item \textbf{Détection comportementale}~: les anomalies non couvertes par les règles statiques doivent être identifiées par un module d'apprentissage automatique, capable de repérer les dérives de comportement subtiles telles que l'utilisation d'un certificat valide depuis un contexte inhabituel.
-\end{itemize}
+L'étude de l'existant et la formulation de la problématique permettent de dégager six domaines fonctionnels complémentaires auxquels la solution doit répondre~: la gestion automatisée des identités cryptographiques (PKI), la sécurisation du transport (TLS~1.3 + mTLS), le contrôle d'accès applicatif par certificat (ACL), la simulation réaliste du trafic IoT, la détection d'intrusion corrélée (IDS + SIEM) et la détection comportementale par apprentissage automatique. La spécification formelle de ces besoins, accompagnée des besoins non fonctionnels et de la modélisation UML, est présentée au chapitre~\ref{chap:conception} (tableaux~\ref{tab:bf} et~\ref{tab:bnf}).
 
 %% ====================================================================
 %%  SECTION : Périmètre et contraintes

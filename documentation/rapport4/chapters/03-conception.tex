@@ -40,7 +40,7 @@ Le diagnostic de l'existant, présenté au chapitre~\ref{chap:introduction} (sec
 \hline
 \textbf{ID} & \textbf{Description} \\
 \hline
-\acs{BNF-1} & \textbf{Monitoring et visualisation}~: tableaux de bord Grafana pour le suivi des métriques en temps réel (latence, débit, alertes) et tableaux de bord Wazuh pour l'analyse de sécurité, accessibles en moins de 3~clics. \\ \hline
+\acs{BNF-1} & \textbf{Monitoring et visualisation}~: tableaux de bord Wazuh/OpenSearch Dashboards pour le suivi des métriques en temps réel (latence, débit, alertes) et l'analyse de sécurité, accessibles en moins de 3~clics. \\ \hline
 \acs{BNF-2} & \textbf{Performance}~: latence handshake mTLS \(<50\)~ms~; débit broker \(>500\)~msg/s par client. \\ \hline
 \acs{BNF-3} & \textbf{Reproductibilité}~: l'environnement complet doit être réinstallable à partir des scripts fournis. \\ \hline
 \acs{BNF-4} & \textbf{Scalabilité}~: l'architecture doit accepter sans refonte au moins 200 dispositifs. \\ \hline
@@ -53,18 +53,21 @@ Ces besoins définissent le \emph{quoi} de la solution~: les fonctionnalités at
 
 \subsection{Acteurs du système}
 
-La plateforme met en jeu deux catégories d'acteurs~: les \textbf{acteurs humains}, qui interagissent directement avec le système, et les \textbf{acteurs système}, qui participent au traitement de manière automatisée. Chaque acteur système joue un rôle spécifique dans la chaîne de sécurité~:
+La plateforme met en jeu trois catégories d'acteurs~: les \textbf{acteurs humains}, qui interagissent directement avec le système~; les \textbf{acteurs système}, qui participent au traitement de manière automatisée~; et un \textbf{acteur externe automatisé}, le dispositif IoT, qui opère de façon autonome mais constitue le point d'entrée de la chaîne de sécurité.
+
+\paragraph{Acteurs système.} Chaque acteur système joue un rôle spécifique dans la chaîne de sécurité~:
 
 \begin{itemize}[leftmargin=*]
   \item \textbf{PKI HashiCorp Vault}~: autorité de certification automatisée, responsable de l'émission, du renouvellement et de la révocation des certificats X.509. Vault garantit que chaque dispositif et chaque service dispose d'une identité cryptographique vérifiable. En cas de compromission, il permet la révocation immédiate du certificat concerné et la mise à jour de la CRL~;
   \item \textbf{Broker Mosquitto}~: point central de la messagerie MQTT, il assure le routage des messages entre les dispositifs et les souscripteurs. Configuré en TLS~1.3 avec mTLS obligatoire, il vérifie le certificat de chaque client lors de la connexion et applique les ACL par \emph{Common Name} pour restreindre l'accès aux topics autorisés~;
-  \item \textbf{IDS Suricata}~: système de détection d'intrusion réseau positionné en miroir sur le segment DMZ. Il inspecte passivement le trafic MQTT grâce à son parseur natif et génère des alertes sur les comportements suspects (flood, scan, payloads anormaux) au format \texttt{eve.json}~;
-  \item \textbf{SIEM Wazuh}~: plateforme de corrélation et de visualisation des événements de sécurité. Il agrège les alertes Suricata, les journaux Mosquitto et les scores du module ML pour fournir une vue consolidée à l'opérateur SOC~;
-  \item \textbf{Module ML}~: pipeline d'apprentissage automatique (IsolationForest + Random Forest) qui analyse les caractéristiques du trafic pour détecter les anomalies comportementales non couvertes par les règles statiques~;
-  \item \textbf{Grafana}~: outil de visualisation des métriques de performance et de supervision, connecté aux sources de données du système pour le suivi en temps réel des indicateurs opérationnels.
+  \item \textbf{IDS Suricata}~: système de détection d'intrusion réseau positionné dans la zone Analyse en miroir sur le segment DMZ. Il inspecte passivement le trafic MQTT grâce à son parseur natif et génère des alertes sur les comportements suspects (flood, scan, payloads anormaux) au format \texttt{eve.json}~;
+  \item \textbf{SIEM Wazuh}~: plateforme de corrélation et de visualisation des événements de sécurité. Il agrège les alertes Suricata, les journaux Mosquitto et les scores du module ML pour fournir une vue consolidée à l'opérateur SOC via OpenSearch Dashboards~;
+  \item \textbf{Module ML}~: pipeline d'apprentissage automatique (IsolationForest + Random Forest) qui analyse les caractéristiques du trafic pour détecter les anomalies comportementales non couvertes par les règles statiques.
 \end{itemize}
 
-Les \textbf{acteurs humains} sont~: le \textbf{dispositif IoT} (représentant l'ensemble des capteurs et objets connectés de la flotte), l'\textbf{administrateur de sécurité} (responsable de la configuration de la PKI, des ACL et des règles de détection) et l'\textbf{opérateur SOC} (analyste chargé de la surveillance et de la réponse aux incidents).
+\paragraph{Acteur externe automatisé.} Le \textbf{dispositif IoT} représente l'ensemble des 50~capteurs émulés par le simulateur de flotte. Il est classé comme acteur externe car il opère de façon autonome (connexion mTLS, publication périodique, renouvellement de certificat) sans intervention humaine directe.
+
+\paragraph{Acteurs humains.} L'\textbf{administrateur de sécurité} est responsable de la configuration de la PKI, des ACL et des règles de détection. L'\textbf{opérateur SOC} est l'analyste chargé de la surveillance des tableaux de bord et de la réponse aux incidents.
 
 \subsection{Diagrammes de cas d'utilisation}
 
@@ -183,6 +186,16 @@ S5 & 2~semaines & Règles Suricata MQTT, intégration Wazuh et tableaux de bord.
 S6 & 2~semaines & Modèles IsolationForest et RandomForest, évaluation finale et rédaction. \\ \hline
 \end{tabularx}
 \end{table}
+
+La figure~\ref{fig:gantt} présente cette planification sous forme de diagramme de Gantt, illustrant la dépendance séquentielle entre les sprints et les jalons clés du projet.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{diag-gantt.png}
+\caption{Diagramme de Gantt --- planification des sprints et jalons du projet}
+\label{fig:gantt}
+\end{figure}
+\FloatBarrier
 
 Cette planification met en évidence une progression cohérente~: l'infrastructure et la PKI précèdent logiquement le broker sécurisé, puis la simulation, la détection et enfin l'évaluation ML.
 

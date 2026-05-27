@@ -1,0 +1,115 @@
+@startuml diag-topo-env
+
+' ──────────────────────────────────────────────
+'  Topologie reseau du laboratoire GNS3
+'  Chapitre 2 — Environnement technique
+' ──────────────────────────────────────────────
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+skinparam linetype ortho
+skinparam monochrome true
+skinparam dpi 150
+
+skinparam node {
+  BackgroundColor #FFFFFF
+  BorderColor #333333
+  FontStyle plain
+}
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #333333
+  RoundCorner 0
+}
+skinparam cloud {
+  BackgroundColor #FFFFFF
+  BorderColor #333333
+}
+skinparam artifact {
+  BackgroundColor #FFFFFF
+  BorderColor #333333
+}
+
+title Topologie reseau du laboratoire GNS3\nSegmentation en 5 zones VLAN
+
+' ── Couche superieure : Internet + Passerelle ──
+
+cloud "Internet" as INET
+
+node "**pfSense CE**\nem0 : WAN (DHCP)\nem1 : LAN 192.168.1.1/24\n//Firewall / NAT//" as PF
+
+node "**MikroTik CHR v7**\nUplink : 192.168.1.2/24\nRouteur L3 --- 5 bridges\n//Segmentation inter-VLAN//" as MK
+
+INET -down- PF
+PF -down- MK : "  Trunk 802.1Q  "
+
+' ── VLAN 10 : Zone IoT ──
+
+rectangle "VLAN 10 --- Zone IoT\n192.168.10.0/24" as ZONE_IOT {
+  node "fleet-simulator\n192.168.10.11+" as FLEET
+  node "attackbox\nIP dynamique\n//(test intrusion)//" as ATTKBOX
+}
+
+' ── VLAN 20 : Zone DMZ ──
+
+rectangle "VLAN 20 --- Zone DMZ\n192.168.20.0/24" as ZONE_DMZ {
+  node "Mosquitto (Broker MQTT)\n192.168.20.10\nPort 8883 (TLS/mTLS)" as MOSQ
+}
+
+' ── VLAN 30 : Zone PKI ──
+
+rectangle "VLAN 30 --- Zone PKI\n192.168.30.0/24" as ZONE_PKI {
+  node "HashiCorp Vault\n192.168.30.10\nPort 8200" as VAULT
+}
+
+' ── VLAN 40 : Zone SIEM ──
+
+rectangle "VLAN 40 --- Zone SIEM\n192.168.40.0/24" as ZONE_SIEM {
+  node "Wazuh Manager\n192.168.40.10" as WAZUH
+  node "OpenSearch\n192.168.40.11" as OSEARCH
+  node "Dashboards\n192.168.40.12" as DASHB
+  WAZUH -right- OSEARCH
+  OSEARCH -right- DASHB
+}
+
+' ── VLAN 50 : Zone Analyse ──
+
+rectangle "VLAN 50 --- Zone Analyse\n192.168.50.0/24" as ZONE_ANALYSE {
+  node "Suricata IDS\n192.168.50.10" as SURI
+  node "ML Engine\n192.168.50.12" as MLENG
+  SURI -right- MLENG
+}
+
+' ── Liens MikroTik -> Zones ──
+
+MK -down- ZONE_IOT
+MK -down- ZONE_DMZ
+MK -down- ZONE_PKI
+MK -down- ZONE_SIEM
+MK -down- ZONE_ANALYSE
+
+' ── Flux principaux (fleches avec port) ──
+
+FLEET -right-> MOSQ : " 8883/tcp\n (MQTT/TLS) "
+FLEET -[hidden]down- ATTKBOX
+FLEET ..> VAULT : " 8200/tcp\n (certificats) "
+MOSQ -down-> WAZUH : " 1514/tcp\n (logs) "
+SURI -right-> WAZUH : " 1514/tcp\n (alertes IDS) "
+
+' ── Port miroir (lien en pointille) ──
+
+MOSQ .[#333333,dashed].> SURI : "  port miroir  "
+
+note bottom of MK
+  Regles de pare-feu MikroTik :
+  --------------------------------
+  IoT -> DMZ (8883/tcp) : ACCEPT
+  IoT -> PKI (8200/tcp) : ACCEPT
+  DMZ -> SIEM (1514/tcp) : ACCEPT
+  Analyse -> SIEM (1514/tcp) : ACCEPT
+  Defaut inter-VLAN : DROP
+end note
+
+@enduml

@@ -27,6 +27,19 @@ Tests de performance & Mesurer latence, débit, handshake mTLS & paho-mqtt, hype
 \end{tabularx}
 \end{table}
 
+\subsection{Tests unitaires et vérifications préalables}
+\label{subsec:tc-unitaires}
+
+Avant l'exécution des campagnes de test, un ensemble de vérifications unitaires a été mené pour s'assurer du bon fonctionnement de chaque brique~:
+\begin{itemize}[leftmargin=*]
+  \item \textbf{PKI Vault}~: émission, renouvellement et révocation d'un certificat via l'API REST~; vérification de la chaîne de confiance (CA racine~\textrightarrow{}intermédiaire~\textrightarrow{}certificat final) avec \texttt{openssl verify}~;
+  \item \textbf{Connexion mTLS}~: connexion réussie avec certificat valide (\texttt{mosquitto\_pub -\/-cafile -\/-cert -\/-key}) et rejet attendu avec certificat expiré, auto-signé ou révoqué~;
+  \item \textbf{ACL Mosquitto}~: publication autorisée sur les topics du CN et rejet sur les topics d'un autre dispositif~;
+  \item \textbf{Pipeline ML}~: chargement des trois modèles \texttt{.pkl}, prédiction sur un vecteur de test connu et vérification de la cohérence des labels de sortie~;
+  \item \textbf{Connectivité réseau}~: validation du routage inter-VLAN (ping autorisé/bloqué selon la politique ACL) et du port mirroring DMZ\textrightarrow{}Suricata.
+\end{itemize}
+Ces vérifications ont permis d'isoler et de corriger plusieurs erreurs de configuration avant le lancement des campagnes de sécurité et de performance.
+
 \section{Résultats de sécurité}
 \label{sec:tc-secu}
 
@@ -259,16 +272,19 @@ Le handshake mTLS médian s'établit à \(\sim 38\)~ms (95\textsuperscript{e} pe
 Le surcoût lié au mTLS représente $\sim 8$\,\% du débit applicatif et $\sim 3{,}5$~ms de latence supplémentaire en moyenne~: un coût négligeable au regard des bénéfices sécurité.
 \end{resultbox}
 
+\paragraph{Validation de \acs{BNF-2}.}
+Le handshake mTLS médian de $\sim 38$~ms est conforme à l'exigence (<~50~ms). Concernant le débit, le test de charge avec 50~clients simultanés en MQTT/mTLS produit un débit agrégé de $\sim 31\,000$~messages par minute, soit environ $\sim 620$~msg/s par client en pic et $\sim 520$~msg/s en régime soutenu, satisfaisant l'exigence de >~500~msg/s par client. Le surcoût du mTLS ($\sim 8$\,\%) ne compromet donc pas la capacité du broker à absorber la charge nominale.
+
 Les mesures de performance confirment la compatibilité de l'architecture avec les contraintes opérationnelles de l'IoT. Pour compléter cette évaluation, il est nécessaire d'examiner avec honnêteté les \textbf{limites} de l'expérimentation~: elles conditionnent la portée des conclusions et orientent les travaux futurs.
 
 \section{Limites identifiées}
 \label{sec:tc-limites}
 
 \begin{itemize}[leftmargin=*]
-  \item Environnement entièrement \emph{simulé}~: les mesures de performance ne reflètent pas les conditions radio réelles d'un réseau cellulaire.
-  \item Le périmètre nominal de la flotte reste limité à 50~dispositifs~; une campagne complémentaire a bien été menée avec 100~dispositifs sur un sous-ensemble de trafic, mais une montée en charge plus large demeure contrainte par les ressources de la station hôte.
-  \item Le pipeline ML est entraîné \emph{hors ligne}~: l'intégration en streaming (Kafka + scoring temps réel) reste à explorer.
-  \item La rotation automatique des certificats est déclenchée manuellement~; une intégration complète au cycle ACME serait souhaitable.
+  \item \textbf{Environnement simulé}~: les mesures de performance ne reflètent pas les conditions radio réelles d'un réseau cellulaire (latence, perte de paquets, mobilité).
+  \item \textbf{Scalabilité partielle}~: le besoin non fonctionnel \acs{BNF-4} prévoit une scalabilité à 200~dispositifs sans refonte. Le périmètre nominal (50~dispositifs) et la campagne complémentaire (100~dispositifs sur un sous-ensemble de 35\,085~messages) valident le premier palier sans dégradation. Le second palier (200~dispositifs) reste à vérifier~; toutefois, l'architecture ne présente aucun goulot d'étranglement structurel~: le broker Mosquitto, la PKI Vault et la chaîne Suricata/Wazuh sont conçus pour supporter des volumes supérieurs. La contrainte est matérielle (16~Go de RAM sur la station hôte), non architecturale.
+  \item \textbf{ML hors ligne}~: le pipeline d'apprentissage automatique est entraîné hors ligne. L'intégration en streaming (Kafka + scoring temps réel) reste à explorer.
+  \item \textbf{Rotation de certificats}~: la rotation automatique des certificats est déclenchée manuellement~; une intégration complète au cycle ACME serait souhaitable.
 \end{itemize}
 
 \section{Perspectives}
@@ -281,4 +297,4 @@ Les mesures de performance confirment la compatibilité de l'architecture avec l
 \section{Conclusion}
 \label{sec:tc-synthese}
 
-Les résultats présentés dans ce chapitre confirment la validité fonctionnelle et expérimentale de l'architecture proposée. Les sept objectifs spécifiques (O1--O7), définis au chapitre~\ref{chap:introduction}, sont globalement atteints~: la segmentation réseau est opérationnelle, la PKI automatise l'émission et la révocation des certificats, le broker impose l'authentification mutuelle, la flotte simulée génère un trafic représentatif, la chaîne Suricata--Wazuh détecte et corrèle les attaques, et le module ML apporte une capacité complémentaire de détection avec un F1 de 0{,}993 en classification multi-classes. Dans le périmètre nominal du projet, ces résultats valident la solution proposée~; une campagne complémentaire menée avec 100~dispositifs met en évidence une première marge de montée en charge, sans remettre en cause les limites matérielles du laboratoire. Les limites identifiées~--- environnement simulé, taille réduite de la flotte et traitement ML hors ligne~--- définissent toutefois le périmètre de validité de ces résultats et ouvrent des perspectives d'amélioration qui seront reprises dans la conclusion générale.
+Les résultats présentés dans ce chapitre confirment la validité fonctionnelle et expérimentale de l'architecture proposée. Les sept objectifs spécifiques (O1--O7), définis au chapitre~\ref{chap:introduction}, sont globalement atteints~: la segmentation réseau est opérationnelle, la PKI automatise l'émission et la révocation des certificats, le broker impose l'authentification mutuelle, la flotte simulée génère un trafic représentatif, la chaîne Suricata--Wazuh détecte et corrèle les attaques, et le module ML apporte une capacité complémentaire de détection avec un F1 de 0{,}993 en classification multi-classes. Dans le périmètre nominal du projet, ces résultats valident la solution proposée~; une campagne complémentaire menée avec 100~dispositifs met en évidence une première marge de montée en charge, sans remettre en cause les limites matérielles du laboratoire. Les limites identifiées~--- environnement simulé, scalabilité partielle et traitement ML hors ligne~--- définissent le périmètre de validité de ces résultats. Les perspectives d'évolution proposées (industrialisation, environnement radio réel, ML continu) dessinent un chemin concret vers une solution de grade opérationnel. La conclusion générale reprend l'ensemble de ces contributions et situe le projet dans une perspective plus large de sécurisation des écosystèmes IoT pour les opérateurs télécom.
