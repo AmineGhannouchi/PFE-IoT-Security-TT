@@ -1,13 +1,14 @@
-\chapter{Contexte général du projet}
+\chapter{Contexte général et état de l'art}
 \label{chap:contexte-general}
 \label{chap:introduction}
+\label{chap:etat-art}
 
 \section{Introduction}
 
-Ce chapitre expose le cadre général dans lequel s'inscrit le projet de fin d'études. Il présente d'abord l'organisme d'accueil et son positionnement stratégique face aux enjeux de la sécurité IoT, puis situe le travail dans le contexte du marché IoT et dans celui, plus spécifique, des opérateurs télécom. Le chapitre dresse ensuite un état des lieux des pratiques existantes en matière de sécurité IoT afin d'identifier les lacunes à combler. Sur cette base, il formalise la problématique, définit l'objectif général et les objectifs spécifiques, expose les besoins fonctionnels, délimite le périmètre de l'étude et explicite la démarche méthodologique retenue.
+Ce chapitre pose les fondations du projet de fin d'études en réunissant le cadre institutionnel, le contexte technologique et le socle scientifique nécessaires à la compréhension de la solution proposée. Il présente d'abord l'organisme d'accueil et son positionnement stratégique face aux enjeux de la sécurité IoT, puis situe le travail dans le contexte du marché IoT et des opérateurs télécom. Le chapitre dresse ensuite un état de l'art des menaces spécifiques à l'IoT, recense les technologies et protocoles de sécurisation disponibles et analyse les travaux existants afin d'en identifier les limites. Sur cette base, il formalise la problématique, définit les objectifs, expose les besoins fonctionnels, délimite le périmètre de l'étude et explicite la démarche méthodologique retenue.
 
 %% ====================================================================
-%%  SECTION : Organisme d'accueil (placée juste après l'introduction)
+%%  SECTION : Organisme d'accueil
 %% ====================================================================
 \section{Présentation de l'organisme d'accueil}
 \label{sec:organisme}
@@ -90,7 +91,7 @@ Dans le cadre de ce travail, l'objectif est de construire un prototype expérime
 
 L'Internet des Objets constitue l'une des évolutions technologiques les plus structurantes de la décennie actuelle. Selon l'ENISA~\cite{enisa_iot}, le nombre de dispositifs connectés actifs dans le monde poursuit une croissance soutenue, portée par la multiplication des cas d'usage dans l'industrie, les villes intelligentes, la santé connectée, les infrastructures énergétiques et les réseaux de transport. Cette expansion génère un volume massif de données dont la collecte, le transport et le traitement reposent en très grande partie sur les infrastructures des opérateurs télécom.
 
-Cette croissance s'accompagne cependant d'une complexification notable des exigences de sécurité. Meneghello et al.~\cite{meneghello2019iot} soulignent que les dispositifs IoT présentent structurellement des vulnérabilités liées à leur conception~: ressources processeur et mémoire limitées rendant difficile l'intégration de mécanismes cryptographiques complets, cycles de mise à jour longs ou inexistants, et exposition à des réseaux partagés peu maîtrisés. Ces fragilités sont exploitées de manière croissante par des acteurs malveillants, comme l'illustre l'attaque Mirai~\cite{kolias2017mirai}, qui a mobilisé des centaines de milliers d'objets compromis pour générer des attaques par déni de service dépassant 1~Tbit/s (analysée en détail au chapitre~\ref{chap:etat-art}).
+Cette croissance s'accompagne cependant d'une complexification notable des exigences de sécurité. Meneghello et al.~\cite{meneghello2019iot} soulignent que les dispositifs IoT présentent structurellement des vulnérabilités liées à leur conception~: ressources processeur et mémoire limitées rendant difficile l'intégration de mécanismes cryptographiques complets, cycles de mise à jour longs ou inexistants, et exposition à des réseaux partagés peu maîtrisés. Ces fragilités sont exploitées de manière croissante par des acteurs malveillants, comme l'illustre l'attaque Mirai~\cite{kolias2017mirai}, qui a mobilisé des centaines de milliers d'objets compromis pour générer des attaques par déni de service dépassant 1~Tbit/s (analysée à la section~\ref{sec:ea-menaces}).
 
 \subsection{Rôle des opérateurs télécom dans l'écosystème IoT}
 
@@ -103,22 +104,202 @@ Les opérateurs télécom occupent une position centrale et particulière dans l
   \item \textbf{Responsabilité contractuelle et réglementaire}~: une fuite ou une compromission de flux IoT clients expose l'opérateur à des risques réglementaires (protection des données personnelles, responsabilité de service) et à des impacts réputationnels majeurs, le contraignant à démontrer un niveau de sécurité maîtrisé et auditable.
 \end{itemize}
 
-Ces contraintes font de la sécurisation des flux IoT un enjeu opérationnel de premier ordre pour les opérateurs télécom, bien au-delà d'une simple exigence technique ponctuelle.
+Ces contraintes font de la sécurisation des flux IoT un enjeu opérationnel de premier ordre pour les opérateurs télécom. Pour y répondre efficacement, il convient d'abord de caractériser les menaces qui pèsent spécifiquement sur les écosystèmes IoT, puis de recenser les technologies et protocoles de sécurisation disponibles.
 
-\subsection{Protocoles de sécurisation du transport~: TLS et DTLS}
+%% ====================================================================
+%%  SECTION : Menaces et vulnérabilités (ex-Chapitre 2)
+%% ====================================================================
+\section{Menaces et vulnérabilités spécifiques à l'IoT}
+\label{sec:ea-menaces}
+
+\subsection{Surface d'attaque étendue}
+
+Les écosystèmes IoT présentent une surface d'attaque significativement plus large que les systèmes informatiques classiques. Meneghello \emph{et al.}~\cite{meneghello2019iot} en distinguent quatre couches~: (i)~la couche \emph{matérielle} (composants embarqués, interfaces de débogage exposées, attaques par canal auxiliaire)~; (ii)~la couche \emph{firmware} (mises à jour non signées, exécution de code arbitraire)~; (iii)~la couche \emph{réseau} (transports en clair, protocoles propriétaires faibles)~; (iv)~la couche \emph{services et écosystème} (\acs{API} non authentifiées, applications mobiles vulnérables, multi-tenance mal cloisonnée).
+
+Parmi les vecteurs matériels, deux interfaces de débogage méritent une attention particulière dans le contexte IoT~:
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{JTAG} (\emph{Joint Test Action Group})~: interface standard de test et de débogage matériel, initialement conçue pour la vérification des circuits imprimés. Lorsqu'elle reste accessible sur un dispositif déployé, elle permet à un attaquant disposant d'un accès physique de lire ou modifier le firmware, d'extraire des clés cryptographiques stockées en mémoire et de contourner les mécanismes d'authentification logicielle~;
+  \item \textbf{UART} (\emph{Universal Asynchronous Receiver-Transmitter})~: interface de communication série largement utilisée pour les consoles de débogage des systèmes embarqués. Sur de nombreux dispositifs IoT, un port UART non désactivé expose un accès shell avec des privilèges élevés, offrant à un attaquant la possibilité d'interagir directement avec le système d'exploitation du dispositif~;
+  \item \textbf{API exposées}~: les interfaces de programmation applicatives (\acs{API}) REST ou MQTT utilisées pour la gestion des dispositifs constituent également un vecteur d'attaque lorsqu'elles sont déployées sans authentification, sans chiffrement ou avec des mécanismes d'autorisation insuffisants. Dans le contexte opérateur, ces API peuvent donner accès à la configuration de flottes entières de dispositifs.
+\end{itemize}
+
+Ces vecteurs matériels et logiciels illustrent la nécessité d'une approche de sécurisation multicouche, couvrant aussi bien les interfaces physiques que les protocoles applicatifs.
+
+\subsection{OWASP IoT Top 10 et menaces réseau}
+
+L'OWASP synthétise dans son \emph{IoT Top~10}~\cite{owasp_iot} les dix risques applicatifs majeurs~: mots de passe faibles ou par défaut, services réseau non sécurisés, interfaces écosystème non protégées, mécanisme de mise à jour absent, composants obsolètes, protection insuffisante de la vie privée, transferts et stockage non chiffrés, absence de gestion des dispositifs, paramètres par défaut non sûrs, absence de hardening physique. Dans ce projet, nous nous concentrons sur les menaces \textbf{réseau} et \textbf{applicatives}~: interception (\emph{sniffing}), \emph{man-in-the-middle}, force brute, exfiltration applicative, déni de service, vol/abus de certificats.
+
+\subsection{Études de cas de référence}
+
+L'analyse de l'attaque \textbf{Mirai}~\cite{kolias2017mirai,antonakakis2017mirai} illustre toutes ces faiblesses simultanément~: le botnet exploitait des couples identifiant/mot de passe par défaut sur des objets exposés en SSH/Telnet, recrutait des centaines de milliers de dispositifs en quelques jours, et générait des attaques DDoS dépassant 1~Tbit/s. Le rapport \emph{ENISA Threat Landscape for IoT}~\cite{enisa_iot} confirme que ces vecteurs restent dominants et identifie comme contre-mesures prioritaires~: l'authentification forte, le chiffrement systématique, la segmentation réseau et la supervision active. Ces orientations rejoignent les recommandations du NIST~\cite{nist_sp800213} pour la cybersécurité des dispositifs IoT.
+
+Cette cartographie des menaces permet d'identifier les vecteurs prioritaires à contrer~: interception des flux, usurpation d'identité, déni de service et abus de certificats. La section suivante présente les technologies et protocoles mobilisés pour y répondre.
+
+%% ====================================================================
+%%  SECTION : Technologies et protocoles de sécurisation (ex-Chapitre 2)
+%% ====================================================================
+\section{Technologies et protocoles de sécurisation}
+\label{sec:ea-protocoles}
 \label{sec:tls-dtls-intro}
 
-La sécurisation des flux IoT au niveau transport repose principalement sur deux protocoles complémentaires~: \acs{TLS} et \acs{DTLS}. Leur compréhension est essentielle pour saisir les choix architecturaux effectués dans ce projet.
+Le choix des technologies de sécurisation découle directement des menaces identifiées. Cette section suit un fil directeur continu~: du protocole applicatif au chiffrement du transport, de l'authentification mutuelle à la PKI, de la détection par règles à l'apprentissage automatique.
 
-Le protocole \textbf{TLS} (\emph{Transport Layer Security}) assure la confidentialité, l'intégrité et l'authentification des communications établies sur des connexions TCP. Il fonctionne en établissant un canal chiffré entre deux parties via un processus de négociation (\emph{handshake}) au cours duquel les interlocuteurs s'accordent sur les algorithmes cryptographiques, échangent des certificats numériques et dérivent des clés de session. La version~1.3 du protocole, standardisée dans la RFC~8446~\cite{rfc8446}, apporte des améliorations significatives par rapport à la version~1.2~: suppression des suites cryptographiques obsolètes, négociation en un seul aller-retour (1-RTT), \emph{forward secrecy} obligatoire garantissant que la compromission ultérieure d'une clé privée ne met pas en péril les sessions passées, et simplification générale du \emph{handshake}. Dans le contexte IoT, TLS est utilisé pour sécuriser les protocoles applicatifs fondés sur TCP, notamment \acs{MQTT}.
+\subsection{Protocoles applicatifs IoT}
 
-Le protocole \textbf{DTLS} (\emph{Datagram Transport Layer Security}) constitue l'adaptation de TLS aux protocoles de transport non fiables, principalement UDP. Conçu pour tolérer la perte et la réorganisation des paquets inhérentes à UDP, DTLS intègre des mécanismes de retransmission et de numérotation de séquence absents de TLS. Il est principalement utilisé pour sécuriser le protocole \acs{CoAP}, qui repose sur UDP et est privilégié pour les dispositifs à très faibles ressources.
+Le choix du protocole applicatif détermine directement la surface d'attaque réseau de l'écosystème IoT et conditionne les mécanismes de sécurité disponibles. Il est donc essentiel de comparer les candidats sur des critères objectifs avant d'arrêter un choix. Quatre protocoles représentatifs ont été retenus pour cette analyse~: \textbf{MQTT}, qui domine les déploiements IoT industriels grâce à son modèle \emph{publish/subscribe} et sa faible empreinte~; \textbf{CoAP}, conçu pour les dispositifs les plus contraints et reposant sur UDP~; \textbf{AMQP}, privilégié dans les architectures de messagerie d'entreprise~; et \textbf{HTTP/REST}, protocole universel mais dont le modèle requête/réponse et l'empreinte réseau sont moins adaptés à l'IoT contraint. Le tableau~\ref{tab:protocoles} en présente la comparaison structurée.
 
-Dans le cadre de ce projet, l'architecture repose sur \acs{MQTT} comme protocole applicatif principal, sécurisé par \textbf{TLS~1.3 avec authentification mutuelle} (\acs{mTLS}). Le choix de TLS plutôt que DTLS est dicté par le modèle de transport de MQTT (TCP). L'authentification mutuelle ajoute une vérification bidirectionnelle~: non seulement le serveur (broker) prouve son identité au client (dispositif), mais le client doit également présenter un certificat X.509 valide signé par l'autorité de certification du réseau. Une analyse approfondie de TLS~1.3 et de ses implications architecturales est présentée au chapitre~\ref{chap:etat-art}.
+\begin{table}[!htbp]
+\centering
+\caption{Comparaison des principaux protocoles applicatifs IoT}
+\label{tab:protocoles}
+\small
+\begin{tabularx}{\linewidth}{|l|X|X|X|X|}
+\hline
+\textbf{Critère} & \textbf{MQTT 5} & \textbf{CoAP} & \textbf{AMQP 1.0} & \textbf{HTTP/REST} \\
+\hline
+Modèle & Pub/Sub & Req/Rep & Pub/Sub + queues & Req/Rep \\ \hline
+Transport & TCP/TLS & UDP/DTLS & TCP/TLS & TCP/TLS \\ \hline
+Empreinte & Très faible & Très faible & Moyenne & Moyenne/élevée \\ \hline
+QoS & 0/1/2 & Confirmable & 0/1 & Aucun natif \\ \hline
+Sécurité native & TLS+ACL & DTLS+OSCORE & SASL+TLS & TLS+JWT \\ \hline
+Maturité IoT & Très large & Large & Industrielle & Universelle \\ \hline
+\end{tabularx}
+\end{table}
 
-\subsection{Approches de sécurisation disponibles pour les opérateurs}
+Le choix de \textbf{MQTT~5}~\cite{mqtt5} pour ce projet repose sur trois critères convergents~: (i)~son empreinte mémoire et réseau, particulièrement faible, est adaptée aux microcontrôleurs disposant de ressources limitées~; (ii)~sa large adoption dans les écosystèmes industriels et chez les opérateurs IoT garantit un support communautaire étendu et une maturité éprouvée~; (iii)~ses mécanismes natifs d'authentification (\acs{TLS}+\acs{ACL}) sont aisément combinables avec le mTLS, ce qui en fait le candidat naturel pour une architecture de sécurité de bout en bout. Dans l'architecture proposée, MQTT joue le rôle de \textbf{protocole de transport applicatif unique} entre les dispositifs IoT et le broker central~: chaque mesure de capteur, chaque événement et chaque commande transite par ce canal, ce qui justifie l'exigence absolue de le sécuriser.
 
-Face à ces enjeux, plusieurs approches de sécurisation sont envisageables. Le tableau~\ref{tab:approches-secu} présente une comparaison structurée des trois grandes familles de solutions.
+Le protocole applicatif étant fixé, la question du \textbf{chiffrement du canal} devient prépondérante~: MQTT, en lui-même, ne garantit ni la confidentialité ni l'authenticité des messages échangés. TLS~1.3 avec authentification mutuelle répond précisément à ces deux exigences.
+
+\subsection{Sécurisation du transport : TLS 1.3 et mTLS}
+\label{sec:ea-tls}
+
+\subsubsection{TLS 1.3}
+
+Le protocole \acs{TLS}~1.3~\cite{rfc8446} apporte par rapport à TLS~1.2 une simplification significative~: suppression des suites cryptographiques obsolètes, négociation en \textbf{1-RTT} (et 0-RTT optionnel), \emph{forward secrecy} obligatoire, signatures et échanges de clés modernisés (ECDHE, EdDSA, AES-GCM, ChaCha20-Poly1305). Les recommandations opérationnelles publiées dans la \acs{RFC}~9325~\cite{rfc9325} guident le choix des paramètres et la durée de vie des certificats.
+
+Par ailleurs, le protocole \textbf{DTLS} (\emph{Datagram Transport Layer Security}) constitue l'adaptation de TLS aux transports non fiables, principalement UDP. Il intègre des mécanismes de retransmission et de numérotation de séquence et sert à sécuriser le protocole CoAP, privilégié pour les dispositifs à très faibles ressources. Dans le cadre de ce projet, le choix de MQTT (fondé sur TCP) dicte l'utilisation de TLS plutôt que de DTLS.
+
+\subsubsection{Authentification mutuelle}
+
+Dans un déploiement classique, seul le serveur s'authentifie auprès du client. Le \textbf{mTLS} (\emph{mutual TLS}) impose en outre au client de présenter un certificat X.509 valide signé par une autorité de confiance. Cette double authentification permet~: (i) d'éviter qu'un objet illégitime se connecte au broker . (ii) de chiffrer chaque session par bout . (iii) de tracer chaque message via l'identité cryptographique de son émetteur. Cette propriété est essentielle pour la mise en place ultérieure d'\acs{ACL} par certificat dans Mosquitto~\cite{mosquitto_tls}.
+
+\begin{resultbox}{Positionnement critique~: TLS 1.3 + mTLS}
+Le choix de TLS~1.3 en remplacement de TLS~1.2 répond à trois arguments techniques précis~: (i)~la suppression des suites vulnérables (RC4, DES, RSA pur sans \emph{forward secrecy}) réduit la surface cryptographique exploitable~; (ii)~la négociation en 1-RTT diminue la latence du \emph{handshake}, critique pour les dispositifs contraints~; (iii)~la \emph{forward secrecy} obligatoire garantit que la compromission ultérieure d'une clé privée ne met pas en péril les sessions passées. L'ajout du mTLS va au-delà du chiffrement~: il substitue à une authentification par mot de passe (facilement rejouable) une preuve cryptographique d'identité non duplicable sans accès à la clé privée du dispositif. Cette double garantie~-- confidentialité \emph{et} authenticité mutuelle~-- est la seule combinaison capable de fermer simultanément les vecteurs d'interception et d'usurpation identifiés dans la cartographie des menaces.
+\end{resultbox}
+
+L'authentification mutuelle par certificats suppose cependant l'existence d'une infrastructure capable d'\textbf{émettre, renouveler et révoquer} ces certificats à l'échelle d'un parc de dispositifs~: c'est précisément le rôle d'une PKI automatisée.
+
+\subsection{Gestion des identités : PKI et automatisation}
+\label{sec:ea-pki}
+
+Une PKI à deux niveaux (CA racine \emph{offline} + CA intermédiaire \emph{online}) constitue la pratique recommandée~\cite{nist_sp800213}~: la CA racine ne signe que des CA intermédiaires et reste hors ligne~; les CA intermédiaires signent les certificats opérationnels (services, dispositifs). En cas de compromission d'une CA intermédiaire, seul le sous-arbre concerné doit être révoqué.
+
+L'automatisation de l'émission est indispensable lorsque le parc dépasse quelques dizaines d'objets. \textbf{HashiCorp Vault}~\cite{vault_pki} fournit un \emph{secrets engine} \texttt{pki} qui expose une API HTTP de demande de certificats avec contrôle fin (rôles, ACL, TTL). C'est la solution retenue dans ce projet.
+
+\begin{resultbox}{Positionnement critique~: Vault vs alternatives PKI}
+Trois alternatives à HashiCorp Vault ont été évaluées~: (i)~\textbf{OpenSSL CLI}~: complet techniquement mais entièrement manuel~; toute émission de certificat requiert une intervention humaine, ce qui l'exclut dès que le parc dépasse une dizaine de dispositifs~; (ii)~\textbf{EJBCA (Keyfactor)}~: solution PKI d'entreprise mature, mais sa complexité de déploiement et sa courbe d'apprentissage sont disproportionnées pour un projet académique de quatre mois~; (iii)~\textbf{Let's Encrypt / ACME}~: idéal pour les certificats TLS publics, mais inadapté à la PKI interne d'un réseau IoT isolé (absence de validation domaine interne, pas de certificats client mTLS natifs). Vault a été retenu car il est le seul à réunir~: API REST d'émission automatisée, gestion fine des rôles et TTL, intégration aux pipelines DevOps, et déploiement entièrement on-premise~-- critère non négociable dans un contexte opérateur télécom soucieux de souveraineté des données.
+\end{resultbox}
+
+Même avec une PKI robuste et un chiffrement bout en bout, il n'est pas possible d'exclure tout incident~: un certificat peut être volé, un dispositif légitime peut adopter un comportement déviant, ou une configuration insuffisante peut ouvrir un vecteur non anticipé. La \textbf{supervision active}~-- combinant IDS réseau et SIEM~-- constitue le filet de sécurité complémentaire à ces mécanismes préventifs.
+
+\subsection{Détection d'intrusion et supervision}
+\label{sec:ea-ids-siem}
+
+\subsubsection{IDS réseau orienté MQTT}
+
+\textbf{Suricata} est un IDS/IPS open source qui dispose, depuis la version 6, d'un \emph{parser} natif MQTT capable d'extraire les champs \texttt{CONNECT}, \texttt{PUBLISH}, \texttt{SUBSCRIBE}~\cite{suricata_mqtt}. Cette capacité permet de définir des règles métier (par exemple~: alerter sur un \texttt{CONNECT} sans \texttt{ClientID} reconnu, ou sur une rafale de \texttt{CONNECT} indiquant un \emph{brute force}) qui ne seraient pas accessibles à un IDS générique.
+
+Le tableau~\ref{tab:ids-compare} compare trois solutions IDS open source représentatives sur les critères déterminants pour ce projet.
+
+\begin{table}[!htbp]
+\centering
+\caption{Comparaison des solutions IDS open source}
+\label{tab:ids-compare}
+\small
+\begin{tabularx}{\linewidth}{|l|X|X|X|}
+\hline
+\textbf{Critère} & \textbf{Suricata 6} & \textbf{Snort 3} & \textbf{Zeek 6} \\
+\hline
+Parser MQTT natif    & Oui (v6+)     & Non           & Partiel (scripts) \\ \hline
+IDS/IPS actif        & Oui           & Oui           & Non (analyse seule) \\ \hline
+Multi-threading      & Oui (natif)   & Oui (v3)      & Oui \\ \hline
+Intégration Wazuh    & Native (eve.json) & Adaptateur requis & Scripts Lua \\ \hline
+Règles Sigma/Suricata & Native       & Conversion requise & Non \\ \hline
+Maturité IoT         & Élevée        & Moyenne       & Élevée (analytique) \\ \hline
+\textbf{Verdict}     & \textbf{Retenu} & Non retenu   & Complémentaire \\ \hline
+\end{tabularx}
+\end{table}
+
+Suricata est retenu pour trois raisons décisives~: (i)~son parser MQTT natif élimine tout besoin de post-traitement applicatif~; (ii)~son format de sortie \texttt{eve.json} est nativement consommé par Wazuh, réduisant la complexité d'intégration~; (iii)~son moteur multi-thread garantit une analyse sans dégradation de débit sur les segments IoT à forte densité de messages.
+
+\subsubsection{SIEM Wazuh}
+
+\textbf{Wazuh}~\cite{wazuh_docs} est une plateforme de \emph{Security Information and Event Management} qui agrège les journaux d'agents endpoint, de sources réseau (Suricata) et applicatifs (Vault, Mosquitto). Elle s'intègre nativement à OpenSearch pour le stockage et au tableau de bord Wazuh Dashboard pour la visualisation et la corrélation. Sa modularité (règles XML, décodeurs personnalisables) en fait un candidat naturel pour la consolidation des alertes IoT.
+
+Le tableau~\ref{tab:siem-compare} compare Wazuh aux deux autres plates-formes SIEM courantes sur les critères déterminants pour un projet IoT académique à contraintes de coût et de souveraineté.
+
+\begin{table}[!htbp]
+\centering
+\caption{Comparaison des solutions SIEM}
+\label{tab:siem-compare}
+\small
+\begin{tabularx}{\linewidth}{|l|X|X|X|}
+\hline
+\textbf{Critère} & \textbf{Wazuh 4.7} & \textbf{ELK Stack} & \textbf{Splunk Free} \\
+\hline
+Licence              & Open source (OSS)   & Open source    & Propriétaire (limité) \\ \hline
+Intégration Suricata & Native (eve.json)   & Via Filebeat    & Via add-on HEC \\ \hline
+Corrélation native   & Oui (règles XML)    & Non (Elastic SIEM en payant) & Oui (SPL) \\ \hline
+Agents endpoint      & Oui (Wazuh agent)   & Non natif       & Oui (UF) \\ \hline
+Volume journaux (gratuit) & Illimité       & Illimité        & 500 MB/j \\ \hline
+Courbe d'apprentissage & Modérée          & Élevée (tuning) & Modérée \\ \hline
+Souveraineté données & Totale (on-premise) & Totale          & Partielle (cloud) \\ \hline
+\textbf{Verdict}     & \textbf{Retenu}     & Non retenu      & Non retenu \\ \hline
+\end{tabularx}
+\end{table}
+
+Wazuh est retenu pour sa triple intégration native~: avec Suricata (format \texttt{eve.json} sans transformation), avec les agents endpoint sur les conteneurs Docker du laboratoire, et avec OpenSearch pour un stockage illimité. La licence open source garantit en outre la souveraineté des données, critère non négociable dans le contexte opérateur télécom.
+
+Les règles IDS, aussi précises soient-elles, ne peuvent couvrir que les attaques \textbf{déjà connues et formalisées}. Pour détecter des comportements nouveaux ou subtils~-- comme l'utilisation d'un certificat valide depuis un contexte comportemental anormal~-- une couche d'apprentissage automatique est nécessaire.
+
+\subsection{Apprentissage automatique pour la détection d'anomalies}
+\label{sec:ea-ml}
+
+Les approches par règles statiques sont efficaces pour les attaques connues mais peinent à détecter les comportements nouveaux. Hasan \emph{et al.}~\cite{hasan2020securing} ont montré qu'un classifieur supervisé entraîné sur des features réseau et applicatives obtient des taux de détection supérieurs à 99~\% sur sept catégories d'attaques IoT. Les algorithmes les plus utilisés sont~:
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Isolation Forest}~\cite{liu2008isolation}~: méthode non supervisée d'isolement, particulièrement efficace en haute dimension et adaptée aux scénarios où les anomalies sont rares~;
+  \item \textbf{Random Forest}~\cite{breiman2001random}~: ensemble d'arbres de décision, robuste, interprétable (\emph{feature importance}) et performant en classification multi-classes.
+\end{itemize}
+
+La mobilisation conjointe de ces deux algorithmes n'est pas arbitraire~: elle répond à deux exigences analytiquement distinctes. Isolation Forest est \textbf{non supervisé}~: il modélise la normalité sans nécessiter de données étiquetées, ce qui le rend indispensable pour détecter les anomalies \emph{inconnues}~-- typiquement, l'utilisation d'un certificat valide depuis un contexte comportemental inhabituel (scénario~S6). Random Forest est \textbf{supervisé}~: entraîné sur des exemples d'attaques étiquetées, il fournit une classification précise en sept catégories et une mesure d'importance par feature permettant d'identifier les attributs les plus discriminants. Ces deux algorithmes sont donc complémentaires~: l'un couvre l'inconnu, l'autre maximise la précision sur le connu. La bibliothèque \emph{scikit-learn}~\cite{scikit_learn} fournit des implémentations matures de ces deux algorithmes~; elle constitue le socle du pipeline ML de ce projet.
+
+%% ====================================================================
+%%  SECTION : Étude de l'existant et analyse critique
+%% ====================================================================
+\section{Étude de l'existant et analyse critique}
+\label{sec:analyse-existant}
+\label{sec:ea-analyse}
+
+Les technologies étant recensées, il est indispensable de dresser un état des lieux objectif des pratiques de sécurité IoT et d'analyser les solutions existantes, afin de quantifier les lacunes que la solution proposée doit combler. Ce diagnostic s'appuie sur l'analyse des déploiements typiques, les recommandations publiées par l'ENISA~\cite{enisa_iot} et le NIST~\cite{nist_sp800213}, ainsi que sur les observations réalisées dans le cadre du stage chez \TT{}.
+
+\subsection{État des lieux de la sécurité IoT dans les déploiements opérateur}
+
+L'analyse conduite en amont de ce projet, combinant l'étude des pratiques observées dans des déploiements IoT typiques et les enseignements publiés par les organismes de référence, met en évidence plusieurs lacunes de sécurité récurrentes~:
+
+\begin{itemize}[leftmargin=*]
+	\item \textbf{Transport non systématiquement chiffré}~: le protocole MQTT est fréquemment déployé sur le port 1883 (texte clair), sans TLS, par souci de simplicité ou de performance perçue. Un attaquant positionné sur le segment réseau peut alors capturer l'intégralité des messages publiés, y compris les données métier sensibles~;
+	\item \textbf{Authentification unidirectionnelle ou absente}~: le broker ne vérifie généralement pas le certificat du client. Les dispositifs s'authentifient souvent par un simple couple identifiant/mot de passe, voire sans aucun mécanisme d'authentification, rendant toute usurpation d'identité triviale~;
+	\item \textbf{Absence de PKI dédiée}~: lorsque des certificats existent, ils sont fréquemment auto-signés, non révocables automatiquement et gérés de façon ad hoc, sans cycle de vie défini ni procédure de révocation d'urgence en cas de compromission~;
+	\item \textbf{Contrôle d'accès applicatif insuffisant}~: les listes de contrôle d'accès aux topics MQTT sont rarement mises en \oe{}uvre, permettant à tout dispositif connecté d'accéder à l'ensemble des canaux de publication et de souscription, indépendamment de son rôle légitime~;
+	\item \textbf{Supervision fragmentée}~: les outils de monitoring réseau et applicatif ne communiquent pas entre eux, rendant difficile la corrélation d'événements de sécurité. La détection d'une attaque nécessite une analyse manuelle croisée de plusieurs sources de journaux hétérogènes~;
+	\item \textbf{Absence de détection comportementale}~: les mécanismes de détection d'intrusion existants se limitent aux signatures connues. Ils ne permettent pas de détecter des anomalies comportementales subtiles telles que l'utilisation d'un certificat valide depuis un contexte inhabituel, une dérive de fréquence de publication ou une exfiltration lente via des topics légitimes.
+\end{itemize}
+
+\subsection{Analyse critique des solutions existantes}
+
+Plusieurs approches sont envisageables pour sécuriser les flux IoT d'un opérateur. Le tableau~\ref{tab:approches-secu} en présente les trois grandes familles.
 
 \begin{table}[!htbp]
 \centering
@@ -135,34 +316,20 @@ Architecture sur mesure (composants open source) & Contrôle total, souverainet�
 \end{tabularx}
 \end{table}
 
+Au-delà de ce choix d'approche, l'analyse des solutions publiées dans la littérature et des produits disponibles fait ressortir quatre limitations récurrentes~:
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Verrouillage fournisseur} pour les solutions cloud commerciales, peu compatible avec une stratégie souveraine d'opérateur télécom~;
+  \item \textbf{Couverture partielle} de la sécurité chez les distributions intégrées (souvent TLS oui, mais pas mTLS systématique ni PKI automatisée)~;
+  \item \textbf{Faible intégration} entre la couche réseau (IDS) et la couche applicative (broker, ML)~;
+  \item \textbf{Reproductibilité limitée} des architectures publiées dans la littérature, rarement accompagnées d'un environnement d'émulation complet.
+\end{enumerate}
+
 Pour un opérateur télécom souhaitant conserver la maîtrise de son infrastructure, répondre aux exigences réglementaires locales et éviter tout verrouillage fournisseur, une architecture sur mesure fondée sur des composants open source éprouvés constitue l'approche la plus cohérente. C'est ce positionnement qui oriente l'ensemble des choix techniques opérés dans ce projet.
-
-Les enjeux sectoriels étant posés, il est indispensable de dresser un état des lieux concret des pratiques de sécurité IoT actuellement observées dans les environnements opérateur, afin de quantifier les lacunes à combler.
-
-%% ====================================================================
-%%  SECTION : Étude de l'existant (déplacée depuis le chapitre 3)
-%% ====================================================================
-\section{Étude de l'existant}
-\label{sec:analyse-existant}
-
-Avant de formuler la problématique et les objectifs du projet, il est indispensable de dresser un état des lieux objectif des pratiques de sécurité IoT dans les environnements opérateur. Ce diagnostic s'appuie sur l'analyse des déploiements typiques, les recommandations publiées par l'ENISA~\cite{enisa_iot} et le NIST~\cite{nist_sp800213}, ainsi que sur les observations réalisées dans le cadre du stage chez \TT{}.
-
-\subsection{État des lieux de la sécurité IoT dans les déploiements opérateur}
-
-L'analyse conduite en amont de ce projet, combinant l'étude des pratiques observées dans des déploiements IoT typiques et les enseignements publiés par les organismes de référence, met en évidence plusieurs lacunes de sécurité récurrentes~:
-
-\begin{itemize}[leftmargin=*]
-	\item \textbf{Transport non systématiquement chiffré}~: le protocole MQTT est fréquemment déployé sur le port 1883 (texte clair), sans TLS, par souci de simplicité ou de performance perçue. Un attaquant positionné sur le segment réseau peut alors capturer l'intégralité des messages publiés, y compris les données métier sensibles~;
-	\item \textbf{Authentification unidirectionnelle ou absente}~: le broker ne vérifie généralement pas le certificat du client. Les dispositifs s'authentifient souvent par un simple couple identifiant/mot de passe, voire sans aucun mécanisme d'authentification, rendant toute usurpation d'identité triviale~;
-	\item \textbf{Absence de PKI dédiée}~: lorsque des certificats existent, ils sont fréquemment auto-signés, non révocables automatiquement et gérés de façon ad hoc, sans cycle de vie défini ni procédure de révocation d'urgence en cas de compromission~;
-	\item \textbf{Contrôle d'accès applicatif insuffisant}~: les listes de contrôle d'accès aux topics MQTT sont rarement mises en \oe{}uvre, permettant à tout dispositif connecté d'accéder à l'ensemble des canaux de publication et de souscription, indépendamment de son rôle légitime~;
-	\item \textbf{Supervision fragmentée}~: les outils de monitoring réseau et applicatif ne communiquent pas entre eux, rendant difficile la corrélation d'événements de sécurité. La détection d'une attaque nécessite une analyse manuelle croisée de plusieurs sources de journaux hétérogènes~;
-	\item \textbf{Absence de détection comportementale}~: les mécanismes de détection d'intrusion existants se limitent aux signatures connues. Ils ne permettent pas de détecter des anomalies comportementales subtiles telles que l'utilisation d'un certificat valide depuis un contexte inhabituel, une dérive de fréquence de publication ou une exfiltration lente via des topics légitimes.
-\end{itemize}
 
 \subsection{Synthèse du diagnostic}
 
-Le tableau~\ref{tab:diagnostic} synthétise ce diagnostic en mettant en regard chaque lacune identifiée avec la brique de sécurité retenue dans la solution, établissant ainsi le lien direct entre le contexte opérationnel observé et les choix de conception du projet.
+Le tableau~\ref{tab:diagnostic} synthétise le diagnostic en mettant en regard chaque lacune identifiée avec la brique de sécurité retenue dans la solution, établissant ainsi le lien direct entre le contexte opérationnel observé et les choix de conception du projet.
 
 \begin{table}[!htbp]
 \centering
@@ -185,7 +352,7 @@ Absence de détection comportementale & Module ML fondé sur IsolationForest et 
 Ce diagnostic structuré met en évidence des lacunes qui ne peuvent être traitées par des correctifs ponctuels~: elles exigent une réponse architecturale intégrée. Chaque composant de la solution répond à une lacune précisément identifiée, garantissant la pertinence de l'architecture proposée au-delà d'une simple accumulation d'outils technologiques. La formulation d'une problématique globale s'impose donc.
 
 %% ====================================================================
-%%  SECTION : Problématique (reformulée en paragraphes structurés)
+%%  SECTION : Problématique
 %% ====================================================================
 \section{Problématique}
 \label{sec:problematique}
@@ -211,19 +378,18 @@ Comment concevoir, déployer et valider, dans un environnement émulé représen
 Pour répondre à cette problématique, un objectif général et des objectifs spécifiques doivent être clairement définis, afin de structurer l'ensemble des travaux à mener.
 
 %% ====================================================================
-%%  SECTION : Objectif général (nouvelle section)
+%%  SECTION : Objectifs du projet
 %% ====================================================================
-\section{Objectif général}
+\section{Objectifs du projet}
+
+\subsection{Objectif général}
 \label{sec:objectif-general}
 
 L'objectif général de ce projet est de concevoir, implémenter et valider une \textbf{architecture de sécurisation de bout en bout} des flux de communication d'un écosystème IoT, fondée sur le principe de \textbf{défense en profondeur}. Cette architecture vise à intégrer, dans un environnement émulé représentatif d'un opérateur télécom, l'ensemble des couches de protection nécessaires~: chiffrement du transport par TLS~1.3, authentification forte par certificats X.509 avec mTLS, contrôle d'accès granulaire par \acs{ACL}, détection d'intrusion par règles Suricata, corrélation d'alertes dans un SIEM Wazuh et détection comportementale par apprentissage automatique. L'approche retenue privilégie exclusivement des composants open source, souverains et reproductibles, afin de répondre aux contraintes opérationnelles, réglementaires et économiques propres au contexte d'un opérateur télécom national.
 
-Cet objectif général se décline en sept objectifs spécifiques, détaillés dans la section suivante.
+Cet objectif général se décline en sept objectifs spécifiques, détaillés ci-après.
 
-%% ====================================================================
-%%  SECTION : Objectifs spécifiques
-%% ====================================================================
-\section{Objectifs spécifiques}
+\subsection{Objectifs spécifiques}
 \label{sec:objectifs}
 
 Les sept objectifs spécifiques (\acs{O1}--\acs{O7}) structurent l'ensemble des travaux et sont présentés dans le tableau~\ref{tab:objectifs}~:
@@ -249,7 +415,7 @@ Les sept objectifs spécifiques (\acs{O1}--\acs{O7}) structurent l'ensemble des 
 Ces objectifs traduisent opérationnellement la problématique et structurent les différentes phases du projet. Avant de délimiter le périmètre du travail, il convient de préciser les besoins fonctionnels auxquels la solution doit répondre.
 
 %% ====================================================================
-%%  SECTION : Besoins fonctionnels (nouvelle section)
+%%  SECTION : Besoins fonctionnels
 %% ====================================================================
 \section{Besoins fonctionnels}
 \label{sec:besoins-fonctionnels-ch1}
@@ -360,5 +526,7 @@ Kanban, dont l'absence de cadence fixe est inadaptée à un projet soumis à des
 %% ====================================================================
 \section{Conclusion}
 \label{sec:contexte-conclusion}
+\label{sec:ea-conclusion}
+\label{sec:ea-positionnement}
 
-Ce chapitre a permis d'établir le cadre de référence du projet en articulant successivement l'ancrage institutionnel, le contexte sectoriel, les protocoles de sécurisation du transport, l'état des lieux des pratiques existantes, la problématique, les objectifs, les besoins fonctionnels, le périmètre d'étude et la démarche méthodologique. Cet ensemble fournit la base nécessaire à la compréhension des choix effectués dans la suite du mémoire. Avant de définir une solution, il convient désormais d'examiner en profondeur les références théoriques, les menaces, les protocoles et les mécanismes de protection mobilisables dans un contexte IoT. Le chapitre suivant prolonge donc ce cadrage par un état de l'art qui établit le socle scientifique des choix architecturaux retenus.
+Ce chapitre a permis d'établir le cadre de référence et le socle conceptuel du projet. Le contexte institutionnel, le marché IoT et le rôle des opérateurs télécom ont d'abord situé les enjeux. La caractérisation des menaces, l'analyse des protocoles et des mécanismes de sécurisation ont ensuite établi les fondements techniques, en suivant un fil directeur continu~: des menaces spécifiques à l'IoT découlent les exigences de protocole~; du choix de MQTT découle le besoin de TLS~1.3~; de TLS avec mTLS découle la nécessité d'une PKI automatisée~; de la PKI découle le besoin de supervision IDS/SIEM~; enfin, des limites des règles statiques découle l'apport de l'apprentissage automatique. L'étude de l'existant a confirmé les lacunes à combler et permis de formuler une problématique précise, des objectifs mesurables et un périmètre clairement délimité. Le projet se positionne ainsi non comme une juxtaposition d'outils, mais comme une \textbf{architecture de référence open source} pour la sécurisation des flux IoT dans un contexte opérateur. Le chapitre suivant traduit ces constats en choix de conception~: spécification formelle des besoins, modélisation des cas d'utilisation et architecture de défense en profondeur.
