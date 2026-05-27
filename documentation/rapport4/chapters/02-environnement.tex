@@ -1,0 +1,280 @@
+\chapter{Environnement technique du laboratoire}
+\label{chap:environnement}
+
+\section{Introduction}
+
+Le chapitre précédent a établi le cadre théorique du projet et identifié les technologies retenues. Avant de formaliser la conception, il est nécessaire de présenter concrètement l'environnement expérimental dans lequel la solution est déployée. Ce chapitre décrit chaque composant du laboratoire~--- les «~boîtes noires~» de la topologie GNS3~--- en précisant pour chacun son rôle, son image de base, sa position réseau et ses interfaces avec les autres composants. L'objectif est de donner au lecteur une vision complète de l'infrastructure avant d'aborder les choix de conception et les détails de mise en \oe{}uvre.
+
+%% ====================================================================
+%%  SECTION : Vue d'ensemble
+%% ====================================================================
+\section{Vue d'ensemble du laboratoire}
+\label{sec:env-vue}
+
+L'ensemble du laboratoire est émulé sous \textbf{GNS3}~\cite{gns3_docs}, une plateforme d'émulation réseau qui permet d'interconnecter des machines virtuelles QEMU et des conteneurs Docker au sein d'une topologie réseau réaliste. Contrairement à un simulateur, GNS3 exécute les systèmes d'exploitation et les services réels, garantissant la fidélité des comportements observés.
+
+La topologie repose sur cinq zones réseau isolées par VLANs, reliées par un routeur MikroTik CHR (couche~3) et protégées par un pare-feu pfSense en amont. Chaque zone héberge un ou plusieurs conteneurs Docker spécialisés, construits sur des images Alpine Linux ou spécifiques au service concerné. L'architecture générale a été présentée à la figure~\ref{fig:archi-reelle-ch1}~; le présent chapitre en détaille chaque composant individuellement.
+
+Le tableau~\ref{tab:inventaire-noeuds} présente l'inventaire complet des n\oe{}uds du laboratoire.
+
+\begin{table}[!htbp]
+\centering
+\caption{Inventaire des n\oe{}uds du laboratoire GNS3}
+\label{tab:inventaire-noeuds}
+\small
+\begin{tabularx}{\linewidth}{|l|l|l|l|l|>{\raggedright\arraybackslash}X|}
+\hline
+\textbf{N\oe{}ud} & \textbf{Image} & \textbf{Zone} & \textbf{IP} & \textbf{Port} & \textbf{Rôle} \\
+\hline
+pfSense         & CE 2.7.2                & WAN/LAN     & 192.168.1.1   & --   & Pare-feu, NAT              \\ \hline
+MikroTik        & CHR 7.16                & Trunk       & .x.1          & --   & Routeur L3, VLANs          \\ \hline
+fleet-sim       & python:3.11-alpine      & IoT (10)    & .10.11+       & --   & Simulateur de flotte       \\ \hline
+mosquitto       & eclipse-mosquitto:2.0   & DMZ (20)    & .20.10        & 8883 & Broker MQTT mTLS           \\ \hline
+vault           & hashicorp/vault:1.15.4  & PKI (30)    & .30.10        & 8200 & PKI, CA, certificats       \\ \hline
+wazuh           & wazuh/manager:4.7       & SIEM (40)   & .40.10        & 1514 & SIEM, corrélation          \\ \hline
+opensearch      & opensearch:2.x          & SIEM (40)   & .40.11        & 9200 & Indexation des événements   \\ \hline
+dashboards      & opensearch-dashboards   & SIEM (40)   & .40.12        & 5601 & Visualisation, tableaux     \\ \hline
+suricata        & --                      & Analyse (50)& .50.10        & --   & IDS réseau, parser MQTT    \\ \hline
+ml-engine       & python:3.11-slim        & Analyse (50)& .50.12        & 5000 & Détection d'anomalies ML   \\ \hline
+attackbox       & python:3.11-alpine      & IoT (10)    & dynamique     & --   & Boîte à outils d'attaque   \\ \hline
+\end{tabularx}
+\end{table}
+
+Les sections suivantes décrivent chaque composant en détail, en commençant par l'infrastructure réseau, puis les services applicatifs zone par zone.
+
+%% ====================================================================
+%%  SECTION : Infrastructure réseau
+%% ====================================================================
+\section{Infrastructure réseau}
+\label{sec:env-infra}
+
+\subsection{pfSense --- pare-feu et passerelle WAN}
+\label{subsec:env-pfsense}
+
+\textbf{pfSense Community Edition~2.7.2} est un pare-feu open source basé sur FreeBSD, déployé en tant que machine virtuelle QEMU dans GNS3. Il constitue le point d'entrée du laboratoire vers Internet et assure trois fonctions~:
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{NAT et routage WAN}~: l'interface \texttt{em0} obtient une adresse IP par DHCP depuis le réseau hôte et fournit l'accès Internet à l'ensemble du laboratoire via NAT~;
+  \item \textbf{Filtrage périmétrique}~: pfSense applique les règles de filtrage entre le réseau externe et le réseau interne (192.168.1.0/24), bloquant tout trafic entrant non sollicité~;
+  \item \textbf{Liaison vers le routeur interne}~: l'interface \texttt{em1} (192.168.1.1/24) est connectée au MikroTik, qui prend en charge la segmentation interne en VLANs.
+\end{itemize}
+
+\subsection{MikroTik CHR --- routeur L3 et segmentation VLAN}
+\label{subsec:env-mikrotik}
+
+\textbf{MikroTik Cloud Hosted Router (CHR)~7.16} est un routeur logiciel déployé en tant que VM QEMU. Il constitue le c\oe{}ur de la segmentation réseau du laboratoire. Sa configuration repose sur cinq \emph{bridges}, chacun associé à une zone réseau et à une interface physique distincte~:
+
+\begin{itemize}[leftmargin=*]
+  \item \texttt{bridge-iot} (ether2)~: zone IoT, passerelle 192.168.10.1/24~;
+  \item \texttt{bridge-dmz} (ether3)~: zone DMZ, passerelle 192.168.20.1/24~;
+  \item \texttt{bridge-pki} (ether4)~: zone PKI, passerelle 192.168.30.1/24~;
+  \item \texttt{bridge-siem} (ether5)~: zone SIEM, passerelle 192.168.40.1/24~;
+  \item \texttt{bridge-analyse} (ether6)~: zone Analyse, passerelle 192.168.50.1/24.
+\end{itemize}
+
+Le MikroTik applique une politique de filtrage inter-VLAN en mode \emph{deny-by-default}~: seuls les flux explicitement autorisés traversent les frontières de zone. Il fournit également la fonction de \textbf{port mirroring}, copiant passivement le trafic de la zone DMZ vers Suricata dans la zone Analyse, sans altérer les paquets en transit.
+
+\subsection{Politique de sécurité inter-zones}
+\label{subsec:env-acl}
+
+Le tableau~\ref{tab:acl-inter-zones} résume les règles de filtrage inter-VLAN appliquées par le MikroTik. Tout flux non listé est bloqué.
+
+\begin{table}[!htbp]
+\centering
+\caption{Politique de filtrage inter-VLAN (\emph{deny-by-default})}
+\label{tab:acl-inter-zones}
+\small
+\begin{tabularx}{\linewidth}{|l|l|l|l|>{\raggedright\arraybackslash}X|}
+\hline
+\textbf{Source} & \textbf{Destination} & \textbf{Proto/Port} & \textbf{Action} & \textbf{Justification} \\
+\hline
+IoT (10) & DMZ .20.10  & TCP/8883 & Accept & MQTT/TLS vers broker       \\ \hline
+IoT (10) & PKI .30.10  & TCP/8200 & Accept & Demande de certificat      \\ \hline
+DMZ (20) & PKI .30.10  & TCP/8200 & Accept & Vérification de certificat \\ \hline
+DMZ (20) & SIEM .40.10 & TCP/1514 & Accept & Envoi des journaux         \\ \hline
+Analyse (50) & SIEM .40.10 & TCP/1514 & Accept & Envoi des alertes      \\ \hline
+SIEM (40) & SIEM (40)  & Tous     & Accept & Communications internes    \\ \hline
+Tous     & SIEM .40.12 & TCP/5601 & Accept & Accès aux tableaux de bord \\ \hline
+IoT (10) & SIEM (40)   & --       & Drop   & Isolation directe          \\ \hline
+IoT (10) & Analyse (50)& --       & Drop   & Isolation directe          \\ \hline
+Autre    & Autre       & --       & Drop   & Politique par défaut       \\ \hline
+\end{tabularx}
+\end{table}
+
+Cette politique garantit que les dispositifs IoT ne peuvent communiquer qu'avec le broker et la PKI, empêchant toute interaction directe avec les systèmes de supervision ou d'analyse.
+
+%% ====================================================================
+%%  SECTION : Composants applicatifs
+%% ====================================================================
+\section{Composants applicatifs}
+\label{sec:env-composants}
+
+Chaque composant applicatif est déployé sous forme de conteneur Docker intégré à GNS3. Les sous-sections suivantes décrivent le rôle, le fonctionnement et les interfaces de chacun.
+
+\subsection{Broker MQTT Mosquitto (zone DMZ)}
+\label{subsec:env-mosquitto}
+
+\textbf{Eclipse Mosquitto~2.0}~\cite{mosquitto_tls} est le broker MQTT central de l'architecture. Construit à partir de l'image officielle \texttt{eclipse-mosquitto:2.0}, il constitue le point de passage obligatoire de tous les flux applicatifs IoT.
+
+\paragraph{Rôle.}
+Mosquitto reçoit les publications des 50~dispositifs émulés, gère les souscriptions et applique le contrôle d'accès. Il est le seul service directement accessible depuis la zone IoT.
+
+\paragraph{Sécurisation.}
+Le broker est configuré exclusivement en mode TLS~1.3 sur le port~8883. L'authentification anonyme est désactivée~; chaque client doit présenter un certificat X.509 signé par la CA intermédiaire (\texttt{require\_certificate true}). Le \emph{Common Name} (CN) du certificat est utilisé comme identifiant MQTT (\texttt{use\_identity\_as\_username true}), ce qui permet d'appliquer des \textbf{ACL par dispositif}~: chaque objet ne peut publier que sur ses propres topics (\texttt{iot/+/<device\_id>/\#}) et lire uniquement ses commandes (\texttt{iot/commands/<device\_id>/\#}).
+
+\paragraph{Journalisation.}
+Un agent \textbf{rsyslog} embarqué dans le conteneur surveille le fichier de log Mosquitto et transmet les événements au SIEM Wazuh (192.168.40.10, port UDP~514) en temps réel. Ce mécanisme permet la corrélation des événements MQTT avec les alertes réseau de Suricata.
+
+\paragraph{Interfaces.}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Entrée}~: flux MQTT/TLS (TCP/8883) depuis la zone IoT et le ML Engine~;
+  \item \textbf{Sortie}~: journaux Syslog (UDP/514) vers Wazuh~; vérification de certificats (TCP/8200) vers Vault.
+\end{itemize}
+
+\subsection{HashiCorp Vault (zone PKI)}
+\label{subsec:env-vault}
+
+\textbf{HashiCorp Vault~1.15.4}~\cite{vault_pki} est le serveur de gestion des identités cryptographiques. Déployé à partir de l'image officielle \texttt{hashicorp/vault:1.15.4}, il héberge l'infrastructure à clés publiques (PKI) du laboratoire.
+
+\paragraph{Rôle.}
+Vault fournit une PKI automatisée à deux niveaux~: une \textbf{CA racine} (\emph{offline}, clé RSA~4096~bits, TTL~10~ans) qui ne signe que la CA intermédiaire, et une \textbf{CA intermédiaire} (\emph{online}, TTL~5~ans) qui émet les certificats opérationnels. L'API REST de Vault (port~8200) permet l'émission, le renouvellement et la révocation automatisés des certificats, sans intervention manuelle.
+
+\paragraph{Rôles PKI.}
+Deux rôles sont configurés pour encadrer l'émission~:
+\begin{itemize}[leftmargin=*]
+  \item \textbf{iot-services}~: pour les services d'infrastructure (Mosquitto, Suricata, ML Engine). Domaines autorisés~: \texttt{*.iot-pfe.local}, \texttt{*.dmz.iot-pfe.local}. TTL~: 30~jours, max~1~an. Flags~: serveur + client~;
+  \item \textbf{iot-devices}~: pour les dispositifs IoT. Domaines autorisés~: \texttt{*.iot.iot-pfe.local}. TTL~: 24~heures, max~30~jours. Flags~: client uniquement.
+\end{itemize}
+
+\paragraph{Interfaces.}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Entrée}~: requêtes API REST (TCP/8200) depuis la zone IoT (demande de certificats) et la zone DMZ (vérification)~;
+  \item \textbf{Stockage}~: backend fichier local (\texttt{/vault/data}).
+\end{itemize}
+
+\subsection{Simulateur de flotte IoT --- fleet-sim (zone IoT)}
+\label{subsec:env-fleet}
+
+Le \textbf{fleet-sim} est un simulateur de flotte développé en Python, construit sur l'image \texttt{python:3.11-alpine}. Il émule le comportement de 50~dispositifs IoT hétérogènes.
+
+\paragraph{Rôle.}
+Le simulateur rejoue un jeu de données de 76\,000~messages issus d'un \emph{dataset} de référence~\cite{hasan2020securing}, couvrant huit catégories~: trafic normal et sept types d'attaques. Chaque dispositif émulé établit une connexion MQTT/TLS~1.3 avec authentification mutuelle en utilisant son propre certificat client.
+
+\paragraph{Fonctionnement.}
+Pour chaque dispositif, le simulateur~:
+\begin{enumerate}[leftmargin=*]
+  \item charge le certificat client correspondant (\texttt{certs/<device\_id>/client.crt} et \texttt{client.key})~;
+  \item établit un contexte TLS~1.3 avec vérification du certificat serveur (\texttt{ca-chain.crt})~;
+  \item se connecte au broker Mosquitto (192.168.20.10:8883) avec le \emph{ClientID} dérivé du \emph{device\_id}~;
+  \item publie les messages du dataset sur les topics MQTT structurés (\texttt{iot/<tenant>/<device>/<type>}).
+\end{enumerate}
+
+\paragraph{Interfaces.}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Sortie}~: flux MQTT/TLS (TCP/8883) vers Mosquitto~;
+  \item \textbf{Dépendance}~: certificats émis par Vault.
+\end{itemize}
+
+\subsection{Wazuh Manager (zone SIEM)}
+\label{subsec:env-wazuh}
+
+\textbf{Wazuh Manager~4.7}~\cite{wazuh_docs} est le composant central de la supervision de sécurité. Il agrège les journaux provenant de toutes les zones et applique des règles de corrélation.
+
+\paragraph{Rôle.}
+Le manager reçoit les journaux de Mosquitto (via rsyslog), les alertes de Suricata (format \texttt{eve.json}) et les événements des agents endpoint déployés sur les conteneurs. Il applique des décodeurs et des règles XML pour identifier les événements de sécurité, générer des alertes et alimenter le tableau de bord.
+
+\paragraph{Écosystème SIEM.}
+La zone SIEM héberge trois composants complémentaires~:
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Wazuh Manager} (192.168.40.10, port~1514/1515)~: collecte et corrélation~;
+  \item \textbf{OpenSearch} (192.168.40.11, port~9200)~: moteur d'indexation et de recherche des événements~;
+  \item \textbf{OpenSearch Dashboards} (192.168.40.12, port~5601)~: interface de visualisation accessible depuis toutes les zones, permettant la consultation des alertes et la construction de tableaux de bord.
+\end{itemize}
+
+\paragraph{Interfaces.}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Entrée}~: journaux Syslog (UDP/514 et TCP/1514) depuis DMZ et Analyse~; événements agents endpoint~;
+  \item \textbf{Sortie}~: indexation vers OpenSearch~; tableaux de bord via Dashboards.
+\end{itemize}
+
+\subsection{Suricata IDS (zone Analyse)}
+\label{subsec:env-suricata}
+
+\textbf{Suricata~7.0}~\cite{suricata_mqtt} est l'IDS réseau du laboratoire. Il opère en mode passif sur un miroir du trafic de la zone DMZ.
+
+\paragraph{Rôle.}
+Suricata analyse le trafic réseau en temps réel à l'aide de règles de détection. Son \emph{parser} MQTT natif (disponible depuis la version~6) lui permet d'inspecter les champs protocolaires MQTT~: \texttt{CONNECT}, \texttt{PUBLISH}, \texttt{SUBSCRIBE}, \texttt{DISCONNECT}. Il peut ainsi détecter des comportements suspects au niveau applicatif, tels qu'une rafale de \texttt{CONNECT} (indicative d'un \emph{brute force}) ou un \texttt{PUBLISH} sur un topic non autorisé.
+
+\paragraph{Capture du trafic.}
+Le MikroTik copie passivement le trafic de la zone DMZ (\texttt{bridge-dmz}) vers l'interface réseau de Suricata via la fonction de \emph{port mirroring}. Ce mécanisme garantit que Suricata observe l'intégralité des échanges MQTT sans s'insérer dans le chemin de données, préservant ainsi la latence et la fiabilité du flux applicatif.
+
+\paragraph{Interfaces.}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Entrée}~: trafic miroir de la zone DMZ (copie passive)~;
+  \item \textbf{Sortie}~: alertes au format \texttt{eve.json} transmises au SIEM Wazuh (TCP/1514).
+\end{itemize}
+
+\subsection{Moteur ML --- ml-engine (zone Analyse)}
+\label{subsec:env-ml}
+
+Le \textbf{ML Engine} est un service de détection d'anomalies développé en Python (image \texttt{python:3.11-slim}). Il constitue la couche de détection comportementale du laboratoire.
+
+\paragraph{Rôle.}
+Le moteur ML se connecte au broker Mosquitto en tant que client mTLS (avec le CN \texttt{ml.iot-pfe.local}) et souscrit à l'ensemble des topics IoT (\texttt{\#}). Pour chaque message reçu, il construit un vecteur de 28~features (taille du payload, entropie de Shannon, fréquence de publication, RTT, jitter, etc.) et le soumet à trois modèles pré-entraînés~:
+
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Random Forest binaire}~: classification normal/attaque avec probabilité~;
+  \item \textbf{Random Forest multi-classes}~: identification du type d'attaque parmi sept catégories~;
+  \item \textbf{Isolation Forest}~: détection non supervisée des anomalies comportementales.
+\end{itemize}
+
+Les prédictions sont exposées via une \textbf{API REST} (Flask, port~5000) et les alertes sont transmises au SIEM Wazuh.
+
+\paragraph{ACL Mosquitto.}
+Le ML Engine dispose d'un accès en \textbf{lecture seule} sur l'ensemble des topics (\texttt{topic read \#}), ce qui lui permet d'observer tout le trafic sans pouvoir publier de messages. Cette restriction est appliquée par l'ACL Mosquitto.
+
+\paragraph{Interfaces.}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Entrée}~: souscription MQTT/TLS (TCP/8883) depuis Mosquitto~;
+  \item \textbf{Sortie}~: API REST (TCP/5000) pour la consultation des résultats~; alertes vers Wazuh (TCP/1514).
+\end{itemize}
+
+\subsection{Boîte à outils d'attaque --- attackbox (zone IoT)}
+\label{subsec:env-attackbox}
+
+La \textbf{boîte à outils d'attaque} est un conteneur Docker spécialisé (image \texttt{python:3.11-alpine}), déployé ponctuellement dans la zone IoT pour exécuter les scénarios d'attaque définis au chapitre~\ref{chap:conception}.
+
+\paragraph{Rôle.}
+Ce conteneur fournit un environnement complet pour simuler les attaques ciblant l'écosystème IoT~: outils réseau (\texttt{tcpdump}, \texttt{nmap}, \texttt{openssl}), bibliothèque MQTT Python (\texttt{paho-mqtt}) et scripts d'attaque spécialisés (flood MQTT, tentatives de connexion avec certificats invalides, exfiltration de données). Il dispose de certificats bootstrap permettant de tester aussi bien les connexions légitimes que les scénarios de rejet.
+
+\paragraph{Interfaces.}
+\begin{itemize}[leftmargin=*]
+  \item \textbf{Sortie}~: flux d'attaque vers Mosquitto (TCP/8883) et tentatives de scan réseau~;
+  \item \textbf{Contrainte}~: soumise aux mêmes règles de filtrage inter-VLAN que les dispositifs IoT légitimes.
+\end{itemize}
+
+%% ====================================================================
+%%  SECTION : Synthèse des interactions
+%% ====================================================================
+\section{Synthèse des interactions entre composants}
+\label{sec:env-synthese}
+
+La figure~\ref{fig:archi-reelle-ch1} (chapitre~\ref{chap:introduction}) présente l'architecture globale. Les interactions entre les composants suivent un cycle de fonctionnement en cinq phases~:
+
+\begin{enumerate}[leftmargin=*]
+  \item \textbf{Provisionnement}~: chaque dispositif (fleet-sim) demande un certificat client à Vault (zone PKI) via l'API REST~;
+  \item \textbf{Connexion sécurisée}~: le dispositif établit une session MQTT/TLS~1.3 mTLS avec Mosquitto (zone DMZ)~;
+  \item \textbf{Publication}~: les données IoT sont publiées sur les topics autorisés, filtrées par les ACL du broker~;
+  \item \textbf{Détection}~: Suricata analyse le trafic miroir de la DMZ et génère des alertes~; le ML Engine analyse chaque message en temps réel~; Wazuh corrèle les événements de toutes les sources~;
+  \item \textbf{Rotation}~: à l'approche de l'expiration, les certificats sont renouvelés automatiquement via Vault.
+\end{enumerate}
+
+Ce cycle illustre la \textbf{défense en profondeur} mise en \oe{}uvre~: chaque composant constitue une couche de protection indépendante, et la compromission d'une couche n'invalide pas les autres.
+
+%% ====================================================================
+%%  SECTION : Conclusion
+%% ====================================================================
+\section{Conclusion}
+\label{sec:env-conclusion}
+
+Ce chapitre a présenté l'ensemble des composants du laboratoire expérimental~: l'infrastructure réseau (pfSense, MikroTik), le broker sécurisé (Mosquitto), la PKI automatisée (Vault), le simulateur de flotte (fleet-sim), la chaîne de détection (Suricata, Wazuh, ML Engine) et la boîte à outils d'attaque. La politique de filtrage inter-VLAN \emph{deny-by-default} et le mécanisme de port mirroring complètent cette description. Le lecteur dispose désormais d'une vision concrète de chaque n\oe{}ud de la topologie. Le chapitre suivant traduit cette infrastructure en choix de conception~: spécification des besoins, modélisation UML et architecture de défense en profondeur.
