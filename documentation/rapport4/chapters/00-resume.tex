@@ -22,7 +22,7 @@
 \noindent Ce projet, mené avec \TT{}, conçoit et valide une architecture de sécurisation de bout en bout d'un
 écosystème IoT émulé sous GNS3. La solution associe une PKI HashiCorp Vault à deux niveaux, un broker MQTT
 en TLS~1.3/mTLS obligatoire, un IDS Suricata et un SIEM Wazuh. Un pipeline ML (IsolationForest + RandomForest)
-détecte les anomalies~: F1\,=\,0,994 et ROC-AUC\,=\,0,999 pour RF~; surcoût mTLS de l'ordre de \(+8\)\,\% sur le débit
+détecte les anomalies~: F1\,=\,0,993 et ROC-AUC\,=\,0,998 pour RF en classification multi-classes~; surcoût mTLS de l'ordre de \(+8\)\,\% sur le débit
 applicatif et \(+3{,}5\)\,ms de latence, sans impact opérationnel notable.
 
 \vspace{4pt}\noindent\rule{\linewidth}{0.4pt}\vspace{4pt}
@@ -37,7 +37,7 @@ applicatif et \(+3{,}5\)\,ms de latence, sans impact opérationnel notable.
 \noindent This project, carried out with Tunisie Telecom, designs and validates an end-to-end security architecture for an
 emulated IoT ecosystem under GNS3. The solution combines a two-level HashiCorp Vault PKI, a Mosquitto MQTT
 broker enforcing TLS~1.3/mTLS, a Suricata IDS and a Wazuh SIEM. An ML pipeline (IsolationForest + RandomForest)
-performs anomaly detection: F1\,=\,0.994, ROC-AUC\,=\,0.999 (RF). mTLS overhead is about \(+8\)\,\% on application
+performs anomaly detection: F1\,=\,0.993, ROC-AUC\,=\,0.998 (RF multi-class). mTLS overhead is about \(+8\)\,\% on application
 throughput and \(+3.5\)\,ms latency, with no noticeable operational impact.
 
 \vspace{4pt}\noindent\rule{\linewidth}{0.4pt}\vspace{4pt}
@@ -54,7 +54,7 @@ throughput and \(+3.5\)\,ms latency, with no noticeable operational impact.
 \noindent صمّم هذا المشروع، المُنجَز مع \emph{اتّصالات تونس}، بنيةً لتأمين الاتّصالات من طرف إلى طرف داخل منظومة
 إنترنت الأشياء المُحاكاة عبر GNS3. تجمع الحلّ بين بنية مفاتيح عموميّة (HashiCorp Vault)، ووسيط MQTT بـ TLS~1.3/mTLS،
 ونظام Suricata، ومنصّة Wazuh SIEM. يُحقّق نموذج RandomForest في سلسلة التعلّم الآليّ
-F1\,=\,0,994 وROC-AUC\,=\,0,999؛ ولا تتجاوز كلفة mTLS \(+8\)\,\% على الإنتاجيّة و\(+3{,}5\) ميلّي ثانية على زمن الاستجابة.
+F1\,=\,0,993 وROC-AUC\,=\,0,998؛ ولا تتجاوز كلفة mTLS \(+8\)\,\% على الإنتاجيّة و\(+3{,}5\) ميلّي ثانية على زمن الاستجابة.
 \end{Arabic}
 
 \endgroup

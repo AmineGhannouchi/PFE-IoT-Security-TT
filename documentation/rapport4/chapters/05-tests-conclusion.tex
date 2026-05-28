@@ -214,7 +214,7 @@ La latence de connexion inclut le handshake TLS, la vérification de la chaîne 
 \label{fig:perf-throughput}
 \end{figure}
 
-Le débit agrégé atteint $\sim 31\,000$~msg/min ($\sim 620$~msg/s en pic, $\sim 520$~msg/s soutenu), dépassant l'exigence de 500~msg/s par client. Ce résultat confirme que le chiffrement mTLS ne constitue pas un goulet d'étranglement. La figure~\ref{fig:perf-rtt} analyse l'influence de la taille des messages.
+Le débit agrégé atteint $\sim 31\,000$~msg/min ($\sim 620$~msg/s en pic, $\sim 520$~msg/s soutenu), dépassant l'exigence BNF-2 de 500~msg/s. Ce résultat confirme que le chiffrement mTLS ne constitue pas un goulet d'étranglement. La figure~\ref{fig:perf-rtt} analyse l'influence de la taille des messages.
 
 \begin{figure}[!htbp]
 \centering
@@ -252,9 +252,11 @@ Le surcoût mTLS représente $\sim 8$\,\% du débit et $\sim 3{,}5$~ms de latenc
 \section{Perspectives}
 \label{sec:tc-perspectives}
 
-\textbf{Court terme} ($<$~3~mois)~: industrialisation des scripts (Ansible), intégration ACME/Vault, extension à 200~clients.\\
-\textbf{Moyen terme} (3--12~mois)~: portage cellulaire réel (4G/5G), intégration aux outils SOC de \TT{}, entraînement ML continu.\\
-\textbf{Long terme} ($>$~12~mois)~: architecture \emph{Zero Trust} IoT, intégration LoRaWAN/NB-IoT, déploiement multi-tenant cloud.
+\begin{description}[leftmargin=*]
+  \item[Court terme ($<$~3~mois)] Industrialisation des scripts (Ansible), intégration ACME/Vault, extension à 200~clients.
+  \item[Moyen terme (3--12~mois)] Portage cellulaire réel (4G/5G), intégration aux outils SOC de \TT{}, entraînement ML continu.
+  \item[Long terme ($>$~12~mois)] Architecture \emph{Zero Trust} IoT, intégration LoRaWAN/NB-IoT, déploiement multi-tenant cloud.
+\end{description}
 
 \section{Conclusion}
 \label{sec:tc-synthese}

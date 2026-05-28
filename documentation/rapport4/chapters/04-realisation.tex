@@ -78,7 +78,7 @@ Le diagramme distingue les trois niveaux de confiance de la hiérarchie~: (i)~la
 
 \subsection{Rôles Vault et émission}
 
-Deux rôles PKI ont été définis dans le script \texttt{bootstrap-pki-api.sh}~: \texttt{iot-services} (TTL par défaut 30~jours, max 1~an, flags \emph{server\_auth}+\emph{client\_auth}) et \texttt{iot-devices} (TTL par défaut 24~heures, max 30~jours, flag \emph{client\_auth} uniquement, \emph{Common Name} contraint au pattern \texttt{dev-XXX.iot.lab}). L'émission d'un certificat client se réduit à un appel HTTP authentifié par jeton AppRole.
+Les deux rôles décrits ci-dessus sont définis dans le script \texttt{bootstrap-pki-api.sh}. L'émission d'un certificat client se réduit à un appel HTTP authentifié par jeton AppRole.
 
 \begin{lstlisting}[language=bash, caption={Émission d'un certificat client via Vault}]
 vault write -format=json pki_int/issue/iot-devices \
@@ -193,7 +193,7 @@ Les trois modèles sont comparés sur F1, ROC-AUC, précision et rappel. La stra
 
 \subsection{Données et features}
 
-Le jeu de données utilisé contient 76\,000 enregistrements répartis en huit classes (1 normale + 7 attaques)~\cite{hasan2020securing}. Les figures~\ref{fig:eda-classes}--\ref{fig:eda-corr} présentent l'analyse exploratoire.
+Le jeu de données utilisé contient 76\,000 enregistrements répartis en huit classes (1 normale + 7 attaques)~\cite{hasan2020securing}. Les figures~\ref{fig:eda-classes} et~\ref{fig:eda-corr} présentent l'analyse exploratoire.
 
 \begin{figure}[!htbp]
 \centering
