@@ -72,16 +72,7 @@ Ce positionnement stratégique de Tunisie Telecom fournit le contexte institutio
 \section{Cadre général du projet}
 \label{sec:contexte-general}
 
-Dans le cadre de ce travail, l'objectif est de construire un prototype expérimental capable de sécuriser les flux de communication d'un écosystème IoT émulé. Le projet s'appuie sur une architecture représentative d'un environnement opérateur~: segmentation réseau, services de confiance, broker MQTT, supervision de sécurité et analyse comportementale. Cette approche permet de valider les mécanismes proposés avant toute projection vers un déploiement réel à plus grande échelle. La figure~\ref{fig:archi-reelle-ch1} donne un aperçu de l'architecture générale du système, qui sera détaillée dans les chapitres suivants.
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=\textwidth]{PFE-IoT-Architecture-Generale.png}
-\caption{Architecture générale du système}
-\label{fig:archi-reelle-ch1}
-\end{figure}
-
-On y distingue les cinq zones réseau isolées (IoT, DMZ, PKI, SIEM, Analyse), le broker MQTT au centre des flux applicatifs, et les couches successives de protection~--- PKI, mTLS, IDS, SIEM, ML~--- qui matérialisent la stratégie de défense en profondeur adoptée. Cette vision d'ensemble constitue le fil directeur du rapport~: chaque chapitre ultérieur détaille la conception puis la réalisation d'une de ces couches.
+Dans le cadre de ce travail, l'objectif est de construire un prototype expérimental capable de sécuriser les flux de communication d'un écosystème IoT émulé. Le projet s'appuie sur une architecture représentative d'un environnement opérateur~: segmentation réseau, services de confiance, broker MQTT, supervision de sécurité et analyse comportementale. Cette approche permet de valider les mécanismes proposés avant toute projection vers un déploiement réel à plus grande échelle. L'architecture repose sur cinq zones réseau isolées (IoT, DMZ, PKI, SIEM, Analyse), un broker MQTT au centre des flux applicatifs et des couches successives de protection~--- PKI, mTLS, IDS, SIEM, ML~--- qui matérialisent une stratégie de défense en profondeur. La représentation détaillée de cette architecture fait l'objet du chapitre~\ref{chap:conception} (figure~\ref{fig:archi-reelle})~; chaque chapitre ultérieur en détaille la conception puis la réalisation.
 
 %% ====================================================================
 %%  SECTION : L'IoT dans les réseaux de télécommunications
