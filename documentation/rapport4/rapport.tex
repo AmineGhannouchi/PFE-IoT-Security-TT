@@ -36,9 +36,9 @@
 \titleformat{\subsubsection}
   {\needspace{3\baselineskip}\normalfont\bfseries\small}
   {\thesubsubsection}{1em}{}
-\titlespacing*{\chapter}{0pt}{-0.4cm}{0.8cm}
-\titlespacing*{\section}{0pt}{0.6cm plus 0.1cm minus 0.1cm}{0.25cm}
-\titlespacing*{\subsection}{0pt}{0.4cm plus 0.1cm minus 0.1cm}{0.2cm}
+\titlespacing*{\chapter}{0pt}{-0.6cm}{0.5cm}
+\titlespacing*{\section}{0pt}{0.4cm plus 0.1cm minus 0.1cm}{0.15cm}
+\titlespacing*{\subsection}{0pt}{0.3cm plus 0.1cm minus 0.1cm}{0.1cm}
 
 \usepackage[dvipsnames, table]{xcolor}
 \usepackage{graphicx}
@@ -48,6 +48,12 @@
 \setkeys{Gin}{max width=\linewidth, max totalheight=0.68\textheight, keepaspectratio}
 \usepackage{float}
 \usepackage[section]{placeins}
+%% Espacement resserré autour des floats
+\setlength{\intextsep}{6pt plus 2pt minus 2pt}
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
+\setlength{\abovecaptionskip}{4pt}
+\setlength{\belowcaptionskip}{2pt}
 \usepackage{subcaption}
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds}
@@ -66,7 +72,7 @@
 \usepackage{multirow}
 \usepackage{longtable}
 \usepackage{array}
-\renewcommand{\arraystretch}{1.3}
+\renewcommand{\arraystretch}{1.15}
 \usepackage{colortbl}
 
 \usepackage{listings}
@@ -167,8 +173,6 @@
 \input{chapters/00-remerciements}
 
 \tableofcontents
-\listoffigures
-\listoftables
 \input{chapters/00-acronymes}
 
 %% Corps du rapport (numerotation arabe)
@@ -178,7 +182,7 @@
 
 \input{chapters/00-introduction-generale}
 \input{chapters/01-introduction}
-\input{chapters/02-etat-art}
+\input{chapters/02-environnement}
 \input{chapters/03-conception}
 \input{chapters/04-realisation}
 \input{chapters/05-tests-conclusion}

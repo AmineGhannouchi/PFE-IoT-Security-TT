@@ -3,7 +3,7 @@
 
 \section{Introduction}
 
-Le chapitre précédent a établi le cadre théorique du projet et identifié les technologies retenues. Avant de formaliser la conception, il est nécessaire de présenter concrètement l'environnement expérimental dans lequel la solution est déployée. Ce chapitre décrit chaque composant du laboratoire~--- les «~boîtes noires~» de la topologie GNS3~--- en précisant pour chacun son rôle, son image de base, sa position réseau et ses interfaces avec les autres composants. L'objectif est de donner au lecteur une vision complète de l'infrastructure avant d'aborder les choix de conception et les détails de mise en \oe{}uvre.
+Ce chapitre présente concrètement l'environnement expérimental~: chaque composant du laboratoire GNS3, son rôle, son image de base, sa position réseau et ses interfaces.
 
 %% ====================================================================
 %%  SECTION : Vue d'ensemble
@@ -11,9 +11,7 @@ Le chapitre précédent a établi le cadre théorique du projet et identifié le
 \section{Vue d'ensemble du laboratoire}
 \label{sec:env-vue}
 
-L'ensemble du laboratoire est émulé sous \textbf{GNS3}~\cite{gns3_docs}, une plateforme d'émulation réseau qui permet d'interconnecter des machines virtuelles QEMU et des conteneurs Docker au sein d'une topologie réseau réaliste. Contrairement à un simulateur, GNS3 exécute les systèmes d'exploitation et les services réels, garantissant la fidélité des comportements observés.
-
-La topologie repose sur cinq zones réseau isolées par VLANs, reliées par un routeur MikroTik CHR (couche~3) et protégées par un pare-feu pfSense en amont. Chaque zone héberge un ou plusieurs conteneurs Docker spécialisés, construits sur des images Alpine Linux ou spécifiques au service concerné. L'architecture générale a été présentée à la figure~\ref{fig:archi-reelle-ch1}~; le présent chapitre en détaille chaque composant individuellement.
+L'ensemble du laboratoire est émulé sous \textbf{GNS3}~\cite{gns3_docs}, qui exécute les systèmes d'exploitation et services réels (VM QEMU + conteneurs Docker). La topologie repose sur cinq zones réseau isolées par VLANs, reliées par un routeur MikroTik CHR et protégées par un pare-feu pfSense.
 
 Le tableau~\ref{tab:inventaire-noeuds} présente l'inventaire complet des n\oe{}uds du laboratoire.
 
@@ -47,6 +45,16 @@ La figure~\ref{fig:topo-env} présente la topologie complète du laboratoire ave
 \includegraphics[width=\textwidth]{diag-topo-env.png}
 \caption{Topologie du laboratoire GNS3~: cinq zones réseau, composants et flux principaux}
 \label{fig:topo-env}
+\end{figure}
+\FloatBarrier
+
+La figure~\ref{fig:gns3-capture} présente la topologie réelle dans GNS3, confirmant la correspondance avec le schéma logique.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\textwidth]{gns3-topologie-reelle.png}
+\caption{Capture d'écran de la topologie réelle dans l'interface GNS3}
+\label{fig:gns3-capture}
 \end{figure}
 \FloatBarrier
 
@@ -292,17 +300,7 @@ Ce conteneur fournit un environnement complet pour simuler les attaques ciblant 
 \section{Synthèse des interactions entre composants}
 \label{sec:env-synthese}
 
-La figure~\ref{fig:archi-reelle-ch1} (chapitre~\ref{chap:introduction}) présente l'architecture globale. Les interactions entre les composants suivent un cycle de fonctionnement en cinq phases~:
-
-\begin{enumerate}[leftmargin=*]
-  \item \textbf{Provisionnement}~: chaque dispositif (fleet-sim) demande un certificat client à Vault (zone PKI) via l'API REST~;
-  \item \textbf{Connexion sécurisée}~: le dispositif établit une session MQTT/TLS~1.3 mTLS avec Mosquitto (zone DMZ)~;
-  \item \textbf{Publication}~: les données IoT sont publiées sur les topics autorisés, filtrées par les ACL du broker~;
-  \item \textbf{Détection}~: Suricata analyse le trafic miroir de la DMZ et génère des alertes~; le ML Engine analyse chaque message en temps réel~; Wazuh corrèle les événements de toutes les sources~;
-  \item \textbf{Rotation}~: à l'approche de l'expiration, les certificats sont renouvelés automatiquement via Vault.
-\end{enumerate}
-
-Ce cycle illustre la \textbf{défense en profondeur} mise en \oe{}uvre~: chaque composant constitue une couche de protection indépendante, et la compromission d'une couche n'invalide pas les autres.
+Les interactions suivent un cycle en cinq phases~: (1)~provisionnement de l'identité cryptographique via Vault~; (2)~connexion MQTT/TLS~1.3 mTLS avec Mosquitto~; (3)~publication sur les topics autorisés~; (4)~détection par Suricata + ML Engine et corrélation Wazuh~; (5)~rotation automatique des certificats. Chaque composant constitue une couche de protection indépendante~: la compromission d'une couche n'invalide pas les autres.
 
 %% ====================================================================
 %%  SECTION : Conclusion
@@ -310,4 +308,4 @@ Ce cycle illustre la \textbf{défense en profondeur} mise en \oe{}uvre~: chaque 
 \section{Conclusion}
 \label{sec:env-conclusion}
 
-Ce chapitre a présenté l'ensemble des composants du laboratoire expérimental~: l'infrastructure réseau (pfSense, MikroTik), le broker sécurisé (Mosquitto), la PKI automatisée (Vault), le simulateur de flotte (fleet-sim), la chaîne de détection (Suricata, Wazuh, ML Engine) et la boîte à outils d'attaque. La politique de filtrage inter-VLAN \emph{deny-by-default} et le mécanisme de port mirroring complètent cette description. Le lecteur dispose désormais d'une vision concrète de chaque n\oe{}ud de la topologie. Le chapitre suivant traduit cette infrastructure en choix de conception~: spécification des besoins, modélisation UML et architecture de défense en profondeur.
+Ce chapitre a présenté l'ensemble des composants du laboratoire~: infrastructure réseau, broker sécurisé, PKI, simulateur de flotte, chaîne de détection et boîte à outils d'attaque. Le chapitre suivant traduit cette infrastructure en choix de conception.

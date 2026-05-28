@@ -1,0 +1,89 @@
+@startuml diag-uc-global
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam shadowing false
+skinparam monochrome true
+skinparam dpi 150
+
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #333333
+}
+skinparam actor {
+  BackgroundColor #FFFFFF
+  BorderColor #333333
+}
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #333333
+}
+
+title Diagramme de cas d'utilisation global
+
+left to right direction
+
+' ── Acteurs ──
+
+actor "Dispositif IoT\n(acteur externe)" as DEV
+actor "Administrateur\nSecurite" as ADMIN
+actor "Operateur\nSOC" as SOC
+
+' ── Systeme ──
+
+rectangle "Plateforme de securisation IoT" {
+
+  ' --- Cas du Dispositif IoT ---
+  usecase "Demander un\ncertificat X.509" as UC1
+  usecase "Se connecter au\nbroker MQTT (mTLS)" as UC2
+  usecase "Publier des\ndonnees telemetrie" as UC3
+  usecase "Renouveler\nle certificat" as UC4
+
+  ' --- Sous-cas inclus ---
+  usecase "Verification\nchaine CA" as UC_VERIF
+  usecase "Authentification\nmTLS" as UC_AUTH
+  usecase "Chiffrement\nTLS 1.3" as UC_TLS
+
+  ' --- Cas de l'Administrateur ---
+  usecase "Configurer\nla PKI Vault" as UC5
+  usecase "Definir les\nregles ACL" as UC6
+  usecase "Configurer les\nregles IDS Suricata" as UC7
+  usecase "Deployer les\nregles SIEM Wazuh" as UC8
+
+  ' --- Cas de l'Operateur SOC ---
+  usecase "Consulter le\ntableau de bord" as UC9
+  usecase "Analyser les\nalertes IDS" as UC10
+  usecase "Lancer la detection\nML d'anomalies" as UC11
+  usecase "Evaluer les\nperformances" as UC12
+}
+
+' ── Liens Dispositif ──
+
+DEV --> UC1
+DEV --> UC2
+DEV --> UC3
+DEV --> UC4
+
+' ── Inclusions ──
+
+UC1 ..> UC_VERIF : <<include>>
+UC2 ..> UC_AUTH  : <<include>>
+UC2 ..> UC_TLS   : <<include>>
+UC3 ..> UC_TLS   : <<include>>
+
+' ── Liens Administrateur ──
+
+ADMIN --> UC5
+ADMIN --> UC6
+ADMIN --> UC7
+ADMIN --> UC8
+
+' ── Liens Operateur SOC ──
+
+SOC --> UC9
+SOC --> UC10
+SOC --> UC11
+SOC --> UC12
+
+@enduml

@@ -4,7 +4,7 @@
 \section{Introduction}
 \label{sec:re-intro}
 
-Sur la base des choix arrêtés au chapitre précédent, ce chapitre présente la mise en \oe{}uvre concrète de l'architecture proposée. Nous décrivons successivement~: l'environnement de développement, l'architecture globale et la topologie réseau, la PKI Vault, le broker MQTT en TLS/mTLS, les scénarios d'attaque retenus avec leurs contre-mesures, le pipeline d'apprentissage automatique (présenté \emph{après} la couche de défense statique pour respecter une logique de défense en profondeur), puis les captures d'écran des interfaces clés (Vault UI, Wazuh, GNS3). L'objectif est de montrer comment chaque brique conçue a été effectivement instanciée dans le laboratoire expérimental.
+Ce chapitre présente la mise en \oe{}uvre concrète de l'architecture~: topologie réseau, PKI Vault, broker MQTT mTLS, scénarios d'attaque, et pipeline ML.
 
 \section{Environnement de développement}
 \label{sec:re-env}
@@ -82,9 +82,9 @@ vault write -format=json pki_int/issue/iot-devices \
     ttl="720h"
 \end{lstlisting}
 
-Le choix des TTL résulte d'une analyse du compromis \textbf{sécurité / coût opérationnel}~: un TTL court réduit la fenêtre d'exposition en cas de vol de clé privée, mais impose une rotation fréquente, source de charge et d'erreur. Pour les services d'infrastructure (broker, Suricata, ML Engine), un TTL par défaut de 30~jours (max 1~an) équilibre la stabilité des configurations et la rotation régulière~; pour les dispositifs, un TTL de 24~heures (max 30~jours) est préférable car ces objets ont un cycle de vie moins maîtrisé et la rotation est automatisée par Vault, rendant son surcoût négligeable. Ce choix est cohérent avec les recommandations du NIST~\cite{nist_sp800213} qui préconise des TTL courts pour les certificats d'entité terminale dans les environnements IoT.
+Le choix des TTL résulte du compromis \textbf{sécurité / coût opérationnel}~: un TTL court réduit la fenêtre d'exposition mais impose une rotation fréquente. Pour les services d'infrastructure, 30~jours (max~1~an) équilibre stabilité et rotation~; pour les dispositifs, 24~heures (max~30~jours) est préférable car la rotation est automatisée par Vault, conformément aux recommandations du NIST~\cite{nist_sp800213}.
 
-La PKI étant opérationnelle, chaque composant~-- dispositif comme service~-- dispose d'une identité cryptographique vérifiable par tous les pairs. C'est sur cette fondation que repose la couche transport~: le broker MQTT peut désormais exiger la présentation d'un certificat signé par la CA intermédiaire avant d'accepter toute connexion, comme décrit dans la section suivante.
+La PKI étant opérationnelle, le broker MQTT peut désormais exiger un certificat signé par la CA intermédiaire avant d'accepter toute connexion.
 
 \section{Broker MQTT en TLS 1.3 + mTLS}
 \label{sec:re-mqtt}
@@ -107,50 +107,32 @@ Le diagramme de séquence se lit selon quatre phases distinctes~:
 \end{enumerate}
 L'authentification mutuelle garantit qu'aucun dispositif sans certificat valide ne peut accéder au broker, et qu'aucun broker frauduleux ne peut se faire passer pour Mosquitto.
 
-L'architecture de confiance est ainsi opérationnelle~: les identités sont gérées par Vault, le canal de communication est chiffré et les accès applicatifs sont restreints par ACL par certificat. Pour valider la robustesse de cet ensemble, six scénarios d'attaque ont été conçus en s'appuyant directement sur les vecteurs identifiés dans l'état de l'art~: interception, usurpation d'identité, déni de service et exfiltration applicative.
+Pour valider la robustesse de cet ensemble, six scénarios d'attaque ont été conçus.
 
 \section{Scénarios d'attaque et contre-mesures}
 \label{sec:re-attaques}
 
-Six scénarios ont été conçus pour couvrir les principales catégories d'attaques applicables à un broker MQTT. Chaque scénario est défini par un \emph{vecteur}, une \emph{méthode de détection} et une \emph{contre-mesure}. Les scénarios sont rejoués depuis la flotte simulée et corroborés par les alertes Suricata/Wazuh.
+Six scénarios couvrent les principales catégories d'attaques applicables à un broker MQTT. Le tableau~\ref{tab:scenarios-attaque} les synthétise avec leur vecteur, leur méthode de détection et la contre-mesure appliquée.
 
-\begin{attackbox}[Scénario 1 -- Man-in-the-Middle (TLS désactivé)]
-\textbf{Vecteur~:} un dispositif tente de se connecter sur le port 1883 (MQTT en clair) au lieu de 8883 (TLS). Un attaquant en position MITM peut alors capturer puis modifier les messages.\\
-\textbf{Détection~:} règle Suricata sur tout flux TCP/1883.\\
-\textbf{Contre-mesure~:} pare-feu pfSense bloquant 1883~; broker écoutant uniquement sur 8883 avec \texttt{require\_certificate}.
-\end{attackbox}
+\begin{table}[!htbp]
+\centering
+\caption{Scénarios d'attaque, détection et contre-mesures}
+\label{tab:scenarios-attaque}
+\small
+\begin{tabularx}{\linewidth}{|l|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
+\hline
+\textbf{ID} & \textbf{Vecteur} & \textbf{Détection} & \textbf{Contre-mesure} \\
+\hline
+S1 -- MITM & Connexion port 1883 (clair)~; MITM capture/modifie les messages & Règle Suricata TCP/1883 & pfSense bloque 1883~; broker sur 8883 + \texttt{require\_certificate} \\ \hline
+S2 -- Sniffing & Interception passive MQTT non chiffré & Alerte Suricata hors session TLS & TLS~1.3 obligatoire (RFC~9325~\cite{rfc9325}) \\ \hline
+S3 -- Brute-force & 500 \texttt{CONNECT}/60\,s avec certificats forgés & Seuil \texttt{CONNECT}/IP Suricata & Certificats CA Vault~; \emph{rate-limit} pfSense \\ \hline
+S4 -- Exfiltration & \texttt{SUBSCRIBE} à \texttt{tt/admin/\#} & Log \texttt{ACL denied} + corrélation Wazuh & ACL stricte par CN, granularité topic \\ \hline
+S5 -- Flood & Milliers de connexions TLS partielles & Taux TLS anormal Suricata & \texttt{max\_connections}~; blacklist Wazuh \\ \hline
+S6 -- Cert.\ volé & Certificat \texttt{dev-017} réutilisé depuis IP inconnue & IF (écart comportemental) + corrélation Wazuh & Révocation Vault + rotation CRL \\ \hline
+\end{tabularx}
+\end{table}
 
-\begin{attackbox}[Scénario 2 -- Sniffing MQTT en clair]
-\textbf{Vecteur~:} interception passive du trafic MQTT non chiffré sur le segment IoT.\\
-\textbf{Détection~:} alerte Suricata si un \texttt{PUBLISH} apparaît hors de la session TLS.\\
-\textbf{Contre-mesure~:} TLS~1.3 obligatoire. Les suites cryptographiques sont restreintes conformément à la RFC~9325~\cite{rfc9325}.
-\end{attackbox}
-
-\begin{attackbox}[Scénario 3 -- Brute-force d'authentification]
-\textbf{Vecteur~:} 500~tentatives de \texttt{CONNECT} en moins de 60~s avec des certificats forgés.\\
-\textbf{Détection~:} règle Suricata MQTT (seuil de \texttt{CONNECT} par IP source).\\
-\textbf{Contre-mesure~:} certificats clients signés par CA Vault~; \emph{rate-limit} pfSense sur le port 8883.
-\end{attackbox}
-
-\begin{attackbox}[Scénario 4 -- Exfiltration via topic non autorisé]
-\textbf{Vecteur~:} un dispositif compromis tente de \texttt{SUBSCRIBE} à \texttt{tt/admin/\#}.\\
-\textbf{Détection~:} log Mosquitto \texttt{ACL denied}~; règle Wazuh corrélant N occurrences/15~min.\\
-\textbf{Contre-mesure~:} ACL stricte par \emph{Common Name}, granularité au topic.
-\end{attackbox}
-
-\begin{attackbox}[Scénario 5 -- Déni de service par flood CONNECT]
-\textbf{Vecteur~:} client malveillant ouvrant plusieurs milliers de connexions TLS partielles.\\
-\textbf{Détection~:} alertes Suricata sur taux d'ouvertures TLS anormal.\\
-\textbf{Contre-mesure~:} \texttt{max\_connections} Mosquitto, \texttt{state-table-limit} pfSense, blacklist dynamique Wazuh.
-\end{attackbox}
-
-\begin{attackbox}[Scénario 6 -- Compromission de certificat client]
-\textbf{Vecteur~:} certificat \texttt{dev-017} volé puis réutilisé depuis une IP non habituelle.\\
-\textbf{Détection~:} module ML (Isolation Forest) signalant l'écart comportemental~; corrélation Wazuh IP$\leftrightarrow$identité.\\
-\textbf{Contre-mesure~:} révocation Vault (\texttt{vault write pki\_int/revoke serial=...}) et \emph{rotation} immédiate de la CRL.
-\end{attackbox}
-
-La chaîne de détection fonctionne en trois étapes. Suricata reçoit d'abord une copie passive du trafic VLAN~20 via le port miroir MikroTik (AF\_PACKET, zéro copie, aucun impact sur la latence MQTT), décode la pile réseau et active son parseur MQTT sur le port~8883 pour extraire les métadonnées applicatives (type de paquet, topic, QoS, taille de payload, \texttt{client\_id}). Les règles SID personnalisées sont ensuite appliquées, comme détaillé ci-dessous.
+La chaîne de détection fonctionne en trois étapes~: Suricata reçoit le trafic VLAN~20 via port miroir MikroTik (AF\_PACKET, zéro copie), active son parseur MQTT sur le port~8883, puis applique les règles SID personnalisées~:
 
 \begin{figure}[!htbp]
 \centering
@@ -175,7 +157,7 @@ La figure~\ref{fig:detection-p3} décrit le pipeline d'ingestion~: Suricata écr
 \section{Pipeline d'apprentissage automatique}
 \label{sec:re-ml}
 
-Les scénarios d'attaque ont mis en évidence une limite inhérente aux approches par règles~: le scénario~S6 (certificat valide réutilisé depuis un contexte inhabituel) n'est détecté que partiellement par Suricata et Wazuh. Le pipeline ML intervient précisément pour combler cette lacune~: il complète la détection par signature en repérant les comportements anormaux que les règles statiques ne peuvent pas anticiper. Il est constitué de trois phases~: préparation des données, entraînement des modèles et intégration dans le SIEM.
+Le scénario~S6 (certificat valide réutilisé) n'est que partiellement détecté par les règles. Le pipeline ML comble cette lacune en trois phases~:
 
 \paragraph{Phase~1 — Chargement, exploration et feature engineering.}
 Le dataset CSV (76\,000~entrées) est chargé puis soumis à une analyse exploratoire~: distribution des classes, matrice de corrélation et boxplots par type d'attaque. Il comprend \textbf{29~features} réparties en deux familles~:
@@ -230,10 +212,10 @@ Ce graphique met en évidence le fort déséquilibre du jeu de données entre la
 La matrice de corrélation révèle les variables fortement liées entre elles, ce qui permet d'écarter les features redondantes et de retenir un sous-ensemble informatif pour l'entraînement des modèles.
 \FloatBarrier
 
-\paragraph{Synthèse de présentation.}
-Les interfaces d'administration (Vault, Wazuh, GNS3) ont été mobilisées tout au long du déploiement et de la validation, mais leurs captures détaillées ne sont pas conservées dans le corps principal afin de privilégier les choix d'architecture, les mécanismes de sécurité et les résultats mesurés. Les éléments visuels les plus probants sont repris au chapitre~\ref{chap:tests-conclusion}, sous forme de preuves ciblées directement liées aux scénarios évalués.
+\paragraph{Synthèse.}
+Les captures détaillées des interfaces (Vault, Wazuh, GNS3) sont présentées au chapitre~\ref{chap:tests-conclusion} sous forme de preuves directement liées aux scénarios évalués.
 
 \section{Conclusion}
 \label{sec:re-conclusion}
 
-Ce chapitre a décrit la mise en \oe{}uvre concrète de l'architecture conçue~: un environnement reproductible sous GNS3 et Docker, une PKI Vault à deux niveaux assurant l'émission et la révocation automatisées, un broker Mosquitto imposant mTLS à toutes les connexions, une flotte nominale de 50~dispositifs rejouant un jeu de données de 76\,000~messages, six scénarios d'attaque couvrant les principaux vecteurs IoT, et un pipeline ML complémentaire. Chacune de ces briques répond directement à l'un des objectifs O1--O7 définis au chapitre~\ref{chap:introduction}~: la réalisation valide ainsi la conception dans ses dimensions fonctionnelles et sécuritaires. Il reste désormais à \textbf{mesurer} l'efficacité, la performance et la portée expérimentale de cet ensemble~: c'est l'objet du chapitre suivant.
+Ce chapitre a décrit la mise en \oe{}uvre concrète~: PKI Vault, broker mTLS, six scénarios d'attaque et pipeline ML. Chaque brique répond directement à un objectif O1--O7. Le chapitre suivant en mesure l'efficacité et la performance.

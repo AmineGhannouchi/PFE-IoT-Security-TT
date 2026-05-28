@@ -4,9 +4,7 @@
 \section{Introduction}
 \label{sec:co-intro}
 
-Ce chapitre a pour objectif de traduire, dans le contexte du projet, les enseignements de l'état de l'art et le diagnostic de l'existant (établi au chapitre~\ref{chap:introduction}) ainsi que la connaissance concrète des composants du laboratoire (chapitre~\ref{chap:environnement}) en une conception structurée, argumentée et directement exploitable pour la phase de réalisation. Le chapitre présente la spécification formelle des besoins fonctionnels et non fonctionnels, la modélisation des cas d'utilisation incluant les acteurs système (PKI, Mosquitto, Suricata), puis une vue d'ensemble de la solution proposée fondée sur le principe de sécurité en profondeur. Il expose enfin les principaux artefacts de pilotage et de modélisation du projet~: la planification des sprints, le backlog produit, les diagrammes UML et les diagrammes d'activité illustrant les scénarios d'attaque, qui constituent la référence de travail pour la mise en \oe{}uvre.
-
-Le diagnostic de l'existant, présenté au chapitre~\ref{chap:introduction} (section~\ref{sec:analyse-existant}), a mis en évidence six lacunes structurelles dans la sécurisation des flux IoT~: transport non chiffré, authentification insuffisante, absence de PKI dédiée, contrôle d'accès lacunaire, supervision fragmentée et absence de détection comportementale. Ces constats constituent la justification directe des choix de conception présentés ci-après~: chaque composant de la solution répond à une lacune précisément identifiée (cf.\ tableau~\ref{tab:diagnostic}). La présente section formalise les besoins fonctionnels et non fonctionnels qui en découlent.
+Ce chapitre traduit le diagnostic de l'existant (chapitre~\ref{chap:introduction}) et la connaissance des composants (chapitre~\ref{chap:environnement}) en une conception structurée~: spécification des besoins, cas d'utilisation, vue d'ensemble de la solution, planification des sprints et modélisation UML. Chaque composant de la solution répond à une lacune identifiée au tableau~\ref{tab:diagnostic}.
 
 \section{Spécification des besoins}
 \label{sec:co-besoins}
@@ -69,54 +67,28 @@ La plateforme met en jeu trois catégories d'acteurs~: les \textbf{acteurs humai
 
 \paragraph{Acteurs humains.} L'\textbf{administrateur de sécurité} est responsable de la configuration de la PKI, des ACL et des règles de détection. L'\textbf{opérateur SOC} est l'analyste chargé de la surveillance des tableaux de bord et de la réponse aux incidents.
 
-\subsection{Diagrammes de cas d'utilisation}
+\subsection{Diagramme de cas d'utilisation}
 
-Les diagrammes de cas d'utilisation sont présentés en trois parties complémentaires formant un ensemble cohérent. Les relations d'inclusion signalent les sous-cas obligatoires, tandis que les relations d'extension représentent les comportements optionnels.
-
-\paragraph{Partie 1 — Dispositif IoT.}
-La figure~\ref{fig:uc-p1} résume quatre actions du dispositif IoT~: demande de certificat X.509, connexion mTLS au broker, publication de télémétrie et renouvellement automatique du certificat.
+La figure~\ref{fig:uc-global} présente le diagramme de cas d'utilisation global de la plateforme, réunissant les trois catégories d'acteurs et les douze cas d'utilisation identifiés. Les relations d'inclusion (\emph{<<include>>}) signalent les sous-cas obligatoires (vérification de la chaîne CA, authentification mTLS, chiffrement TLS~1.3).
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.88\linewidth]{diag-uc-part1.png}
-\caption{Cas d'utilisation --- Partie~1~: Dispositif IoT (authentification, publication, renouvellement)}
-\label{fig:uc-p1}
+\includegraphics[width=0.7\textwidth]{diag-uc-global.png}
+\caption{Diagramme de cas d'utilisation global de la plateforme de sécurisation IoT}
+\label{fig:uc-global}
 \end{figure}
 \FloatBarrier
 
-\paragraph{Partie 2 — Administrateur sécurité.}
-La figure~\ref{fig:uc-p2} montre les quatre cas d'utilisation de l'administrateur~: configuration de la PKI Vault (hiérarchie CA, rôles, TTL), définition des règles ACL Mosquitto, paramétrage des règles IDS Suricata et déploiement des règles de corrélation SIEM Wazuh.
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.72\linewidth]{diag-uc-part2.png}
-\caption{Cas d'utilisation --- Partie~2~: Administrateur sécurité (PKI, ACL, IDS, SIEM)}
-\label{fig:uc-p2}
-\end{figure}
-\FloatBarrier
-
-\paragraph{Partie 3 — Opérateur SOC.}
-La figure~\ref{fig:uc-p3} représente les quatre cas d'utilisation de l'opérateur~: consultation du tableau de bord Wazuh, analyse des alertes IDS, lancement de la détection ML d'anomalies et évaluation des performances de la plateforme.
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.72\linewidth]{diag-uc-part3.png}
-\caption{Cas d'utilisation --- Partie~3~: Opérateur TT/SOC (dashboard, alertes, ML, performances)}
-\label{fig:uc-p3}
-\end{figure}
-\FloatBarrier
-
-\paragraph{Cas complémentaire~: capteur erroné ou compromis.}
-Un cas d'utilisation transversal concerne la gestion d'un \textbf{capteur émettant des données erronées ou compromis}. Ce scénario peut se manifester de deux manières~: (i)~un capteur défaillant envoie des valeurs incohérentes (dérive de mesure, valeurs hors plage) sans intention malveillante~; (ii)~un dispositif compromis utilise un certificat valide pour publier des données falsifiées ou pour exfiltrer des informations via des topics légitimes. Dans les deux cas, la détection repose sur la \textbf{complémentarité des mécanismes}~:
+Le diagramme distingue trois groupes de cas d'utilisation~:
 
 \begin{itemize}[leftmargin=*]
-  \item Le \textbf{broker Mosquitto} applique les ACL et bloque toute tentative de publication sur un topic non autorisé~;
-  \item L'\textbf{IDS Suricata} détecte les anomalies volumétriques (rafale de publications, payloads anormalement volumineux)~;
-  \item Le \textbf{module ML} identifie les dérives comportementales subtiles (changement de fréquence de publication, contexte IP inhabituel pour un certificat donné)~;
-  \item Le \textbf{SIEM Wazuh} corrèle ces signaux et déclenche une alerte de niveau critique lorsque plusieurs indicateurs convergent.
+  \item \textbf{Dispositif IoT} (acteur externe automatisé)~: quatre cas couvrent le cycle de vie cryptographique et applicatif~--- demande de certificat X.509, connexion mTLS au broker, publication de télémétrie et renouvellement automatique du certificat. La connexion et la publication incluent obligatoirement le chiffrement TLS~1.3~;
+  \item \textbf{Administrateur de sécurité}~: quatre cas de configuration~--- PKI Vault (hiérarchie CA, rôles, TTL), règles ACL Mosquitto, règles IDS Suricata et règles de corrélation SIEM Wazuh~;
+  \item \textbf{Opérateur SOC}~: quatre cas de supervision~--- consultation du tableau de bord Wazuh, analyse des alertes IDS, lancement de la détection ML d'anomalies et évaluation des performances de la plateforme.
 \end{itemize}
 
-Ce cas d'utilisation illustre l'intérêt de l'architecture multicouche~: aucune brique isolée ne suffit à couvrir l'ensemble du spectre, mais leur combinaison assure une couverture complète.
+\paragraph{Cas complémentaire~: capteur erroné ou compromis.}
+Un capteur défaillant (valeurs hors plage) ou compromis (certificat valide, données falsifiées) est détecté par la \textbf{complémentarité des mécanismes}~: Mosquitto bloque les publications sur topics non autorisés (ACL), Suricata détecte les anomalies volumétriques, le module ML identifie les dérives comportementales subtiles (fréquence, contexte IP) et Wazuh corrèle ces signaux pour déclencher une alerte critique. Cette couverture multicouche justifie l'architecture en profondeur retenue.
 
 \section{Vue d'ensemble de la solution proposée}
 \label{sec:solution-proposee}
@@ -202,7 +174,7 @@ Cette planification met en évidence une progression cohérente~: l'infrastructu
 \section{Backlog produit}
 \label{sec:co-backlog}
 
-Le \emph{backlog produit} a été priorisé selon la méthode \textbf{MoSCoW} puis réparti sur les six sprints. Les éléments jugés critiques portent sur la topologie réseau, la PKI Vault, le broker mTLS, la simulation de flotte, l'intégration Suricata/Wazuh et l'évaluation du module ML. Le détail exhaustif des \emph{User Stories} n'est pas reproduit ici afin de conserver le focus du chapitre sur les choix de conception.
+Le \emph{backlog} a été priorisé selon \textbf{MoSCoW} et réparti sur les six sprints. Les éléments critiques couvrent la topologie, la PKI, le broker mTLS, la simulation, l'intégration Suricata/Wazuh et le module ML.
 
 \section{Modélisation UML}
 \label{sec:co-uml}
@@ -252,28 +224,27 @@ Pour compléter la modélisation, deux diagrammes d'activité illustrent les sc�
 \begin{figure}[!htbp]
 \centering
 \begin{tikzpicture}[
-  node distance=0.8cm,
-  startstop/.style={circle, fill=black, minimum size=8pt, inner sep=0pt},
-  process/.style={rectangle, rounded corners=4pt, draw, minimum width=4.8cm, minimum height=0.7cm, align=center, font=\small},
-  decision/.style={diamond, draw, aspect=2.2, minimum width=2cm, align=center, font=\small},
-  arrow/.style={-{Stealth[length=6pt]}, thick},
+  node distance=0.5cm,
+  startstop/.style={circle, fill=black, minimum size=6pt, inner sep=0pt},
+  process/.style={rectangle, rounded corners=3pt, draw, minimum width=3.6cm, minimum height=0.5cm, align=center, font=\footnotesize},
+  decision/.style={diamond, draw, aspect=2.2, minimum width=1.4cm, align=center, font=\footnotesize},
+  arrow/.style={-{Stealth[length=5pt]}, thick},
 ]
 \node[startstop] (start) {};
-\node[process, below=of start] (flood) {Attaquant lance flood\\CONNECT sur port 8883};
-\node[process, below=of flood] (suricata) {Suricata détecte seuil\\(>50 CONNECT/10s, SID 9000001)};
-\node[decision, below=1cm of suricata] (seuil) {Seuil\\atteint~?};
-\node[process, below left=1cm and -0.5cm of seuil] (alerte) {Alerte \texttt{eve.json}\\transmise à Wazuh};
-\node[process, right=2.5cm of seuil] (pass) {Trafic normal\\autorisé};
-\node[process, below=of alerte] (corr) {Wazuh corrèle >5 alertes\\en <60s $\rightarrow$ niveau 12};
-\node[process, below=of corr] (pfsense) {pfSense blacklist IP\\source dynamiquement};
-\node[process, below=of pfsense] (notif) {Notification analyste SOC\\via tableau de bord};
-\node[startstop, below=0.6cm of notif] (end) {};
-%
+\node[process, below=of start] (flood) {Flood CONNECT\\sur port 8883};
+\node[process, below=of flood] (suricata) {Suricata~: seuil\\>50 CONNECT/10s};
+\node[decision, below=0.7cm of suricata] (seuil) {Seuil~?};
+\node[process, below left=0.7cm and -0.3cm of seuil] (alerte) {Alerte \texttt{eve.json}\\$\to$ Wazuh};
+\node[process, right=2cm of seuil] (pass) {Trafic normal};
+\node[process, below=of alerte] (corr) {Wazuh corrèle\\$\to$ niveau 12};
+\node[process, below=of corr] (pfsense) {pfSense blacklist\\IP source};
+\node[process, below=of pfsense] (notif) {Notification SOC};
+\node[startstop, below=0.4cm of notif] (end) {};
 \draw[arrow] (start) -- (flood);
 \draw[arrow] (flood) -- (suricata);
 \draw[arrow] (suricata) -- (seuil);
-\draw[arrow] (seuil) -- node[left, font=\small] {Oui} (alerte);
-\draw[arrow] (seuil) -- node[above, font=\small] {Non} (pass);
+\draw[arrow] (seuil) -- node[left, font=\footnotesize] {Oui} (alerte);
+\draw[arrow] (seuil) -- node[above, font=\footnotesize] {Non} (pass);
 \draw[arrow] (alerte) -- (corr);
 \draw[arrow] (corr) -- (pfsense);
 \draw[arrow] (pfsense) -- (notif);
@@ -287,35 +258,34 @@ Pour compléter la modélisation, deux diagrammes d'activité illustrent les sc�
 \begin{figure}[!htbp]
 \centering
 \begin{tikzpicture}[
-  node distance=0.8cm,
-  startstop/.style={circle, fill=black, minimum size=8pt, inner sep=0pt},
-  process/.style={rectangle, rounded corners=4pt, draw, minimum width=4.8cm, minimum height=0.7cm, align=center, font=\small},
-  decision/.style={diamond, draw, aspect=2.2, minimum width=2cm, align=center, font=\small},
-  arrow/.style={-{Stealth[length=6pt]}, thick},
+  node distance=0.5cm,
+  startstop/.style={circle, fill=black, minimum size=6pt, inner sep=0pt},
+  process/.style={rectangle, rounded corners=3pt, draw, minimum width=3.6cm, minimum height=0.5cm, align=center, font=\footnotesize},
+  decision/.style={diamond, draw, aspect=2.2, minimum width=1.4cm, align=center, font=\footnotesize},
+  arrow/.style={-{Stealth[length=5pt]}, thick},
 ]
 \node[startstop] (start) {};
-\node[process, below=of start] (vol) {Certificat \texttt{dev-017} volé\\et réutilisé depuis IP inconnue};
-\node[process, below=of vol] (mtls) {Connexion mTLS réussie\\(certificat techniquement valide)};
-\node[process, below=of mtls] (pub) {Publication MQTT sur\\topics autorisés du CN};
-\node[decision, below=1cm of pub] (ids) {Suricata~:\\anomalie~?};
-\node[process, right=2.5cm of ids] (miss) {Aucune alerte\\(certificat valide)};
-\node[process, below=1.2cm of ids] (ml) {Module ML analyse\\le contexte comportemental};
-\node[decision, below=1cm of ml] (score) {Score\\anomalie~?};
-\node[process, below left=1cm and -0.5cm of score] (detect) {Détection~: IP/fréquence\\incompatibles avec historique};
-\node[process, right=2.5cm of score] (normal) {Comportement\\classé normal};
-\node[process, below=of detect] (wazuh) {Wazuh corrèle score ML\\+ alerte $\rightarrow$ niveau critique};
-\node[process, below=of wazuh] (revoke) {Révocation certificat\\via Vault + rotation CRL};
-\node[startstop, below=0.6cm of revoke] (end) {};
-%
+\node[process, below=of start] (vol) {Cert.\ \texttt{dev-017} volé\\IP inconnue};
+\node[process, below=of vol] (mtls) {Connexion mTLS réussie\\(cert.\ valide)};
+\node[process, below=of mtls] (pub) {Publication MQTT\\topics autorisés};
+\node[decision, below=0.7cm of pub] (ids) {Suricata~?};
+\node[process, right=2cm of ids] (miss) {Aucune alerte};
+\node[process, below=0.8cm of ids] (ml) {ML analyse\\contexte comportemental};
+\node[decision, below=0.7cm of ml] (score) {Score~?};
+\node[process, below left=0.7cm and -0.3cm of score] (detect) {IP/fréquence\\incompatibles};
+\node[process, right=2cm of score] (normal) {Normal};
+\node[process, below=of detect] (wazuh) {Wazuh corrèle\\$\to$ niveau critique};
+\node[process, below=of wazuh] (revoke) {Révocation Vault\\+ rotation CRL};
+\node[startstop, below=0.4cm of revoke] (end) {};
 \draw[arrow] (start) -- (vol);
 \draw[arrow] (vol) -- (mtls);
 \draw[arrow] (mtls) -- (pub);
 \draw[arrow] (pub) -- (ids);
-\draw[arrow] (ids) -- node[above, font=\small] {Non} (miss);
-\draw[arrow] (ids) -- node[left, font=\small] {Partiel} (ml);
+\draw[arrow] (ids) -- node[above, font=\footnotesize] {Non} (miss);
+\draw[arrow] (ids) -- node[left, font=\footnotesize] {Partiel} (ml);
 \draw[arrow] (ml) -- (score);
-\draw[arrow] (score) -- node[left, font=\small] {Élevé} (detect);
-\draw[arrow] (score) -- node[above, font=\small] {Faible} (normal);
+\draw[arrow] (score) -- node[left, font=\footnotesize] {Élevé} (detect);
+\draw[arrow] (score) -- node[above, font=\footnotesize] {Faible} (normal);
 \draw[arrow] (detect) -- (wazuh);
 \draw[arrow] (wazuh) -- (revoke);
 \draw[arrow] (revoke) -- (end);
@@ -330,4 +300,4 @@ Le scénario~S5 illustre la détection au \textbf{niveau réseau}~: Suricata ide
 \section{Conclusion}
 \label{sec:co-conclusion}
 
-Ce chapitre a formalisé la conception du projet en articulant successivement la spécification des besoins, la description des acteurs système et de leurs rôles, les cas d'utilisation incluant la gestion des capteurs compromis, la vue d'ensemble de la solution fondée sur la défense en profondeur, la planification générale et les principales vues UML complétées par les diagrammes d'activité des scénarios d'attaque. Cet ensemble fournit une base cohérente pour la phase de réalisation, en assurant la traçabilité entre les lacunes identifiées au chapitre~\ref{chap:introduction}, les objectifs visés et les choix de conception adoptés. Le chapitre suivant décrit précisément \textbf{comment} chaque élément a été mis en \oe{}uvre~: de l'environnement GNS3 à la PKI Vault, du broker mTLS au pipeline ML, en passant par les scénarios d'attaque.
+Ce chapitre a formalisé la conception~: besoins, acteurs, cas d'utilisation, architecture de défense en profondeur, planification et modélisation UML. Le chapitre suivant décrit la mise en \oe{}uvre concrète de chaque brique.
