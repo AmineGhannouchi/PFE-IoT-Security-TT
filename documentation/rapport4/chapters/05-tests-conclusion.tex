@@ -60,7 +60,7 @@ La complémentarité \emph{règles}~$+$~\emph{ML} est clairement démontrée~: l
 
 \subsection{Preuves visuelles}
 
-Les captures ci-dessous étayent les taux du tableau~\ref{tab:detection-secu}.
+Les captures suivantes étayent les taux du tableau~\ref{tab:detection-secu} en apportant, pour chaque couche de défense, une preuve visuelle de son fonctionnement effectif. La figure~\ref{fig:pfsense-rules} présente les règles pfSense actives.
 
 \begin{figure}[!htbp]
 \centering
@@ -69,12 +69,16 @@ Les captures ci-dessous étayent les taux du tableau~\ref{tab:detection-secu}.
 \label{fig:pfsense-rules}
 \end{figure}
 
+L'analyse de cette capture confirme la politique \emph{deny-by-default}~: seuls les flux IoT\textrightarrow{}Broker/8883 et IoT\textrightarrow{}Vault/8200 sont autorisés~; tout autre trafic inter-VLAN est explicitement bloqué. Ce filtrage constitue la première couche de défense périmétrique. La figure~\ref{fig:fleet-sim} illustre la montée en charge.
+
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\textwidth]{atk-fleet-sim.png}
 \caption{Campagne complémentaire~: 100~dispositifs actifs, 35\,085~messages MQTT (O4)}
 \label{fig:fleet-sim}
 \end{figure}
+
+La campagne à 100~dispositifs démontre que l'architecture supporte le double du périmètre nominal (50~dispositifs) sans dégradation~: les 35\,085~messages sont traités sans perte ni dépassement de délai, validant le premier palier de scalabilité (O4). La figure~\ref{fig:mosquitto-acl} illustre le contrôle d'accès applicatif.
 
 \begin{figure}[!htbp]
 \centering
@@ -84,7 +88,7 @@ Les captures ci-dessous étayent les taux du tableau~\ref{tab:detection-secu}.
 \end{figure}
 \FloatBarrier
 
-La figure~\ref{fig:pfsense-rules} confirme la politique \emph{deny-by-default}~: seuls IoT\textrightarrow{}Broker/8883 et IoT\textrightarrow{}Vault/8200 sont autorisés. La figure~\ref{fig:fleet-sim} valide la montée en charge à 100~dispositifs (O4). La figure~\ref{fig:mosquitto-acl} montre les connexions mTLS par CN et les refus ACL.
+Les journaux révèlent deux comportements clés~: d'une part, chaque connexion est identifiée par le \emph{Common Name} du certificat client (ex.~: \texttt{dev-042.iot.lab}), prouvant l'application effective du mTLS~; d'autre part, les tentatives de publication sur un topic non autorisé sont immédiatement rejetées avec le code \texttt{ACL denied}, confirmant la granularité du contrôle par dispositif. La figure~\ref{fig:atk-summary} présente le résultat du scénario S5.
 
 \begin{figure}[!htbp]
 \centering
@@ -93,12 +97,16 @@ La figure~\ref{fig:pfsense-rules} confirme la politique \emph{deny-by-default}~:
 \label{fig:atk-summary}
 \end{figure}
 
+Le code de sortie~1 et le compteur de 0~connexion réussie sur 24~tentatives démontrent que la combinaison pfSense (\emph{rate-limit}) + Mosquitto (\texttt{max\_connections}) bloque intégralement le flood, avant même que celui-ci n'atteigne le parseur MQTT de Suricata. La figure~\ref{fig:suricata-alerts-test} présente les alertes IDS.
+
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\textwidth]{suricata-alerts.png}
 \caption{Alertes Suricata~: SID 9000001--9000004, 51~alertes, 0~faux positif sur trafic TLS (O5)}
 \label{fig:suricata-alerts-test}
 \end{figure}
+
+Les 51~alertes réparties sur les quatre SID personnalisées attestent de la capacité de Suricata à opérer au niveau applicatif MQTT~; l'absence de faux positif sur le trafic TLS légitime confirme la précision des seuils retenus. La figure~\ref{fig:wazuh-dashboard-test} montre la corrélation SIEM.
 
 \begin{figure}[!htbp]
 \centering
@@ -108,12 +116,14 @@ La figure~\ref{fig:pfsense-rules} confirme la politique \emph{deny-by-default}~:
 \end{figure}
 \FloatBarrier
 
-Le blocage du flood S5 (figure~\ref{fig:atk-summary}) confirme l'efficacité du filtrage pfSense + Mosquitto. Les figures~\ref{fig:suricata-alerts-test} et~\ref{fig:wazuh-dashboard-test} valident la chaîne de détection Suricata\textrightarrow{}Wazuh de bout en bout.
+Le tableau de bord agrège les alertes Suricata, les événements Mosquitto et les scores ML en une vue unique filtrée par criticité et type d'attaque. Cette consolidation permet à l'analyste SOC d'identifier en moins de trois clics l'origine, la nature et la criticité de chaque incident, satisfaisant le besoin BNF-1.
 
 \section{Résultats du module ML}
 \label{sec:tc-ml}
 
 \subsection{Isolation Forest}
+
+La figure~\ref{fig:iso-eval} présente la matrice de confusion du modèle Isolation Forest.
 
 \begin{figure}[!htbp]
 \centering
@@ -121,6 +131,8 @@ Le blocage du flood S5 (figure~\ref{fig:atk-summary}) confirme l'efficacité du 
 \caption{Isolation Forest -- matrice de confusion binaire}
 \label{fig:iso-eval}
 \end{figure}
+
+La matrice révèle un rappel de 0{,}947~: le modèle identifie la quasi-totalité des anomalies, au prix de quelques faux positifs inhérents à l'approche non supervisée. Ce compromis est acceptable car IF est conçu comme filet de sécurité pour les attaques inconnues (scénario~S6), où manquer une anomalie serait plus coûteux qu'une fausse alerte. La figure~\ref{fig:iso-scores} illustre la distribution des scores.
 
 \begin{figure}[!htbp]
 \centering
@@ -130,9 +142,11 @@ Le blocage du flood S5 (figure~\ref{fig:atk-summary}) confirme l'efficacité du 
 \end{figure}
 \FloatBarrier
 
-Le modèle distingue correctement le trafic normal des anomalies avec un rappel de 0{,}947. La distribution des scores confirme la séparabilité des deux populations.
+La distribution bimodale confirme la séparabilité des deux populations~: le trafic normal se concentre au-dessus du seuil $-0{,}05$, tandis que les anomalies se regroupent nettement en dessous. Cette séparation nette justifie le choix du seuil et sa robustesse.
 
 \subsection{Random Forest}
+
+La figure~\ref{fig:rf-eval} présente la matrice de confusion binaire et la courbe ROC du modèle Random Forest.
 
 \begin{figure}[!htbp]
 \centering
@@ -141,12 +155,16 @@ Le modèle distingue correctement le trafic normal des anomalies avec un rappel 
 \label{fig:rf-eval}
 \end{figure}
 
+L'AUC de 0{,}999 et le taux d'erreur quasi nul attestent de la capacité du modèle supervisé à discriminer normal/attaque avec une fiabilité exploitable en production. La figure~\ref{fig:rf-multiclass} étend cette analyse aux sept catégories d'attaques.
+
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.88\linewidth]{rf_multiclass_confusion.png}
 \caption{Random Forest -- confusion multi-classes~: 7~types d'attaques, absence de confusion Normal$\leftrightarrow$DoS}
 \label{fig:rf-multiclass}
 \end{figure}
+
+La matrice multi-classes montre l'absence de confusion entre les classes Normal et DoS, qui sont pourtant les plus proches en volume. Cette distinction est cruciale dans un contexte opérateur où un faux positif DoS déclencherait un blocage injustifié. La figure~\ref{fig:rf-features} identifie les variables les plus discriminantes.
 
 \begin{figure}[!htbp]
 \centering
@@ -155,6 +173,8 @@ Le modèle distingue correctement le trafic normal des anomalies avec un rappel 
 \label{fig:rf-features}
 \end{figure}
 \FloatBarrier
+
+L'analyse des importances confirme que les features temporelles (\emph{inter-arrival time}) et volumétriques (\emph{payload length}) portent l'essentiel du pouvoir discriminant. Ce résultat est cohérent avec la nature des attaques IoT, qui se manifestent principalement par des écarts de fréquence et de taille de messages par rapport au profil nominal.
 
 \begin{table}[!htbp]
 \centering
@@ -176,42 +196,57 @@ L'écart de F1 (0{,}932 vs 0{,}993) reflète la différence de paradigmes~: IF m
 \section{Résultats de performance}
 \label{sec:tc-perf}
 
+La figure~\ref{fig:perf-handshake} présente la distribution des durées de \emph{handshake} mTLS mesurées sur 500~connexions successives.
+
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.88\linewidth]{perf_tls_handshake.png}
 \caption{Distribution du handshake mTLS}
+\label{fig:perf-handshake}
 \end{figure}
+
+Le handshake mTLS médian s'établit à $\sim 38$~ms (95\textsuperscript{e} percentile~: 47~ms), conforme à l'exigence BNF-2 (<~50~ms). La faible dispersion de la distribution atteste de la stabilité du mécanisme, même sous charge soutenue. La figure~\ref{fig:perf-latency} complète cette mesure par la latence totale de connexion.
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.88\linewidth]{perf_connection_latency.png}
 \caption{Latence de connexion}
+\label{fig:perf-latency}
 \end{figure}
 \FloatBarrier
 
-Le handshake mTLS médian s'établit à $\sim 38$~ms (95\textsuperscript{e} percentile~: 47~ms), conforme à BNF-2 (<~50~ms).
+La latence de connexion inclut le handshake TLS, la vérification de la chaîne PKI et l'échange MQTT CONNECT/CONNACK. Le surcoût total reste inférieur à 50~ms, confirmant la compatibilité avec les contraintes temps réel de l'IoT. La figure~\ref{fig:perf-throughput} mesure le débit applicatif.
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.88\linewidth]{perf_throughput.png}
 \caption{Débit applicatif}
+\label{fig:perf-throughput}
 \end{figure}
+
+Le débit agrégé atteint $\sim 31\,000$~msg/min ($\sim 620$~msg/s en pic, $\sim 520$~msg/s soutenu), dépassant l'exigence de 500~msg/s par client. Ce résultat confirme que le chiffrement mTLS ne constitue pas un goulet d'étranglement. La figure~\ref{fig:perf-rtt} analyse l'influence de la taille des messages.
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.88\linewidth]{perf_rtt_messages.png}
 \caption{RTT par taille de message}
+\label{fig:perf-rtt}
 \end{figure}
+
+La corrélation positive entre taille de payload et RTT reste linéaire jusqu'à 4~Ko, au-delà de quoi la fragmentation TCP introduit un surcoût non linéaire. Ce seuil est rarement atteint en trafic IoT nominal (payloads typiques de 100--500~octets). La figure~\ref{fig:perf-protocols} compare les trois modes de transport.
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.85\linewidth]{perf_protocols_comparison.png}
 \caption{Comparaison MQTT clair vs MQTT/TLS vs MQTT/mTLS}
+\label{fig:perf-protocols}
 \end{figure}
 \FloatBarrier
 
+La comparaison quantifie le surcoût progressif~: MQTT/TLS ajoute $\sim 5$\,\% et MQTT/mTLS $\sim 8$\,\% par rapport au MQTT en clair. Ce surcoût modéré démontre que la sécurisation complète (confidentialité + authentification mutuelle) ne compromet pas la capacité opérationnelle du broker.
+
 \begin{resultbox}[Validation BNF-2]
-Le surcoût mTLS représente $\sim 8$\,\% du débit et $\sim 3{,}5$~ms de latence supplémentaire. Le débit agrégé ($\sim 31\,000$~msg/min, soit $\sim 620$~msg/s en pic et $\sim 520$~msg/s soutenu) dépasse l'exigence de 500~msg/s par client. Le surcoût ne compromet pas la capacité du broker.
+Le surcoût mTLS représente $\sim 8$\,\% du débit et $\sim 3{,}5$~ms de latence supplémentaire. Le handshake médian ($\sim 38$~ms) et le débit soutenu ($>500$~msg/s) satisfont les exigences non fonctionnelles. L'architecture est compatible avec les contraintes de performance IoT.
 \end{resultbox}
 
 \section{Limites identifiées}

@@ -45,7 +45,7 @@ La structure organisationnelle de Tunisie Telecom est constituée d'une directio
 \label{fig:organigramme-tt}
 \end{figure}
 
-Le projet a été réalisé au sein du service technique chargé des infrastructures réseau et de la sécurité des systèmes de communication. Ce service joue un rôle central dans la gestion, la supervision et la protection des infrastructures utilisées pour les services télécom et les plateformes numériques. Ses principales activités incluent~:
+L'organigramme fait apparaître, sous la direction des infrastructures réseau, le service technique chargé de la sécurité des systèmes de communication~--- service au sein duquel ce projet a été réalisé. Ce positionnement organisationnel est déterminant~: il confère au service une vision transversale sur les couches réseau, applicatives et sécurité, indispensable pour un projet de sécurisation IoT de bout en bout. Ses principales activités incluent~:
 
 \begin{itemize}[leftmargin=*]
   \item la gestion et l'administration des infrastructures réseau~;
@@ -80,6 +80,8 @@ Dans le cadre de ce travail, l'objectif est de construire un prototype expérime
 \caption{Architecture générale du système de sécurisation IoT proposé}
 \label{fig:archi-reelle-ch1}
 \end{figure}
+
+On y distingue les cinq zones réseau isolées (IoT, DMZ, PKI, SIEM, Analyse), le broker MQTT au centre des flux applicatifs, et les couches successives de protection~--- PKI, mTLS, IDS, SIEM, ML~--- qui matérialisent la stratégie de défense en profondeur adoptée. Cette vision d'ensemble constitue le fil directeur du rapport~: chaque chapitre ultérieur détaille la conception puis la réalisation d'une de ces couches.
 
 %% ====================================================================
 %%  SECTION : L'IoT dans les réseaux de télécommunications

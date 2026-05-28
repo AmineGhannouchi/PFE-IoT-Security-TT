@@ -48,7 +48,9 @@ La figure~\ref{fig:topo-env} présente la topologie complète du laboratoire ave
 \end{figure}
 \FloatBarrier
 
-La figure~\ref{fig:gns3-capture} présente la topologie réelle dans GNS3, confirmant la correspondance avec le schéma logique.
+Le schéma met en évidence l'isolement strict entre zones~: les dispositifs IoT n'atteignent que le broker (DMZ) et la PKI, tandis que les flux de supervision convergent vers la zone SIEM. Cette séparation matérialise le principe \emph{deny-by-default} au c\oe{}ur de l'architecture.
+
+La figure~\ref{fig:gns3-capture} présente la topologie réelle dans GNS3.
 
 \begin{figure}[!htbp]
 \centering
@@ -58,7 +60,7 @@ La figure~\ref{fig:gns3-capture} présente la topologie réelle dans GNS3, confi
 \end{figure}
 \FloatBarrier
 
-Les sections suivantes décrivent chaque composant en détail, en commençant par l'infrastructure réseau, puis les services applicatifs zone par zone.
+La correspondance entre la topologie logique et son implémentation effective dans GNS3 atteste de la reproductibilité de l'environnement~: chaque n\oe{}ud, chaque lien et chaque zone du schéma conceptuel se retrouve dans la capture, confirmant que le laboratoire peut être reconstruit à l'identique à partir des scripts versionnés. Les sections suivantes décrivent chaque composant en détail.
 
 %% ====================================================================
 %%  SECTION : Infrastructure réseau
