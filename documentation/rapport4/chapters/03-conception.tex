@@ -19,12 +19,12 @@ Ce chapitre traduit le diagnostic de l'existant (chapitre~\ref{chap:introduction
 \hline
 \textbf{ID} & \textbf{Description} \\
 \hline
-\acs{BF-1} & Émettre, renouveler et révoquer automatiquement des certificats X.509 pour services et dispositifs. \\ \hline
-\acs{BF-2} & Imposer le chiffrement TLS~1.3 et l'authentification mutuelle (mTLS) sur le broker MQTT. \\ \hline
-\acs{BF-3} & Restreindre l'accès aux topics MQTT par dispositif via des listes de contrôle d'accès. \\ \hline
-\acs{BF-4} & Simuler une flotte hétérogène de 50 dispositifs IoT générant un trafic réaliste. \\ \hline
-\acs{BF-5} & Détecter les attaques réseau et applicatives par règles IDS et corréler les alertes dans un SIEM. \\ \hline
-\acs{BF-6} & Détecter les anomalies non couvertes par les règles via un modèle d'apprentissage automatique. \\ \hline
+BF-1 & Émettre, renouveler et révoquer automatiquement des certificats X.509 pour services et dispositifs. \\ \hline
+BF-2 & Imposer le chiffrement TLS~1.3 et l'authentification mutuelle (mTLS) sur le broker MQTT. \\ \hline
+BF-3 & Restreindre l'accès aux topics MQTT par dispositif via des listes de contrôle d'accès. \\ \hline
+BF-4 & Simuler une flotte hétérogène de 50 dispositifs IoT générant un trafic réaliste. \\ \hline
+BF-5 & Détecter les attaques réseau et applicatives par règles IDS et corréler les alertes dans un SIEM. \\ \hline
+BF-6 & Détecter les anomalies non couvertes par les règles via un modèle d'apprentissage automatique. \\ \hline
 \end{tabularx}
 \end{table}
 
@@ -38,12 +38,12 @@ Ce chapitre traduit le diagnostic de l'existant (chapitre~\ref{chap:introduction
 \hline
 \textbf{ID} & \textbf{Description} \\
 \hline
-\acs{BNF-1} & \textbf{Monitoring et visualisation}~: tableaux de bord Wazuh/OpenSearch Dashboards pour le suivi des métriques en temps réel (latence, débit, alertes) et l'analyse de sécurité, accessibles en moins de 3~clics. \\ \hline
-\acs{BNF-2} & \textbf{Performance}~: latence handshake mTLS \(<50\)~ms~; débit broker \(>500\)~msg/s par client. \\ \hline
-\acs{BNF-3} & \textbf{Reproductibilité}~: l'environnement complet doit être réinstallable à partir des scripts fournis. \\ \hline
-\acs{BNF-4} & \textbf{Scalabilité}~: l'architecture doit accepter sans refonte au moins 200 dispositifs. \\ \hline
-\acs{BNF-5} & \textbf{Maintenabilité}~: configurations versionnées, modules indépendants, journalisation centralisée. \\ \hline
-\acs{BNF-6} & \textbf{Traçabilité}~: chaque flux MQTT doit être identifiable par l'identité cryptographique de son émetteur~; aucun flux en clair ne doit être possible. \\ \hline
+BNF-1 & \textbf{Monitoring et visualisation}~: tableaux de bord Wazuh/OpenSearch Dashboards pour le suivi des métriques en temps réel (latence, débit, alertes) et l'analyse de sécurité, accessibles en moins de 3~clics. \\ \hline
+BNF-2 & \textbf{Performance}~: latence handshake mTLS \(<50\)~ms~; débit broker \(>500\)~msg/s par client. \\ \hline
+BNF-3 & \textbf{Reproductibilité}~: l'environnement complet doit être réinstallable à partir des scripts fournis. \\ \hline
+BNF-4 & \textbf{Scalabilité}~: l'architecture doit accepter sans refonte au moins 200 dispositifs. \\ \hline
+BNF-5 & \textbf{Maintenabilité}~: configurations versionnées, modules indépendants, journalisation centralisée. \\ \hline
+BNF-6 & \textbf{Traçabilité}~: chaque flux MQTT doit être identifiable par l'identité cryptographique de son émetteur~; aucun flux en clair ne doit être possible. \\ \hline
 \end{tabularx}
 \end{table}
 
