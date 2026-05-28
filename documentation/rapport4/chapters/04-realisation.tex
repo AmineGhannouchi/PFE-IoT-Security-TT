@@ -21,7 +21,7 @@ La figure~\ref{fig:topo-p1} présente la topologie réseau du laboratoire~: la c
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.90\linewidth]{diag-topo-part1.png}
-\caption{Topologie réseau~: infrastructure pfSense/MikroTik et segmentation en 5~VLANs}
+\caption{Topologie réseau}
 \label{fig:topo-p1}
 \end{figure}
 \FloatBarrier
@@ -43,7 +43,7 @@ Le cycle de fonctionnement de bout en bout suit cinq phases successives~: (1)~pr
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.95\linewidth,height=0.40\textheight,keepaspectratio]{diag-flux-phase2.png}
-\caption{Flux E2E --- Phase~2~: établissement de la connexion TLS~1.3 mTLS entre un dispositif et le broker}
+\caption{Flux E2E --- Phase~2~: connexion mTLS}
 \label{fig:flux-p2}
 \end{figure}
 \FloatBarrier
@@ -53,7 +53,7 @@ Le diagramme montre que le dispositif présente son certificat client, que le br
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.92\linewidth,height=0.38\textheight,keepaspectratio]{diag-flux-phase4.png}
-\caption{Flux E2E --- Phase~4~: détection et supervision (Suricata IDS~\textrightarrow{} Wazuh SIEM~\textrightarrow{} tableau de bord)}
+\caption{Flux E2E --- Phase~4~: détection et supervision}
 \label{fig:flux-p4}
 \end{figure}
 \FloatBarrier
@@ -70,7 +70,7 @@ La PKI suit le modèle à deux niveaux préconisé par le NIST~\cite{nist_sp8002
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.85\linewidth]{diag-pki-hierarchy.png}
-\caption{Hiérarchie de la PKI à deux niveaux (CA racine \emph{offline} + CA intermédiaire Vault)}
+\caption{Hiérarchie PKI à deux niveaux}
 \label{fig:pki-hier}
 \end{figure}
 
@@ -98,7 +98,7 @@ Mosquitto est configuré~\cite{mosquitto_tls} pour exiger un certificat client, 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.9\linewidth]{diag-tls-handshake.png}
-\caption{\emph{Handshake} TLS~1.3 avec authentification mutuelle (mTLS)}
+\caption{Handshake TLS~1.3 mTLS}
 \label{fig:tls-handshake}
 \end{figure}
 
@@ -141,7 +141,7 @@ La chaîne de détection fonctionne en trois étapes~: Suricata reçoit le trafi
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.73\linewidth,height=0.72\textheight,keepaspectratio]{diag-suricata-part2.png}
-\caption{Chaîne de détection Suricata~\textrightarrow{}Wazuh~: application des règles SID personnalisées et génération d'alertes}
+\caption{Chaîne de détection Suricata--Wazuh}
 \label{fig:detection-p2}
 \end{figure}
 \FloatBarrier
@@ -151,7 +151,7 @@ L'analyse de cette figure révèle quatre règles SID personnalisées~: \textbf{
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.73\linewidth,height=0.72\textheight,keepaspectratio]{diag-suricata-part3.png}
-\caption{Pipeline d'ingestion des alertes~: EVE JSON~\textrightarrow{} Filebeat~\textrightarrow{} Wazuh~\textrightarrow{} OpenSearch~\textrightarrow{} Dashboard}
+\caption{Pipeline d'ingestion des alertes}
 \label{fig:detection-p3}
 \end{figure}
 \FloatBarrier
@@ -177,7 +177,7 @@ Les trois modèles sont entraînés en parallèle sur les mêmes 29~features num
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.80\linewidth]{diag-ml-part2.png}
-\caption{Pipeline ML~: entraînement parallèle des trois modèles (IsolationForest, RF binaire, RF multi-classes)}
+\caption{Pipeline ML}
 \label{fig:ml-p2}
 \end{figure}
 \FloatBarrier
@@ -198,7 +198,7 @@ Le jeu de données utilisé contient 76\,000 enregistrements répartis en huit c
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.85\linewidth,height=0.38\textheight,keepaspectratio]{eda_classes_distribution.png}
-\caption{Analyse exploratoire --- distribution des classes}
+\caption{Distribution des classes}
 \label{fig:eda-classes}
 \end{figure}
 \FloatBarrier
@@ -208,7 +208,7 @@ Ce graphique met en évidence le fort déséquilibre du jeu de données entre la
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.95\linewidth,height=0.45\textheight,keepaspectratio]{eda_correlation_heatmap.png}
-\caption{Analyse exploratoire --- matrice de corrélation des features numériques}
+\caption{Matrice de corrélation des features}
 \label{fig:eda-corr}
 \end{figure}
 \FloatBarrier

@@ -65,7 +65,7 @@ Les captures suivantes étayent les taux du tableau~\ref{tab:detection-secu} en 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\textwidth]{atk-pfsense-rules.png}
-\caption{pfSense~-- règles de filtrage inter-VLAN actives validant la politique \emph{deny-by-default} (O1)}
+\caption{Règles de filtrage pfSense}
 \label{fig:pfsense-rules}
 \end{figure}
 
@@ -74,26 +74,16 @@ L'analyse de cette capture confirme la politique \emph{deny-by-default}~: seuls 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\textwidth]{atk-fleet-sim.png}
-\caption{Campagne complémentaire~: 100~dispositifs actifs, 35\,085~messages MQTT (O4)}
+\caption{Campagne à 100~dispositifs}
 \label{fig:fleet-sim}
 \end{figure}
 
-La campagne à 100~dispositifs démontre que l'architecture supporte le double du périmètre nominal (50~dispositifs) sans dégradation~: les 35\,085~messages sont traités sans perte ni dépassement de délai, validant le premier palier de scalabilité (O4). La figure~\ref{fig:mosquitto-acl} illustre le contrôle d'accès applicatif.
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=\textwidth]{atk-mosquitto-acl.png}
-\caption{Logs Mosquitto~: connexions mTLS identifiées par CN et refus ACL sur topics non autorisés (O3, BF-3)}
-\label{fig:mosquitto-acl}
-\end{figure}
-\FloatBarrier
-
-Les journaux révèlent deux comportements clés~: d'une part, chaque connexion est identifiée par le \emph{Common Name} du certificat client (ex.~: \texttt{dev-042.iot.lab}), prouvant l'application effective du mTLS~; d'autre part, les tentatives de publication sur un topic non autorisé sont immédiatement rejetées avec le code \texttt{ACL denied}, confirmant la granularité du contrôle par dispositif. La figure~\ref{fig:atk-summary} présente le résultat du scénario S5.
+La campagne à 100~dispositifs démontre que l'architecture supporte le double du périmètre nominal (50~dispositifs) sans dégradation~: les 35\,085~messages sont traités sans perte ni dépassement de délai, validant le premier palier de scalabilité (O4). La figure~\ref{fig:atk-summary} présente le résultat du scénario S5.
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\textwidth]{atk-flood-summary.png}
-\caption{Scénario S5 -- flood CONNECT~: 24~tentatives, 0~connexion réussie, \texttt{exit code 1}}
+\caption{Scénario S5~: flood CONNECT}
 \label{fig:atk-summary}
 \end{figure}
 
@@ -102,7 +92,7 @@ Le code de sortie~1 et le compteur de 0~connexion réussie sur 24~tentatives dé
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\textwidth]{suricata-alerts.png}
-\caption{Alertes Suricata~: SID 9000001--9000004, 51~alertes, 0~faux positif sur trafic TLS (O5)}
+\caption{Alertes Suricata}
 \label{fig:suricata-alerts-test}
 \end{figure}
 
@@ -111,7 +101,7 @@ Les 51~alertes réparties sur les quatre SID personnalisées attestent de la cap
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=\textwidth]{wazuh-dashboard.png}
-\caption{Tableau de bord Wazuh~: alertes corrélées par criticité et type d'attaque (O6, BNF-1)}
+\caption{Tableau de bord Wazuh}
 \label{fig:wazuh-dashboard-test}
 \end{figure}
 \FloatBarrier
@@ -128,7 +118,7 @@ La figure~\ref{fig:iso-eval} présente la matrice de confusion du modèle Isolat
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.88\linewidth]{iso_forest_confusion_matrix.png}
-\caption{Isolation Forest -- matrice de confusion binaire}
+\caption{Matrice de confusion Isolation Forest}
 \label{fig:iso-eval}
 \end{figure}
 
@@ -137,7 +127,7 @@ La matrice révèle un rappel de 0{,}947~: le modèle identifie la quasi-totalit
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.88\linewidth]{iso_forest_scores_distribution.png}
-\caption{Isolation Forest -- distribution des scores d'anomalie (seuil à $-0{,}05$)}
+\caption{Distribution des scores Isolation Forest}
 \label{fig:iso-scores}
 \end{figure}
 \FloatBarrier
@@ -151,7 +141,7 @@ La figure~\ref{fig:rf-eval} présente la matrice de confusion binaire et la cour
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.95\linewidth]{rf_confusion_roc.png}
-\caption{Random Forest~: matrice de confusion binaire et courbe ROC (AUC~=~0{,}999)}
+\caption{Confusion et ROC Random Forest}
 \label{fig:rf-eval}
 \end{figure}
 
@@ -160,7 +150,7 @@ L'AUC de 0{,}999 et le taux d'erreur quasi nul attestent de la capacité du mod�
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.88\linewidth]{rf_multiclass_confusion.png}
-\caption{Random Forest -- confusion multi-classes~: 7~types d'attaques, absence de confusion Normal$\leftrightarrow$DoS}
+\caption{Confusion multi-classes Random Forest}
 \label{fig:rf-multiclass}
 \end{figure}
 
@@ -169,7 +159,7 @@ La matrice multi-classes montre l'absence de confusion entre les classes Normal 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.90\linewidth]{rf_feature_importance.png}
-\caption{Importance des features~: \emph{inter-arrival time} et \emph{payload length} sont les plus discriminants}
+\caption{Importance des features}
 \label{fig:rf-features}
 \end{figure}
 \FloatBarrier
@@ -238,7 +228,7 @@ La corrélation positive entre taille de payload et RTT reste linéaire jusqu'à
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.85\linewidth]{perf_protocols_comparison.png}
-\caption{Comparaison MQTT clair vs MQTT/TLS vs MQTT/mTLS}
+\caption{Comparaison des protocoles MQTT}
 \label{fig:perf-protocols}
 \end{figure}
 \FloatBarrier
