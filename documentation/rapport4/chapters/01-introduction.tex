@@ -161,7 +161,7 @@ Maturité IoT & Très large & Large & Industrielle & Universelle \\ \hline
 
 \textbf{MQTT~5}~\cite{mqtt5} est retenu pour son empreinte faible, sa large adoption industrielle et ses mécanismes natifs TLS+ACL combinables avec le mTLS. MQTT ne garantissant ni confidentialité ni authenticité, TLS~1.3 avec authentification mutuelle s'impose.
 
-\subsection{Sécurisation du transport : TLS 1.3 et mTLS}
+\subsection{Sécurisation du transport~: TLS 1.3 et mTLS}
 \label{sec:ea-tls}
 
 \subsubsection{TLS 1.3}
@@ -172,7 +172,7 @@ Par ailleurs, le protocole \textbf{DTLS} (\emph{Datagram Transport Layer Securit
 
 \subsubsection{Authentification mutuelle}
 
-Dans un déploiement classique, seul le serveur s'authentifie auprès du client. Le \textbf{mTLS} (\emph{mutual TLS}) impose en outre au client de présenter un certificat X.509 valide signé par une autorité de confiance. Cette double authentification permet~: (i) d'éviter qu'un objet illégitime se connecte au broker . (ii) de chiffrer chaque session par bout . (iii) de tracer chaque message via l'identité cryptographique de son émetteur. Cette propriété est essentielle pour la mise en place ultérieure d'\acs{ACL} par certificat dans Mosquitto~\cite{mosquitto_tls}.
+Dans un déploiement classique, seul le serveur s'authentifie auprès du client. Le \textbf{mTLS} (\emph{mutual TLS}) impose en outre au client de présenter un certificat X.509 valide signé par une autorité de confiance. Cette double authentification permet~: (i)~d'éviter qu'un objet illégitime se connecte au broker~; (ii)~de chiffrer chaque session de bout en bout~; (iii)~de tracer chaque message via l'identité cryptographique de son émetteur. Cette propriété est essentielle pour la mise en place ultérieure d'\acs{ACL} par certificat dans Mosquitto~\cite{mosquitto_tls}.
 
 \begin{resultbox}{Positionnement critique~: TLS 1.3 + mTLS}
 TLS~1.3 supprime les suites vulnérables, négocie en 1-RTT et impose la \emph{forward secrecy}. Le mTLS substitue à l'authentification par mot de passe une preuve cryptographique d'identité non duplicable. Cette double garantie~-- confidentialité \emph{et} authenticité mutuelle~-- ferme simultanément les vecteurs d'interception et d'usurpation identifiés.
@@ -180,7 +180,7 @@ TLS~1.3 supprime les suites vulnérables, négocie en 1-RTT et impose la \emph{f
 
 L'authentification mutuelle par certificats suppose cependant l'existence d'une infrastructure capable d'\textbf{émettre, renouveler et révoquer} ces certificats à l'échelle d'un parc de dispositifs~: c'est précisément le rôle d'une PKI automatisée.
 
-\subsection{Gestion des identités : PKI et automatisation}
+\subsection{Gestion des identités~: PKI et automatisation}
 \label{sec:ea-pki}
 
 Une PKI à deux niveaux (CA racine \emph{offline} + CA intermédiaire \emph{online}) constitue la pratique recommandée~\cite{nist_sp800213}~: la CA racine ne signe que des CA intermédiaires et reste hors ligne~; les CA intermédiaires signent les certificats opérationnels (services, dispositifs). En cas de compromission d'une CA intermédiaire, seul le sous-arbre concerné doit être révoqué.
