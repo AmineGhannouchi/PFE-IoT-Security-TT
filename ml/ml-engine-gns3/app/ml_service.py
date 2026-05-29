@@ -16,6 +16,7 @@ from collections import defaultdict, deque
 from datetime import datetime
 
 import numpy as np
+import pandas as pd
 import joblib
 import paho.mqtt.client as mqtt
 from flask import Flask, jsonify
@@ -118,7 +119,7 @@ def measure_rtt(host: str) -> float:
     return 10.0   # valeur par défaut si ping échoue
 
 def build_feature_vector(client_id: str, payload: bytes,
-                          topic: str, qos: int) -> np.ndarray:
+                          topic: str, qos: int) -> "pd.DataFrame":
     m = stats[client_id]
     now = time.time()
 
@@ -166,7 +167,7 @@ def build_feature_vector(client_id: str, payload: bytes,
         'battery_pct':            100.0,
         **CAT_DEFAULTS
     }
-    return np.array([vec[f] for f in FEATURES]).reshape(1, -1)
+    return pd.DataFrame([vec])[FEATURES]
 
 # ─── Prédiction ───────────────────────────────────────────────────────────────
 def predict(client_id: str, topic: str, X: np.ndarray) -> dict:
@@ -225,18 +226,22 @@ def on_connect(client, userdata, flags, rc):
         log.error(f"Echec connexion MQTT, code={rc}")
 
 def on_message(client, userdata, msg):
-    client_id = msg.topic.split("/")[-1] if "/" in msg.topic else "unknown"
+    log.debug(f"MSG recu | topic={msg.topic} | size={len(msg.payload)}B")
+    try:
+        client_id = msg.topic.split("/")[-1] if "/" in msg.topic else "unknown"
 
-    with lock:
-        m = stats[client_id]
-        m.msg_count  += 1
-        m.last_seen   = time.time()
-        m.recent_msgs.append(time.time())
-        m.payloads.append(msg.payload)
-        m.topics[msg.topic] += 1
+        with lock:
+            m = stats[client_id]
+            m.msg_count  += 1
+            m.last_seen   = time.time()
+            m.recent_msgs.append(time.time())
+            m.payloads.append(msg.payload)
+            m.topics[msg.topic] += 1
 
-    X = build_feature_vector(client_id, msg.payload, msg.topic, msg.qos)
-    predict(client_id, msg.topic, X)
+        X = build_feature_vector(client_id, msg.payload, msg.topic, msg.qos)
+        predict(client_id, msg.topic, X)
+    except Exception as e:
+        log.error(f"Erreur on_message | topic={msg.topic} | {e}", exc_info=True)
 
 def on_disconnect(client, userdata, rc):
     log.warning(f"Deconnecte de Mosquitto (rc={rc}), reconnexion...")
@@ -269,6 +274,15 @@ def get_latest_alert():
 
 # ─── Main ─────────────────────────────────────────────────────────────────────
 def start_mqtt():
+    # Vérification explicite des fichiers avant tls_set
+    for label, path in [("CA_CERT", CA_CERT), ("CLIENT_CERT", CLIENT_CERT), ("CLIENT_KEY", CLIENT_KEY)]:
+        exists = os.path.exists(path)
+        log.info(f"  {label} = {path}  →  {'OK' if exists else 'MANQUANT !'}")
+        if not exists:
+            log.error(f"Fichier manquant : {path}")
+            log.error(f"Contenu de /app/certs/ : {os.listdir('./certs') if os.path.isdir('./certs') else 'dossier absent'}")
+            return
+
     client = mqtt.Client(client_id="ml-engine-analyser")
     client.tls_set(ca_certs=CA_CERT, certfile=CLIENT_CERT, keyfile=CLIENT_KEY)
     client.on_connect    = on_connect

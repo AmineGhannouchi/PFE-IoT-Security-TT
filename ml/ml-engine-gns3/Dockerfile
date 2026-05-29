@@ -28,6 +28,7 @@ COPY certs/ ./certs/
 # API REST
 EXPOSE 5000
 
-# -u = stdout non-bufferisé → logs visibles en temps réel dans GNS3
+# stdout non-bufferisé → logs visibles en temps réel dans GNS3
 ENV PYTHONUNBUFFERED=1
+
 CMD ["python", "-u", "ml_service.py"]
