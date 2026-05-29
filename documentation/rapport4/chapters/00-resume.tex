@@ -1,6 +1,6 @@
 %% ============================================================
 %% RESUMES TRI-LANGUE -- une seule page, derniere du rapport
-%% FR / EN / AR -- chaque section <= 4 lignes + mots-cles
+%% Ordre reglementaire UTM : Arabe, Francais, Anglais
 %% ============================================================
 \clearpage
 \thispagestyle{empty}
@@ -12,7 +12,26 @@
 \renewcommand{\baselinestretch}{1.1}
 \footnotesize
 
-% ---------- Français ----------
+% ---------- Arabic ----------
+\begin{center}
+  \textbf{\normalsize \textarabic{ملخص}}
+\end{center}
+\begin{Arabic}
+\noindent\textbf{الكلمات المفتاحيّة:}
+إنترنت الأشياء، أمن سيبراني، \LR{TLS~1.3}، \LR{mTLS}، \LR{PKI}، \LR{HashiCorp Vault}، \LR{MQTT}، \LR{Suricata}، \LR{Wazuh}، تعلّم آليّ، \LR{GNS3}.
+
+\smallskip
+\noindent يُقدِّم هذا المشروع، المُنجَز بالتعاون مع \emph{اتّصالات تونس}، بنيةً أمنيّة شاملة لتأمين الاتّصالات
+من طرف إلى طرف داخل منظومة إنترنت الأشياء المُحاكاة عبر \LR{GNS3}. يجمع الحلّ المقترح بين بنية تحتيّة للمفاتيح
+العموميّة ثنائيّة المستوى (\LR{HashiCorp Vault})، ووسيط \LR{MQTT} مؤمَّن بـ \LR{TLS~1.3/mTLS}، ونظام كشف التسلّل \LR{Suricata}،
+ومنصّة \LR{Wazuh SIEM}. يُحقّق نموذج \LR{RandomForest} ضمن سلسلة التعلّم الآليّ
+\LR{F1\,=\,0,993} و\LR{ROC-AUC\,=\,0,998} في التصنيف متعدّد الفئات؛ ولا تتجاوز الكلفة الإضافيّة لبروتوكول \LR{mTLS}
+نسبة \LR{\(+8\)\,\%} من الإنتاجيّة و\LR{\(+3{,}5\)} ميلّي ثانية من زمن الاستجابة، دون تأثير تشغيليّ ملحوظ.
+\end{Arabic}
+
+\vspace{4pt}\noindent\rule{\linewidth}{0.4pt}\vspace{4pt}
+
+% ---------- Francais ----------
 \begin{center}
   \textbf{\normalsize Résumé}
 \end{center}
@@ -39,24 +58,5 @@ emulated IoT ecosystem under GNS3. The solution combines a two-level HashiCorp V
 broker enforcing TLS~1.3/mTLS, a Suricata IDS and a Wazuh SIEM. An ML pipeline (IsolationForest + RandomForest)
 performs anomaly detection: F1\,=\,0.993, ROC-AUC\,=\,0.998 (RF multi-class). mTLS overhead is about \(+8\)\,\% on application
 throughput and \(+3.5\)\,ms latency, with no noticeable operational impact.
-
-\vspace{4pt}\noindent\rule{\linewidth}{0.4pt}\vspace{4pt}
-
-% ---------- Arabic ----------
-\begin{center}
-  \textbf{\normalsize \textarabic{ملخص}}
-\end{center}
-\begin{Arabic}
-\noindent\textbf{الكلمات المفتاحيّة:}
-إنترنت الأشياء، أمن سيبراني، \LR{TLS~1.3}، \LR{mTLS}، \LR{PKI}، \LR{HashiCorp Vault}، \LR{MQTT}، \LR{Suricata}، \LR{Wazuh}، تعلّم آليّ، \LR{GNS3}.
-
-\smallskip
-\noindent يُقدِّم هذا المشروع، المُنجَز بالتعاون مع \emph{اتّصالات تونس}، بنيةً أمنيّة شاملة لتأمين الاتّصالات
-من طرف إلى طرف داخل منظومة إنترنت الأشياء المُحاكاة عبر \LR{GNS3}. يجمع الحلّ المقترح بين بنية تحتيّة للمفاتيح
-العموميّة ثنائيّة المستوى (\LR{HashiCorp Vault})، ووسيط \LR{MQTT} مؤمَّن بـ \LR{TLS~1.3/mTLS}، ونظام كشف التسلّل \LR{Suricata}،
-ومنصّة \LR{Wazuh SIEM}. يُحقّق نموذج \LR{RandomForest} ضمن سلسلة التعلّم الآليّ
-\LR{F1\,=\,0,993} و\LR{ROC-AUC\,=\,0,998} في التصنيف متعدّد الفئات؛ ولا تتجاوز الكلفة الإضافيّة لبروتوكول \LR{mTLS}
-نسبة \LR{\(+8\)\,\%} من الإنتاجيّة و\LR{\(+3{,}5\)} ميلّي ثانية من زمن الاستجابة، دون تأثير تشغيليّ ملحوظ.
-\end{Arabic}
 
 \endgroup
