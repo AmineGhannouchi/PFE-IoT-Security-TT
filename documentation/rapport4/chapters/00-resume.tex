@@ -44,17 +44,19 @@ throughput and \(+3.5\)\,ms latency, with no noticeable operational impact.
 
 % ---------- Arabic ----------
 \begin{center}
-  \textbf{\normalsize \textarabic{ملخّص}}
+  \textbf{\normalsize \textarabic{ملخص}}
 \end{center}
 \begin{Arabic}
 \noindent\textbf{الكلمات المفتاحيّة:}
-إنترنت الأشياء، أمن سيبراني، TLS~1.3، mTLS، PKI، HashiCorp Vault، MQTT، Suricata، Wazuh، تعلّم آليّ، GNS3.
+إنترنت الأشياء، أمن سيبراني، \LR{TLS~1.3}، \LR{mTLS}، \LR{PKI}، \LR{HashiCorp Vault}، \LR{MQTT}، \LR{Suricata}، \LR{Wazuh}، تعلّم آليّ، \LR{GNS3}.
 
 \smallskip
-\noindent صمّم هذا المشروع، المُنجَز مع \emph{اتّصالات تونس}، بنيةً لتأمين الاتّصالات من طرف إلى طرف داخل منظومة
-إنترنت الأشياء المُحاكاة عبر GNS3. تجمع الحلّ بين بنية مفاتيح عموميّة (HashiCorp Vault)، ووسيط MQTT بـ TLS~1.3/mTLS،
-ونظام Suricata، ومنصّة Wazuh SIEM. يُحقّق نموذج RandomForest في سلسلة التعلّم الآليّ
-F1\,=\,0,993 وROC-AUC\,=\,0,998؛ ولا تتجاوز كلفة mTLS \(+8\)\,\% على الإنتاجيّة و\(+3{,}5\) ميلّي ثانية على زمن الاستجابة.
+\noindent يُقدِّم هذا المشروع، المُنجَز بالتعاون مع \emph{اتّصالات تونس}، بنيةً أمنيّة شاملة لتأمين الاتّصالات
+من طرف إلى طرف داخل منظومة إنترنت الأشياء المُحاكاة عبر \LR{GNS3}. يجمع الحلّ المقترح بين بنية تحتيّة للمفاتيح
+العموميّة ثنائيّة المستوى (\LR{HashiCorp Vault})، ووسيط \LR{MQTT} مؤمَّن بـ \LR{TLS~1.3/mTLS}، ونظام كشف التسلّل \LR{Suricata}،
+ومنصّة \LR{Wazuh SIEM}. يُحقّق نموذج \LR{RandomForest} ضمن سلسلة التعلّم الآليّ
+\LR{F1\,=\,0,993} و\LR{ROC-AUC\,=\,0,998} في التصنيف متعدّد الفئات؛ ولا تتجاوز الكلفة الإضافيّة لبروتوكول \LR{mTLS}
+نسبة \LR{\(+8\)\,\%} من الإنتاجيّة و\LR{\(+3{,}5\)} ميلّي ثانية من زمن الاستجابة، دون تأثير تشغيليّ ملحوظ.
 \end{Arabic}
 
 \endgroup
