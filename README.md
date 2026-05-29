@@ -7,7 +7,7 @@
 | Rôle | Nom |
 |------|-----|
 | Encadrante universitaire | Mme. ELLOUZE NOURHENE — FST |
-| Encadrant entreprise | M. Moez Khlifi — Tunisie Telecom (TT) |
+| Encadrant entreprise | M. Moez Khlif — Tunisie Telecom (TT) |
 | Étudiant | Amine Ghannouchi |
 
 ## 📌 Contexte
