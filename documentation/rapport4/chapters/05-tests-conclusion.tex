@@ -9,7 +9,7 @@ Ce chapitre confronte la solution réalisée aux besoins formulés au chapitre~\
 \section{Plan de tests}
 \label{sec:tc-plan}
 
-Quatre familles de tests ont été définies, conformément aux besoins du chapitre~\ref{chap:conception}~:
+Quatre familles de tests ont été définies, conformément aux besoins du chapitre~\ref{chap:conception}. Le tableau~\ref{tab:plan-tests} en résume les objectifs et les outils associés.
 
 \begin{table}[!htbp]
 \centering
@@ -27,7 +27,7 @@ Tests de performance & Mesurer latence, débit, handshake mTLS & paho-mqtt, hype
 \end{tabularx}
 \end{table}
 
-Avant les campagnes de test, un ensemble de vérifications unitaires a validé chaque brique~: émission, renouvellement et révocation PKI Vault avec vérification de la chaîne de confiance (\texttt{openssl verify})~; connexion mTLS réussie avec certificat valide et rejet avec certificat expiré, auto-signé ou révoqué~; enforcement ACL Mosquitto (publication autorisée sur les topics du CN, rejet sur ceux d'un autre dispositif)~; chargement des trois modèles \texttt{.pkl} et prédiction sur un vecteur de test connu~; validation du routage inter-VLAN et du port mirroring DMZ\textrightarrow{}Suricata. Ces vérifications ont permis de corriger plusieurs erreurs de configuration avant le lancement des campagnes.
+Cette organisation garantit une couverture progressive~: les tests unitaires valident chaque brique isolément, les tests d'intégration vérifient la chaîne de bout en bout, les tests de sécurité évaluent la résistance aux attaques et les tests de performance quantifient le surcoût du mTLS. Avant les campagnes de test, un ensemble de vérifications unitaires a validé chaque brique~: émission, renouvellement et révocation PKI Vault avec vérification de la chaîne de confiance (\texttt{openssl verify})~; connexion mTLS réussie avec certificat valide et rejet avec certificat expiré, auto-signé ou révoqué~; enforcement ACL Mosquitto (publication autorisée sur les topics du CN, rejet sur ceux d'un autre dispositif)~; chargement des trois modèles \texttt{.pkl} et prédiction sur un vecteur de test connu~; validation du routage inter-VLAN et du port mirroring DMZ\textrightarrow{}Suricata. Ces vérifications ont permis de corriger plusieurs erreurs de configuration avant le lancement des campagnes.
 
 \section{Résultats de sécurité}
 \label{sec:tc-secu}
@@ -160,6 +160,8 @@ La matrice multi-classes montre l'absence de confusion entre les classes Normal 
 \FloatBarrier
 
 L'analyse des importances confirme que les features temporelles (\emph{inter-arrival time}) et volumétriques (\emph{payload length}) portent l'essentiel du pouvoir discriminant. Ce résultat est cohérent avec la nature des attaques IoT, qui se manifestent principalement par des écarts de fréquence et de taille de messages par rapport au profil nominal.
+
+Le tableau~\ref{tab:perf-ml} consolide les métriques de performance des deux modèles sur une validation croisée à cinq plis.
 
 \begin{table}[!htbp]
 \centering
