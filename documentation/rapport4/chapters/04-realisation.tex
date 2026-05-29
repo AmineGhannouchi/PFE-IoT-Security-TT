@@ -91,7 +91,7 @@ La PKI étant opérationnelle, le broker MQTT peut désormais exiger un certific
 \section{Broker MQTT en TLS 1.3 + mTLS}
 \label{sec:re-mqtt}
 
-Mosquitto est configuré~\cite{mosquitto_tls} pour exiger un certificat client, associer l'identité certifiée au nom d'utilisateur et appliquer un fichier d'\acs{ACL} liant chaque \emph{Common Name} à ses topics autorisés. La figure~\ref{fig:tls-handshake} retrace le \emph{handshake} TLS~1.3 mutuel observé entre un dispositif et le broker.
+Mosquitto est configuré~\cite{mosquitto_tls} pour exiger un certificat client, associer l'identité certifiée au nom d'utilisateur et appliquer un fichier d'ACL liant chaque \emph{Common Name} à ses topics autorisés. La figure~\ref{fig:tls-handshake} retrace le \emph{handshake} TLS~1.3 mutuel observé entre un dispositif et le broker.
 
 \begin{figure}[!htbp]
 \centering

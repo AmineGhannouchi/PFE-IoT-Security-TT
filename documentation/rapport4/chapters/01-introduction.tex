@@ -72,7 +72,7 @@ Ce positionnement stratégique de Tunisie Telecom fournit le contexte institutio
 \section{Cadre général du projet}
 \label{sec:contexte-general}
 
-Dans le cadre de ce travail, l'objectif est de construire un prototype expérimental capable de sécuriser les flux de communication d'un écosystème IoT émulé. Le projet s'appuie sur une architecture représentative d'un environnement opérateur~: segmentation réseau, services de confiance, broker MQTT, supervision de sécurité et analyse comportementale. Cette approche permet de valider les mécanismes proposés avant toute projection vers un déploiement réel à plus grande échelle. L'architecture repose sur cinq zones réseau isolées (IoT, DMZ, PKI, SIEM, Analyse), un broker MQTT au centre des flux applicatifs et des couches successives de protection~--- PKI, mTLS, IDS, SIEM, ML~--- qui matérialisent une stratégie de défense en profondeur. La représentation détaillée de cette architecture fait l'objet du chapitre~\ref{chap:conception} (figure~\ref{fig:archi-reelle})~; chaque chapitre ultérieur en détaille la conception puis la réalisation.
+Dans le cadre de ce travail, l'objectif est de construire un prototype expérimental capable de sécuriser les flux de communication d'un écosystème IoT émulé. Le projet s'appuie sur une architecture représentative d'un environnement opérateur~: segmentation réseau, services de confiance, broker MQTT, supervision de sécurité et analyse comportementale. Cette approche permet de valider les mécanismes proposés avant toute projection vers un déploiement réel à plus grande échelle. L'architecture repose sur cinq zones réseau isolées~: zone IoT, zone démilitarisée (DMZ), zone PKI, zone de supervision (SIEM, \emph{Security Information and Event Management}) et zone Analyse. Le broker MQTT, au centre des flux applicatifs, est protégé par des couches successives~--- PKI, TLS mutuel (mTLS, \emph{mutual TLS}), système de détection d'intrusion (IDS, \emph{Intrusion Detection System}), corrélation SIEM et apprentissage automatique (ML, \emph{Machine Learning})~--- qui matérialisent une stratégie de défense en profondeur. La représentation détaillée de cette architecture fait l'objet du chapitre~\ref{chap:conception} (figure~\ref{fig:archi-reelle})~; chaque chapitre ultérieur en détaille la conception puis la réalisation.
 
 %% ====================================================================
 %%  SECTION : L'IoT dans les réseaux de télécommunications
@@ -82,7 +82,7 @@ Dans le cadre de ce travail, l'objectif est de construire un prototype expérime
 
 \subsection{Croissance et enjeux du marché IoT}
 
-L'Internet des Objets constitue l'une des évolutions technologiques les plus structurantes de la décennie actuelle. Selon l'ENISA~\cite{enisa_iot}, le nombre de dispositifs connectés actifs dans le monde poursuit une croissance soutenue, portée par la multiplication des cas d'usage dans l'industrie, les villes intelligentes, la santé connectée, les infrastructures énergétiques et les réseaux de transport. Cette expansion génère un volume massif de données dont la collecte, le transport et le traitement reposent en très grande partie sur les infrastructures des opérateurs télécom.
+L'Internet des Objets constitue l'une des évolutions technologiques les plus structurantes de la décennie actuelle. Selon l'ENISA (\emph{European Union Agency for Cybersecurity})~\cite{enisa_iot}, le nombre de dispositifs connectés actifs dans le monde poursuit une croissance soutenue, portée par la multiplication des cas d'usage dans l'industrie, les villes intelligentes, la santé connectée, les infrastructures énergétiques et les réseaux de transport. Cette expansion génère un volume massif de données dont la collecte, le transport et le traitement reposent en très grande partie sur les infrastructures des opérateurs télécom.
 
 Cette croissance s'accompagne cependant d'une complexification notable des exigences de sécurité. Meneghello et al.~\cite{meneghello2019iot} soulignent que les dispositifs IoT présentent structurellement des vulnérabilités liées à leur conception~: ressources processeur et mémoire limitées rendant difficile l'intégration de mécanismes cryptographiques complets, cycles de mise à jour longs ou inexistants, et exposition à des réseaux partagés peu maîtrisés. Ces fragilités sont exploitées de manière croissante par des acteurs malveillants, comme l'illustre l'attaque Mirai~\cite{kolias2017mirai}, qui a mobilisé des centaines de milliers d'objets compromis pour générer des attaques par déni de service dépassant 1~Tbit/s (analysée à la section~\ref{sec:ea-menaces}).
 
@@ -107,17 +107,17 @@ Ces contraintes font de la sécurisation IoT un enjeu de premier ordre pour les 
 
 \subsection{Surface d'attaque étendue}
 
-Les écosystèmes IoT présentent une surface d'attaque significativement plus large que les systèmes informatiques classiques. Meneghello \emph{et al.}~\cite{meneghello2019iot} en distinguent quatre couches~: (i)~la couche \emph{matérielle} (composants embarqués, interfaces de débogage exposées, attaques par canal auxiliaire)~; (ii)~la couche \emph{firmware} (mises à jour non signées, exécution de code arbitraire)~; (iii)~la couche \emph{réseau} (transports en clair, protocoles propriétaires faibles)~; (iv)~la couche \emph{services et écosystème} (\acs{API} non authentifiées, applications mobiles vulnérables, multi-tenance mal cloisonnée).
+Les écosystèmes IoT présentent une surface d'attaque significativement plus large que les systèmes informatiques classiques. Meneghello \emph{et al.}~\cite{meneghello2019iot} en distinguent quatre couches~: (i)~la couche \emph{matérielle} (composants embarqués, interfaces de débogage exposées, attaques par canal auxiliaire)~; (ii)~la couche \emph{firmware} (mises à jour non signées, exécution de code arbitraire)~; (iii)~la couche \emph{réseau} (transports en clair, protocoles propriétaires faibles)~; (iv)~la couche \emph{services et écosystème} (API, \emph{Application Programming Interface}, non authentifiées, applications mobiles vulnérables, multi-tenance mal cloisonnée).
 
-Au niveau matériel, les interfaces de débogage non désactivées (JTAG, UART) exposent un accès physique permettant l'extraction de clés cryptographiques ou la modification du firmware. Au niveau logiciel, les \acs{API} REST ou MQTT de gestion des dispositifs constituent un vecteur complémentaire lorsqu'elles sont déployées sans authentification ou avec des mécanismes d'autorisation insuffisants. Ces vecteurs illustrent la nécessité d'une approche de sécurisation multicouche.
+Au niveau matériel, les interfaces de débogage non désactivées (JTAG, UART) exposent un accès physique permettant l'extraction de clés cryptographiques ou la modification du firmware. Au niveau logiciel, les API REST ou MQTT de gestion des dispositifs constituent un vecteur complémentaire lorsqu'elles sont déployées sans authentification ou avec des mécanismes d'autorisation insuffisants. Ces vecteurs illustrent la nécessité d'une approche de sécurisation multicouche.
 
 \subsection{OWASP IoT Top 10 et menaces réseau}
 
-L'OWASP synthétise dans son \emph{IoT Top~10}~\cite{owasp_iot} les dix risques applicatifs majeurs~: mots de passe faibles ou par défaut, services réseau non sécurisés, interfaces écosystème non protégées, mécanisme de mise à jour absent, composants obsolètes, protection insuffisante de la vie privée, transferts et stockage non chiffrés, absence de gestion des dispositifs, paramètres par défaut non sûrs, absence de hardening physique. Dans ce projet, nous nous concentrons sur les menaces \textbf{réseau} et \textbf{applicatives}~: interception (\emph{sniffing}), \emph{man-in-the-middle}, force brute, exfiltration applicative, déni de service, vol/abus de certificats.
+L'OWASP (\emph{Open Worldwide Application Security Project}) synthétise dans son \emph{IoT Top~10}~\cite{owasp_iot} les dix risques applicatifs majeurs~: mots de passe faibles ou par défaut, services réseau non sécurisés, interfaces écosystème non protégées, mécanisme de mise à jour absent, composants obsolètes, protection insuffisante de la vie privée, transferts et stockage non chiffrés, absence de gestion des dispositifs, paramètres par défaut non sûrs, absence de hardening physique. Dans ce projet, nous nous concentrons sur les menaces \textbf{réseau} et \textbf{applicatives}~: interception (\emph{sniffing}), \emph{man-in-the-middle}, force brute, exfiltration applicative, déni de service, vol/abus de certificats.
 
 \subsection{Études de cas de référence}
 
-L'analyse de l'attaque \textbf{Mirai}~\cite{kolias2017mirai,antonakakis2017mirai} illustre toutes ces faiblesses simultanément~: le botnet exploitait des couples identifiant/mot de passe par défaut sur des objets exposés en SSH/Telnet, recrutait des centaines de milliers de dispositifs en quelques jours, et générait des attaques DDoS dépassant 1~Tbit/s. Le rapport \emph{ENISA Threat Landscape for IoT}~\cite{enisa_iot} confirme que ces vecteurs restent dominants et identifie comme contre-mesures prioritaires~: l'authentification forte, le chiffrement systématique, la segmentation réseau et la supervision active. Ces orientations rejoignent les recommandations du NIST~\cite{nist_sp800213} pour la cybersécurité des dispositifs IoT.
+L'analyse de l'attaque \textbf{Mirai}~\cite{kolias2017mirai,antonakakis2017mirai} illustre toutes ces faiblesses simultanément~: le botnet exploitait des couples identifiant/mot de passe par défaut sur des objets exposés en SSH/Telnet, recrutait des centaines de milliers de dispositifs en quelques jours, et générait des attaques par déni de service distribué (DDoS, \emph{Distributed Denial of Service}) dépassant 1~Tbit/s. Le rapport \emph{ENISA Threat Landscape for IoT}~\cite{enisa_iot} confirme que ces vecteurs restent dominants et identifie comme contre-mesures prioritaires~: l'authentification forte, le chiffrement systématique, la segmentation réseau et la supervision active. Ces orientations rejoignent les recommandations du NIST (\emph{National Institute of Standards and Technology})~\cite{nist_sp800213} pour la cybersécurité des dispositifs IoT.
 
 Cette cartographie des menaces permet d'identifier les vecteurs prioritaires à contrer~: interception des flux, usurpation d'identité, déni de service et abus de certificats. La section suivante présente les technologies et protocoles mobilisés pour y répondre.
 
@@ -132,7 +132,7 @@ Le choix des technologies de sécurisation découle directement des menaces iden
 
 \subsection{Protocoles applicatifs IoT}
 
-Quatre protocoles représentatifs ont été comparés (tableau~\ref{tab:protocoles})~:
+Quatre protocoles représentatifs ont été comparés (tableau~\ref{tab:protocoles})~: MQTT, CoAP (\emph{Constrained Application Protocol}), AMQP (\emph{Advanced Message Queuing Protocol}) et HTTP (\emph{HyperText Transfer Protocol}).
 
 \begin{table}[!htbp]
 \centering
@@ -152,20 +152,20 @@ Maturité IoT & Très large & Large & Industrielle & Universelle \\ \hline
 \end{tabularx}
 \end{table}
 
-\textbf{MQTT~5}~\cite{mqtt5} est retenu pour son empreinte faible, sa large adoption industrielle et ses mécanismes natifs TLS+ACL combinables avec le mTLS. MQTT ne garantissant ni confidentialité ni authenticité, TLS~1.3 avec authentification mutuelle s'impose.
+\textbf{MQTT~5}~\cite{mqtt5} est retenu pour son empreinte faible, sa large adoption industrielle et ses mécanismes natifs TLS+ACL combinables avec le mTLS. MQTT ne garantissant ni confidentialité ni authenticité, le protocole TLS~1.3 (\emph{Transport Layer Security}) avec authentification mutuelle s'impose.
 
 \subsection{Sécurisation du transport~: TLS 1.3 et mTLS}
 \label{sec:ea-tls}
 
 \subsubsection{TLS 1.3}
 
-Le protocole \acs{TLS}~1.3~\cite{rfc8446} apporte par rapport à TLS~1.2 une simplification significative~: suppression des suites cryptographiques obsolètes, négociation en \textbf{1-RTT} (et 0-RTT optionnel), \emph{forward secrecy} obligatoire, signatures et échanges de clés modernisés (ECDHE, EdDSA, AES-GCM, ChaCha20-Poly1305). Les recommandations opérationnelles publiées dans la \acs{RFC}~9325~\cite{rfc9325} guident le choix des paramètres et la durée de vie des certificats.
+Le protocole TLS~1.3~\cite{rfc8446} apporte par rapport à TLS~1.2 une simplification significative~: suppression des suites cryptographiques obsolètes, négociation en \textbf{1-RTT} (et 0-RTT optionnel), \emph{forward secrecy} obligatoire, signatures et échanges de clés modernisés (ECDHE, EdDSA, AES-GCM, ChaCha20-Poly1305). Les recommandations opérationnelles publiées dans la RFC~9325 (\emph{Request for Comments})~\cite{rfc9325} guident le choix des paramètres et la durée de vie des certificats.
 
 Par ailleurs, le protocole \textbf{DTLS} (\emph{Datagram Transport Layer Security}) constitue l'adaptation de TLS aux transports non fiables, principalement UDP. Il intègre des mécanismes de retransmission et de numérotation de séquence et sert à sécuriser le protocole CoAP, privilégié pour les dispositifs à très faibles ressources. Dans le cadre de ce projet, le choix de MQTT (fondé sur TCP) dicte l'utilisation de TLS plutôt que de DTLS.
 
 \subsubsection{Authentification mutuelle}
 
-Dans un déploiement classique, seul le serveur s'authentifie auprès du client. Le \textbf{mTLS} (\emph{mutual TLS}) impose en outre au client de présenter un certificat X.509 valide signé par une autorité de confiance. Cette double authentification permet~: (i)~d'éviter qu'un objet illégitime se connecte au broker~; (ii)~de chiffrer chaque session de bout en bout~; (iii)~de tracer chaque message via l'identité cryptographique de son émetteur. Cette propriété est essentielle pour la mise en place ultérieure d'\acs{ACL} par certificat dans Mosquitto~\cite{mosquitto_tls}.
+Dans un déploiement classique, seul le serveur s'authentifie auprès du client. Le \textbf{mTLS} (\emph{mutual TLS}) impose en outre au client de présenter un certificat X.509 valide signé par une autorité de confiance. Cette double authentification permet~: (i)~d'éviter qu'un objet illégitime se connecte au broker~; (ii)~de chiffrer chaque session de bout en bout~; (iii)~de tracer chaque message via l'identité cryptographique de son émetteur. Cette propriété est essentielle pour la mise en place ultérieure de listes de contrôle d'accès (ACL, \emph{Access Control List}) par certificat dans Mosquitto~\cite{mosquitto_tls}.
 
 \begin{resultbox}{Positionnement critique~: TLS 1.3 + mTLS}
 TLS~1.3 supprime les suites vulnérables, négocie en 1-RTT et impose la \emph{forward secrecy}. Le mTLS substitue à l'authentification par mot de passe une preuve cryptographique d'identité non duplicable. Cette double garantie~-- confidentialité \emph{et} authenticité mutuelle~-- ferme simultanément les vecteurs d'interception et d'usurpation identifiés.
@@ -345,11 +345,11 @@ Les sept objectifs spécifiques (O1--O7) structurent l'ensemble des travaux et s
 \textbf{ID} & \textbf{Objectif} \\
 \hline
 O1 & Concevoir une architecture IoT segmentée et reproductible, déployable dans un environnement émulé. \\ \hline
-O2 & Déployer une infrastructure à clés publiques (\acs{PKI}) automatisée fondée sur HashiCorp Vault. \\ \hline
-O3 & Imposer un chiffrement \acs{TLS}~1.3 avec authentification mutuelle (\acs{mTLS}) sur le broker MQTT. \\ \hline
+O2 & Déployer une infrastructure à clés publiques (PKI) automatisée fondée sur HashiCorp Vault. \\ \hline
+O3 & Imposer un chiffrement TLS~1.3 avec authentification mutuelle (mTLS) sur le broker MQTT. \\ \hline
 O4 & Émuler une flotte hétérogène de 50 dispositifs IoT et générer un trafic réaliste mêlant comportements légitimes et attaques. \\ \hline
-O5 & Mettre en place une analyse réseau native MQTT au moyen d'un \acs{IDS} Suricata. \\ \hline
-O6 & Centraliser et corréler les événements de sécurité dans un \acs{SIEM} Wazuh, avec visualisation via OpenSearch Dashboards. \\ \hline
+O5 & Mettre en place une analyse réseau native MQTT au moyen d'un IDS Suricata. \\ \hline
+O6 & Centraliser et corréler les événements de sécurité dans un SIEM Wazuh, avec visualisation via OpenSearch Dashboards. \\ \hline
 O7 & Développer un module de détection d'anomalies par apprentissage automatique (IsolationForest et Random Forest) et évaluer son apport. \\ \hline
 \end{tabularx}
 \end{table}
@@ -387,7 +387,7 @@ Segmentation réseau par VLANs sous GNS3 & Déploiement en environnement de prod
 PKI à deux niveaux avec HashiCorp Vault & Gestion des mises à jour firmware des objets (OTA) \\ \hline
 Broker MQTT en TLS~1.3 + mTLS avec ACL par topic & Sécurité de la couche matérielle des dispositifs \\ \hline
 Émulation d'une flotte de 50 dispositifs hétérogènes & Flotte supérieure à 50 dispositifs (contrainte ressources hôte) \\ \hline
-Détection IDS Suricata + corrélation SIEM Wazuh & Intégration aux outils SOC existants de Tunisie Telecom \\ \hline
+Détection IDS Suricata + corrélation SIEM Wazuh & Intégration aux outils SOC (\emph{Security Operations Center}) existants de Tunisie Telecom \\ \hline
 Pipeline ML hors ligne (IsolationForest, Random Forest) & Scoring ML en temps réel sur flux de données en streaming \\ \hline
 Évaluation des performances (latence, débit mTLS) & Tests de charge en environnement radio réel (4G/5G/NB-IoT) \\ \hline
 \end{tabularx}
