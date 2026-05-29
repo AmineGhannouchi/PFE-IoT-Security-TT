@@ -14,8 +14,6 @@ Le laboratoire est entièrement reproductible sur une station Windows~10/11 (16~
 \section{Architecture globale et topologie réseau}
 \label{sec:re-archi}
 
-\subsection{Topologie réseau}
-
 La figure~\ref{fig:topo-p1} présente la topologie réseau du laboratoire~: la chaîne Internet~\textrightarrow{} pfSense~\textrightarrow{} MikroTik et la segmentation en cinq VLANs, avec un miroir passif du trafic DMZ vers Suricata (zone Analyse). L'architecture générale du système a déjà été présentée au chapitre~\ref{chap:conception} (figure~\ref{fig:archi-reelle}) et l'inventaire complet des composants figure au chapitre~\ref{chap:environnement}~; la présente section en détaille la topologie réseau effective.
 
 \begin{figure}[!htbp]
@@ -191,8 +189,7 @@ Les trois modèles sont entraînés en parallèle sur les mêmes 29~features num
 \paragraph{Phase~3 — Comparaison, export et intégration SIEM.}
 Les trois modèles sont comparés sur F1, ROC-AUC, précision et rappel. La stratégie retenue est bicouche~: IsolationForest pour la détection sans étiquettes (données de production non labellisées) et RandomForest binaire pour la classification en temps réel du trafic labelé. Les modèles sont sauvegardés au format \texttt{.pkl} (joblib) dans \texttt{ml/models/}. Les scores d'anomalie sont transmis à Wazuh via l'API REST (port~55000) et corrélés avec les alertes Suricata pour une détection multicouche~: un message simultanément signalé par l'IDS et classé anormal par le modèle ML déclenche une alarme de niveau critique.
 
-\subsection{Données et features}
-
+\paragraph{Données et features.}
 Le jeu de données utilisé contient 76\,000 enregistrements répartis en huit classes (1 normale + 7 attaques)~\cite{hasan2020securing}. Les figures~\ref{fig:eda-classes} et~\ref{fig:eda-corr} présentent l'analyse exploratoire.
 
 \begin{figure}[!htbp]

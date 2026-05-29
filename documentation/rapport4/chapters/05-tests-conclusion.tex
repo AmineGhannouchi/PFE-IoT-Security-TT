@@ -27,9 +27,6 @@ Tests de performance & Mesurer latence, débit, handshake mTLS & paho-mqtt, hype
 \end{tabularx}
 \end{table}
 
-\subsection{Tests unitaires et vérifications préalables}
-\label{subsec:tc-unitaires}
-
 Avant les campagnes de test, un ensemble de vérifications unitaires a validé chaque brique~: émission, renouvellement et révocation PKI Vault avec vérification de la chaîne de confiance (\texttt{openssl verify})~; connexion mTLS réussie avec certificat valide et rejet avec certificat expiré, auto-signé ou révoqué~; enforcement ACL Mosquitto (publication autorisée sur les topics du CN, rejet sur ceux d'un autre dispositif)~; chargement des trois modèles \texttt{.pkl} et prédiction sur un vecteur de test connu~; validation du routage inter-VLAN et du port mirroring DMZ\textrightarrow{}Suricata. Ces vérifications ont permis de corriger plusieurs erreurs de configuration avant le lancement des campagnes.
 
 \section{Résultats de sécurité}
@@ -57,8 +54,6 @@ S6 -- Compromission certificat  &  3/10 &  6/10 & 10/10 \\ \hline
 \begin{resultbox}[Lecture]
 La complémentarité \emph{règles}~$+$~\emph{ML} est clairement démontrée~: les attaques exploitant un vecteur réseau identifiable (S1--S5) sont couvertes par les règles~; le scénario~S6 (certificat valide réutilisé) n'est détecté de manière fiable que par le module ML, qui repère l'écart comportemental.
 \end{resultbox}
-
-\subsection{Preuves visuelles}
 
 Les captures suivantes étayent les taux du tableau~\ref{tab:detection-secu} en apportant, pour chaque couche de défense, une preuve visuelle de son fonctionnement effectif. La figure~\ref{fig:pfsense-rules} présente les règles pfSense actives.
 
