@@ -84,7 +84,7 @@ Dans le cadre de ce travail, l'objectif est de construire un prototype expérime
 
 L'Internet des Objets constitue l'une des évolutions technologiques les plus structurantes de la décennie actuelle. Selon l'ENISA (\emph{European Union Agency for Cybersecurity})~\cite{enisa_iot}, le nombre de dispositifs connectés actifs dans le monde poursuit une croissance soutenue, portée par la multiplication des cas d'usage dans l'industrie, les villes intelligentes, la santé connectée, les infrastructures énergétiques et les réseaux de transport. Cette expansion génère un volume massif de données dont la collecte, le transport et le traitement reposent en très grande partie sur les infrastructures des opérateurs télécom.
 
-Cette croissance s'accompagne cependant d'une complexification notable des exigences de sécurité. Meneghello et al.~\cite{meneghello2019iot} soulignent que les dispositifs IoT présentent structurellement des vulnérabilités liées à leur conception~: ressources processeur et mémoire limitées rendant difficile l'intégration de mécanismes cryptographiques complets, cycles de mise à jour longs ou inexistants, et exposition à des réseaux partagés peu maîtrisés. Ces fragilités sont exploitées de manière croissante par des acteurs malveillants, comme l'illustre l'attaque Mirai~\cite{kolias2017mirai}, qui a mobilisé des centaines de milliers d'objets compromis pour générer des attaques par déni de service dépassant 1~Tbit/s (analysée à la section~\ref{sec:ea-menaces}).
+Cette croissance s'accompagne cependant d'une complexification notable des exigences de sécurité. La littérature souligne que les dispositifs IoT présentent structurellement des vulnérabilités liées à leur conception~: ressources processeur et mémoire limitées rendant difficile l'intégration de mécanismes cryptographiques complets, cycles de mise à jour longs ou inexistants, et exposition à des réseaux partagés peu maîtrisés. Ces fragilités sont exploitées de manière croissante par des acteurs malveillants, comme l'illustre l'attaque Mirai, qui a mobilisé des centaines de milliers d'objets compromis pour générer des attaques par déni de service dépassant 1~Tbit/s (analysée à la section~\ref{sec:ea-menaces}).
 
 \subsection{Rôle des opérateurs télécom dans l'écosystème IoT}
 
@@ -107,7 +107,7 @@ Ces contraintes font de la sécurisation IoT un enjeu de premier ordre pour les 
 
 \subsection{Surface d'attaque étendue}
 
-Les écosystèmes IoT présentent une surface d'attaque significativement plus large que les systèmes informatiques classiques. Meneghello \emph{et al.}~\cite{meneghello2019iot} en distinguent quatre couches~: (i)~la couche \emph{matérielle} (composants embarqués, interfaces de débogage exposées, attaques par canal auxiliaire)~; (ii)~la couche \emph{firmware} (mises à jour non signées, exécution de code arbitraire)~; (iii)~la couche \emph{réseau} (transports en clair, protocoles propriétaires faibles)~; (iv)~la couche \emph{services et écosystème} (API, \emph{Application Programming Interface}, non authentifiées, applications mobiles vulnérables, multi-tenance mal cloisonnée).
+Les écosystèmes IoT présentent une surface d'attaque significativement plus large que les systèmes informatiques classiques. L'analyse de la littérature en distingue quatre couches~: (i)~la couche \emph{matérielle} (composants embarqués, interfaces de débogage exposées, attaques par canal auxiliaire)~; (ii)~la couche \emph{firmware} (mises à jour non signées, exécution de code arbitraire)~; (iii)~la couche \emph{réseau} (transports en clair, protocoles propriétaires faibles)~; (iv)~la couche \emph{services et écosystème} (API, \emph{Application Programming Interface}, non authentifiées, applications mobiles vulnérables, multi-tenance mal cloisonnée).
 
 Au niveau matériel, les interfaces de débogage non désactivées (JTAG, UART) exposent un accès physique permettant l'extraction de clés cryptographiques ou la modification du firmware. Au niveau logiciel, les API REST ou MQTT de gestion des dispositifs constituent un vecteur complémentaire lorsqu'elles sont déployées sans authentification ou avec des mécanismes d'autorisation insuffisants. Ces vecteurs illustrent la nécessité d'une approche de sécurisation multicouche.
 
@@ -117,7 +117,7 @@ L'OWASP (\emph{Open Worldwide Application Security Project}) synthétise dans so
 
 \subsection{Études de cas de référence}
 
-L'analyse de l'attaque \textbf{Mirai}~\cite{kolias2017mirai,antonakakis2017mirai} illustre toutes ces faiblesses simultanément~: le botnet exploitait des couples identifiant/mot de passe par défaut sur des objets exposés en SSH/Telnet, recrutait des centaines de milliers de dispositifs en quelques jours, et générait des attaques par déni de service distribué (DDoS, \emph{Distributed Denial of Service}) dépassant 1~Tbit/s. Le rapport \emph{ENISA Threat Landscape for IoT}~\cite{enisa_iot} confirme que ces vecteurs restent dominants et identifie comme contre-mesures prioritaires~: l'authentification forte, le chiffrement systématique, la segmentation réseau et la supervision active. Ces orientations rejoignent les recommandations du NIST (\emph{National Institute of Standards and Technology})~\cite{nist_sp800213} pour la cybersécurité des dispositifs IoT.
+L'analyse de l'attaque \textbf{Mirai} illustre toutes ces faiblesses simultanément~: le botnet exploitait des couples identifiant/mot de passe par défaut sur des objets exposés en SSH/Telnet, recrutait des centaines de milliers de dispositifs en quelques jours, et générait des attaques par déni de service distribué (DDoS, \emph{Distributed Denial of Service}) dépassant 1~Tbit/s. Le rapport \emph{ENISA Threat Landscape for IoT}~\cite{enisa_iot} confirme que ces vecteurs restent dominants et identifie comme contre-mesures prioritaires~: l'authentification forte, le chiffrement systématique, la segmentation réseau et la supervision active. Ces orientations rejoignent les recommandations du NIST (\emph{National Institute of Standards and Technology})~\cite{nist_sp800213} pour la cybersécurité des dispositifs IoT.
 
 Cette cartographie des menaces permet d'identifier les vecteurs prioritaires à contrer~: interception des flux, usurpation d'identité, déni de service et abus de certificats. La section suivante présente les technologies et protocoles mobilisés pour y répondre.
 
@@ -159,7 +159,7 @@ Maturité IoT & Très large & Large & Industrielle & Universelle \\ \hline
 
 \subsubsection{TLS 1.3}
 
-Le protocole TLS~1.3~\cite{rfc8446} apporte par rapport à TLS~1.2 une simplification significative~: suppression des suites cryptographiques obsolètes, négociation en \textbf{1-RTT} (et 0-RTT optionnel), \emph{forward secrecy} obligatoire, signatures et échanges de clés modernisés (ECDHE, EdDSA, AES-GCM, ChaCha20-Poly1305). Les recommandations opérationnelles publiées dans la RFC~9325 (\emph{Request for Comments})~\cite{rfc9325} guident le choix des paramètres et la durée de vie des certificats.
+Le protocole TLS~1.3 (RFC~8446) apporte par rapport à TLS~1.2 une simplification significative~: suppression des suites cryptographiques obsolètes, négociation en \textbf{1-RTT} (et 0-RTT optionnel), \emph{forward secrecy} obligatoire, signatures et échanges de clés modernisés (ECDHE, EdDSA, AES-GCM, ChaCha20-Poly1305). Les recommandations opérationnelles publiées dans la RFC~9325 (\emph{Request for Comments}) guident le choix des paramètres et la durée de vie des certificats.
 
 Par ailleurs, le protocole \textbf{DTLS} (\emph{Datagram Transport Layer Security}) constitue l'adaptation de TLS aux transports non fiables, principalement UDP. Il intègre des mécanismes de retransmission et de numérotation de séquence et sert à sécuriser le protocole CoAP, privilégié pour les dispositifs à très faibles ressources. Dans le cadre de ce projet, le choix de MQTT (fondé sur TCP) dicte l'utilisation de TLS plutôt que de DTLS.
 
@@ -249,14 +249,14 @@ Les règles IDS ne couvrent que les attaques connues~; une couche ML est nécess
 \subsection{Apprentissage automatique pour la détection d'anomalies}
 \label{sec:ea-ml}
 
-Les approches par règles statiques sont efficaces pour les attaques connues mais peinent à détecter les comportements nouveaux. Hasan \emph{et al.}~\cite{hasan2020securing} ont montré qu'un classifieur supervisé entraîné sur des features réseau et applicatives obtient des taux de détection supérieurs à 99~\% sur sept catégories d'attaques IoT. Les algorithmes les plus utilisés sont~:
+Les approches par règles statiques sont efficaces pour les attaques connues mais peinent à détecter les comportements nouveaux. La littérature a montré qu'un classifieur supervisé entraîné sur des features réseau et applicatives obtient des taux de détection supérieurs à 99~\% sur sept catégories d'attaques IoT. Les algorithmes les plus utilisés sont~:
 
 \begin{itemize}[leftmargin=*]
-  \item \textbf{Isolation Forest}~\cite{liu2008isolation}~: méthode non supervisée d'isolement, particulièrement efficace en haute dimension et adaptée aux scénarios où les anomalies sont rares~;
-  \item \textbf{Random Forest}~\cite{breiman2001random}~: ensemble d'arbres de décision, robuste, interprétable (\emph{feature importance}) et performant en classification multi-classes.
+  \item \textbf{Isolation Forest}~: méthode non supervisée d'isolement, particulièrement efficace en haute dimension et adaptée aux scénarios où les anomalies sont rares~;
+  \item \textbf{Random Forest}~: ensemble d'arbres de décision, robuste, interprétable (\emph{feature importance}) et performant en classification multi-classes.
 \end{itemize}
 
-Ces deux algorithmes sont complémentaires~: IF (non supervisé) modélise la normalité et détecte les anomalies inconnues (scénario~S6)~; RF (supervisé) fournit une classification précise en sept catégories avec mesure d'importance par feature. La bibliothèque \emph{scikit-learn}~\cite{scikit_learn} constitue le socle du pipeline ML.
+Ces deux algorithmes sont complémentaires~: IF (non supervisé) modélise la normalité et détecte les anomalies inconnues (scénario~S6)~; RF (supervisé) fournit une classification précise en sept catégories avec mesure d'importance par feature. La bibliothèque \emph{scikit-learn} constitue le socle du pipeline ML.
 
 %% ====================================================================
 %%  SECTION : Étude de l'existant et analyse critique
@@ -399,7 +399,7 @@ Quatre contraintes ont influencé directement les choix architecturaux~: (i)~\te
 
 \subsection{Hypothèses de travail}
 
-L'expérimentation repose sur trois hypothèses~: (1)~le dataset de 76\,000~messages en huit classes~\cite{hasan2020securing} est représentatif du trafic IoT réel~; (2)~les mesures émulées (latence mTLS, débit) constituent des ordres de grandeur valides, sans reproduire un réseau radio réel~; (3)~la détection par règles (Suricata/Wazuh) et par ML sont des couches complémentaires et non substituables.
+L'expérimentation repose sur trois hypothèses~: (1)~le dataset de 76\,000~messages en huit classes est représentatif du trafic IoT réel~; (2)~les mesures émulées (latence mTLS, débit) constituent des ordres de grandeur valides, sans reproduire un réseau radio réel~; (3)~la détection par règles (Suricata/Wazuh) et par ML sont des couches complémentaires et non substituables.
 
 %% ====================================================================
 %%  SECTION : Démarche méthodologique
@@ -407,7 +407,7 @@ L'expérimentation repose sur trois hypothèses~: (1)~le dataset de 76\,000~mess
 \section{Démarche méthodologique}
 \label{sec:methodo}
 
-Trois cadres agiles ont été évalués~: Scrum~\cite{scrum_guide}, Kanban~\cite{anderson2010kanban} et XP~\cite{beck2004xp}. \textbf{Scrum} a été retenu pour trois raisons~: (i)~l'alignement des revues de sprint avec les jalons académiques (rapport intermédiaire, soutenance)~; (ii)~la flexibilité du backlog face aux imprévus techniques (blocage réseau, problèmes de certificats)~; (iii)~la priorisation garantissant la livraison des fonctionnalités critiques en premier. Kanban a été écarté pour son absence de cadence fixe, incompatible avec des jalons imposés, et XP pour ses pratiques (TDD, \emph{pair-programming}) disproportionnées en développement solo. Six sprints de deux semaines structurent la réalisation~; leur planification figure au chapitre~\ref{chap:conception}.
+Trois cadres agiles ont été évalués~: Scrum~\cite{scrum_guide}, Kanban et XP. \textbf{Scrum} a été retenu pour trois raisons~: (i)~l'alignement des revues de sprint avec les jalons académiques (rapport intermédiaire, soutenance)~; (ii)~la flexibilité du backlog face aux imprévus techniques (blocage réseau, problèmes de certificats)~; (iii)~la priorisation garantissant la livraison des fonctionnalités critiques en premier. Kanban a été écarté pour son absence de cadence fixe, incompatible avec des jalons imposés, et XP pour ses pratiques (TDD, \emph{pair-programming}) disproportionnées en développement solo. Six sprints de deux semaines structurent la réalisation~; leur planification figure au chapitre~\ref{chap:conception}.
 
 %% ====================================================================
 %%  SECTION : Conclusion

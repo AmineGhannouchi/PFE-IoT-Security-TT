@@ -107,7 +107,7 @@ Pour répondre à la problématique et atteindre les objectifs ci-dessus, nous p
 	\item Un \textbf{broker MQTT Mosquitto} configuré en TLS~1.3 avec authentification mutuelle obligatoire et listes de contrôle d'accès par topic~\cite{mosquitto_tls}~.
 	\item Un \textbf{simulateur de flotte} de 50 dispositifs Python rejouant 76\,000 messages issus d'un jeu de données réel, dont sept catégories d'attaques~.
 	\item Une \textbf{chaîne de détection} comprenant un IDS Suricata avec règles MQTT personnalisées~\cite{suricata_mqtt} et un SIEM Wazuh~\cite{wazuh_docs} pour la corrélation et la visualisation~.
-	\item Un \textbf{pipeline de ML} (IsolationForest~\cite{liu2008isolation} et Random Forest~\cite{breiman2001random}) entraîné sur les caractéristiques extraites du trafic, capable de détecter les anomalies non couvertes par les règles statiques.
+	\item Un \textbf{pipeline de ML} (IsolationForest et Random Forest) entraîné sur les caractéristiques extraites du trafic, capable de détecter les anomalies non couvertes par les règles statiques.
 \end{enumerate}
 
 Le tableau~\ref{tab:mapping-sol} établit la correspondance entre les lacunes diagnostiquées à la section~\ref{sec:analyse-existant}, les briques de la solution et les objectifs spécifiques auxquels elles répondent, assurant ainsi la traçabilité complète entre le diagnostic initial et l'architecture proposée.

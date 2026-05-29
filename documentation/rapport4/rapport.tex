@@ -130,8 +130,17 @@
 ]{hyperref}
 \usepackage{bookmark}
 
-\usepackage[backend=biber, style=ieee, sorting=none]{biblatex}
+\usepackage[backend=biber, style=ieee, sorting=none, url=true, doi=true]{biblatex}
 \addbibresource{bibliography.bib}
+%% Forcer l'affichage du champ urldate (date d'acces) pour toutes les references en ligne.
+%% Le style IEEE par defaut omet urldate ; on l'ajoute en fin de chaque entree concernee.
+\DeclareFieldFormat{urldate}{Consult\'e le~#1}
+\AtEveryBibitem{%
+  \iffieldundef{urldate}{}{%
+    \setunit{\addspace}%
+    \printtext[parens]{\printurldate}%
+  }%
+}
 
 \usepackage{microtype}
 \usepackage{csquotes}

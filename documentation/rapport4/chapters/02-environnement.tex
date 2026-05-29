@@ -179,7 +179,7 @@ Deux rôles sont configurés pour encadrer l'émission~:
 Le \textbf{fleet-sim} est un simulateur de flotte développé en Python, construit sur l'image \texttt{python:3.11-alpine}. Il émule le comportement de 50~dispositifs IoT hétérogènes.
 
 \paragraph{Rôle.}
-Le simulateur rejoue un jeu de données de 76\,000~messages issus d'un \emph{dataset} de référence~\cite{hasan2020securing}, couvrant huit catégories~: trafic normal et sept types d'attaques. Chaque dispositif émulé établit une connexion MQTT/TLS~1.3 avec authentification mutuelle en utilisant son propre certificat client.
+Le simulateur rejoue un jeu de données de 76\,000~messages issus d'un \emph{dataset} de référence, couvrant huit catégories~: trafic normal et sept types d'attaques. Chaque dispositif émulé établit une connexion MQTT/TLS~1.3 avec authentification mutuelle en utilisant son propre certificat client.
 
 \paragraph{Fonctionnement.}
 Pour chaque dispositif, le simulateur~:

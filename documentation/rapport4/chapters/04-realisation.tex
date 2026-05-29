@@ -126,7 +126,7 @@ Six scénarios couvrent les principales catégories d'attaques applicables à un
 \textbf{ID} & \textbf{Vecteur} & \textbf{Détection} & \textbf{Contre-mesure} \\
 \hline
 S1 -- MITM & Connexion port 1883 (clair)~; MITM capture/modifie les messages & Règle Suricata TCP/1883 & pfSense bloque 1883~; broker sur 8883 + \texttt{require\_certificate} \\ \hline
-S2 -- Sniffing & Interception passive MQTT non chiffré & Alerte Suricata hors session TLS & TLS~1.3 obligatoire (RFC~9325~\cite{rfc9325}) \\ \hline
+S2 -- Sniffing & Interception passive MQTT non chiffré & Alerte Suricata hors session TLS & TLS~1.3 obligatoire (RFC~9325) \\ \hline
 S3 -- Brute-force & 500 \texttt{CONNECT}/60\,s avec certificats forgés & Seuil \texttt{CONNECT}/IP Suricata & Certificats CA Vault~; \emph{rate-limit} pfSense \\ \hline
 S4 -- Exfiltration & \texttt{SUBSCRIBE} à \texttt{tt/admin/\#} & Log \texttt{ACL denied} + corrélation Wazuh & ACL stricte par CN, granularité topic \\ \hline
 S5 -- Flood & Milliers de connexions TLS partielles & Taux TLS anormal Suricata & \texttt{max\_connections}~; blacklist Wazuh \\ \hline
@@ -190,7 +190,7 @@ Les trois modèles sont entraînés en parallèle sur les mêmes 29~features num
 Les trois modèles sont comparés sur F1, ROC-AUC, précision et rappel. La stratégie retenue est bicouche~: IsolationForest pour la détection sans étiquettes (données de production non labellisées) et RandomForest binaire pour la classification en temps réel du trafic labelé. Les modèles sont sauvegardés au format \texttt{.pkl} (joblib) dans \texttt{ml/models/}. Les scores d'anomalie sont transmis à Wazuh via l'API REST (port~55000) et corrélés avec les alertes Suricata pour une détection multicouche~: un message simultanément signalé par l'IDS et classé anormal par le modèle ML déclenche une alarme de niveau critique.
 
 \paragraph{Données et features.}
-Le jeu de données utilisé contient 76\,000 enregistrements répartis en huit classes (1 normale + 7 attaques)~\cite{hasan2020securing}. Les figures~\ref{fig:eda-classes} et~\ref{fig:eda-corr} présentent l'analyse exploratoire.
+Le jeu de données utilisé contient 76\,000 enregistrements répartis en huit classes (1 normale + 7 attaques). Les figures~\ref{fig:eda-classes} et~\ref{fig:eda-corr} présentent l'analyse exploratoire.
 
 \begin{figure}[!htbp]
 \centering
