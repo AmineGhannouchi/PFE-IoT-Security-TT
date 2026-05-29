@@ -59,9 +59,15 @@ add chain=forward src-address=192.168.10.0/24 dst-address=192.168.30.10 \
 add chain=forward src-address=192.168.20.0/24 dst-address=192.168.30.10 \
     protocol=tcp dst-port=8200 action=accept comment="DMZ→Vault verify"
 
-# DMZ → SIEM (logs)
+# DMZ → SIEM (logs Wazuh agent + syslog rsyslog)
 add chain=forward src-address=192.168.20.0/24 dst-address=192.168.40.10 \
-    protocol=tcp dst-port=1514 action=accept comment="DMZ→Wazuh logs"
+    protocol=tcp dst-port=1514 action=accept comment="DMZ→Wazuh agent"
+add chain=forward src-address=192.168.20.0/24 dst-address=192.168.40.10 \
+    protocol=udp dst-port=514 action=accept comment="DMZ→Wazuh syslog UDP"
+
+# SIEM → DMZ (Wazuh monitoring Mosquitto)
+add chain=forward src-address=192.168.40.10 dst-address=192.168.20.10 \
+    protocol=tcp dst-port=8883 action=accept comment="Wazuh→Mosquitto monitoring"
 
 # Analyse → SIEM (alertes)
 add chain=forward src-address=192.168.50.0/24 dst-address=192.168.40.10 \
