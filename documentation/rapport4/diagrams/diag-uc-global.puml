@@ -24,9 +24,8 @@ title Diagramme de cas d'utilisation global
 
 left to right direction
 
-' ── Acteurs ──
+' ── Acteurs humains (a gauche) ──
 
-actor "Dispositif IoT\n(acteur externe)" as DEV
 actor "Administrateur\nSecurite" as ADMIN
 actor "Operateur\nSOC" as SOC
 
@@ -58,19 +57,9 @@ rectangle "Plateforme de securisation IoT" {
   usecase "Evaluer les\nperformances" as UC12
 }
 
-' ── Liens Dispositif ──
+' ── Acteur systeme secondaire (a droite, sous forme de rectangle) ──
 
-DEV --> UC1
-DEV --> UC2
-DEV --> UC3
-DEV --> UC4
-
-' ── Inclusions ──
-
-UC1 ..> UC_VERIF : <<include>>
-UC2 ..> UC_AUTH  : <<include>>
-UC2 ..> UC_TLS   : <<include>>
-UC3 ..> UC_TLS   : <<include>>
+rectangle "<<acteur systeme>>\nDispositif IoT" as DEV
 
 ' ── Liens Administrateur ──
 
@@ -85,5 +74,19 @@ SOC --> UC9
 SOC --> UC10
 SOC --> UC11
 SOC --> UC12
+
+' ── Liens Dispositif IoT (a droite : fleches inversees) ──
+
+UC1 --> DEV
+UC2 --> DEV
+UC3 --> DEV
+UC4 --> DEV
+
+' ── Inclusions ──
+
+UC1 ..> UC_VERIF : <<include>>
+UC2 ..> UC_AUTH  : <<include>>
+UC2 ..> UC_TLS   : <<include>>
+UC3 ..> UC_TLS   : <<include>>
 
 @enduml
