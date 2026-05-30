@@ -1,0 +1,174 @@
+%YAML 1.1
+---
+# =====================================================
+# Suricata 7 — Configuration PFE IoT Security TT
+# Zone Analyse (VLAN 50) — Parser MQTT natif + TLS/JA4
+# Reçoit le trafic miroir de la zone DMZ (port mirroring MikroTik)
+# =====================================================
+
+vars:
+  address-groups:
+    # Les 5 VLANs du laboratoire
+    HOME_NET: "[192.168.10.0/24,192.168.20.0/24,192.168.30.0/24,192.168.40.0/24,192.168.50.0/24]"
+    EXTERNAL_NET: "!$HOME_NET"
+    # Broker MQTT (zone DMZ)
+    MQTT_BROKER: "[192.168.20.10]"
+    # Zone IoT légitime (seule autorisée à publier)
+    IOT_NET: "[192.168.10.0/24]"
+    HTTP_SERVERS: "$HOME_NET"
+    SMTP_SERVERS: "$HOME_NET"
+    SQL_SERVERS: "$HOME_NET"
+    DNS_SERVERS: "$HOME_NET"
+    TELNET_SERVERS: "$HOME_NET"
+    DC_SERVERS: "$HOME_NET"
+
+  port-groups:
+    HTTP_PORTS: "80"
+    SHELLCODE_PORTS: "!80"
+    MQTT_PORTS: "8883"
+    ORACLE_PORTS: 1521
+    SSH_PORTS: 22
+    DNP3_PORTS: 20000
+    MODBUS_PORTS: 502
+    FILE_DATA_PORTS: "[$HTTP_PORTS,110,143]"
+    FTP_PORTS: 21
+    GENEVE_PORTS: 6081
+    VXLAN_PORTS: 4789
+    TEREDO_PORTS: 3544
+
+default-log-dir: /var/log/suricata
+
+# ─── Statistiques ───────────────────────────────────────────────
+stats:
+  enabled: yes
+  interval: 30
+
+# ─── Sorties : EVE JSON (consommé par Wazuh) ────────────────────
+outputs:
+  - eve-log:
+      enabled: yes
+      filetype: regular
+      filename: /var/log/suricata/eve.json
+      community-id: yes
+      types:
+        - alert:
+            payload: yes
+            payload-printable: yes
+            packet: yes
+            metadata: yes
+            tagged-packets: yes
+            http: yes
+            tls: yes
+            mqtt: yes
+        - mqtt
+        - tls:
+            extended: yes
+        - flow
+        - stats:
+            totals: yes
+            threads: no
+            deltas: no
+
+  - fast:
+      enabled: yes
+      filename: /var/log/suricata/fast.log
+
+  - stats:
+      enabled: yes
+      filename: /var/log/suricata/stats.log
+      totals: yes
+      threads: no
+
+# ─── Journalisation console (visible dans GNS3) ─────────────────
+logging:
+  default-log-level: notice
+  outputs:
+    - console:
+        enabled: yes
+    - file:
+        enabled: yes
+        level: info
+        filename: /var/log/suricata/suricata.log
+
+# ─── Capture : AF_PACKET sur l'interface miroir DMZ ─────────────
+af-packet:
+  - interface: eth0
+    cluster-id: 99
+    cluster-type: cluster_flow
+    defrag: yes
+    use-mmap: yes
+    tpacket-v3: yes
+    ring-size: 2048
+    checksum-checks: kernel
+  - interface: default
+
+# ─── Décodage des protocoles applicatifs ────────────────────────
+app-layer:
+  protocols:
+    tls:
+      enabled: yes
+      detection-ports:
+        dp: "[443,8883]"
+      ja3-fingerprints: yes
+      ja4-fingerprints: yes
+    mqtt:
+      enabled: yes
+      # Parser MQTT natif sur le port du broker TLS
+      detection-ports:
+        dp: 8883
+      max-msg-length: 1mb
+    http:
+      enabled: yes
+    ssh:
+      enabled: yes
+    dns:
+      tcp:
+        enabled: yes
+        detection-ports:
+          dp: 53
+      udp:
+        enabled: yes
+        detection-ports:
+          dp: 53
+
+# ─── Moteur de détection ────────────────────────────────────────
+detect:
+  profile: medium
+  custom-values:
+    toclient-groups: 3
+    toserver-groups: 25
+  sgh-mpm-context: auto
+  inspection-recursion-limit: 3000
+
+mpm-algo: auto
+spm-algo: auto
+
+threading:
+  set-cpu-affinity: no
+  detect-thread-ratio: 1.0
+
+# ─── Règles ─────────────────────────────────────────────────────
+default-rule-path: /var/lib/suricata/rules
+rule-files:
+  - mqtt-iot.rules      # Règles MQTT du rapport (SID 9000001-9000004)
+  - tls-iot.rules       # Règles TLS/JA4 (trafic chiffré réel)
+
+classification-file: /etc/suricata/classification.config
+reference-config-file: /etc/suricata/reference.config
+
+# ─── Réassemblage de flux ───────────────────────────────────────
+stream:
+  memcap: 64mb
+  checksum-validation: no
+  inline: no
+  reassembly:
+    memcap: 256mb
+    depth: 1mb
+    toserver-chunk-size: 2560
+    toclient-chunk-size: 2560
+
+flow:
+  memcap: 128mb
+  hash-size: 65536
+  prealloc: 10000
+  emergency-recovery: 30

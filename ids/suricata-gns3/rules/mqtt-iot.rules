@@ -1,0 +1,59 @@
+# ============================================================
+# PFE IoT Security — Règles MQTT natives (parser Suricata v7)
+# Conformes au rapport (figure 4.6) — SID 9000001 à 9000004
+# Zone Analyse — détection au niveau applicatif MQTT
+#
+# NOTE : ces règles exploitent le parser MQTT natif et ne se
+# déclenchent que si le trafic MQTT est observable en clair
+# (ex. miroir avant chiffrement, ou broker de test sur 1883).
+# Sur du TLS 1.3 chiffré, voir tls-iot.rules (JA4 / volumétrie).
+# ============================================================
+
+# ----- SID 9000001 : IoT DoS — flood de connexions -----
+# > 50 CONNECT en 10 s depuis la même IP source
+alert mqtt any any -> $HOME_NET any ( \
+    msg:"PFE [HIGH] IoT DoS - MQTT connection flood"; \
+    mqtt.type:connect; \
+    threshold:type threshold, track by_src, count 50, seconds 10; \
+    classtype:denial-of-service; \
+    sid:9000001; rev:1; \
+    metadata:attack_category DoS, severity high;)
+
+# ----- SID 9000002 : Topic de commande suspect -----
+# Publication sur un topic commençant par "cmd/"
+alert mqtt any any -> $HOME_NET any ( \
+    msg:"PFE [MEDIUM] IoT Suspicious command topic"; \
+    mqtt.type:publish; \
+    mqtt.publish.topic; content:"cmd/"; startswith; nocase; \
+    classtype:policy-violation; \
+    sid:9000002; rev:1; \
+    metadata:attack_category policy_violation, severity medium;)
+
+# ----- SID 9000003 : Payload MQTT surdimensionné -----
+# Taille du message PUBLISH > 4096 octets (injection / exfiltration)
+alert mqtt any any -> $HOME_NET any ( \
+    msg:"PFE [HIGH] IoT Oversized MQTT payload"; \
+    mqtt.type:publish; \
+    mqtt.publish.message; bsize:>4096; \
+    classtype:attempted-admin; \
+    sid:9000003; rev:1; \
+    metadata:attack_category injection, severity high;)
+
+# ----- SID 9000004 : Scan du broker -----
+# > 20 CONNECT en 5 s (reconnaissance, généralement sans SUBSCRIBE)
+alert mqtt any any -> $HOME_NET any ( \
+    msg:"PFE [MEDIUM] IoT MQTT broker scanning"; \
+    mqtt.type:connect; \
+    threshold:type threshold, track by_src, count 20, seconds 5; \
+    classtype:attempted-recon; \
+    sid:9000004; rev:1; \
+    metadata:attack_category scan, severity medium;)
+
+# ----- Bonus : SUBSCRIBE sur topic admin (exfiltration S4) -----
+alert mqtt any any -> $HOME_NET any ( \
+    msg:"PFE [HIGH] IoT Unauthorized SUBSCRIBE to admin topic"; \
+    mqtt.type:subscribe; \
+    mqtt.subscribe.topic; content:"admin"; nocase; \
+    classtype:policy-violation; \
+    sid:9000005; rev:1; \
+    metadata:attack_category exfiltration, severity high;)
