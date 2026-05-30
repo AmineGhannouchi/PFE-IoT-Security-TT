@@ -32,30 +32,7 @@ Cette organisation garantit une couverture progressive~: les tests unitaires val
 \section{Résultats de sécurité}
 \label{sec:tc-secu}
 
-Les six scénarios d'attaque définis en \S\ref{sec:re-attaques} ont été rejoués 10~fois chacun. Les taux de détection sont consignés dans le tableau~\ref{tab:detection-secu}.
-
-\begin{table}[!htbp]
-\centering
-\caption{Taux de détection des scénarios d'attaque (10 rejeux par scénario)}
-\label{tab:detection-secu}
-\begin{tabularx}{\linewidth}{|X|c|c|c|}
-\hline
-\textbf{Scénario} & \textbf{Suricata} & \textbf{Wazuh (corr.)} & \textbf{ML} \\
-\hline
-S1 -- MITM TLS désactivé        & 10/10 & 10/10 & N/A \\ \hline
-S2 -- Sniffing MQTT clair       & 10/10 & 10/10 & N/A \\ \hline
-S3 -- Brute-force CONNECT       & 10/10 & 10/10 & 9/10 \\ \hline
-S4 -- Topic non autorisé        &  8/10 & 10/10 & 10/10 \\ \hline
-S5 -- Flood CONNECT             & 10/10 & 10/10 & 9/10 \\ \hline
-S6 -- Compromission certificat  &  3/10 &  6/10 & 10/10 \\ \hline
-\end{tabularx}
-\end{table}
-
-\begin{resultbox}[Lecture]
-La complémentarité \emph{règles}~$+$~\emph{ML} est clairement démontrée~: les attaques exploitant un vecteur réseau identifiable (S1--S5) sont couvertes par les règles~; le scénario~S6 (certificat valide réutilisé) n'est détecté de manière fiable que par le module ML, qui repère l'écart comportemental.
-\end{resultbox}
-
-Les captures suivantes étayent les taux du tableau~\ref{tab:detection-secu} en apportant, pour chaque couche de défense, une preuve visuelle de son fonctionnement effectif. La figure~\ref{fig:pfsense-rules} présente les règles pfSense actives.
+Les six scénarios d'attaque définis en \S\ref{sec:re-attaques} ont été rejoués sur la plateforme afin d'évaluer chaque couche de défense (pfSense, broker Mosquitto, Suricata et Wazuh). Les captures suivantes apportent, pour chaque couche, une preuve visuelle de son fonctionnement effectif. La figure~\ref{fig:pfsense-rules} présente les règles pfSense actives.
 
 \begin{figure}[!htbp]
 \centering
@@ -95,7 +72,7 @@ Le code de sortie~1 et le compteur de 0~connexion réussie sur 24~tentatives dé
 \end{figure}
 \FloatBarrier
 
-Les 51~alertes réparties sur les quatre SID personnalisées attestent de la capacité de Suricata à opérer au niveau applicatif MQTT~; l'absence de faux positif sur le trafic TLS légitime confirme la précision des seuils retenus. La figure~\ref{fig:wazuh-dashboard-test} montre la corrélation SIEM.
+Les alertes générées par les quatre SID personnalisées attestent de la capacité de Suricata à opérer au niveau applicatif MQTT, en distinguant le trafic suspect du trafic TLS légitime sans générer d'alertes parasites. La figure~\ref{fig:wazuh-dashboard-test} montre la corrélation SIEM.
 
 \begin{figure}[!htbp]
 \centering
