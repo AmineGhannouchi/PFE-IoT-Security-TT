@@ -122,17 +122,17 @@ Six scénarios couvrent les principales catégories d'attaques applicables à un
 \centering
 \caption{Scénarios d'attaque, détection et contre-mesures}
 \label{tab:scenarios-attaque}
-\small
-\begin{tabularx}{\linewidth}{|l|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
+\footnotesize
+\begin{tabularx}{\linewidth}{|c|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
 \hline
 \textbf{ID} & \textbf{Vecteur} & \textbf{Détection} & \textbf{Contre-mesure} \\
 \hline
-S1 -- MITM & Connexion port 1883 (clair)~; MITM capture/modifie les messages & Règle Suricata TCP/1883 & pfSense bloque 1883~; broker sur 8883 + \texttt{require\_certificate} \\ \hline
-S2 -- Sniffing & Interception passive MQTT non chiffré & Alerte Suricata hors session TLS & TLS~1.3 obligatoire (RFC~9325) \\ \hline
-S3 -- Brute-force & 500 \texttt{CONNECT}/60\,s avec certificats forgés & Seuil \texttt{CONNECT}/IP Suricata & Certificats CA Vault~; \emph{rate-limit} pfSense \\ \hline
-S4 -- Exfiltration & \texttt{SUBSCRIBE} à \texttt{tt/admin/\#} & Log \texttt{ACL denied} + corrélation Wazuh & ACL stricte par CN, granularité topic \\ \hline
-S5 -- Flood & Milliers de connexions TLS partielles & Taux TLS anormal Suricata & \texttt{max\_connections}~; blacklist Wazuh \\ \hline
-S6 -- Cert.\ volé & Certificat \texttt{dev-017} réutilisé depuis IP inconnue & IF (écart comportemental) + corrélation Wazuh & Révocation Vault + rotation CRL \\ \hline
+S1 & MITM~: connexion port 1883 (clair), capture/modification des messages & Règle Suricata TCP/1883 & pfSense bloque 1883~; broker sur 8883 + \texttt{require\_certificate} \\ \hline
+S2 & Sniffing~: interception passive MQTT non chiffré & Alerte Suricata hors session TLS & TLS~1.3 obligatoire (RFC~9325) \\ \hline
+S3 & Brute-force~: 500 \texttt{CONNECT}/60\,s avec certificats forgés & Seuil \texttt{CONNECT}/IP Suricata & Certificats CA Vault~; \emph{rate-limit} pfSense \\ \hline
+S4 & Exfiltration~: \texttt{SUBSCRIBE} à \texttt{tt/admin/\#} & Log \texttt{ACL denied} + corrélation Wazuh & ACL stricte par CN, granularité topic \\ \hline
+S5 & Flood~: milliers de connexions TLS partielles & Taux TLS anormal Suricata & \texttt{max\_connections}~; blacklist Wazuh \\ \hline
+S6 & Cert.\ volé~: \texttt{dev-017} réutilisé depuis IP inconnue & IF (écart comportemental) + corrélation Wazuh & Révocation Vault + rotation CRL \\ \hline
 \end{tabularx}
 \end{table}
 

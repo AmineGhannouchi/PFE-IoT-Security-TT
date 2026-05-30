@@ -144,6 +144,13 @@
 
 \usepackage{microtype}
 \usepackage{csquotes}
+%% Tolerance accrue aux debordements de marge : etire les espaces
+%% jusqu'a 3em pour eviter les Overfull \hbox sur les paragraphes
+%% contenant de longs identifiants \texttt{...} ou des URL.
+\setlength{\emergencystretch}{3em}
+\tolerance=1000
+\hbadness=10000
+\hyphenpenalty=50
 \usepackage{acronym}
 \usepackage{enumitem}
 \usepackage{pifont}
