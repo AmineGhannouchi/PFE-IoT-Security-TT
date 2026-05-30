@@ -79,7 +79,7 @@ La figure~\ref{fig:uc-global} présente le diagramme de cas d'utilisation global
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.7\textwidth]{diag-uc-global.png}
+\includegraphics[width=0.92\textwidth,height=0.95\textheight,keepaspectratio]{diag-uc-global.png}
 \caption{Diagramme de cas d'utilisation global}
 \label{fig:uc-global}
 \end{figure}
@@ -139,6 +139,7 @@ La figure~\ref{fig:archi-vue-intro} schématise cette vision globale, qui sera d
 \caption{Vue d'ensemble de l'architecture}
 \label{fig:archi-vue-intro}
 \end{figure}
+\FloatBarrier
 
 Le schéma fait apparaître l'empilement des six briques~--- segmentation réseau, PKI, mTLS, ACL, chaîne IDS/SIEM et ML~--- chacune couvrant une lacune identifiée au diagnostic. L'intérêt de cette représentation est de montrer que la compromission d'une couche n'invalide pas les autres, validant ainsi le principe de défense en profondeur.
 
@@ -150,6 +151,7 @@ La figure~\ref{fig:archi-reelle} détaille la topologie réseau concrète de l'a
 \caption{Architecture générale du système}
 \label{fig:archi-reelle}
 \end{figure}
+\FloatBarrier
 
 On y distingue la segmentation en cinq VLANs~--- IoT, DMZ, PKI, SIEM et Analyse~--- avec le broker Mosquitto en DMZ comme point de convergence des flux applicatifs, le serveur Vault isolé dans la zone PKI, Suricata en miroir sur le segment DMZ et Wazuh dans la zone SIEM. Cette disposition matérialise le principe de défense en profondeur~: chaque zone ne communique qu'avec les zones strictement nécessaires selon des règles de filtrage définies sur le pare-feu pfSense.
 
@@ -202,7 +204,7 @@ La modélisation UML a été recentrée sur trois vues suffisantes pour comprend
 
 \subsection{Diagramme de classes du simulateur}
 
-La figure~\ref{fig:classe-p1} résume le noyau d'orchestration du simulateur~: \texttt{FleetOrchestrator} pilote les instances \texttt{DeviceSimulator}, tandis que \texttt{DeviceStats} centralise les métriques utiles à l'évaluation.
+La structure du simulateur de flotte est présentée à la figure~\ref{fig:classe-p1}.
 
 \begin{figure}[!htbp]
 \centering
@@ -212,9 +214,11 @@ La figure~\ref{fig:classe-p1} résume le noyau d'orchestration du simulateur~: \
 \end{figure}
 \FloatBarrier
 
+Le diagramme résume le noyau d'orchestration du simulateur~: \texttt{FleetOrchestrator} pilote les instances \texttt{DeviceSimulator}, tandis que \texttt{DeviceStats} centralise les métriques utiles à l'évaluation. Cette organisation découple le contrôle global de la flotte du comportement individuel de chaque dispositif, ce qui permet d'ajuster indépendamment la charge, le profil de trafic et la collecte de mesures.
+
 \subsection{Diagramme de séquence~: émission d'un certificat client}
 
-La figure~\ref{fig:seq-pki-p2} résume l'émission d'un certificat client via Vault~: requête API authentifiée, contrôle du rôle PKI, signature par la CA intermédiaire puis retour du bundle au dispositif, qui peut ensuite programmer son renouvellement.
+L'émission d'un certificat client par Vault est illustrée à la figure~\ref{fig:seq-pki-p2}.
 
 \begin{figure}[!htbp]
 \centering
@@ -224,9 +228,11 @@ La figure~\ref{fig:seq-pki-p2} résume l'émission d'un certificat client via Va
 \end{figure}
 \FloatBarrier
 
+Le diagramme retrace le cycle complet de provisionnement~: requête API authentifiée par jeton AppRole, contrôle du rôle PKI \texttt{iot-devices}, signature par la CA intermédiaire, puis retour du bundle (certificat + clé + chaîne de confiance) au dispositif. Ce dernier programme alors son renouvellement avant expiration, garantissant la continuité de l'identité cryptographique sans intervention humaine.
+
 \subsection{Diagramme d'activité~: cycle de publication mTLS}
 
-La figure~\ref{fig:activity-p3} synthétise le comportement d'un dispositif simulé~: chargement de son sous-ensemble de données, publication MQTT sur les topics autorisés, adaptation du rythme d'émission en cas d'attaque, puis agrégation des statistiques en fin d'exécution.
+Le cycle de publication d'un dispositif simulé est représenté à la figure~\ref{fig:activity-p3}.
 
 \begin{figure}[!htbp]
 \centering
@@ -236,9 +242,11 @@ La figure~\ref{fig:activity-p3} synthétise le comportement d'un dispositif simu
 \end{figure}
 \FloatBarrier
 
+Le diagramme synthétise le comportement d'un dispositif simulé~: chargement de son sous-ensemble de données, publication MQTT sur les topics autorisés, adaptation du rythme d'émission en cas d'attaque, puis agrégation des statistiques en fin d'exécution. Cette modélisation met en évidence le point unique de blocage~: toute publication transite obligatoirement par la session mTLS établie au préalable, supprimant tout chemin clair possible.
+
 \subsection{Diagrammes d'activité des scénarios d'attaque}
 
-Pour compléter la modélisation, deux diagrammes d'activité illustrent les scénarios d'attaque les plus représentatifs de l'architecture de détection multicouche. Le premier (figure~\ref{fig:act-flood}) décrit un scénario de déni de service par flood CONNECT, détecté au niveau réseau. Le second (figure~\ref{fig:act-certcompromis}) décrit un scénario de compromission de certificat, détecté par le module ML.
+Pour compléter la modélisation, deux diagrammes d'activité illustrent les scénarios d'attaque les plus représentatifs de l'architecture de détection multicouche~: le scénario S5 (déni de service par flood CONNECT, figure~\ref{fig:act-flood}) et le scénario S6 (compromission de certificat, figure~\ref{fig:act-certcompromis}).
 
 \begin{figure}[!htbp]
 \centering

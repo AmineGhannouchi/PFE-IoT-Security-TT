@@ -71,6 +71,7 @@ La PKI suit le modèle à deux niveaux préconisé par le NIST~\cite{nist_sp8002
 \caption{Hiérarchie PKI à deux niveaux}
 \label{fig:pki-hier}
 \end{figure}
+\FloatBarrier
 
 Le diagramme distingue les trois niveaux de confiance de la hiérarchie~: (i)~la \textbf{CA racine} (RSA-4096, self-signed, TTL~10~ans) est conservée hors ligne et ne signe que les CA intermédiaires~; sa clé privée n'est jamais exposée dans la VM GNS3~; (ii)~la \textbf{CA intermédiaire} (RSA-4096, TTL~5~ans) est embarquée dans le \emph{secrets engine PKI} de Vault et signe les certificats opérationnels à la demande via API REST~; (iii)~les \textbf{certificats finaux} sont émis selon deux rôles distincts~: \texttt{iot-services} (TTL par défaut~30~jours, max~1~an, flags \texttt{serverAuth}+\texttt{clientAuth}, pour Mosquitto, Suricata et le ML Engine), et \texttt{iot-devices} (TTL par défaut~24~heures, max~30~jours, flag \texttt{clientAuth} uniquement, CN contrôlé au pattern \texttt{dev-XXX.iot.lab}). La séparation des rôles empêche qu'un certificat de service soit utilisé pour s'authentifier comme dispositif, et inversement.
 
@@ -99,6 +100,7 @@ Mosquitto est configuré~\cite{mosquitto_tls} pour exiger un certificat client, 
 \caption{Handshake TLS~1.3 mTLS}
 \label{fig:tls-handshake}
 \end{figure}
+\FloatBarrier
 
 Le diagramme de séquence se lit selon quatre phases distinctes~:
 \begin{enumerate}[leftmargin=*]

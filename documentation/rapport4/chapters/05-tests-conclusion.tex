@@ -63,6 +63,7 @@ Les captures suivantes étayent les taux du tableau~\ref{tab:detection-secu} en 
 \caption{Règles de filtrage pfSense}
 \label{fig:pfsense-rules}
 \end{figure}
+\FloatBarrier
 
 L'analyse de cette capture confirme la politique \emph{deny-by-default}~: seuls les flux IoT\textrightarrow{}Broker/8883 et IoT\textrightarrow{}Vault/8200 sont autorisés~; tout autre trafic inter-VLAN est explicitement bloqué. Ce filtrage constitue la première couche de défense périmétrique. La figure~\ref{fig:fleet-sim} illustre la montée en charge.
 
@@ -72,6 +73,7 @@ L'analyse de cette capture confirme la politique \emph{deny-by-default}~: seuls 
 \caption{Campagne à 100~dispositifs}
 \label{fig:fleet-sim}
 \end{figure}
+\FloatBarrier
 
 La campagne à 100~dispositifs démontre que l'architecture supporte le double du périmètre nominal (50~dispositifs) sans dégradation~: les 35\,085~messages sont traités sans perte ni dépassement de délai, validant le premier palier de scalabilité (O4). La figure~\ref{fig:atk-summary} présente le résultat du scénario S5.
 
@@ -81,6 +83,7 @@ La campagne à 100~dispositifs démontre que l'architecture supporte le double d
 \caption{Scénario S5~: flood CONNECT}
 \label{fig:atk-summary}
 \end{figure}
+\FloatBarrier
 
 Le code de sortie~1 et le compteur de 0~connexion réussie sur 24~tentatives démontrent que la combinaison pfSense (\emph{rate-limit}) + Mosquitto (\texttt{max\_connections}) bloque intégralement le flood, avant même que celui-ci n'atteigne le parseur MQTT de Suricata. La figure~\ref{fig:suricata-alerts-test} présente les alertes IDS.
 
@@ -90,6 +93,7 @@ Le code de sortie~1 et le compteur de 0~connexion réussie sur 24~tentatives dé
 \caption{Alertes Suricata}
 \label{fig:suricata-alerts-test}
 \end{figure}
+\FloatBarrier
 
 Les 51~alertes réparties sur les quatre SID personnalisées attestent de la capacité de Suricata à opérer au niveau applicatif MQTT~; l'absence de faux positif sur le trafic TLS légitime confirme la précision des seuils retenus. La figure~\ref{fig:wazuh-dashboard-test} montre la corrélation SIEM.
 
@@ -116,6 +120,7 @@ La figure~\ref{fig:iso-eval} présente la matrice de confusion du modèle Isolat
 \caption{Matrice de confusion Isolation Forest}
 \label{fig:iso-eval}
 \end{figure}
+\FloatBarrier
 
 La matrice révèle un rappel de 0{,}947~: le modèle identifie la quasi-totalité des anomalies, au prix de quelques faux positifs inhérents à l'approche non supervisée. Ce compromis est acceptable car IF est conçu comme filet de sécurité pour les attaques inconnues (scénario~S6), où manquer une anomalie serait plus coûteux qu'une fausse alerte. La figure~\ref{fig:iso-scores} illustre la distribution des scores.
 
@@ -139,6 +144,7 @@ La figure~\ref{fig:rf-eval} présente la matrice de confusion binaire et la cour
 \caption{Confusion et ROC Random Forest}
 \label{fig:rf-eval}
 \end{figure}
+\FloatBarrier
 
 L'AUC de 0{,}999 et le taux d'erreur quasi nul attestent de la capacité du modèle supervisé à discriminer normal/attaque avec une fiabilité exploitable en production. La figure~\ref{fig:rf-multiclass} étend cette analyse aux sept catégories d'attaques.
 
@@ -148,6 +154,7 @@ L'AUC de 0{,}999 et le taux d'erreur quasi nul attestent de la capacité du mod�
 \caption{Confusion multi-classes Random Forest}
 \label{fig:rf-multiclass}
 \end{figure}
+\FloatBarrier
 
 La matrice multi-classes montre l'absence de confusion entre les classes Normal et DoS, qui sont pourtant les plus proches en volume. Cette distinction est cruciale dans un contexte opérateur où un faux positif DoS déclencherait un blocage injustifié. La figure~\ref{fig:rf-features} identifie les variables les plus discriminantes.
 
@@ -191,6 +198,7 @@ La figure~\ref{fig:perf-handshake} présente la distribution des durées de \emp
 \caption{Distribution du handshake mTLS}
 \label{fig:perf-handshake}
 \end{figure}
+\FloatBarrier
 
 Le handshake mTLS médian s'établit à $\sim 38$~ms (95\textsuperscript{e} percentile~: 47~ms), conforme à l'exigence BNF-2 (<~50~ms). La faible dispersion de la distribution atteste de la stabilité du mécanisme, même sous charge soutenue. La figure~\ref{fig:perf-latency} complète cette mesure par la latence totale de connexion.
 
@@ -210,6 +218,7 @@ La latence de connexion inclut le handshake TLS, la vérification de la chaîne 
 \caption{Débit applicatif}
 \label{fig:perf-throughput}
 \end{figure}
+\FloatBarrier
 
 Le débit agrégé atteint $\sim 31\,000$~msg/min ($\sim 620$~msg/s en pic, $\sim 520$~msg/s soutenu), dépassant l'exigence BNF-2 de 500~msg/s. Ce résultat confirme que le chiffrement mTLS ne constitue pas un goulet d'étranglement. La figure~\ref{fig:perf-rtt} analyse l'influence de la taille des messages.
 
@@ -219,6 +228,7 @@ Le débit agrégé atteint $\sim 31\,000$~msg/min ($\sim 620$~msg/s en pic, $\si
 \caption{RTT par taille de message}
 \label{fig:perf-rtt}
 \end{figure}
+\FloatBarrier
 
 La corrélation positive entre taille de payload et RTT reste linéaire jusqu'à 4~Ko, au-delà de quoi la fragmentation TCP introduit un surcoût non linéaire. Ce seuil est rarement atteint en trafic IoT nominal (payloads typiques de 100--500~octets). La figure~\ref{fig:perf-protocols} compare les trois modes de transport.
 
