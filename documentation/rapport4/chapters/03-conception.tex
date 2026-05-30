@@ -102,11 +102,11 @@ Un capteur défaillant (valeurs hors plage) ou compromis (certificat valide, don
 Pour répondre à la problématique et atteindre les objectifs ci-dessus, nous proposons une \textbf{architecture de défense en profondeur} composée de six briques complémentaires, intégralement déployée dans un laboratoire émulé sous GNS3~\cite{gns3_docs} et Docker~\cite{docker_docs}~:
 
 \begin{enumerate}[leftmargin=*]
-	\item Une \textbf{infrastructure réseau segmentée} (VLANs IoT, services, monitoring, management) construite autour d'un pare-feu pfSense et d'un routeur MikroTik~.
-	\item Une \textbf{PKI automatisée} HashiCorp Vault à deux niveaux (CA racine hors ligne + CA intermédiaire en ligne), capable d'émettre à la demande des certificats X.509 pour les services et les dispositifs~\cite{vault_pki}~.
-	\item Un \textbf{broker MQTT Mosquitto} configuré en TLS~1.3 avec authentification mutuelle obligatoire et listes de contrôle d'accès par topic~\cite{mosquitto_tls}~.
-	\item Un \textbf{simulateur de flotte} de 50 dispositifs Python rejouant 76\,000 messages issus d'un jeu de données réel, dont sept catégories d'attaques~.
-	\item Une \textbf{chaîne de détection} comprenant un IDS Suricata avec règles MQTT personnalisées~\cite{suricata_mqtt} et un SIEM Wazuh~\cite{wazuh_docs} pour la corrélation et la visualisation~.
+	\item Une \textbf{infrastructure réseau segmentée} (VLANs IoT, services, monitoring, management) construite autour d'un pare-feu pfSense et d'un routeur MikroTik.
+	\item Une \textbf{PKI automatisée} HashiCorp Vault à deux niveaux (CA racine hors ligne + CA intermédiaire en ligne), capable d'émettre à la demande des certificats X.509 pour les services et les dispositifs~\cite{vault_pki}.
+	\item Un \textbf{broker MQTT Mosquitto} configuré en TLS~1.3 avec authentification mutuelle obligatoire et listes de contrôle d'accès par topic~\cite{mosquitto_tls}.
+	\item Un \textbf{simulateur de flotte} de 50~dispositifs Python rejouant 76\,000~messages issus d'un jeu de données réel, dont sept catégories d'attaques.
+	\item Une \textbf{chaîne de détection} comprenant un IDS Suricata avec règles MQTT personnalisées~\cite{suricata_mqtt} et un SIEM Wazuh~\cite{wazuh_docs} pour la corrélation et la visualisation.
 	\item Un \textbf{pipeline de ML} (IsolationForest et Random Forest) entraîné sur les caractéristiques extraites du trafic, capable de détecter les anomalies non couvertes par les règles statiques.
 \end{enumerate}
 

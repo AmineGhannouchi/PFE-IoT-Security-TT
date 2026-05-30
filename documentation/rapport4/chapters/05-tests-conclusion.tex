@@ -230,7 +230,7 @@ Le débit agrégé atteint $\sim 31\,000$~msg/min ($\sim 620$~msg/s en pic, $\si
 \end{figure}
 \FloatBarrier
 
-La corrélation positive entre taille de payload et RTT reste linéaire jusqu'à 4~Ko, au-delà de quoi la fragmentation TCP introduit un surcoût non linéaire. Ce seuil est rarement atteint en trafic IoT nominal (payloads typiques de 100--500~octets). La figure~\ref{fig:perf-protocols} compare les trois modes de transport.
+La corrélation positive entre taille de payload et RTT reste linéaire jusqu'à 4~Ko, seuil au-delà duquel la fragmentation TCP introduit un surcoût non linéaire. Ce seuil est rarement atteint en trafic IoT nominal (payloads typiques de 100--500~octets). La figure~\ref{fig:perf-protocols} compare les trois modes de transport.
 
 \begin{figure}[!htbp]
 \centering
@@ -268,4 +268,4 @@ Le surcoût mTLS représente $\sim 8$\,\% du débit et $\sim 3{,}5$~ms de latenc
 \section{Conclusion}
 \label{sec:tc-synthese}
 
-Les résultats confirment la validité de l'architecture proposée. Les sept objectifs (O1--O7) sont atteints~: segmentation opérationnelle, PKI automatisée, mTLS obligatoire, flotte simulée (campagne complémentaire à 100~dispositifs), chaîne Suricata--Wazuh et module ML avec F1~=~0{,}993 en multi-classes. Le surcoût mTLS reste modéré ($\sim 8$\,\%). Les limites identifiées définissent le périmètre de validité et orientent les perspectives vers une solution de grade opérationnel.
+Les résultats confirment la validité de l'architecture proposée. Les sept objectifs (O1--O7) sont atteints~: segmentation opérationnelle, PKI automatisée, mTLS obligatoire, flotte simulée (campagne complémentaire à 100~dispositifs), chaîne Suricata--Wazuh et module ML avec F1~=~0{,}993 en multi-classes. Le surcoût mTLS reste modéré ($\sim 8$\,\%). Les limites identifiées définissent le périmètre de validité et orientent les perspectives vers une solution de niveau opérationnel.
