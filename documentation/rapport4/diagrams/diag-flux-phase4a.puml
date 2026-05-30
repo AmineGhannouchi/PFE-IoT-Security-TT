@@ -1,0 +1,22 @@
+@startuml diag-flux-phase4a
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam sequenceMessageAlign center
+skinparam shadowing false
+
+title Phase 4a — Détection réseau par règles (Suricata vers Wazuh)
+
+participant "Suricata\nIDS" as IDS
+participant "Wazuh\nSIEM" as SIEM
+participant "OpenSearch\nDashboards" as DASH
+
+autonumber
+
+IDS -> IDS : Inspection du trafic DMZ (miroir)\nRègles MQTT → alerte eve.json
+IDS -> SIEM : Transmission de l'alerte\n(Filebeat, TCP/1514)
+SIEM -> SIEM : Corrélation et indexation
+SIEM -> DASH : Restitution à l'analyste SOC
+
+@enduml

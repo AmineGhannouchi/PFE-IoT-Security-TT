@@ -46,17 +46,29 @@ Le cycle de fonctionnement de bout en bout suit cinq phases successives~: (1)~pr
 \end{figure}
 \FloatBarrier
 
-Le diagramme montre que le dispositif présente son certificat client, que le broker vérifie la chaîne PKI complète, et que les deux parties dérivent les clés de session avant tout échange applicatif. Ce mécanisme garantit qu'aucun flux MQTT ne circule sans preuve mutuelle d'identité. La figure~\ref{fig:flux-p4} illustre la phase~4.
+Le diagramme montre que le dispositif présente son certificat client, que le broker vérifie la chaîne PKI complète, et que les deux parties dérivent les clés de session avant tout échange applicatif. Ce mécanisme garantit qu'aucun flux MQTT ne circule sans preuve mutuelle d'identité.
+
+La phase~4 (détection et supervision) repose en réalité sur \textbf{deux chaînes complémentaires} qui convergent toutes deux vers le SIEM Wazuh. La première, illustrée par la figure~\ref{fig:flux-p4a}, assure la détection \textbf{réseau par règles}~: Suricata inspecte une copie du trafic DMZ et transmet ses alertes à Wazuh via Filebeat.
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.92\linewidth,height=0.38\textheight,keepaspectratio]{diag-flux-phase4.png}
-\caption{Flux E2E --- Phase~4~: détection et supervision}
-\label{fig:flux-p4}
+\includegraphics[width=\linewidth,height=0.34\textheight,keepaspectratio]{diag-flux-phase4a.png}
+\caption{Flux E2E --- Phase~4a~: détection réseau par règles (Suricata)}
+\label{fig:flux-p4a}
 \end{figure}
 \FloatBarrier
 
-Cette figure révèle le chemin complet d'une alerte~: Suricata inspecte le trafic miroir, produit un événement \texttt{eve.json}, que Wazuh corrèle avec les journaux Mosquitto avant de le restituer sur le tableau de bord SOC. La chaîne complète ainsi la boucle de sécurité en ajoutant la détection aux mécanismes préventifs.
+Cette première chaîne révèle le chemin complet d'une alerte réseau~: Suricata applique son parseur MQTT natif et ses règles SID personnalisées, écrit l'événement dans \texttt{eve.json}, que Filebeat relaie vers Wazuh~; ce dernier corrèle les alertes (escalade de niveau au-delà d'un seuil), indexe le résultat dans OpenSearch et le restitue à l'analyste SOC. La seconde chaîne, illustrée par la figure~\ref{fig:flux-p4b}, assure la détection \textbf{comportementale par apprentissage automatique}.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth,height=0.34\textheight,keepaspectratio]{diag-flux-phase4b.png}
+\caption{Flux E2E --- Phase~4b~: détection comportementale (ML Engine)}
+\label{fig:flux-p4b}
+\end{figure}
+\FloatBarrier
+
+Cette seconde chaîne complète la précédente~: le ML Engine, souscrit en lecture seule au broker via mTLS, construit pour chaque message un vecteur de features, calcule un score IsolationForest et une classification RandomForest, puis transmet ces scores à Wazuh. La corrélation finale entre les alertes Suricata et les scores ML permet de déclencher une alarme critique lorsqu'un même message est simultanément signalé par les deux chaînes. L'ensemble complète ainsi la boucle de sécurité en superposant détection par règles et détection comportementale aux mécanismes préventifs.
 
 \section{Infrastructure à clés publiques (Vault)}
 \label{sec:re-pki}
@@ -176,7 +188,7 @@ Les trois modèles sont entraînés en parallèle sur les mêmes 29~features num
 
 \begin{figure}[!htbp]
 \centering
-\includegraphics[width=0.80\linewidth]{diag-ml-part2.png}
+\includegraphics[width=0.90\linewidth]{diag-ml-part2.png}
 \caption{Pipeline ML}
 \label{fig:ml-p2}
 \end{figure}

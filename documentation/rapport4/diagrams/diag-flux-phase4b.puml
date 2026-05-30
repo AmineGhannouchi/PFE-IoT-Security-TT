@@ -1,0 +1,24 @@
+@startuml diag-flux-phase4b
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam sequenceMessageAlign center
+skinparam shadowing false
+
+title Phase 4b — Détection comportementale (ML Engine vers Wazuh)
+
+participant "Mosquitto\nBroker" as BROKER
+participant "ML Engine" as ML
+participant "Wazuh\nSIEM" as SIEM
+participant "OpenSearch\nDashboards" as DASH
+
+autonumber
+
+BROKER -> ML : Souscription mTLS (lecture seule)
+ML -> ML : IsolationForest + RandomForest\n→ score d'anomalie
+ML -> SIEM : Envoi des scores (API REST)
+SIEM -> SIEM : Corrélation IDS + ML\n→ alarme critique si double signalement
+SIEM -> DASH : Restitution à l'analyste SOC
+
+@enduml
