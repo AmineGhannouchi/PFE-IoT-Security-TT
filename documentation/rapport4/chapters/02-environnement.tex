@@ -40,12 +40,12 @@ attackbox       & python:3.11-alpine      & IoT (10)    & dynamique     & --   &
 
 L'inventaire fait apparaître onze n\oe{}uds répartis sur les cinq zones, chacun remplissant un rôle précis dans la chaîne de sécurité. Les colonnes \emph{Image} et \emph{Port} permettent de reproduire le laboratoire à l'identique à partir des mêmes versions logicielles. La figure~\ref{fig:topo-env} présente la topologie complète du laboratoire avec les cinq zones réseau et les interactions principales entre les composants.
 
-\begin{figure}[!htbp]
+\begin{sidewaysfigure}
 \centering
-\includegraphics[width=\textwidth]{diag-topo-env.png}
+\includegraphics[height=0.85\textwidth,width=\textheight,keepaspectratio]{diag-topo-env.png}
 \caption{Topologie du laboratoire GNS3}
 \label{fig:topo-env}
-\end{figure}
+\end{sidewaysfigure}
 \FloatBarrier
 
 Le schéma met en évidence l'isolement strict entre zones~: les dispositifs IoT n'atteignent que le broker (DMZ) et la PKI, tandis que les flux de supervision convergent vers la zone SIEM. Cette séparation matérialise le principe \emph{deny-by-default} au c\oe{}ur de l'architecture.

@@ -24,6 +24,10 @@ title Diagramme de cas d'utilisation global
 
 left to right direction
 
+' ── Acteur systeme secondaire (declare en premier pour l'ancrer en haut a droite) ──
+
+rectangle "<<acteur systeme>>\nDispositif IoT" as DEV
+
 ' ── Acteurs humains (a gauche) ──
 
 actor "Administrateur\nSecurite" as ADMIN
@@ -57,36 +61,36 @@ rectangle "Plateforme de securisation IoT" {
   usecase "Evaluer les\nperformances" as UC12
 }
 
-' ── Acteur systeme secondaire (a droite, sous forme de rectangle) ──
+' ── Ancrage : lien invisible pour forcer l'acteur systeme en haut a droite ──
 
-rectangle "<<acteur systeme>>\nDispositif IoT" as DEV
+UC_VERIF -[hidden]- DEV
 
-' ── Liens Administrateur ──
+' ── Liens Dispositif IoT (a droite/haut : associations sans tete) ──
 
-ADMIN --> UC5
-ADMIN --> UC6
-ADMIN --> UC7
-ADMIN --> UC8
+UC1 -- DEV
+UC2 -- DEV
+UC3 -- DEV
+UC4 -- DEV
 
-' ── Liens Operateur SOC ──
+' ── Liens Administrateur (associations : traits sans tete) ──
 
-SOC --> UC9
-SOC --> UC10
-SOC --> UC11
-SOC --> UC12
+ADMIN -- UC5
+ADMIN -- UC6
+ADMIN -- UC7
+ADMIN -- UC8
 
-' ── Liens Dispositif IoT (a droite : fleches inversees) ──
+' ── Liens Operateur SOC (associations : traits sans tete) ──
 
-UC1 --> DEV
-UC2 --> DEV
-UC3 --> DEV
-UC4 --> DEV
+SOC -- UC9
+SOC -- UC10
+SOC -- UC11
+SOC -- UC12
 
-' ── Inclusions ──
+' ── Inclusions (cas inclus places a gauche) ──
 
-UC1 ..> UC_VERIF : <<include>>
-UC2 ..> UC_AUTH  : <<include>>
-UC2 ..> UC_TLS   : <<include>>
-UC3 ..> UC_TLS   : <<include>>
+UC_VERIF <.. UC1 : <<include>>
+UC_AUTH  <.. UC2 : <<include>>
+UC_TLS   <.. UC2 : <<include>>
+UC_TLS   <.. UC3 : <<include>>
 
 @enduml
