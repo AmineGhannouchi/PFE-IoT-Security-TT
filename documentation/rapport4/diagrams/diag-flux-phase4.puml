@@ -14,6 +14,8 @@ participant "Suricata\nIDS" as IDS
 participant "Wazuh\nSIEM" as SIEM
 participant "ML Engine\nDétection" as ML
 
+autonumber
+
 RTR -> IDS : Port mirroring\n(copie du trafic VLAN 20)
 activate IDS
 IDS -> IDS : Inspection DPI\nApplication des règles MQTT\n(DoS, injection, scanning)

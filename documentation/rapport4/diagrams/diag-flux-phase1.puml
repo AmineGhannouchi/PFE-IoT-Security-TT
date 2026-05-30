@@ -8,7 +8,7 @@ skinparam shadowing false
 
 title Phase 1 — Provisionnement de l'Identité
 
-actor "Dispositif IoT" as DEV
+participant "Dispositif IoT" as DEV
 participant "HashiCorp\nVault (PKI)" as VAULT
 
 DEV -> VAULT : Requête API REST\nDemande certificat X.509\n(CN = device-XXX.devices.pfe-iot.local)

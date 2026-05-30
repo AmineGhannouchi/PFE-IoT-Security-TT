@@ -11,6 +11,8 @@ participant "Vault CLI /\nAPI REST" as API
 participant "Vault Server\n(PKI Engine)" as VAULT
 database "Backend\nStockage" as STORE
 
+autonumber
+
 == Émission de certificat ==
 
 TARGET -> API : POST /v1/pki_int/issue/iot-devices\n{"common_name": "device-001.iot.lab",\n "ttl": "720h"}

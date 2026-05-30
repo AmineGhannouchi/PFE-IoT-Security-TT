@@ -15,7 +15,7 @@ skinparam sequence {
 
 title Flux de Communication E2E Sécurisé\nDiagramme de Séquence
 
-actor "Dispositif IoT\n(Capteur)" as DEV
+participant "Dispositif IoT\n(Capteur)" as DEV
 participant "MikroTik\nRouteur L3" as RTR
 participant "HashiCorp\nVault (PKI)" as VAULT
 participant "Mosquitto\nBroker MQTT" as BROKER

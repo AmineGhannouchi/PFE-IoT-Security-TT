@@ -8,9 +8,11 @@ skinparam shadowing false
 
 title Phase 2 — Établissement de la Connexion TLS 1.3 mTLS
 
-actor "Dispositif IoT" as DEV
+participant "Dispositif IoT" as DEV
 participant "MikroTik\nRouteur L3" as RTR
 participant "Mosquitto\nBroker MQTT" as BROKER
+
+autonumber
 
 DEV -> RTR : Paquet TCP SYN (port 8883)
 RTR -> RTR : Vérification ACL firewall\n(IoT → DMZ autorisé)

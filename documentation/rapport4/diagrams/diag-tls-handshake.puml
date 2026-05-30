@@ -14,6 +14,8 @@ title Diagramme de Séquence — Handshake TLS 1.3 mTLS\nAuthentification Mutuel
 participant "Dispositif IoT\n(Client TLS)" as CLIENT
 participant "Mosquitto\n(Serveur TLS)" as SERVER
 
+autonumber
+
 note over CLIENT, SERVER #FFF9C4
   **TLS 1.3 (RFC 8446)** — Handshake en 1-RTT
   Contrairement à TLS 1.2 (2-RTT), TLS 1.3 réduit

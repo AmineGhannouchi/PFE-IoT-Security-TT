@@ -8,7 +8,7 @@ skinparam shadowing false
 
 title Phase 3 — Publication des Données IoT
 
-actor "Dispositif IoT" as DEV
+participant "Dispositif IoT" as DEV
 participant "Mosquitto\nBroker MQTT" as BROKER
 
 DEV -> BROKER : [TLS] MQTT CONNECT\n(ClientID + CN certificat)

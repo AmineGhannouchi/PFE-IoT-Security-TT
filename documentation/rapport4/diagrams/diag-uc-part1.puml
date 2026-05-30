@@ -16,7 +16,7 @@ title Cas d'utilisation --- Partie 1 : Dispositif IoT (Capteur)
 
 left to right direction
 
-actor "Dispositif IoT\n(Capteur)" as DEV
+rectangle "Dispositif IoT\n(Capteur)" as DEV
 
 rectangle "Interactions du dispositif avec la plateforme" {
   usecase "Demander un\ncertificat X.509" as UC1

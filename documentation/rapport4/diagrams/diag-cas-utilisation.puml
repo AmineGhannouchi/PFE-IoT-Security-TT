@@ -16,7 +16,7 @@ title Diagramme de Cas d'Utilisation\nÉcosystème IoT Sécurisé
 
 left to right direction
 
-actor "Dispositif IoT\n(Capteur)" as DEV
+rectangle "Dispositif IoT\n(Capteur)" as DEV
 actor "Administrateur\nSécurité" as ADMIN
 actor "Opérateur\nTT (SOC)" as SOC
 

@@ -8,7 +8,7 @@ skinparam shadowing false
 
 title Phase 5 — Rotation Automatique des Certificats
 
-actor "Dispositif IoT" as DEV
+participant "Dispositif IoT" as DEV
 participant "HashiCorp\nVault (PKI)" as VAULT
 
 note over DEV, VAULT
