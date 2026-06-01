@@ -1,21 +1,20 @@
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {1.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison des approches de sécurisation IoT pour les opérateurs}}{4}{table.caption.8}%
-\contentsline {table}{\numberline {1.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Objectifs spécifiques du projet}}{7}{table.caption.13}%
-\contentsline {table}{\numberline {1.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Périmètre du projet -- inclus et exclus}}{8}{table.caption.50}%
-\contentsline {table}{\numberline {1.4}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison Scrum, Kanban et XP}}{10}{table.caption.51}%
+\contentsline {table}{\numberline {1.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison des principaux protocoles applicatifs IoT}}{7}{table.caption.10}%
+\contentsline {table}{\numberline {1.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison des solutions IDS open source}}{9}{table.caption.11}%
+\contentsline {table}{\numberline {1.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison des solutions SIEM}}{10}{table.caption.12}%
+\contentsline {table}{\numberline {1.4}{\ignorespaces \xpg@aux {}{french}\ignorespaces Diagnostic des lacunes et briques de réponse correspondantes}}{12}{table.caption.13}%
+\contentsline {table}{\numberline {1.5}{\ignorespaces \xpg@aux {}{french}\ignorespaces Objectifs spécifiques du projet}}{13}{table.caption.14}%
+\contentsline {table}{\numberline {1.6}{\ignorespaces \xpg@aux {}{french}\ignorespaces Périmètre du projet -- inclus et exclus}}{14}{table.caption.15}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {2.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison des principaux protocoles applicatifs IoT}}{12}{table.caption.53}%
-\contentsline {table}{\numberline {2.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison des solutions IDS open source}}{15}{table.caption.59}%
-\contentsline {table}{\numberline {2.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Comparaison des solutions SIEM}}{16}{table.caption.60}%
+\contentsline {table}{\numberline {2.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Inventaire des n\oe {}uds du laboratoire GNS3}}{16}{table.caption.16}%
+\contentsline {table}{\numberline {2.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Politique de filtrage inter-VLAN (\emph {deny-by-default})}}{21}{table.caption.19}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {3.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Diagnostic des lacunes et briques de réponse correspondantes}}{19}{table.caption.61}%
-\contentsline {table}{\numberline {3.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Besoins fonctionnels}}{20}{table.caption.62}%
-\contentsline {table}{\numberline {3.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Besoins non fonctionnels}}{20}{table.caption.81}%
-\contentsline {table}{\numberline {3.4}{\ignorespaces \xpg@aux {}{french}\ignorespaces Correspondance lacunes -- briques de sécurité -- objectifs spécifiques}}{24}{table.caption.109}%
-\contentsline {table}{\numberline {3.5}{\ignorespaces \xpg@aux {}{french}\ignorespaces Planification des sprints}}{25}{table.caption.111}%
+\contentsline {table}{\numberline {3.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Besoins fonctionnels}}{27}{table.caption.43}%
+\contentsline {table}{\numberline {3.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Besoins non fonctionnels}}{28}{table.caption.44}%
+\contentsline {table}{\numberline {3.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Correspondance lacunes -- briques de sécurité -- objectifs spécifiques}}{32}{table.caption.50}%
+\contentsline {table}{\numberline {3.4}{\ignorespaces \xpg@aux {}{french}\ignorespaces Planification des sprints}}{35}{table.caption.53}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {4.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Composants de l'environnement de développement}}{30}{table.caption.115}%
+\contentsline {table}{\numberline {4.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Scénarios d'attaque, détection et contre-mesures}}{51}{table.caption.66}%
 \addvspace {10\p@ }
-\contentsline {table}{\numberline {5.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Plan de tests}}{55}{table.caption.146}%
-\contentsline {table}{\numberline {5.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Taux de détection des scénarios d'attaque (10 rejeux par scénario)}}{56}{table.caption.147}%
-\contentsline {table}{\numberline {5.3}{\ignorespaces \xpg@aux {}{french}\ignorespaces Performances ML (validation 5-fold)}}{63}{table.caption.158}%
+\contentsline {table}{\numberline {5.1}{\ignorespaces \xpg@aux {}{french}\ignorespaces Plan de tests}}{58}{table.caption.77}%
+\contentsline {table}{\numberline {5.2}{\ignorespaces \xpg@aux {}{french}\ignorespaces Performances ML (validation 5-fold)}}{65}{table.caption.88}%

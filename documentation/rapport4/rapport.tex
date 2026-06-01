@@ -27,15 +27,20 @@
   {Chapitre \thechapter}
   {0.5cm}
   {\LARGE}
+%% Empeche un titre d'apparaitre seul en bas de page : on reserve
+%% l'espace du titre + au moins 2-3 lignes de texte qui doivent suivre.
 \titleformat{\section}
-  {\needspace{4\baselineskip}\normalfont\bfseries\large}
+  {\needspace{6\baselineskip}\normalfont\bfseries\large}
   {\thesection}{1em}{}
 \titleformat{\subsection}
-  {\needspace{3\baselineskip}\normalfont\bfseries\normalsize}
+  {\needspace{5\baselineskip}\normalfont\bfseries\normalsize}
   {\thesubsection}{1em}{}
 \titleformat{\subsubsection}
-  {\needspace{3\baselineskip}\normalfont\bfseries\small}
+  {\needspace{4\baselineskip}\normalfont\bfseries\small}
   {\thesubsubsection}{1em}{}
+\titleformat{\paragraph}[runin]
+  {\needspace{3\baselineskip}\normalfont\bfseries\normalsize}
+  {\theparagraph}{1em}{}
 \titlespacing*{\chapter}{0pt}{-0.6cm}{0.5cm}
 \titlespacing*{\section}{0pt}{0.4cm plus 0.1cm minus 0.1cm}{0.15cm}
 \titlespacing*{\subsection}{0pt}{0.3cm plus 0.1cm minus 0.1cm}{0.1cm}

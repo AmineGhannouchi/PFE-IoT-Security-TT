@@ -1,101 +1,136 @@
 \xpg@aux {}{french}
 \contentsline {chapter}{Dédicace}{i}{chapter*.1}%
-\contentsline {chapter}{Remerciements}{iii}{chapter*.2}%
-\contentsline {chapter}{Liste des acronymes}{xi}{chapter*.6}%
+\contentsline {chapter}{Remerciements}{ii}{chapter*.2}%
+\contentsline {chapter}{Liste des acronymes}{ix}{chapter*.6}%
 \contentsline {chapter}{Introduction générale}{1}{section*.7}%
-\contentsline {chapter}{\numberline {1}Contexte général du projet}{2}{chapter.1}%
+\contentsline {chapter}{\numberline {1}Contexte général et état de l'art}{2}{chapter.1}%
 \contentsline {section}{\numberline {1.1}Introduction}{2}{section.1.1}%
-\contentsline {section}{\numberline {1.2}Cadre général du projet}{2}{section.1.2}%
-\contentsline {section}{\numberline {1.3}L'IoT dans les réseaux de télécommunications}{2}{section.1.3}%
-\contentsline {subsection}{\numberline {1.3.1}Croissance et enjeux du marché IoT}{2}{subsection.1.3.1}%
-\contentsline {subsection}{\numberline {1.3.2}Rôle des opérateurs télécom dans l'écosystème IoT}{3}{subsection.1.3.2}%
-\contentsline {subsection}{\numberline {1.3.3}Approches de sécurisation disponibles pour les opérateurs}{4}{subsection.1.3.3}%
-\contentsline {section}{\numberline {1.4}Présentation de l'organisme d'accueil}{4}{section.1.4}%
-\contentsline {subsection}{\numberline {1.4.1}Service d'accueil}{5}{subsection.1.4.1}%
-\contentsline {subsection}{\numberline {1.4.2}Positionnement de Tunisie Telecom face aux enjeux IoT}{6}{subsection.1.4.2}%
-\contentsline {section}{\numberline {1.5}Problématique}{6}{section.1.5}%
-\contentsline {section}{\numberline {1.6}Objectifs spécifiques}{7}{section.1.6}%
-\contentsline {section}{\numberline {1.7}Périmètre et contraintes du projet}{8}{section.1.7}%
-\contentsline {subsection}{\numberline {1.7.1}Périmètre fonctionnel}{8}{subsection.1.7.1}%
-\contentsline {subsection}{\numberline {1.7.2}Contraintes du projet}{8}{subsection.1.7.2}%
-\contentsline {subsection}{\numberline {1.7.3}Hypothèses de travail}{9}{subsection.1.7.3}%
-\contentsline {section}{\numberline {1.8}Démarche méthodologique}{9}{section.1.8}%
-\contentsline {section}{\numberline {1.9}Conclusion}{10}{section.1.9}%
-\contentsline {chapter}{\numberline {2}État de l'art}{11}{chapter.2}%
-\contentsline {section}{\numberline {2.1}Introduction}{11}{section.2.1}%
-\contentsline {section}{\numberline {2.2}Menaces et vulnérabilités spécifiques à l'IoT}{11}{section.2.2}%
-\contentsline {subsection}{\numberline {2.2.1}Surface d'attaque étendue}{11}{subsection.2.2.1}%
-\contentsline {subsection}{\numberline {2.2.2}OWASP IoT Top 10 et menaces réseau}{11}{subsection.2.2.2}%
-\contentsline {subsection}{\numberline {2.2.3}Études de cas de référence}{12}{subsection.2.2.3}%
-\contentsline {section}{\numberline {2.3}Protocoles applicatifs IoT}{12}{section.2.3}%
-\contentsline {section}{\numberline {2.4}Sécurisation du transport : TLS et mTLS}{13}{section.2.4}%
-\contentsline {subsection}{\numberline {2.4.1}TLS 1.3}{13}{subsection.2.4.1}%
-\contentsline {subsection}{\numberline {2.4.2}Authentification mutuelle}{13}{subsection.2.4.2}%
-\contentsline {section}{\numberline {2.5}Gestion des identités : PKI et automatisation}{14}{section.2.5}%
-\contentsline {section}{\numberline {2.6}Détection d'intrusion et supervision}{14}{section.2.6}%
-\contentsline {subsection}{\numberline {2.6.1}IDS réseau orienté MQTT}{14}{subsection.2.6.1}%
-\contentsline {subsection}{\numberline {2.6.2}SIEM Wazuh}{15}{subsection.2.6.2}%
-\contentsline {section}{\numberline {2.7}Apprentissage automatique pour la détection d'anomalies}{16}{section.2.7}%
-\contentsline {section}{\numberline {2.8}Analyse critique de l'existant}{17}{section.2.8}%
-\contentsline {section}{\numberline {2.9}Synthèse du chapitre}{17}{section.2.9}%
-\contentsline {section}{\numberline {2.10}Conclusion}{17}{section.2.10}%
-\contentsline {chapter}{\numberline {3}Conception}{18}{chapter.3}%
-\contentsline {section}{\numberline {3.1}Introduction}{18}{section.3.1}%
-\contentsline {section}{\numberline {3.2}Diagnostic de l'existant}{18}{section.3.2}%
-\contentsline {subsection}{\numberline {3.2.1}État des lieux de la sécurité IoT dans les déploiements opérateur}{18}{subsection.3.2.1}%
-\contentsline {subsection}{\numberline {3.2.2}Synthèse du diagnostic}{19}{subsection.3.2.2}%
-\contentsline {section}{\numberline {3.3}Spécification des besoins}{20}{section.3.3}%
-\contentsline {subsection}{\numberline {3.3.1}Besoins fonctionnels (BF)}{20}{subsection.3.3.1}%
-\contentsline {subsection}{\numberline {3.3.2}Besoins non fonctionnels (BNF)}{20}{subsection.3.3.2}%
-\contentsline {subsection}{\numberline {3.3.3}Diagramme de cas d'utilisation}{21}{subsection.3.3.3}%
-\contentsline {paragraph}{Partie 1 — Dispositif IoT.}{21}{paragraph*.100}%
-\contentsline {paragraph}{Partie 2 — Administrateur sécurité.}{21}{paragraph*.102}%
-\contentsline {paragraph}{Partie 3 — Opérateur SOC.}{22}{paragraph*.104}%
-\contentsline {section}{\numberline {3.4}Vue d'ensemble de la solution proposée}{23}{section.3.4}%
-\contentsline {section}{\numberline {3.5}Planification des sprints}{25}{section.3.5}%
-\contentsline {section}{\numberline {3.6}Backlog produit}{25}{section.3.6}%
-\contentsline {section}{\numberline {3.7}Modélisation UML}{25}{section.3.7}%
-\contentsline {subsection}{\numberline {3.7.1}Diagramme de classes du simulateur}{25}{subsection.3.7.1}%
-\contentsline {subsection}{\numberline {3.7.2}Diagramme de séquence~: émission d'un certificat client}{27}{subsection.3.7.2}%
-\contentsline {subsection}{\numberline {3.7.3}Diagramme d'activité~: cycle de publication mTLS}{27}{subsection.3.7.3}%
-\contentsline {section}{\numberline {3.8}Conclusion}{29}{section.3.8}%
-\contentsline {chapter}{\numberline {4}Réalisation}{30}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Introduction}{30}{section.4.1}%
-\contentsline {section}{\numberline {4.2}Environnement de développement}{30}{section.4.2}%
-\contentsline {section}{\numberline {4.3}Architecture globale et topologie réseau}{31}{section.4.3}%
-\contentsline {subsection}{\numberline {4.3.1}Architecture de déploiement}{31}{subsection.4.3.1}%
-\contentsline {subsection}{\numberline {4.3.2}Topologie réseau}{33}{subsection.4.3.2}%
-\contentsline {paragraph}{Partie 1 — Infrastructure réseau et segmentation VLAN.}{33}{paragraph*.118}%
-\contentsline {paragraph}{Partie 2 — VLAN 10 (Zone IoT) et VLAN 20 (Zone DMZ).}{35}{paragraph*.120}%
-\contentsline {paragraph}{Partie 3 — VLAN 30 (Zone PKI) et VLAN 40 (Zone SIEM).}{35}{paragraph*.122}%
-\contentsline {paragraph}{Partie 4 — Politique de filtrage inter-VLAN (deny-by-default).}{36}{paragraph*.124}%
-\contentsline {section}{\numberline {4.4}Infrastructure à clés publiques (Vault)}{39}{section.4.4}%
-\contentsline {subsection}{\numberline {4.4.1}Hiérarchie}{39}{subsection.4.4.1}%
-\contentsline {subsection}{\numberline {4.4.2}Rôles Vault et émission}{39}{subsection.4.4.2}%
-\contentsline {section}{\numberline {4.5}Broker MQTT en TLS 1.3 + mTLS}{41}{section.4.5}%
-\contentsline {section}{\numberline {4.6}Scénarios d'attaque et contre-mesures}{43}{section.4.6}%
-\contentsline {section}{\numberline {4.7}Pipeline d'apprentissage automatique}{47}{section.4.7}%
-\contentsline {paragraph}{Partie 1 — Chargement, exploration et feature engineering.}{47}{paragraph*.137}%
-\contentsline {paragraph}{Partie 2 — Entraînement des trois modèles.}{49}{paragraph*.139}%
-\contentsline {paragraph}{Partie 3 — Comparaison, export et intégration SIEM.}{50}{paragraph*.141}%
-\contentsline {subsection}{\numberline {4.7.1}Données et features}{52}{subsection.4.7.1}%
-\contentsline {paragraph}{Synthèse de présentation.}{53}{paragraph*.145}%
-\contentsline {section}{\numberline {4.8}Conclusion}{53}{section.4.8}%
-\contentsline {chapter}{\numberline {5}Tests, résultats et validation}{55}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Introduction}{55}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Plan de tests}{55}{section.5.2}%
-\contentsline {section}{\numberline {5.3}Résultats de sécurité}{55}{section.5.3}%
-\contentsline {subsection}{\numberline {5.3.1}Validation par l'exécution~: preuves visuelles}{56}{subsection.5.3.1}%
-\contentsline {section}{\numberline {5.4}Résultats du module ML}{60}{section.5.4}%
-\contentsline {subsection}{\numberline {5.4.1}Isolation Forest}{60}{subsection.5.4.1}%
-\contentsline {subsection}{\numberline {5.4.2}Random Forest}{61}{subsection.5.4.2}%
-\contentsline {section}{\numberline {5.5}Résultats de performance}{64}{section.5.5}%
-\contentsline {subsection}{\numberline {5.5.1}Handshake TLS et latence}{64}{subsection.5.5.1}%
-\contentsline {subsection}{\numberline {5.5.2}Débit et RTT}{64}{subsection.5.5.2}%
-\contentsline {section}{\numberline {5.6}Limites identifiées}{66}{section.5.6}%
-\contentsline {section}{\numberline {5.7}Perspectives}{67}{section.5.7}%
-\contentsline {section}{\numberline {5.8}Conclusion}{67}{section.5.8}%
-\contentsline {chapter}{Conclusion générale}{68}{section*.167}%
-\contentsline {chapter}{Références bibliographiques}{69}{chapter*.168}%
+\contentsline {section}{\numberline {1.2}Présentation de l'organisme d'accueil}{2}{section.1.2}%
+\contentsline {subsection}{\numberline {1.2.1}Service d'accueil}{3}{subsection.1.2.1}%
+\contentsline {subsection}{\numberline {1.2.2}Positionnement de Tunisie Telecom face aux enjeux IoT}{4}{subsection.1.2.2}%
+\contentsline {section}{\numberline {1.3}Cadre général du projet}{4}{section.1.3}%
+\contentsline {section}{\numberline {1.4}L'IoT dans les réseaux de télécommunications}{5}{section.1.4}%
+\contentsline {subsection}{\numberline {1.4.1}Croissance et enjeux du marché IoT}{5}{subsection.1.4.1}%
+\contentsline {subsection}{\numberline {1.4.2}Rôle des opérateurs télécom dans l'écosystème IoT}{5}{subsection.1.4.2}%
+\contentsline {section}{\numberline {1.5}Menaces et vulnérabilités spécifiques à l'IoT}{6}{section.1.5}%
+\contentsline {subsection}{\numberline {1.5.1}Surface d'attaque étendue}{6}{subsection.1.5.1}%
+\contentsline {subsection}{\numberline {1.5.2}OWASP IoT Top 10 et menaces réseau}{6}{subsection.1.5.2}%
+\contentsline {subsection}{\numberline {1.5.3}Études de cas de référence}{6}{subsection.1.5.3}%
+\contentsline {section}{\numberline {1.6}Technologies et protocoles de sécurisation}{7}{section.1.6}%
+\contentsline {subsection}{\numberline {1.6.1}Protocoles applicatifs IoT}{7}{subsection.1.6.1}%
+\contentsline {subsection}{\numberline {1.6.2}Sécurisation du transport~: TLS 1.3 et mTLS}{7}{subsection.1.6.2}%
+\contentsline {subsubsection}{\numberline {1.6.2.1}TLS 1.3}{7}{subsubsection.1.6.2.1}%
+\contentsline {subsubsection}{\numberline {1.6.2.2}Authentification mutuelle}{8}{subsubsection.1.6.2.2}%
+\contentsline {subsection}{\numberline {1.6.3}Gestion des identités~: PKI et automatisation}{8}{subsection.1.6.3}%
+\contentsline {subsection}{\numberline {1.6.4}Détection d'intrusion et supervision}{9}{subsection.1.6.4}%
+\contentsline {subsubsection}{\numberline {1.6.4.1}IDS réseau orienté MQTT}{9}{subsubsection.1.6.4.1}%
+\contentsline {subsubsection}{\numberline {1.6.4.2}SIEM Wazuh}{9}{subsubsection.1.6.4.2}%
+\contentsline {subsection}{\numberline {1.6.5}Apprentissage automatique pour la détection d'anomalies}{10}{subsection.1.6.5}%
+\contentsline {section}{\numberline {1.7}Étude de l'existant et analyse critique}{10}{section.1.7}%
+\contentsline {subsection}{\numberline {1.7.1}État des lieux de la sécurité IoT dans les déploiements opérateur}{11}{subsection.1.7.1}%
+\contentsline {subsection}{\numberline {1.7.2}Analyse critique des solutions existantes}{11}{subsection.1.7.2}%
+\contentsline {subsection}{\numberline {1.7.3}Synthèse du diagnostic}{11}{subsection.1.7.3}%
+\contentsline {section}{\numberline {1.8}Problématique}{12}{section.1.8}%
+\contentsline {section}{\numberline {1.9}Objectifs du projet}{13}{section.1.9}%
+\contentsline {subsection}{\numberline {1.9.1}Objectif général}{13}{subsection.1.9.1}%
+\contentsline {subsection}{\numberline {1.9.2}Objectifs spécifiques}{13}{subsection.1.9.2}%
+\contentsline {section}{\numberline {1.10}Besoins fonctionnels}{13}{section.1.10}%
+\contentsline {section}{\numberline {1.11}Périmètre et contraintes du projet}{14}{section.1.11}%
+\contentsline {subsection}{\numberline {1.11.1}Périmètre fonctionnel}{14}{subsection.1.11.1}%
+\contentsline {subsection}{\numberline {1.11.2}Contraintes du projet}{14}{subsection.1.11.2}%
+\contentsline {subsection}{\numberline {1.11.3}Hypothèses de travail}{14}{subsection.1.11.3}%
+\contentsline {section}{\numberline {1.12}Démarche méthodologique}{15}{section.1.12}%
+\contentsline {section}{\numberline {1.13}Conclusion}{15}{section.1.13}%
+\contentsline {chapter}{\numberline {2}Environnement technique du laboratoire}{16}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Introduction}{16}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Vue d'ensemble du laboratoire}{16}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Infrastructure réseau}{19}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}pfSense --- pare-feu et passerelle WAN}{19}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}MikroTik CHR --- routeur L3 et segmentation VLAN}{20}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.3}Politique de sécurité inter-zones}{20}{subsection.2.3.3}%
+\contentsline {section}{\numberline {2.4}Composants applicatifs}{21}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}Broker MQTT Mosquitto (zone DMZ)}{21}{subsection.2.4.1}%
+\contentsline {paragraph}{Rôle.}{21}{paragraph*.20}%
+\contentsline {paragraph}{Sécurisation.}{21}{paragraph*.21}%
+\contentsline {paragraph}{Journalisation.}{21}{paragraph*.22}%
+\contentsline {paragraph}{Interfaces.}{22}{paragraph*.23}%
+\contentsline {subsection}{\numberline {2.4.2}HashiCorp Vault (zone PKI)}{22}{subsection.2.4.2}%
+\contentsline {paragraph}{Rôle.}{22}{paragraph*.24}%
+\contentsline {paragraph}{Rôles PKI.}{22}{paragraph*.25}%
+\contentsline {paragraph}{Interfaces.}{22}{paragraph*.26}%
+\contentsline {subsection}{\numberline {2.4.3}Simulateur de flotte IoT --- fleet-sim (zone IoT)}{22}{subsection.2.4.3}%
+\contentsline {paragraph}{Rôle.}{22}{paragraph*.27}%
+\contentsline {paragraph}{Fonctionnement.}{23}{paragraph*.28}%
+\contentsline {paragraph}{Interfaces.}{23}{paragraph*.29}%
+\contentsline {subsection}{\numberline {2.4.4}Wazuh Manager (zone SIEM)}{23}{subsection.2.4.4}%
+\contentsline {paragraph}{Rôle.}{23}{paragraph*.30}%
+\contentsline {paragraph}{Écosystème SIEM.}{23}{paragraph*.31}%
+\contentsline {paragraph}{Interfaces.}{23}{paragraph*.32}%
+\contentsline {subsection}{\numberline {2.4.5}OpenSearch (zone SIEM)}{24}{subsection.2.4.5}%
+\contentsline {paragraph}{Interfaces.}{24}{paragraph*.33}%
+\contentsline {subsection}{\numberline {2.4.6}OpenSearch Dashboards (zone SIEM)}{24}{subsection.2.4.6}%
+\contentsline {paragraph}{Interfaces.}{24}{paragraph*.34}%
+\contentsline {subsection}{\numberline {2.4.7}Suricata IDS (zone Analyse)}{24}{subsection.2.4.7}%
+\contentsline {paragraph}{Rôle.}{24}{paragraph*.35}%
+\contentsline {paragraph}{Capture du trafic.}{24}{paragraph*.36}%
+\contentsline {paragraph}{Interfaces.}{25}{paragraph*.37}%
+\contentsline {subsection}{\numberline {2.4.8}Moteur ML --- ml-engine (zone Analyse)}{25}{subsection.2.4.8}%
+\contentsline {paragraph}{Rôle.}{25}{paragraph*.38}%
+\contentsline {paragraph}{ACL Mosquitto.}{25}{paragraph*.39}%
+\contentsline {paragraph}{Interfaces.}{25}{paragraph*.40}%
+\contentsline {subsection}{\numberline {2.4.9}Boîte à outils d'attaque --- attackbox (zone IoT)}{25}{subsection.2.4.9}%
+\contentsline {paragraph}{Rôle.}{26}{paragraph*.41}%
+\contentsline {paragraph}{Interfaces.}{26}{paragraph*.42}%
+\contentsline {section}{\numberline {2.5}Synthèse des interactions entre composants}{26}{section.2.5}%
+\contentsline {section}{\numberline {2.6}Conclusion}{26}{section.2.6}%
+\contentsline {chapter}{\numberline {3}Conception}{27}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Introduction}{27}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Spécification des besoins}{27}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Besoins fonctionnels (BF)}{27}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Besoins non fonctionnels (BNF)}{27}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.2.3}Acteurs du système}{28}{subsection.3.2.3}%
+\contentsline {paragraph}{Acteurs système.}{28}{paragraph*.45}%
+\contentsline {paragraph}{Acteur externe automatisé.}{29}{paragraph*.46}%
+\contentsline {paragraph}{Acteurs humains.}{29}{paragraph*.47}%
+\contentsline {subsection}{\numberline {3.2.4}Diagramme de cas d'utilisation}{29}{subsection.3.2.4}%
+\contentsline {paragraph}{Cas complémentaire~: capteur erroné ou compromis.}{31}{paragraph*.49}%
+\contentsline {section}{\numberline {3.3}Vue d'ensemble de la solution proposée}{31}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Planification des sprints}{35}{section.3.4}%
+\contentsline {section}{\numberline {3.5}Backlog produit}{35}{section.3.5}%
+\contentsline {section}{\numberline {3.6}Modélisation UML}{36}{section.3.6}%
+\contentsline {subsection}{\numberline {3.6.1}Diagramme de classes du simulateur}{36}{subsection.3.6.1}%
+\contentsline {subsection}{\numberline {3.6.2}Diagramme de séquence~: émission d'un certificat client}{38}{subsection.3.6.2}%
+\contentsline {subsection}{\numberline {3.6.3}Diagramme d'activité~: cycle de publication mTLS}{38}{subsection.3.6.3}%
+\contentsline {subsection}{\numberline {3.6.4}Diagrammes d'activité des scénarios d'attaque}{40}{subsection.3.6.4}%
+\contentsline {section}{\numberline {3.7}Conclusion}{42}{section.3.7}%
+\contentsline {chapter}{\numberline {4}Réalisation}{43}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Introduction}{43}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Environnement de développement}{43}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Architecture globale et topologie réseau}{43}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Infrastructure à clés publiques (Vault)}{47}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Hiérarchie}{47}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}Rôles Vault et émission}{49}{subsection.4.4.2}%
+\contentsline {section}{\numberline {4.5}Broker MQTT en TLS 1.3 + mTLS}{49}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Scénarios d'attaque et contre-mesures}{51}{section.4.6}%
+\contentsline {section}{\numberline {4.7}Pipeline d'apprentissage automatique}{54}{section.4.7}%
+\contentsline {paragraph}{Phase~1 — Chargement, exploration et feature engineering.}{54}{paragraph*.69}%
+\contentsline {paragraph}{Phase~2 — Entraînement des trois modèles.}{54}{paragraph*.70}%
+\contentsline {paragraph}{Phase~3 — Comparaison, export et intégration SIEM.}{56}{paragraph*.72}%
+\contentsline {paragraph}{Données et features.}{56}{paragraph*.73}%
+\contentsline {paragraph}{Synthèse.}{57}{paragraph*.76}%
+\contentsline {section}{\numberline {4.8}Conclusion}{57}{section.4.8}%
+\contentsline {chapter}{\numberline {5}Tests, résultats et validation}{58}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Introduction}{58}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Plan de tests}{58}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Résultats de sécurité}{59}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Résultats du module ML}{62}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}Isolation Forest}{62}{subsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.4.2}Random Forest}{64}{subsection.5.4.2}%
+\contentsline {section}{\numberline {5.5}Résultats de performance}{66}{section.5.5}%
+\contentsline {section}{\numberline {5.6}Limites identifiées}{68}{section.5.6}%
+\contentsline {section}{\numberline {5.7}Perspectives}{68}{section.5.7}%
+\contentsline {section}{\numberline {5.8}Conclusion}{68}{section.5.8}%
+\contentsline {chapter}{Conclusion générale}{69}{section*.94}%
+\contentsline {chapter}{Références bibliographiques}{71}{chapter*.95}%
 \xpg@aux {}{arabic}
 \xpg@aux {}{french}

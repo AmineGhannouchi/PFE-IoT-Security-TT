@@ -1,6 +1,7 @@
 %% ============================================================
 %% RESUMES TRI-LANGUE -- une seule page, derniere du rapport
 %% Ordre reglementaire UTM : Arabe, Francais, Anglais
+%% Mots-cles places APRES le texte de chaque resume
 %% ============================================================
 \clearpage
 \thispagestyle{empty}
@@ -17,16 +18,16 @@
 \begin{center}
   \textbf{\normalsize ملخّص}
 \end{center}
-\noindent\textbf{الكلمات المفتاحيّة:}
-أمن إنترنت الأشياء، تأمين الاتّصالات من طرف إلى طرف، الدفاع المتعمّق، المصادقة المتبادلة، البنية التحتيّة للمفاتيح العموميّة، التواصل \LR{MQTT} المؤمَّن، كشف التسلّل، الإشراف الأمنيّ، كشف الشذوذ، التعلّم الآليّ.
-
-\smallskip
 \noindent يُقدِّم هذا المشروع، المُنجَز بالتعاون مع \emph{اتّصالات تونس}، بنيةً أمنيّة شاملة لتأمين الاتّصالات
 من طرف إلى طرف داخل منظومة إنترنت الأشياء المُحاكاة عبر \LR{GNS3}. يجمع الحلّ المقترح بين بنية تحتيّة للمفاتيح
 العموميّة ثنائيّة المستوى (\LR{HashiCorp Vault})، ووسيط \LR{MQTT} مؤمَّن بـ \LR{TLS~1.3/mTLS}، ونظام كشف التسلّل \LR{Suricata}،
 ومنصّة \LR{Wazuh SIEM}. يُحقّق نموذج \LR{RandomForest} ضمن سلسلة التعلّم الآليّ
 \LR{F1\,=\,0,993} و\LR{ROC-AUC\,=\,0,998} في التصنيف متعدّد الفئات؛ ولا تتجاوز الكلفة الإضافيّة لبروتوكول \LR{mTLS}
 نسبة \LR{\(+8\)\,\%} من الإنتاجيّة و\LR{\(+3{,}5\)} ميلّي ثانية من زمن الاستجابة، دون تأثير تشغيليّ ملحوظ.
+
+\smallskip
+\noindent\textbf{الكلمات المفتاحيّة:}
+أمن إنترنت الأشياء، تأمين الاتّصالات من طرف إلى طرف، الدفاع المتعمّق، المصادقة المتبادلة، البنية التحتيّة للمفاتيح العموميّة، التواصل \LR{MQTT} المؤمَّن، كشف التسلّل، الإشراف الأمنيّ، كشف الشذوذ، التعلّم الآليّ.
 \end{Arabic}
 
 \vspace{4pt}\noindent\rule{\linewidth}{0.4pt}\vspace{4pt}
@@ -35,14 +36,14 @@
 \begin{center}
   \textbf{\normalsize Résumé}
 \end{center}
-\noindent\textbf{Mots-clés~:} sécurité IoT, sécurisation de bout en bout, défense en profondeur, authentification mutuelle, infrastructure à clés publiques, messagerie MQTT sécurisée, détection d'intrusion, supervision de sécurité, détection d'anomalies, apprentissage automatique.
-
-\smallskip
 \noindent Ce projet, mené avec \TT{}, conçoit et valide une architecture de sécurisation de bout en bout d'un
 écosystème IoT émulé sous GNS3. La solution associe une PKI HashiCorp Vault à deux niveaux, un broker MQTT
 en TLS~1.3/mTLS obligatoire, un IDS Suricata et un SIEM Wazuh. Un pipeline ML (IsolationForest + RandomForest)
 détecte les anomalies~: F1\,=\,0,993 et ROC-AUC\,=\,0,998 pour RF en classification multi-classes~; surcoût mTLS de l'ordre de \(+8\)\,\% sur le débit
 applicatif et \(+3{,}5\)\,ms de latence, sans impact opérationnel notable.
+
+\smallskip
+\noindent\textbf{Mots-clés~:} sécurité IoT, sécurisation de bout en bout, défense en profondeur, authentification mutuelle, infrastructure à clés publiques, messagerie MQTT sécurisée, détection d'intrusion, supervision de sécurité, détection d'anomalies, apprentissage automatique.
 
 \vspace{4pt}\noindent\rule{\linewidth}{0.4pt}\vspace{4pt}
 
@@ -50,13 +51,13 @@ applicatif et \(+3{,}5\)\,ms de latence, sans impact opérationnel notable.
 \begin{center}
   \textbf{\normalsize Abstract}
 \end{center}
-\noindent\textbf{Keywords:} IoT security, end-to-end communication security, defense in depth, mutual authentication, public key infrastructure, secure MQTT messaging, intrusion detection, security monitoring, anomaly detection, machine learning.
-
-\smallskip
 \noindent This project, carried out with Tunisie Telecom, designs and validates an end-to-end security architecture for an
 emulated IoT ecosystem under GNS3. The solution combines a two-level HashiCorp Vault PKI, a Mosquitto MQTT
 broker enforcing TLS~1.3/mTLS, a Suricata IDS and a Wazuh SIEM. An ML pipeline (IsolationForest + RandomForest)
 performs anomaly detection: F1\,=\,0.993, ROC-AUC\,=\,0.998 (RF multi-class). mTLS overhead is about \(+8\)\,\% on application
 throughput and \(+3.5\)\,ms latency, with no noticeable operational impact.
+
+\smallskip
+\noindent\textbf{Keywords:} IoT security, end-to-end communication security, defense in depth, mutual authentication, public key infrastructure, secure MQTT messaging, intrusion detection, security monitoring, anomaly detection, machine learning.
 
 \endgroup
