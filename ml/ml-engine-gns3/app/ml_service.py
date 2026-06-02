@@ -8,6 +8,8 @@ PFE IoT Security TT
 import os
 import math
 import time
+import socket
+import struct
 import threading
 import subprocess
 import json
@@ -23,6 +25,8 @@ from flask import Flask, jsonify
 
 # ─── Configuration ────────────────────────────────────────────────────────────
 MOSQUITTO_HOST = os.getenv("MOSQUITTO_HOST", "192.168.20.10")
+WAZUH_HOST     = os.getenv("WAZUH_HOST",     "192.168.40.10")
+WAZUH_PORT     = int(os.getenv("WAZUH_PORT", "514"))
 MOSQUITTO_PORT = int(os.getenv("MOSQUITTO_PORT", "8883"))
 CA_CERT        = os.getenv("CA_CERT",   "./certs/ca-chain.crt")
 CLIENT_CERT    = os.getenv("CLIENT_CERT","./certs/client.crt")
@@ -79,6 +83,31 @@ CAT_DEFAULTS = {
     'message_type_enc':encode('message_type','PUBLISH'),
     'device_type_enc': encode('device_type', 'sensor'),
 }
+
+# ─── Forwarding Wazuh (syslog UDP 514) ───────────────────────────────────────
+def send_to_wazuh(result: dict):
+    """Envoie une alerte ML au Wazuh Manager via syslog UDP."""
+    try:
+        # Format syslog RFC5424 — facility=local1(9), severity=warning(4)
+        priority = 9 * 8 + 4  # = 76
+        timestamp = result.get("timestamp", datetime.utcnow().isoformat() + "Z")
+        client_id = result.get("client_id", "unknown")
+        attack    = result.get("attack_type", "unknown")
+        conf      = result.get("rf_confidence", 0)
+        iso       = result.get("iso_score", 0)
+
+        message = (
+            f"<{priority}>1 {timestamp} ml-engine ml-engine - - - "
+            f"MQTT_ATTACK client={client_id} type={attack} "
+            f"confidence={conf:.4f} iso_score={iso:.4f}"
+        )
+
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.sendto(message.encode("utf-8"), (WAZUH_HOST, WAZUH_PORT))
+        sock.close()
+        log.info(f"Alerte envoyee a Wazuh {WAZUH_HOST}:{WAZUH_PORT}")
+    except Exception as e:
+        log.error(f"Erreur envoi Wazuh : {e}")
 
 # ─── Métriques par client ─────────────────────────────────────────────────────
 class ClientMetrics:
@@ -207,6 +236,8 @@ def predict(client_id: str, topic: str, X: np.ndarray) -> dict:
                 f"type={attack_type} | confiance={confidence:.2%} | "
                 f"iso={iso_score:.3f}"
             )
+            # Forwarder l'alerte vers Wazuh
+            send_to_wazuh(result)
         else:
             predictions_total["normal"] += 1
             log.info(

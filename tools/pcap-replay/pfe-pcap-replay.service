@@ -1,0 +1,19 @@
+# =====================================================
+# PFE IoT Security TT — Service de rejeu pcap (démo)
+# Démarre 60 s après Wazuh et envoie le flux capturé une fois.
+# Installer dans /etc/systemd/system/pfe-pcap-replay.service
+# =====================================================
+[Unit]
+Description=PFE - Rejeu du pcap vers Suricata (demo de detection)
+After=wazuh-manager.service network-online.target
+Wants=wazuh-manager.service network-online.target
+
+[Service]
+Type=simple
+User=root
+# Le delai de 60s est gere par le script (--delay 60)
+ExecStart=/usr/bin/python3 /opt/pfe/pcap_replay.py --pcap /opt/pfe/wireshark.pcapng --iface eth0 --delay 60 --loops 1
+Restart=no
+
+[Install]
+WantedBy=multi-user.target
