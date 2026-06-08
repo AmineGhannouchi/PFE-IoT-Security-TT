@@ -1,10 +1,11 @@
 # ACL Mosquitto Fleet top50
 
-# ML Engine (Zone Analyse 192.168.50.10) — lecture seule sur tous les topics
-user ml.iot-pfe.local
-topic read #
 
-user dev-048797.iot.iot-pfe.local
+# ML Engine (Zone Analyse 192.168.50.12) — lecture seule sur tous les topics
+user ml-engine.analyse.iot-pfe.local
+topic read iot/#
+
+user dev_048797.iot.iot-pfe.local
 topic write iot/+/dev_048797/#
 topic read  iot/commands/dev_048797/#
 

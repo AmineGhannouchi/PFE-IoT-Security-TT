@@ -8,7 +8,7 @@ COPY config/aclfile /mosquitto/config/aclfile
 COPY certs/ /mosquitto/config/certs/
 
 # rsyslog pour forwarding des logs vers Wazuh (192.168.40.10:514)
-RUN apk add --no-cache rsyslog
+RUN apk add --no-cache rsyslog iproute2
 
 # Config rsyslog
 COPY config/rsyslog.conf /etc/rsyslog.conf

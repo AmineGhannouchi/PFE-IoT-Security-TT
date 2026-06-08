@@ -80,7 +80,7 @@ GNS3/projects/
 # =============================
 plantuml.jar
 
-iot/device-sim/fleet-sim/certs/
+# iot/device-sim/fleet-sim/certs/
 *.log
 *.aux
 *.bbl
